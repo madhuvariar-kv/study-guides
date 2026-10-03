@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exercise 1 · Animated Solutions – Irrational Numbers</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+
+</style>
+<style>
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.qnum{display:inline-block;background:var(--primary);color:#fff;font-weight:800;border-radius:8px;padding:.1rem .6rem;margin-bottom:.4rem}
+.qtext{font-weight:600}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.6rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.pairs{display:flex;flex-wrap:wrap;gap:.5rem;margin:.5rem 0}
+.pairs .btn.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+</style>
+</head>
+<body data-page="06_exercise_1_solutions">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 5 · Exercise 1</span><span class="chip amber">Textbook pages 88–89</span>
+<h1>Exercise 1 – Animated Solutions <span class="ml">ഗുണനം</span></h1>
+<p class="lead">Six questions, all built on two ideas from Section 1: a square of area A has side √A, and <b>√x × √y = √(xy)</b> (so √18 = √9 × √2 = 3√2). For each question, read it, try it in your notebook (use the hint if you are stuck), then press <b>Next ▶</b> to watch the solution grow step by step.</p>
+
+<div class="callout book"><div class="title">📖 Tools you will use</div>
+<ul style="margin:0">
+<li><b>Side of a square</b> = √(area). A square of area 27 sq cm has side √27 cm.</li>
+<li><b>Simplify:</b> pull out perfect squares – √27 = √(9 × 3) = 3√3, √12 = 2√3, √18 = 3√2, √50 = 5√2.</li>
+<li><b>Like terms:</b> 3√3 + 2√3 = 5√3 (just like 3a + 2a = 5a), but √2 + √3 stays as it is.</li>
+<li><b>Equilateral triangle</b> of side 2 cm: height = √(2² − 1²) = √3 cm (page 4 of this guide).</li>
+<li><b>Pythagoras:</b> (hypotenuse)² = (leg)² + (leg)²; and the diagonal of a square of side a is a√2.</li>
+</ul></div>
+
+<h2>Question 1 · A rectangle from four equilateral triangles</h2>
+<div class="qcard"><span class="qnum">Q1</span>
+<p class="qtext">Four equilateral triangles of the same size: two are cut lengthwise into halves, two are kept whole, and all the pieces are put together to make a rectangle. If every side of the triangles is 2 cm, what are the perimeter and the area of the rectangle?</p>
+<p><span class="ml">(സമഭുജത്രികോണങ്ങളുടെയെല്ലാം വശങ്ങളുടെ നീളം 2 സെന്റിമീറ്റർ ആണെങ്കിൽ, ചതുരത്തിന്റെ ചുറ്റളവും പരപ്പളവും എത്രയാണ്?)</span></p>
+<div class="reveal" data-btn="💡 Show a hint"><p>The rectangle's short side is one triangle side. Its long side is made of two triangle <em>heights</em>. Find the height first (half-side 1 cm, Pythagoras).</p></div>
+</div>
+<div class="lab" id="lab1">
+  <div class="lab-title">🎬 Solution animation</div>
+  <svg viewBox="0 0 800 360" role="img" aria-label="Four equilateral triangles rearranged into a rectangle"></svg>
+</div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> Height of each triangle = √(2² − 1²) = √3 cm. Rectangle = 2 cm by 2√3 cm. Perimeter = 2(2 + 2√3) = <b>4 + 4√3 cm</b> ≈ 10.93 cm. Area = 2 × 2√3 = <b>4√3 sq cm</b> ≈ 6.93 sq cm (the same as four triangles of area √3 each).</div></div>
+<div class="callout real"><div class="title">🌍 Real life</div><p>Tilers do exactly this: triangular tiles are cut in half to fill the straight edges of a floor. Knowing that a triangle of side 2 is √3 tall lets them work out how many tiles a 2 m × 3.46 m strip needs without measuring.</p></div>
+
+<h2>Question 2 · A trapezium from a square and a triangle</h2>
+<div class="qcard"><span class="qnum">Q2</span>
+<p class="qtext">A square and an equilateral triangle whose sides are twice the square's side are cut and rearranged as shown to make a trapezium (<span class="ml">ലംബകം</span>). If the side of the square is 2 cm, what are the perimeter and the area of the trapezium?</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Cut the square along a diagonal and the triangle along its height. The two triangle-halves form a rectangle; the square-halves go at the two ends. Cutting and moving pieces never changes the total area!</p></div>
+</div>
+<div class="lab" id="lab2">
+  <div class="lab-title">🎬 Solution animation</div>
+  <svg viewBox="0 0 800 400" role="img" aria-label="A square and an equilateral triangle rearranged into a trapezium"></svg>
+</div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> Triangle side 4 cm, height 2√3 cm; square diagonal 2√2 cm. Trapezium: height 2 cm, parallel sides 2√3 cm and 2√3 + 4 cm, slanted sides 2√2 cm each. Perimeter = 2√3 + (2√3 + 4) + 2√2 + 2√2 = <b>4 + 4√3 + 4√2 cm</b> ≈ 16.59 cm. Area = area of square + area of triangle = 4 + ½ × 4 × 2√3 = <b>4 + 4√3 sq cm</b> ≈ 10.93 sq cm. (Check: ½(2√3 + 2√3 + 4) × 2 = 4√3 + 4 ✓.)</div></div>
+<div class="callout think"><div class="title">💡 Two kinds of √ in one answer</div><p>The perimeter mixes √3 and √2. They are <em>not</em> like terms, so 4√3 + 4√2 cannot be shortened – just as 4a + 4b cannot. Only a decimal (6.93 + 5.66 = 12.59) combines them, and then the answer is no longer exact.</p></div>
+
+<h2>Question 3 · Two squares side by side</h2>
+<div class="qcard"><span class="qnum">Q3</span>
+<p class="qtext">The figure shows two squares placed side by side, of areas 27 sq cm and 12 sq cm. Calculate the exact length of the bottom side of the figure.</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Side = √(area). Simplify √27 and √12 – both contain the same √3, so they can be added like terms.</p></div>
+</div>
+<div class="lab" id="lab3">
+  <div class="lab-title">🎬 Solution animation</div>
+  <svg viewBox="0 0 800 340" role="img" aria-label="Two squares of areas 27 and 12 side by side"></svg>
+</div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> √27 + √12 = 3√3 + 2√3 = <b>5√3 cm</b> ≈ 8.66 cm.</div></div>
+<div class="lab">
+  <div class="lab-title">🎚️ Try other areas: when do the sides add up neatly?</div>
+  <div class="split">
+    <svg id="q3Svg" viewBox="0 0 520 300" role="img" aria-label="Two squares with chosen areas"></svg>
+    <div>
+      <div class="controls"><label>Area of first square <input id="q3a" type="range" min="1" max="100" step="1" value="27"><output></output></label></div>
+      <div class="controls"><label>Area of second square <input id="q3b" type="range" min="1" max="100" step="1" value="12"><output></output></label></div>
+      <div class="readout" id="q3Out"></div>
+    </div>
+  </div>
+  <p class="hint">After simplifying, the two sides add up to a single term only when the same number is left under the root (√27 = 3√3 and √12 = 2√3). Try 18 and 8, or 20 and 45, or 50 and 2. With 2 and 3 you are stuck with √2 + √3.</p>
+</div>
+
+<h2>Question 4 · Two squares at a corner</h2>
+<div class="qcard"><span class="qnum">Q4</span>
+<p class="qtext">The figure shows two squares of sides 3 cm and 2 cm joined at a corner. Find the length of the slanted line.</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>The slanted line is made of the two diagonals. The diagonal of a square of side a is √(a² + a²) = a√2.</p></div>
+</div>
+<div class="lab" id="lab4">
+  <div class="lab-title">🎬 Solution animation</div>
+  <svg viewBox="0 0 800 340" role="img" aria-label="Two squares joined at a corner with their diagonals in a line"></svg>
+</div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> 3√2 + 2√2 = <b>5√2 cm</b> ≈ 7.07 cm. (Both diagonals make 45° with the horizontal, so they lie on one straight line.)</div></div>
+
+<h2>Question 5 · Squares on the sides of a right triangle</h2>
+<div class="qcard"><span class="qnum">Q5</span>
+<p class="qtext">In the figure, squares are drawn on two sides of a right triangle: one of area 18 sq cm on a perpendicular side, and one of area 50 sq cm on the hypotenuse. Calculate the length of the third side and the perimeter of the triangle.</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>The square of area 50 sits on the hypotenuse (the side opposite the right angle). Pythagoras: (other leg)² = 50 − 18. Then simplify all three square roots – they all contain √2.</p></div>
+</div>
+<div class="lab" id="lab5">
+  <div class="lab-title">🎬 Solution animation</div>
+  <svg viewBox="0 0 800 380" role="img" aria-label="Right triangle with squares of area 18 and 50 on two sides"></svg>
+</div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> Third side = √(50 − 18) = √32 = <b>4√2 cm</b> ≈ 5.66 cm. Sides: √18 = 3√2, 4√2, √50 = 5√2. Perimeter = 3√2 + 4√2 + 5√2 = <b>12√2 cm</b> ≈ 16.97 cm. (It is a 3-4-5 triangle with every side multiplied by √2.)</div></div>
+<div class="callout real"><div class="title">🌍 Real life</div><p>Surveyors and carpenters check right angles with 3-4-5 triangles. Multiplying by √2 (or by any number) keeps the angles the same – you met this in the chapter on similar triangles.</p></div>
+
+<h2>Question 6 · Which products are whole numbers or fractions?</h2>
+<div class="qcard"><span class="qnum">Q6</span>
+<p class="qtext">The product of some of these pairs of numbers is a natural number or a fraction. Find them: (i) √3, √12 (ii) √3, √1.2 (iii) √5, √8 (iv) √0.5, √8 (v) √7½, √3⅓ (vi) √(2/5), √(1/10).</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Use √x × √y = √(xy): multiply the numbers under the roots. The product is a natural number or a fraction exactly when xy is a perfect square (like 36, 4, 25, 1/25).</p></div>
+</div>
+<div class="lab">
+  <div class="lab-title">🧪 Click a pair to multiply it</div>
+  <div class="pairs" id="pairBtns"></div>
+  <div class="split">
+    <svg id="q6Svg" viewBox="0 0 520 280" role="img" aria-label="Rectangle whose sides are the two square roots"></svg>
+    <div class="readout" id="q6Out">Click a pair above.</div>
+  </div>
+  <p class="hint">Picture each product as the area of a rectangle with sides √x and √y. The area is √(xy) – a nice number only when xy is a perfect square.</p>
+</div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> (i) √36 = <b>6</b> ✔ (ii) √3.6 – irrational ✘ (iii) √40 = 2√10 – irrational ✘ (iv) √4 = <b>2</b> ✔ (v) √(15/2 × 10/3) = √25 = <b>5</b> ✔ (vi) √(2/50) = √(1/25) = <b>1/5</b> ✔</div></div>
+
+<h2>Check yourself</h2>
+<div id="qz1"></div>
+<div id="qz2"></div>
+<div id="qz3"></div>
+<div id="qz4"></div>
+
+<div class="callout"><div class="title">🧭 What Exercise 1 taught us</div>
+<ul style="margin:0">
+<li>Cutting and rearranging never changes area – use it to turn triangles into rectangles and trapeziums.</li>
+<li>Side of a square = √(area); diagonal of a square = side × √2; height of an equilateral triangle = half-side × √3.</li>
+<li>Always simplify: √27 + √12 = 3√3 + 2√3 = 5√3. Different roots (√3 and √2) cannot be combined.</li>
+<li>√x × √y is a whole number or fraction exactly when xy is a perfect square.</li>
+</ul></div>
+<p>Next: <a href="07_division.html">Section 2 – Division ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Irrational Numbers · Class 9", "icon": "√", "key": "irrational_numbers_ch5_progress", "pages": [["index.html", "Home"], ["01_square_roots_basics.html", "1 · Square Roots & Perfect Squares"], ["02_rational_irrational.html", "2 · Rational vs Irrational Numbers"], ["03_adding_irrationals.html", "3 · Adding Irrationals & Decimals"], ["04_geometry_toolkit.html", "4 · Geometry & Algebra Toolkit"], ["05_multiplication.html", "5 · Multiplication (Section 1)"], ["06_exercise_1_solutions.html", "6 · Exercise 1 – Solutions"], ["07_division.html", "7 · Division (Section 2)"], ["08_exercise_2_solutions.html", "8 · Exercise 2 – Solutions"], ["09_triangle_areas.html", "9 · Areas of Triangles & Heron (Section 3)"], ["10_exercise_3_solutions.html", "10 · Exercise 3 – Solutions"], ["11_applications.html", "11 · Real-World Applications"], ["12_summary_revision.html", "12 · Summary & Quick Quiz"], ["13_model_test_paper.html", "13 · Model Test Paper"], ["14_model_test_solutions.html", "14 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Similar Triangles – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+const {P, add, sub, scale, lerpPt, dist, fmt, polygon, seg, text, sideLabel, dot, multiText, rightMark, centroid, rotateAround, deg} = K;
+const R2 = Math.SQRT2, R3 = Math.sqrt(3);
+/* rigid motion of a polygon from one position to another (must be a proper rotation + translation), t in [0,1] */
+function movePoly(from, to, t){ const c0 = centroid(from), c1 = centroid(to); const a0 = Math.atan2(from[1].y-from[0].y, from[1].x-from[0].x), a1 = Math.atan2(to[1].y-to[0].y, to[1].x-to[0].x); let da = a1 - a0; while (da > Math.PI) da -= 2*Math.PI; while (da < -Math.PI) da += 2*Math.PI; const c = lerpPt(c0, c1, t); return from.map(p => add(c, sub(rotateAround(p, c0, deg(da)*t), c0))); }
+const shift = (poly, dx, dy) => poly.map(p => P(p.x+dx, p.y+dy));
+function simp(n){ let k = 1; for (let s = 2; s*s <= n; s++) if (n % (s*s) === 0) k = s; return [k, n/(k*k)]; }
+const rootStr = n => { const [k,m] = simp(n); return m === 1 ? String(k) : (k === 1 ? `√${m}` : `${k}√${m}`); };
+
+/* ---------- Q1 ---------- */
+(function(){
+  const u = 60, h = u*R3, by = 160;
+  const tri = x => [P(x, by), P(x+2*u, by), P(x+u, by-h)];
+  const T = [tri(40), tri(190), tri(340), tri(490)];
+  const x0 = 296, x1 = 296 + 2*h, y0 = 210, y1 = 330, cx = 400, cy = 270;
+  const g = 12;
+  const L1 = shift([P(T[0][2].x, by), T[0][0], T[0][2]], -g, 0), R1 = shift([P(T[0][2].x, by), T[0][1], T[0][2]], g, 0);
+  const L2 = shift([P(T[1][2].x, by), T[1][0], T[1][2]], -g, 0), R2h = shift([P(T[1][2].x, by), T[1][1], T[1][2]], g, 0);
+  const tTL = [P(cx,y0), P(cx,cy), P(x0,y0)], tTR = [P(cx,y0), P(cx,cy), P(x1,y0)];
+  const tBL = [P(cx,y1), P(cx,cy), P(x0,y1)], tBR = [P(cx,y1), P(cx,cy), P(x1,y1)];
+  const T3t = [P(x0,y0), P(x0,y1), P(cx,cy)], T4t = [P(x1,y1), P(x1,y0), P(cx,cy)];
+  const steps = [
+    'Four <b>equilateral triangles</b>, every side 2 cm. The height of each one: half-side 1 cm, so h² = 2² − 1² = 3, h = <b>√3 cm</b> ≈ 1.73 cm.',
+    'Cut two of them lengthwise along the height. Each half is a right triangle with legs <b>1 cm</b> and <b>√3 cm</b>.',
+    'Stand the two whole triangles up so that their bases become the <b>left and right sides</b> of a rectangle, with the apexes meeting at the centre.',
+    'The four halves fill the gaps at the top and bottom – a perfect <b>rectangle</b>.',
+    'Its breadth is a triangle side, <b>2 cm</b>. Its length is two triangle heights, √3 + √3 = <b>2√3 cm</b>.',
+    'Perimeter = 2(2 + 2√3) = <b>4 + 4√3 cm</b> ≈ 10.93 cm. Area = 2 × 2√3 = <b>4√3 sq cm</b> ≈ 6.93 sq cm – the same as four triangles of area √3 each.'
+  ];
+  new K.Stepper('#lab1', {steps, draw(svg, i, t){
+    const gap = i === 0 ? 0 : (i === 1 ? t : 1);
+    const mT = i < 2 ? 0 : (i === 2 ? t : 1);
+    const mH = i < 3 ? 0 : (i === 3 ? t : 1);
+    text(svg, P(325, 32), 'four equilateral triangles, side 2 cm', {class:'lbl muted'});
+    /* whole triangles */
+    polygon(svg, movePoly(T[2], T3t, mT), {class:'tri-small'}); polygon(svg, movePoly(T[3], T4t, mT), {class:'tri-small'});
+    /* halves (at step 0 the two triangles are still whole) */
+    if (i === 0){ polygon(svg, T[0], {class:'tri-small'}); polygon(svg, T[1], {class:'tri-small'}); }
+    else [[L1,tTL],[R1,tTR],[R2h,tBL],[L2,tBR]].forEach(([src, dst]) => { const start = shift(src, (src === L1 || src === L2 ? g : -g) * (1-gap), 0); polygon(svg, movePoly(start, dst, mH), {class:'tri-amber'}); });
+    if (i === 0){ sideLabel(svg, T[0][0], T[0][1], '2 cm', 16, {class:'lbl green'}); sideLabel(svg, T[0][1], T[0][2], '2 cm', 16, {class:'lbl green'}); sideLabel(svg, T[0][2], T[0][0], '2 cm', 16, {class:'lbl green'}); }
+    if (i === 1){ [T[0],T[1]].forEach(tr => { seg(svg, P(tr[2].x, by), tr[2], {class:'ln-red dash'}); }); sideLabel(svg, P(T[1][2].x, by), T[1][2], '√3 cm', -18, {class:'lbl red'}); sideLabel(svg, T[1][0], P(T[1][2].x, by), '1 cm', 16, {class:'lbl red'}); }
+    if (i >= 2 && mT > .98) dot(svg, P(cx,cy), {class:'pt red'});
+    if (i >= 4){ const o = i === 4 ? t : 1; polygon(svg, [P(x0,y0),P(x1,y0),P(x1,y1),P(x0,y1)], {class:'tri-none thick', fill:'none', opacity:o}); sideLabel(svg, P(x0,y1), P(x0,y0), '2 cm', -28, {class:'lbl', opacity:o}); sideLabel(svg, P(x0,y1), P(x1,y1), '2√3 cm', 16, {class:'lbl', opacity:o}); seg(svg, P(x0,y0), P(x1,y0), {class:'ln-red thick', opacity:o}); text(svg, P(cx, y0-14), '√3 + √3', {class:'lbl sm red', opacity:o}); }
+    if (i >= 5) multiText(svg, P(650, 230), ['perimeter = 2(2 + 2√3)', '= 4 + 4√3 cm ≈ 10.93 cm', 'area = 2 × 2√3', '= 4√3 sq cm ≈ 6.93 sq cm'], {class:'lbl', opacity:t}, 24);
+    if (i === 0) multiText(svg, P(700, 110), ['h² = 2² − 1²', 'h = √3 cm'], {class:'lbl red', opacity:t}, 22);
+  }});
+})();
+
+/* ---------- Q2 ---------- */
+(function(){
+  const u = 45;
+  const S = [P(50,160), P(140,160), P(140,70), P(50,70)];
+  const Tb = [P(220,200), P(400,200), P(310, 200-2*u*R3)];
+  const ty0 = 260, ty1 = 350, ml = 400 - u*R3, mr = 400 + u*R3, tl = ml - 2*u, tr = mr + 2*u;
+  const sqLR = [P(140,160), P(50,160), P(140,70)], sqUL = [P(50,70), P(140,70), P(50,160)];
+  const sqLRt = [P(ml,ty1), P(tl,ty1), P(ml,ty0)], sqULt = [P(mr,ty1), P(mr,ty0), P(tr,ty1)];
+  const trR = [P(310,200), P(400,200), Tb[2]], trL = [P(310,200), P(220,200), Tb[2]];
+  const trRt = [P(mr,ty1), P(mr,ty0), P(ml,ty1)], trLt = [P(ml,ty0), P(ml,ty1), P(mr,ty0)];
+  const flipX = (poly, s) => { const c = centroid(poly); return poly.map(p => P(c.x + (p.x - c.x)*s, p.y)); };
+  const nd = unitV => P(-unitV.y, unitV.x);
+  const steps = [
+    'A <b>square</b> of side 2 cm and an <b>equilateral triangle</b> of side 4 cm (twice the square\'s side). The triangle\'s height is √3 × 2 = <b>2√3 cm</b> ≈ 3.46 cm.',
+    'Cut the square along a diagonal. Each half is a right triangle with legs 2 cm; its hypotenuse (the diagonal) is √(2² + 2²) = √8 = <b>2√2 cm</b>.',
+    'Cut the triangle along its height. Each half is a right triangle with legs <b>2 cm</b> and <b>2√3 cm</b> and hypotenuse 4 cm.',
+    'Put the two triangle-halves together (one of them flipped over): they make a <b>rectangle</b> 2√3 cm by 2 cm.',
+    'Add the square\'s halves at the two ends. Their 2 cm legs match the height – the shape is a <b>trapezium</b> (<span class="ml">ലംബകം</span>) of height 2 cm.',
+    'Parallel sides: top = 2√3 cm, bottom = 2 + 2√3 + 2 = 2√3 + 4 cm. Slanted sides: 2√2 cm each. Perimeter = 2√3 + (2√3 + 4) + 2√2 + 2√2 = <b>4 + 4√3 + 4√2 cm</b> ≈ 16.59 cm.',
+    'Area: cutting and moving changes nothing, so area = square + triangle = 2² + ½ × 4 × 2√3 = <b>4 + 4√3 sq cm</b> ≈ 10.93 sq cm. (Trapezium formula check: ½(2√3 + 2√3 + 4) × 2 = 4√3 + 4 ✓)'
+  ];
+  new K.Stepper('#lab2', {steps, draw(svg, i, t){
+    /* square halves */
+    const sqMove = i < 4 ? 0 : (i === 4 ? t : 1);
+    const dg = unitVec => unitVec; const dSep = (i >= 1 ? (i === 1 ? t : 1) : 0) * 6;
+    const n1 = nd(K.unit(P(50,160), P(140,70)));                           // normal to the diagonal
+    const sqLRs = shift(sqLR, n1.x*dSep*(1-sqMove), n1.y*dSep*(1-sqMove)), sqULs = shift(sqUL, -n1.x*dSep*(1-sqMove), -n1.y*dSep*(1-sqMove));
+    if (i === 0) polygon(svg, S, {class:'tri-big'});
+    else { polygon(svg, movePoly(sqLRs, sqLRt, sqMove), {class:'tri-big'}); polygon(svg, movePoly(sqULs, sqULt, sqMove), {class:'tri-purple'}); }
+    /* triangle halves */
+    const trMove = i < 3 ? 0 : (i === 3 ? t : 1);
+    const tSep = (i >= 2 ? (i === 2 ? t : 1) : 0) * 7;
+    const trRs = shift(trR, tSep*(1-trMove), 0), trLs = shift(trL, -tSep*(1-trMove), 0);
+    if (i <= 1) polygon(svg, Tb, {class:'tri-small'});
+    else {
+      polygon(svg, movePoly(trRs, trRt, trMove), {class:'tri-small'});
+      if (i === 3){ const u1 = K.sub01(t, 0, .4), u2 = K.sub01(t, .4, 1); const flipped = flipX(trLs, Math.cos(Math.PI*u1)); polygon(svg, u1 < 1 ? flipped : movePoly(flipX(trLs, -1), trLt, u2), {class:'tri-amber'}); }
+      else if (i > 3) polygon(svg, trLt, {class:'tri-amber'});
+      else polygon(svg, trLs, {class:'tri-amber'});
+    }
+    /* labels */
+    if (i === 0){ sideLabel(svg, S[0], S[1], '2 cm', 16, {class:'lbl blue'}); sideLabel(svg, S[1], S[2], '2 cm', 28, {class:'lbl blue'}); sideLabel(svg, Tb[0], Tb[1], '4 cm', 16, {class:'lbl green'}); sideLabel(svg, Tb[1], Tb[2], '4 cm', 24, {class:'lbl green'}); sideLabel(svg, Tb[2], Tb[0], '4 cm', 24, {class:'lbl green'}); }
+    if (i === 1){ seg(svg, P(50,160), P(140,70), {class:'ln-red dash'}); text(svg, P(178, 115), '2√2 cm', {class:'lbl sm red'}); sideLabel(svg, S[0], S[1], '2 cm', 16, {class:'lbl blue'}); }
+    if (i === 2){ seg(svg, P(310,200), Tb[2], {class:'ln-red dash'}); sideLabel(svg, P(310,200), Tb[2], '2√3 cm', -22, {class:'lbl sm red'}); sideLabel(svg, Tb[0], P(310,200), '2 cm', 16, {class:'lbl red'}); sideLabel(svg, P(310,200), Tb[1], '2 cm', 16, {class:'lbl red'}); }
+    if (i >= 3 && trMove > .98){ sideLabel(svg, P(ml,ty0), P(mr,ty0), '2√3 cm', -14, {class:'lbl sm'}); }
+    if (i >= 4 && sqMove > .98){ polygon(svg, [P(tl,ty1), P(tr,ty1), P(mr,ty0), P(ml,ty0)], {class:'tri-none thick', fill:'none'}); sideLabel(svg, P(tl,ty1), P(tr,ty1), i >= 5 ? '2 + 2√3 + 2 = 2√3 + 4 cm' : '', 18, {class:'lbl'}); if (i >= 5){ sideLabel(svg, P(ml,ty0), P(tl,ty1), '2√2', 18, {class:'lbl sm purple'}); sideLabel(svg, P(tr,ty1), P(mr,ty0), '2√2', 18, {class:'lbl sm purple'}); } K.dim(svg, P(tr,ty1), P(tr,ty0), 'height 2 cm', 30); }
+    if (i === 5) multiText(svg, P(690, 110), ['perimeter', '= 2√3 + 2√3 + 4', '  + 2√2 + 2√2', '= 4 + 4√3 + 4√2', '≈ 16.59 cm'], {class:'lbl', opacity:t}, 22);
+    if (i === 6) multiText(svg, P(690, 110), ['area', '= square + triangle', '= 4 + ½ × 4 × 2√3', '= 4 + 4√3 sq cm', '≈ 10.93 sq cm'], {class:'lbl', opacity:t}, 22);
+  }});
+})();
+
+/* ---------- Q3 ---------- */
+(function(){
+  const u = 30, s1 = Math.sqrt(27)*u, s2 = Math.sqrt(12)*u, base = 300, x0 = 90;
+  const A = [P(x0,base), P(x0+s1,base), P(x0+s1,base-s1), P(x0,base-s1)], B = [P(x0+s1,base), P(x0+s1+s2,base), P(x0+s1+s2,base-s2), P(x0+s1,base-s2)];
+  const steps = [
+    'Two squares stand side by side on a line: the first has area <b>27 sq cm</b>, the second <b>12 sq cm</b>. We want the exact length of the bottom.',
+    'The side of a square is the square root of its area: first side = <b>√27 cm</b>, second side = <b>√12 cm</b>.',
+    'Simplify: 27 = 9 × 3, so √27 = √9 × √3 = <b>3√3</b>. And 12 = 4 × 3, so √12 = √4 × √3 = <b>2√3</b>.',
+    'Both are multiples of √3 – like terms. Bottom = 3√3 + 2√3 = <b>5√3 cm</b> ≈ 5 × 1.732 = 8.66 cm.'
+  ];
+  new K.Stepper('#lab3', {steps, draw(svg, i, t){
+    polygon(svg, A, {class:'tri-small'}); polygon(svg, B, {class:'tri-big'});
+    text(svg, P(x0+s1/2, base-s1/2), '27 sq cm', {class:'lbl green'}); text(svg, P(x0+s1+s2/2, base-s2/2), '12 sq cm', {class:'lbl blue'});
+    seg(svg, P(40,base), P(400,base), {class:'ground'});
+    if (i >= 1){ const o = i===1 ? t : 1; sideLabel(svg, A[0], A[1], i >= 2 ? '3√3 cm' : '√27 cm', 18, {class:'lbl green', opacity:o}); sideLabel(svg, B[0], B[1], i >= 2 ? '2√3 cm' : '√12 cm', 18, {class:'lbl blue', opacity:o}); }
+    if (i >= 2) multiText(svg, P(600, 90), ['√27 = √(9 × 3) = 3√3', '√12 = √(4 × 3) = 2√3'], {class:'lbl', opacity: i===2 ? t : 1}, 26);
+    if (i >= 3){ K.dim(svg, A[0], B[1], '3√3 + 2√3 = 5√3 cm ≈ 8.66 cm', 44); multiText(svg, P(600, 200), ['3√3 + 2√3', '= 5√3 cm'], {class:'lbl big', opacity:t}, 30); }
+  }});
+  /* slider lab */
+  const svg = document.getElementById('q3Svg'), out = document.getElementById('q3Out'); let a = 27, b = 12;
+  function draw(){ K.clear(svg); const k = 150/Math.sqrt(Math.max(a,b)); const sa = Math.sqrt(a)*k, sb = Math.sqrt(b)*k; const y = 200, x = 40;
+    polygon(svg, [P(x,y),P(x+sa,y),P(x+sa,y-sa),P(x,y-sa)], {class:'tri-small'}); polygon(svg, [P(x+sa,y),P(x+sa+sb,y),P(x+sa+sb,y-sb),P(x+sa,y-sb)], {class:'tri-big'});
+    text(svg, P(x+sa/2, y-sa/2), String(a), {class:'lbl green'}); text(svg, P(x+sa+sb/2, y-sb/2), String(b), {class:'lbl blue'});
+    sideLabel(svg, P(x,y), P(x+sa,y), rootStr(a), 16, {class:'lbl sm green'}); sideLabel(svg, P(x+sa,y), P(x+sa+sb,y), rootStr(b), 16, {class:'lbl sm blue'});
+    const [ka,ma] = simp(a), [kb,mb] = simp(b); let sum; if (ma === mb) sum = ma === 1 ? String(ka+kb) : `${ka+kb}√${ma}`; else sum = `${rootStr(a)} + ${rootStr(b)}`;
+    K.dim(svg, P(x,y), P(x+sa+sb,y), sum, 44);
+    out.textContent = `√${a} = ${rootStr(a)}     √${b} = ${rootStr(b)}\nbottom = ${rootStr(a)} + ${rootStr(b)} = ${sum}${ma === mb ? '   (like terms – they add up!)' : '   (different roots – cannot be combined)'}\n≈ ${(Math.sqrt(a)+Math.sqrt(b)).toFixed(3)} cm`; }
+  K.slider('#q3a', v => { a = v; draw(); }, 0); K.slider('#q3b', v => { b = v; draw(); }, 0);
+})();
+
+/* ---------- Q4 ---------- */
+(function(){
+  const A = [P(120,300), P(270,300), P(270,150), P(120,150)], B = [P(270,150), P(370,150), P(370,50), P(270,50)];
+  const steps = [
+    'Two squares, sides <b>3 cm</b> and <b>2 cm</b>, touch at a corner. The slanted line runs from the bottom-left corner of the big square to the top-right corner of the small one.',
+    'Each half of the line is a <b>diagonal</b> of a square. A diagonal makes 45° with the sides, so the two diagonals lie on one straight line.',
+    'Diagonal of the 3 cm square: √(3² + 3²) = √18 = √(9 × 2) = <b>3√2 cm</b>. Diagonal of the 2 cm square: √(2² + 2²) = √8 = <b>2√2 cm</b>.',
+    'Slanted line = 3√2 + 2√2 = <b>5√2 cm</b> ≈ 7.07 cm. (Shortcut: the diagonal of any square is side × √2, so (3 + 2)√2.)'
+  ];
+  new K.Stepper('#lab4', {steps, draw(svg, i, t){
+    polygon(svg, A, {class:'tri-big'}); polygon(svg, B, {class:'tri-small'});
+    sideLabel(svg, A[0], A[1], '3 cm', 16, {class:'lbl blue'}); sideLabel(svg, B[1], B[2], '2 cm', 28, {class:'lbl green'});
+    const e = i === 0 ? lerpPt(A[0], B[2], t) : B[2]; seg(svg, A[0], e, {class:'ln-red thick'});
+    if (i >= 1){ K.angleArc(svg, A[0], A[1], A[2], 30, {label:'45°'}); K.angleArc(svg, B[0], B[1], B[2], 24, {label:'45°'}); }
+    if (i >= 2){ const o = i===2 ? t : 1; sideLabel(svg, A[0], A[2], '3√2 cm', -28, {class:'lbl red', opacity:o}); sideLabel(svg, B[0], B[2], '2√2 cm', -26, {class:'lbl sm red', opacity:o}); multiText(svg, P(600, 120), ['√(3² + 3²) = √18 = 3√2', '√(2² + 2²) = √8 = 2√2'], {class:'lbl', opacity:o}, 26); }
+    if (i >= 3) multiText(svg, P(600, 230), ['3√2 + 2√2 = 5√2 cm', '≈ 7.07 cm'], {class:'lbl big', opacity:t}, 30);
+  }});
+})();
+
+/* ---------- Q5 ---------- */
+(function(){
+  const u = 24; const c = 5*R2*u, a = 4*R2*u, b = 3*R2*u;   // hypotenuse, long leg, short leg (px)
+  const H1 = P(260,190), H2 = P(260 + c, 190); const d1 = a*a/c, hh = a*b/c; const R = P(H1.x + d1, 190 - hh);
+  const uRH2 = K.unit(R, H2), n = P(uRH2.y, -uRH2.x);        // outward normal (up-right)
+  const SqLeg = [R, H2, add(H2, scale(n, b)), add(R, scale(n, b))];
+  const SqHyp = [H1, H2, P(H2.x, 190 + c), P(H1.x, 190 + c)];
+  const steps = [
+    'A right triangle with the right angle at the top. The square on one perpendicular side has area <b>18 sq cm</b>; the square on the <b>hypotenuse</b> (the bottom side, opposite the right angle) has area <b>50 sq cm</b>.',
+    'Side of a square = √(area): the perpendicular side is √18 = √(9 × 2) = <b>3√2 cm</b>, the hypotenuse is √50 = √(25 × 2) = <b>5√2 cm</b>.',
+    'Pythagoras: (third side)² = (hypotenuse)² − (other leg)² = 50 − 18 = 32. So the third side = √32 = √(16 × 2) = <b>4√2 cm</b> ≈ 5.66 cm.',
+    'Perimeter = 3√2 + 4√2 + 5√2 = <b>12√2 cm</b> ≈ 16.97 cm. Notice 3√2, 4√2, 5√2 – a 3-4-5 triangle with every side multiplied by √2!'
+  ];
+  new K.Stepper('#lab5', {steps, draw(svg, i, t){
+    polygon(svg, SqHyp, {class:'tri-small'}); polygon(svg, SqLeg, {class:'tri-amber'}); polygon(svg, [H1,H2,R], {class:'tri-big'});
+    rightMark(svg, R, H1, H2, 11);
+    text(svg, centroid(SqHyp), '50 sq cm', {class:'lbl green'}); const cL = centroid(SqLeg); text(svg, P(cL.x + n.x*22, cL.y + n.y*22), '18 sq cm', {class:'lbl sm amber'});
+    if (i >= 1){ const o = i===1 ? t : 1; sideLabel(svg, H2, R, '√18 = 3√2', 32, {class:'lbl sm red', opacity:o}); sideLabel(svg, H1, H2, '√50 = 5√2', 16, {class:'lbl sm red', opacity:o}); }
+    if (i >= 2){ const o = i===2 ? t : 1; sideLabel(svg, H1, R, i===2 && t<.5 ? '?' : '√32 = 4√2', -24, {class:'lbl red', opacity:o}); multiText(svg, P(640, 80), ['(third side)² = 50 − 18 = 32', 'third side = √32', '= √(16 × 2) = 4√2 cm'], {class:'lbl', opacity:o}, 24); }
+    else sideLabel(svg, H1, R, '?', -22, {class:'lbl red'});
+    if (i >= 3) multiText(svg, P(640, 220), ['perimeter', '= 3√2 + 4√2 + 5√2', '= 12√2 cm ≈ 16.97 cm'], {class:'lbl big', opacity:t}, 28);
+  }});
+})();
+
+/* ---------- Q6 interactive ---------- */
+(function(){
+  const pairs = [
+    {lab:'(i) √3 × √12', a:3, b:12, lines:['√3 × √12 = √(3 × 12) = √36','36 = 6 × 6, a perfect square','= 6   ✔ a natural number']},
+    {lab:'(ii) √3 × √1.2', a:3, b:1.2, lines:['√3 × √1.2 = √(3 × 1.2) = √3.6','3.6 = 36/10 = 18/5 – not a perfect square','√3.6 ≈ 1.897…   ✘ irrational']},
+    {lab:'(iii) √5 × √8', a:5, b:8, lines:['√5 × √8 = √(5 × 8) = √40','40 = 4 × 10 ⇒ √40 = 2√10 (10 is not a perfect square)','≈ 6.325…   ✘ irrational']},
+    {lab:'(iv) √0.5 × √8', a:.5, b:8, lines:['√0.5 × √8 = √(0.5 × 8) = √4','4 = 2 × 2, a perfect square','= 2   ✔ a natural number']},
+    {lab:'(v) √7½ × √3⅓', a:7.5, b:10/3, lines:['7½ = 15/2 and 3⅓ = 10/3','√(15/2) × √(10/3) = √(150/6) = √25','= 5   ✔ a natural number']},
+    {lab:'(vi) √(2/5) × √(1/10)', a:.4, b:.1, lines:['√(2/5) × √(1/10) = √(2/50) = √(1/25)','1/25 = (1/5) × (1/5), a perfect square','= 1/5   ✔ a fraction']}
+  ];
+  const btns = document.getElementById('pairBtns'), svg = document.getElementById('q6Svg'), out = document.getElementById('q6Out'); let cancel = null;
+  pairs.forEach((p, k) => { const b = document.createElement('button'); b.className = 'btn'; b.textContent = p.lab; b.addEventListener('click', () => show(k)); btns.appendChild(b); });
+  function show(k){ const p = pairs[k]; Array.from(btns.children).forEach((b, j) => b.classList.toggle('on', j === k)); if (cancel) cancel();
+    const sa = Math.sqrt(p.a), sb = Math.sqrt(p.b); const kk = 170/Math.max(sa, sb); const w = sa*kk, h = sb*kk; const x = 60, y = 230;
+    cancel = K.animate(1800, t => { K.clear(svg); polygon(svg, [P(x,y),P(x+w,y),P(x+w,y-h),P(x,y-h)], {class:'tri-amber'}); sideLabel(svg, P(x,y), P(x+w,y), p.lab.split(' × ')[0].replace(/^\(.*?\)\s*/,''), 16, {class:'lbl'}); sideLabel(svg, P(x+w,y), P(x+w,y-h), p.lab.split(' × ')[1], 16, {class:'lbl'}); if (t <= .99) text(svg, P(x+w/2, y-h/2), 'area = ?', {class:'lbl muted'}); const shown = Math.floor(t*3+.001); const lines = p.lines.slice(0, Math.min(3, shown+1)); K.multiText(svg, P(300 + 0, 60), lines, {class:'lbl sm'}, 22); out.textContent = p.lines.slice(0, shown+1).join('\n'); if (t > .99){ text(svg, P(x+w/2, y-h/2), p.lines[2].split('   ')[0].replace('= ',''), {class:'lbl big'}); } });
+  }
+  show(0);
+})();
+
+/* ---------- quizzes ---------- */
+K.numq('#qz1', {q:'Two squares of areas 50 sq cm and 8 sq cm are placed side by side. The bottom length is k√2 cm. What is k?', answer:7, tol:0.01, explain:'√50 + √8 = 5√2 + 2√2 = 7√2 cm.', hint:'Simplify √50 and √8 first – both contain √2.'});
+K.mcq('#qz2', {q:'Squares of sides 5 cm and 1 cm are joined at a corner so their diagonals lie on one line. The total length of the two diagonals is', options:['6√2 cm','26√2 cm','6 cm','5√2 + 1 cm'], answer:0, explain:'5√2 + 1·√2 = 6√2 cm.', hint:'The diagonal of a square of side a is a√2.'});
+K.mcq('#qz3', {q:'Squares drawn on the two perpendicular sides of a right triangle have areas 8 and 18 sq cm. The hypotenuse is', options:['√26 cm','5√2 cm','26 cm','√10 cm'], answer:0, explain:'(hypotenuse)² = 8 + 18 = 26, so the hypotenuse is √26 cm (26 has no square factor, so it cannot be simplified).', hint:'Pythagoras adds the two areas when both squares are on the legs.'});
+K.mcq('#qz4', {q:'Which product is a whole number?', options:['√2 × √18','√2 × √12','√5 × √15','√3 × √6'], answer:0, explain:'√2 × √18 = √36 = 6. The others give √24, √75 and √18, none of which is a perfect square.', hint:'Multiply under the root and look for a perfect square.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

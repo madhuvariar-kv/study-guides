@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practice Set 1 · Solutions – Pairs of Equations</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+
+</style>
+<style>
+.ways{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.8rem;margin:.8rem 0}
+.ways .card{margin:0}
+.ways h4{margin:.1rem 0 .4rem;color:var(--primary-ink)}
+.algebra{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.05rem;line-height:1.7;white-space:pre-line}
+.qcard{border-left:6px solid var(--primary)}
+.qnum{display:inline-block;background:var(--primary);color:#fff;border-radius:8px;padding:.05rem .5rem;font-weight:800;margin-right:.4rem}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.6rem 0;background:var(--green-soft)}
+.answer b.a{color:var(--green)}
+</style>
+</head>
+<body data-page="06_practice_1_solutions">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 1 · Practice set 1</span><span class="chip amber">Textbook pages 10–11</span>
+<h1>Practice Set 1 – Animated Solutions <span class="ml">ചിന്തിക്കാം</span></h1>
+<p class="lead">The textbook asks you to solve these eight puzzles <b>mentally</b>, with <b>one letter</b>, or with <b>two equations</b> – whichever you like. For each one, read the question, try it in your notebook (use the hint if you are stuck), then press <b>Next ▶</b> and watch the solution grow.</p>
+
+<div class="callout book"><div class="title">📖 Tools you will use (pages 1–5 of this guide)</div>
+<ul style="margin:0">
+<li><b>Set the extra aside:</b> if one amount is d more than the other and the total is T, the smaller is (T − d) ÷ 2.</li>
+<li><b>One letter:</b> write the other unknown in terms of x (x + 300, x − 8, 100000 − x) and solve one equation.</li>
+<li><b>Two letters:</b> one equation per fact; substitute one into the other.</li>
+<li><b>Special quantities (page 4):</b> perimeter = 2(length + breadth), 7% of x = 0.07x, speed in the t-th second = u + at.</li>
+</ul></div>
+
+<!-- ===================== Q1 ===================== -->
+<h2>Question 1 · Bag and umbrella</h2>
+<div class="card qcard">
+<p><span class="qnum">Q1</span><b>Priya bought a bag and an umbrella, paying ₹1100. The bag cost ₹300 more than the umbrella. What did each cost?</b></p>
+<p class="ml">(പ്രിയ 1100 രൂപ കൊടുത്ത് ബാഗും കുടയും വാങ്ങി. ബാഗിന് കുടയെക്കാൾ 300 രൂപ കൂടുതലാണ്. ഓരോന്നിന്റെയും വില എത്ര?)</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Put the extra ₹300 of the bag aside. What is left is shared equally.</p></div>
+</div>
+<div class="lab" id="q1lab"><div class="lab-title">🎬 Solution animation</div><svg viewBox="0 0 800 330" role="img" aria-label="Bar model for the bag and umbrella"></svg></div>
+<div class="ways">
+  <div class="card"><h4>🧠 In your head</h4><p>1100 − 300 = 800, half is 400. Umbrella ₹400; bag 400 + 300 = ₹700.</p></div>
+  <div class="card"><h4>✏️ One letter</h4><div class="algebra">umbrella x, bag x + 300
+x + (x + 300) = 1100
+2x = 800,  x = 400</div></div>
+  <div class="card"><h4>✏️✏️ Two letters</h4><div class="algebra">bag x, umbrella y
+x + y = 1100
+x − y = 300
+add: 2x = 1400, x = 700</div></div>
+</div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b class="a">Answer:</b> umbrella <b>₹400</b>, bag <b>₹700</b> (check: 400 + 700 = 1100, 700 − 400 = 300).</div></div>
+
+<!-- ===================== Q2 ===================== -->
+<h2>Question 2 · Sum 26, difference 4</h2>
+<div class="card qcard">
+<p><span class="qnum">Q2</span><b>The sum of two numbers is 26 and their difference is 4. Find the numbers.</b></p>
+<div class="reveal" data-btn="💡 Show a hint"><p>The larger is the smaller plus 4. Take the 4 away from 26 and halve.</p></div>
+</div>
+<div class="lab" id="q2lab"><div class="lab-title">🎬 Solution animation</div><svg viewBox="0 0 800 330" role="img" aria-label="Bar model for sum and difference"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b class="a">Answer:</b> <b>15</b> and <b>11</b>. With two letters: x + y = 26, x − y = 4; adding gives 2x = 30.</div></div>
+<div class="callout real"><div class="title">🌍 Why this matters</div><p>"Sum and difference" puzzles hide everywhere – two brothers' ages, two sides of a field, two teams' scores. Section 3 (page 9 of this guide) turns this into a one-line rule.</p></div>
+
+<!-- ===================== Q3 ===================== -->
+<h2>Question 3 · A rectangle's sides</h2>
+<div class="card qcard">
+<p><span class="qnum">Q3</span><b>The perimeter of a rectangle is 40 centimetres. One side is 8 centimetres longer than the other. Find the lengths of the sides.</b></p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Half the perimeter is one length plus one breadth.</p></div>
+</div>
+<div class="lab" id="q3lab"><div class="lab-title">🎬 Solution animation</div><svg viewBox="0 0 800 330" role="img" aria-label="Rectangle with perimeter 40"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b class="a">Answer:</b> the sides are <b>6 cm</b> and <b>14 cm</b> (check: 2 × (6 + 14) = 40).</div></div>
+
+<!-- ===================== Q4 ===================== -->
+<h2>Question 4 · One wire, a square and a triangle</h2>
+<div class="card qcard">
+<p><span class="qnum">Q4</span><b>A wire 3½ metres long is cut into two pieces. One piece is bent into a square and the other into an equilateral triangle, and all the sides of both are equal. How should the wire be cut?</b></p>
+<div class="reveal" data-btn="💡 Show a hint"><p>The square has 4 sides, the triangle 3 – seven equal sides in all.</p></div>
+</div>
+<div class="lab" id="q4lab"><div class="lab-title">🎬 Solution animation</div><svg viewBox="0 0 800 340" role="img" aria-label="Wire cut into seven equal parts and bent into a square and a triangle"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b class="a">Answer:</b> each side is ½ m; cut the wire into <b>2 m</b> (for the square) and <b>1½ m</b> (for the triangle).</div></div>
+<div class="callout think"><div class="title">💡 One letter is enough</div><p>Here one letter does it: side s, 4s + 3s = 7s = 3.5. You could also write two letters (square piece x, triangle piece y): x + y = 3.5 and x/4 = y/3 – but the one-letter way is quicker.</p></div>
+
+<!-- ===================== Q5 ===================== -->
+<h2>Question 5 · Girls and boys</h2>
+<div class="card qcard">
+<p><span class="qnum">Q5</span><b>A class has 4 more girls than boys. One day only 8 boys were absent, and the girls were then twice the boys present. How many girls and boys are there in the class?</b></p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Boys b. Girls b + 4. Boys present b − 8, and the girls are 2(b − 8).</p></div>
+</div>
+<div class="lab" id="q5lab"><div class="lab-title">🎬 Solution animation</div><svg viewBox="0 0 800 340" role="img" aria-label="Bars for boys and girls"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b class="a">Answer:</b> <b>20 boys</b> and <b>24 girls</b> (check: 24 = 20 + 4; boys present 12, and 24 = 2 × 12).</div></div>
+
+<!-- ===================== Q6 ===================== -->
+<h2>Question 6 · A fraction puzzle</h2>
+<div class="card qcard">
+<p><span class="qnum">Q6</span><b>Adding 1 to the numerator of a fraction and simplifying gives ⅓; adding 1 to the denominator gives ¼. What is the fraction?</b></p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Numerator x, denominator y. A fraction equal to ⅓ has its denominator 3 times its numerator.</p></div>
+</div>
+<div class="lab" id="q6lab"><div class="lab-title">🎬 Solution animation</div><svg viewBox="0 0 800 340" role="img" aria-label="Solving the fraction puzzle"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b class="a">Answer:</b> <b>4/15</b> (check: 5/15 = ⅓ and 4/16 = ¼).</div></div>
+
+<!-- ===================== Q7 ===================== -->
+<h2>Question 7 · Two investments</h2>
+<div class="card qcard">
+<p><span class="qnum">Q7</span><b>A person invested ₹100000 in two schemes, one paying 7% and the other 6% annual interest. After a year the total interest from both was ₹6750. How much was invested in each?</b></p>
+<div class="reveal" data-btn="💡 Show a hint"><p>If all ₹100000 earned 6%, the interest would be ₹6000. Every rupee moved to the 7% scheme earns 1 paisa more.</p></div>
+</div>
+<div class="lab" id="q7lab"><div class="lab-title">🎬 Solution animation</div><svg viewBox="0 0 800 340" role="img" aria-label="Investment split bar"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b class="a">Answer:</b> <b>₹75000</b> at 7% and <b>₹25000</b> at 6% (check: 5250 + 1500 = 6750).</div></div>
+<div class="callout real"><div class="title">🌍 Why this matters</div><p>Banks, post-office schemes and loans all work like this: a total amount, two rates, one total interest. The same two-equation idea finds the split.</p></div>
+
+<!-- ===================== Q8 ===================== -->
+<h2>Question 8 · Speeding up</h2>
+<div class="card qcard">
+<p><span class="qnum">Q8</span><b>An object starts with a speed of u metres/second and its speed increases by a metres/second every second, so its speed in the t-th second is u + at. Its speed in the 1st second is 5 m/s and in the 5th second 13 m/s. At what rate does the speed increase each second? What was the starting speed?</b></p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Write u + a = 5 and u + 5a = 13. What does the difference tell you?</p></div>
+</div>
+<div class="lab" id="q8lab"><div class="lab-title">🎬 Solution animation</div><svg viewBox="0 0 800 340" role="img" aria-label="Speed growing second by second"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b class="a">Answer:</b> the speed increases by <b>2 m/s every second</b>, and the starting speed was <b>3 m/s</b>.</div></div>
+
+<!-- ===================== Lab ===================== -->
+<h2>Make your own: total and difference</h2>
+<div class="lab">
+  <div class="lab-title">🎚️ Build a "set the extra aside" puzzle</div>
+  <svg id="ownSvg" viewBox="0 0 800 260" role="img" aria-label="Bar model for any total and difference"></svg>
+  <div class="controls"><label>total <input id="ownT" type="range" min="10" max="200" step="2" value="100"><output></output></label><label>difference <input id="ownD" type="range" min="0" max="60" step="2" value="20"><output></output></label></div>
+  <div class="readout" id="ownOut"></div>
+  <p class="hint">Questions 1, 2 and 3 are all this puzzle in disguise. The difference must be smaller than the total, or the smaller amount would be negative.</p>
+</div>
+
+<h2>Check yourself</h2>
+<div id="qq1"></div>
+<div id="qq2"></div>
+<div id="qq3"></div>
+<div id="qq4"></div>
+
+<div class="callout"><div class="title">🧭 What these eight questions teach</div>
+<ul style="margin:0">
+<li>"Total and difference" (Q1–Q3): set the difference aside and halve – or write x + y = T, x − y = d.</li>
+<li>Count equal parts (Q4): 7 equal sides share 3½ m.</li>
+<li>Turn each sentence into an equation (Q5, Q6) and substitute.</li>
+<li>Rates and steady change (Q7, Q8) give equations like 0.07x + 0.06y and u + at – the method is the same.</li>
+</ul></div>
+<p>Next: <a href="07_two_equations.html">Section 2 – two equations and the trick of elimination ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Pairs of Equations · Class 9", "icon": "x,y", "key": "pairs_of_equations_ch1_progress", "pages": [["index.html", "Home"], ["01_letters_and_expressions.html", "1 · Letters, Expressions & Equations"], ["02_solving_one_equation.html", "2 · Solving One Equation: the Balance"], ["03_words_to_equations.html", "3 · From Words to Equations"], ["04_special_quantities.html", "4 · Digits, Interest, Ages & Speeds"], ["05_mental_and_algebra.html", "5 · Mental Arithmetic & Algebra (Section 1)"], ["06_practice_1_solutions.html", "6 · Practice Set 1 – Solutions"], ["07_two_equations.html", "7 · Two Equations: Elimination (Section 2)"], ["08_practice_2_3_solutions.html", "8 · Practice Sets 2 & 3 – Solutions"], ["09_sum_difference_and_special_cases.html", "9 · Sum & Difference, Special Cases (Section 3)"], ["10_practice_4_solutions.html", "10 · Practice Set 4 – Solutions"], ["11_applications.html", "11 · Real-World Applications"], ["12_summary_revision.html", "12 · Summary & Quick Quiz"], ["13_model_test_paper.html", "13 · Model Test Paper"], ["14_model_test_solutions.html", "14 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Similar Triangles – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+const {P, text, multiText, seg, polygon, dot, sideLabel, rightMark} = K;
+const bar = (svg, x, y, w, h, cls, label, o=1) => { K.el('rect', {x, y, width: Math.max(w, 1), height: h, rx: 4, class: cls, stroke:'var(--text)', 'stroke-width': 1.2, opacity: o}, svg); if (label && w > 18) text(svg, P(x + w/2, y + h/2), label, {class:'lbl', opacity: o}); };
+/* right-hand working column: lines appear step by step */
+const col = (svg, lines, n, t, prevN, x=620, y0=40, dy=30) => lines.slice(0, n).forEach((l, k) => text(svg, P(x, y0 + k*dy), l[0], {class: l[1] || 'lbl', opacity: k >= prevN ? t : 1}));
+const mk = (id, steps, lines, upto, fig) => new K.Stepper(id, {steps, draw(svg, i, t){ fig(svg, i, t); col(svg, lines, upto[i], t, i ? upto[i-1] : 0); }});
+
+/* ---------- Q1 ---------- */
+mk('#q1lab', [
+  'Draw the umbrella as one bar. The bag is the same bar <b>plus ₹300</b>. Together: ₹1100.',
+  'Set the extra ₹300 aside: 1100 − 300 = <b>800</b>, and now the two bars are equal.',
+  'Half of 800 is <b>400</b>: the umbrella costs ₹400.',
+  'Put the ₹300 back: the bag costs 400 + 300 = <b>₹700</b>.'
+], [['bag + umbrella = 1100'],['bag = umbrella + 300'],['1100 − 300 = 800','lbl red'],['800 ÷ 2 = 400','lbl big'],['umbrella ₹400','lbl big green'],['bag ₹700','lbl big green']], [2,3,4,6], (svg, i, t) => {
+  const u = .3; text(svg, P(70, 90), 'bag', {class:'lbl', 'text-anchor':'end'}); text(svg, P(70, 170), 'umbrella', {class:'lbl', 'text-anchor':'end'});
+  bar(svg, 85, 70, 400*u, 40, 'fill-blue', i >= 2 ? '400' : 'x'); bar(svg, 85 + 400*u, 70, 300*u, 40, 'fill-red', '300', i === 1 ? 1 - .7*t : i === 2 ? .3 : 1);
+  bar(svg, 85, 150, 400*u, 40, 'fill-amber', i >= 2 ? '400' : 'x');
+  if (i >= 3) text(svg, P(85 + 350*u, 50), '400 + 300 = 700', {class:'lbl green', opacity: t});
+});
+
+/* ---------- Q2 ---------- */
+mk('#q2lab', [
+  'The larger number is the smaller <b>plus 4</b>; together they make <b>26</b>.',
+  'Take the 4 away: 26 − 4 = <b>22</b> – two equal bars.',
+  'Each equal bar is 22 ÷ 2 = <b>11</b>: the smaller number.',
+  'The larger is 11 + 4 = <b>15</b>. Check: 15 + 11 = 26, 15 − 11 = 4.'
+], [['x + y = 26'],['x − y = 4'],['26 − 4 = 22','lbl red'],['22 ÷ 2 = 11','lbl big'],['smaller 11','lbl big green'],['larger 15','lbl big green']], [2,3,4,6], (svg, i, t) => {
+  const u = 12; text(svg, P(70, 90), 'larger', {class:'lbl', 'text-anchor':'end'}); text(svg, P(70, 170), 'smaller', {class:'lbl', 'text-anchor':'end'});
+  bar(svg, 85, 70, 11*u, 40, 'fill-blue', i >= 2 ? '11' : 'y'); bar(svg, 85 + 11*u, 70, 4*u, 40, 'fill-red', '4', i === 1 ? 1 - .7*t : i === 2 ? .3 : 1);
+  bar(svg, 85, 150, 11*u, 40, 'fill-amber', i >= 2 ? '11' : 'y');
+  K.dim(svg, P(85, 205), P(85 + 11*u, 205), i >= 2 ? '11' : 'equal', 16);
+});
+
+/* ---------- Q3 ---------- */
+mk('#q3lab', [
+  'A rectangle with perimeter <b>40 cm</b>. One side is x, the other is <b>x + 8</b>.',
+  'Going once round uses each side twice, so one length + one breadth = 40 ÷ 2 = <b>20</b>.',
+  'x + (x + 8) = 20 ⇒ 2x + 8 = 20 ⇒ 2x = 12 ⇒ <b>x = 6</b>.',
+  'The sides are <b>6 cm</b> and 6 + 8 = <b>14 cm</b>. Check: 2 × (6 + 14) = 40.'
+], [['perimeter = 40'],['length + breadth = 20','lbl blue'],['x + (x + 8) = 20'],['2x + 8 = 20'],['2x = 12, x = 6','lbl big'],['sides 6 cm and 14 cm','lbl big green']], [1,2,5,6], (svg, i, t) => {
+  const u = 17, X = 70, Y = 90; const W = 14*u, H = 6*u;
+  K.el('rect', {x: X, y: Y, width: W, height: H, class:'fill-green', stroke:'var(--green)', 'stroke-width': 2}, svg);
+  text(svg, P(X + W/2, Y - 16), i >= 3 ? '14 cm' : 'x + 8', {class:'lbl blue'}); text(svg, P(X - 30, Y + H/2), i >= 3 ? '6 cm' : 'x', {class:'lbl blue'});
+  if (i >= 1){ const o = i === 1 ? t : 1; seg(svg, P(X, Y + H + 26), P(X + W, Y + H + 26), {class:'ln-red thick', opacity:o}); seg(svg, P(X + W + 26, Y), P(X + W + 26, Y + H), {class:'ln-red thick', opacity:o}); text(svg, P(X + W/2, Y + H + 48), 'one length + one breadth = 20', {class:'lbl sm red', opacity:o}); }
+});
+
+/* ---------- Q4 ---------- */
+mk('#q4lab', [
+  'The wire is <b>3½ m</b> long. A square has 4 sides and an equilateral triangle 3, all equal: <b>7 equal sides</b>.',
+  'So cut the wire into 7 equal pieces: each is 3.5 ÷ 7 = <b>0.5 m</b>.',
+  'Four pieces (2 m) bend into the square …',
+  '… and three pieces (1.5 m) bend into the triangle. Cut the wire at <b>2 m</b>.'
+], [['4s + 3s = 3.5'],['7s = 3.5','lbl'],['s = 0.5 m','lbl big'],['square piece 4 × 0.5 = 2 m','lbl green'],['triangle piece 3 × 0.5 = 1.5 m','lbl green']], [1,3,4,5], (svg, i, t) => {
+  const X = 40, Y = 60, L = 420, p = L/7;
+  for (let k = 0; k < 7; k++){ const cls = k < 4 ? 'ln-blue' : 'ln-amber'; seg(svg, P(X + k*p, Y), P(X + (k+1)*p, Y), {class: cls + ' thick', 'stroke-width': 6}); if (i >= 1) seg(svg, P(X + k*p, Y - 10), P(X + k*p, Y + 10), {class:'ln-muted thin'}); }
+  seg(svg, P(X + L, Y - 10), P(X + L, Y + 10), {class:'ln-muted thin'});
+  K.dim(svg, P(X, Y), P(X + L, Y), '3½ m', -28);
+  if (i >= 1) text(svg, P(X + p/2, Y + 26), '0.5', {class:'lbl sm', opacity: i === 1 ? t : 1});
+  if (i >= 2){ const o = i === 2 ? t : 1; K.el('rect', {x: 70, y: 140, width: 120, height: 120, fill:'none', stroke:'var(--blue)', 'stroke-width': 6, opacity:o}, svg); text(svg, P(130, 285), 'square: 4 × 0.5 = 2 m', {class:'lbl sm blue', opacity:o}); }
+  if (i >= 3){ const o = t; polygon(svg, [P(260, 260), P(380, 260), P(320, 260 - 104)], {fill:'none', stroke:'var(--accent)', 'stroke-width': 6, opacity:o}); text(svg, P(320, 285), 'triangle: 3 × 0.5 = 1.5 m', {class:'lbl sm amber', opacity:o}); }
+});
+
+/* ---------- Q5 ---------- */
+mk('#q5lab', [
+  'Let the number of boys be <b>b</b>. There are 4 more girls: girls = <b>b + 4</b>.',
+  'On that day 8 boys were absent: boys present = <b>b − 8</b>. The girls were twice that: girls = <b>2(b − 8)</b>.',
+  'Both expressions count the same girls: b + 4 = 2(b − 8) = 2b − 16.',
+  'Take b from both sides: 4 = b − 16, so <b>b = 20</b>. Girls = 24. Check: present boys 12, and 24 = 2 × 12.'
+], [['girls = b + 4','lbl purple'],['girls = 2(b − 8)','lbl purple'],['b + 4 = 2b − 16'],['20 = b','lbl big'],['boys 20, girls 24','lbl big green']], [1,2,3,5], (svg, i, t) => {
+  const u = 7; text(svg, P(80, 70), 'boys', {class:'lbl', 'text-anchor':'end'}); text(svg, P(80, 150), 'girls', {class:'lbl', 'text-anchor':'end'});
+  const b = 20; bar(svg, 95, 50, 12*u, 40, 'fill-blue', i >= 3 ? '12' : 'b − 8'); bar(svg, 95 + 12*u, 50, 8*u, 40, 'fill-red', '8 away', i >= 1 ? 1 : .25);
+  bar(svg, 95, 130, b*u, 40, 'fill-purple', i >= 3 ? '20' : 'b'); bar(svg, 95 + b*u, 130, 4*u, 40, 'fill-amber', '4');
+  if (i >= 1){ const o = i === 1 ? t : 1; text(svg, P(80, 230), '2 × present', {class:'lbl', 'text-anchor':'end', opacity:o}); bar(svg, 95, 210, 12*u, 40, 'fill-blue', i >= 3 ? '12' : 'b − 8', o); bar(svg, 95 + 12*u, 210, 12*u, 40, 'fill-blue', i >= 3 ? '12' : 'b − 8', o); }
+  if (i >= 2) text(svg, P(95 + 12*u, 285), 'girls bar = 2 × present boys bar', {class:'lbl sm', opacity: i === 2 ? t : 1});
+});
+
+/* ---------- Q6 ---------- */
+mk('#q6lab', [
+  'Let the numerator be <b>x</b> and the denominator <b>y</b>.',
+  'Fact 1: (x + 1)/y = ⅓. Every form of ⅓ has its denominator 3 times the numerator: <b>y = 3(x + 1) = 3x + 3</b>.',
+  'Fact 2: x/(y + 1) = ¼, so <b>y + 1 = 4x</b>.',
+  'Substitute y = 3x + 3: (3x + 3) + 1 = 4x ⇒ 3x + 4 = 4x ⇒ <b>x = 4</b>.',
+  'y = 3 × 4 + 3 = <b>15</b>. The fraction is <b>4/15</b>. Check: 5/15 = ⅓, 4/16 = ¼.'
+], [['fraction x / y'],['(x + 1)/y = ⅓','lbl blue'],['⇒ y = 3x + 3','lbl big blue'],['x/(y + 1) = ¼ ⇒ y + 1 = 4x','lbl purple'],['3x + 3 + 1 = 4x'],['x = 4','lbl big'],['y = 15  ⇒  4/15','lbl big green'],['5/15 = ⅓ ✓   4/16 = ¼ ✓','lbl green']], [1,3,4,6,8], (svg, i, t) => {
+  const fr = (x, y, a, b, c) => { text(svg, P(x, y - 22), a, {class:'lbl big ' + c}); seg(svg, P(x - 40, y), P(x + 40, y), {class:'ln'}); text(svg, P(x, y + 22), b, {class:'lbl big ' + c}); };
+  fr(150, 90, i >= 4 ? '4' : 'x', i >= 4 ? '15' : 'y', '');
+  if (i >= 1) fr(110, 230, i >= 4 ? '5' : 'x + 1', i >= 4 ? '15' : 'y', 'blue');
+  if (i >= 2) fr(290, 230, i >= 4 ? '4' : 'x', i >= 4 ? '16' : 'y + 1', 'purple');
+  if (i >= 1) text(svg, P(110, 290), '= ⅓', {class:'lbl blue'}); if (i >= 2) text(svg, P(290, 290), '= ¼', {class:'lbl purple'});
+});
+
+/* ---------- Q7 ---------- */
+mk('#q7lab', [
+  'Split the ₹100000: <b>x</b> rupees at 7%, the rest, <b>100000 − x</b>, at 6%.',
+  'Interest: 7% of x is 0.07x; 6% of the rest is 0.06(100000 − x) = 6000 − 0.06x.',
+  'Total interest: 0.07x + 6000 − 0.06x = 6000 + 0.01x = <b>6750</b>.',
+  '0.01x = 750 ⇒ <b>x = 75000</b>. So ₹75000 at 7% and ₹25000 at 6%. Check: 5250 + 1500 = 6750.'
+], [['at 7%: x','lbl blue'],['at 6%: 100000 − x','lbl amber'],['0.07x + 0.06(100000 − x)'],['= 6000 + 0.01x = 6750'],['0.01x = 750','lbl'],['x = 75000','lbl big'],['₹75000 at 7%, ₹25000 at 6%','lbl green']], [2,3,4,7], (svg, i, t) => {
+  const X = 40, W = 440; const xs = i >= 3 ? .75 : .5;
+  bar(svg, X, 80, W*xs, 50, 'fill-blue', i >= 3 ? '₹75000 at 7%' : 'x at 7%'); bar(svg, X + W*xs, 80, W*(1 - xs), 50, 'fill-amber', i >= 3 ? '₹25000 at 6%' : 'rest at 6%');
+  K.dim(svg, P(X, 80), P(X + W, 80), '₹100000', -22);
+  if (i >= 1){ const o = i === 1 ? t : 1; text(svg, P(X + W*xs/2, 160), i >= 3 ? '₹5250' : '0.07x', {class:'lbl blue', opacity:o}); text(svg, P(X + W*xs + W*(1 - xs)/2, 160), i >= 3 ? '₹1500' : '0.06(100000 − x)', {class:'lbl sm amber', opacity:o}); }
+  if (i >= 2) multiText(svg, P(X + W/2, 220), ['if all were at 6%: ₹6000', 'each rupee at 7% earns 1 paisa more', '₹750 extra ⇒ ₹75000 at 7%'], {class:'lbl sm', opacity: i === 2 ? t : 1}, 22);
+});
+
+/* ---------- Q8 ---------- */
+mk('#q8lab', [
+  'Speed in the t-th second is u + at. In the <b>1st</b> second: u + a = 5. In the <b>5th</b> second: u + 5a = 13.',
+  'From the 1st to the 5th second the speed grows by 4 steps of a: 13 − 5 = 8 = <b>4a</b>.',
+  'So <b>a = 2</b> m/s every second.',
+  'Then u = 5 − 2 = <b>3</b> m/s. The speeds are 5, 7, 9, 11, 13 – each 2 more.'
+], [['u + a = 5'],['u + 5a = 13'],['subtract: 4a = 8','lbl red'],['a = 2','lbl big'],['u = 5 − 2 = 3','lbl big green']], [2,3,4,5], (svg, i, t) => {
+  const X = 60, base = 290, w = 60, sc = 15;
+  [5, 7, 9, 11, 13].forEach((v, k) => { const known = k === 0 || k === 4; const show = known || i >= 3; const h = v*sc;
+    K.el('rect', {x: X + k*(w + 18), y: base - h, width: w, height: h, rx: 4, class: known ? 'fill-blue' : 'fill-green', stroke:'var(--text)', 'stroke-width': 1, opacity: show ? (i >= 3 && !known ? t : 1) : .15}, svg);
+    if (show) text(svg, P(X + k*(w + 18) + w/2, base - h - 12), v + ' m/s', {class:'lbl sm', opacity: (i >= 3 && !known) ? t : 1});
+    text(svg, P(X + k*(w + 18) + w/2, base + 16), 'sec ' + (k + 1), {class:'lbl sm muted'}); });
+  if (i >= 1) text(svg, P(X + 2.5*(w + 18), 40), '4 steps of a = 8', {class:'lbl red', opacity: i === 1 ? t : 1});
+});
+
+/* ---------- own lab ---------- */
+(function(){
+  const svg = document.getElementById('ownSvg'), out = document.getElementById('ownOut'); let T = 100, D = 20;
+  function draw(){ K.clear(svg); const ok = D < T; const s = ok ? (T - D)/2 : 0, l = s + D; const u = 440/Math.max(T, 1);
+    text(svg, P(70, 70), 'larger', {class:'lbl', 'text-anchor':'end'}); text(svg, P(70, 150), 'smaller', {class:'lbl', 'text-anchor':'end'});
+    if (ok){ bar(svg, 85, 50, s*u, 40, 'fill-blue', K.fmt(s, 1)); bar(svg, 85 + s*u, 50, D*u, 40, 'fill-red', D ? String(D) : ''); bar(svg, 85, 130, s*u, 40, 'fill-amber', K.fmt(s, 1)); }
+    else text(svg, P(300, 110), 'impossible: the difference must be less than the total', {class:'lbl red'});
+    text(svg, P(400, 225), ok ? `(${T} − ${D}) ÷ 2 = ${K.fmt(s, 1)}  and  ${K.fmt(s, 1)} + ${D} = ${K.fmt(l, 1)}` : '', {class:'lbl big'});
+    out.textContent = ok ? `x + y = ${T},  x − y = ${D}\nsmaller = (${T} − ${D}) ÷ 2 = ${K.fmt(s, 1)},  larger = ${K.fmt(l, 1)}` : `x + y = ${T},  x − y = ${D}: no positive answer – the smaller amount would be ${K.fmt((T - D)/2, 1)}`; }
+  K.slider('#ownT', v => { T = v; draw(); }, 0); K.slider('#ownD', v => { D = v; draw(); }, 0);
+})();
+
+/* ---------- quizzes ---------- */
+K.numq('#qq1', {q:'A pen and a pencil cost ₹25; the pen costs ₹15 more than the pencil. Price of the pencil (₹)?', answer:5, tol:0, explain:'25 − 15 = 10, half is 5. Pen ₹20.', hint:'Set the extra ₹15 aside.'});
+K.numq('#qq2', {q:'A rectangle has perimeter 50 cm and its length is 5 cm more than its breadth. The breadth (cm) is', answer:10, tol:0, explain:'Length + breadth = 25; (25 − 5) ÷ 2 = 10. Length 15.', hint:'Half the perimeter first.'});
+K.mcq('#qq3', {q:'Speed in the t-th second is u + at. If u + a = 4 and u + 3a = 10, then a =', options:['3','2','6','4'], answer:0, explain:'Subtract: 2a = 6, so a = 3 (and u = 1).', hint:'Subtract the first equation from the second.'});
+K.mcq('#qq4', {q:'Adding 1 to the numerator of x/y gives ½. Which equation is right?', options:['y = 2(x + 1)','y = 2x + 1','x + 1 = 2y','y = x + 2'], answer:0, explain:'Denominator = twice the new numerator: y = 2(x + 1).', hint:'4/8 = ½: the denominator is twice the numerator.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

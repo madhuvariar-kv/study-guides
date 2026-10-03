@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Geometry & Algebra Toolkit – Irrational Numbers</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+
+</style>
+<style>
+.pick{display:flex;flex-wrap:wrap;gap:.4rem;margin:.4rem 0}
+.pick button{padding:.4rem .7rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer}
+.pick button.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+</style>
+</head>
+<body data-page="04_geometry_toolkit">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Part A · Foundation</span><span class="chip amber">Prerequisite · Class 8 geometry and algebra</span>
+<h1>Geometry &amp; Algebra Toolkit <span class="ml">ജ്യാമിതിയും ബീജഗണിതവും</span></h1>
+<p class="lead">Section 3 of the chapter finds the areas of triangles with irrational sides and ends with Heron's formula. Everything it needs – Pythagoras, area formulas, the height of an isosceles triangle, hexagons, trapeziums, and the identities (x+y)(x−y) = x² − y² – is collected here with interactive pictures.</p>
+
+<h2>1. Pythagoras' theorem <span class="ml">പൈതഗോറസ് തത്വം</span></h2>
+<p>In a right triangle with perpendicular sides a and b and hypotenuse c (the side opposite the right angle): <b>a² + b² = c²</b>. Knowing any two sides gives the third – and that third side is often a square root: legs 1 and 1 give c = √2, legs 1 and √2 give c = √3.</p>
+<div class="lab">
+  <div class="lab-title">🖐️ Drag A and B – the squares always add up</div>
+  <div class="split">
+    <svg id="pySvg" viewBox="0 0 560 330" role="img" aria-label="Draggable right triangle"></svg>
+    <div><div class="pick" id="pyPick"></div><div class="readout" id="pyOut"></div><p class="hint">Orange dots can be dragged (A along the floor, B up the wall). Lengths are in units of 60 px.</p></div>
+  </div>
+</div>
+
+<h2>2. Area of a rectangle: length × breadth <span class="ml">ചതുരത്തിന്റെ പരപ്പളവ്</span></h2>
+<div class="lab">
+  <div class="lab-title">🖐️ Count the unit squares</div>
+  <svg id="rectSvg" viewBox="0 0 760 300" role="img" aria-label="Rectangle filled with unit squares"></svg>
+  <div class="controls"><label>length <input id="rectL" type="range" min="1" max="8" step="0.5" value="5"><output></output></label><label>breadth <input id="rectB" type="range" min="1" max="4" step="0.5" value="2.5"><output></output></label></div>
+  <div class="readout" id="rectOut"></div>
+  <p class="hint">With whole-number sides you simply count squares. With a side like 2.5 the half-squares still add up to length × breadth. The chapter asks: what if a side is √3, which is not even a fraction? (Answer: squeeze with decimals – Section 1.)</p>
+</div>
+
+<h2>3. Area of a triangle: ½ × base × height</h2>
+<div class="lab" id="lab3">
+  <div class="lab-title">🎬 Animation: every triangle is half a rectangle</div>
+  <svg viewBox="0 0 800 320" role="img" aria-label="Rectangle split into two triangles, then a general triangle"></svg>
+</div>
+<div class="callout key"><div class="title">⭐ Area of a triangle</div>
+<p>Area = ½ × base × height, where the <b>height</b> (<span class="ml">ഉയരം</span>) is the perpendicular distance from the opposite vertex to the base – measured straight down, never along a slanted side. Finding that height is the whole game in Section 3.</p></div>
+
+<h2>4. The height of an isosceles triangle bisects the base</h2>
+<p>In an isosceles triangle (two equal sides, <span class="ml">സമപാർശ്വത്രികോണം</span>) the perpendicular from the apex lands exactly on the <b>midpoint</b> of the base. This is why the half-base appears in every height calculation of the chapter.</p>
+<div class="lab" id="lab4">
+  <div class="lab-title">🎬 Animation: why the foot of the height is the midpoint (Class 8 <span class="ml">തുല്യത്രികോണങ്ങൾ</span>)</div>
+  <svg viewBox="0 0 800 340" role="img" aria-label="Isosceles triangle with its height splitting it into two congruent right triangles"></svg>
+</div>
+
+<h2>5. A regular hexagon is six equilateral triangles <span class="ml">സമഷഡ്ഭുജം</span></h2>
+<div class="lab" id="lab5">
+  <div class="lab-title">🎬 Animation: joining the centre to the corners</div>
+  <svg viewBox="0 0 800 340" role="img" aria-label="Regular hexagon divided into six equilateral triangles"></svg>
+</div>
+
+<h2>6. Area of a trapezium <span class="ml">ലംബകം</span></h2>
+<div class="lab" id="lab6">
+  <div class="lab-title">🎬 Animation: two trapeziums make a parallelogram</div>
+  <svg viewBox="0 0 800 300" role="img" aria-label="Trapezium and a rotated copy forming a parallelogram"></svg>
+</div>
+<div class="callout key"><div class="title">⭐ Trapezium area</div>
+<p>Area = ½ × (sum of the parallel sides) × height. Exercise 1 of the chapter builds a trapezium from a square and an equilateral triangle – you will need this.</p></div>
+
+<h2>7. Algebra: the identities we need <span class="ml">സർവസമവാക്യങ്ങൾ</span></h2>
+<p>These Class 8 identities hold for <em>all</em> numbers – including irrational ones like √2. The chapter uses them to prove (√2 + 1)(√2 − 1) = 1 and to derive Heron's formula.</p>
+<div class="lab" id="lab7">
+  <div class="lab-title">🎬 Animation: (x + y)(x − y) = x² − y²</div>
+  <svg viewBox="0 0 800 320" role="img" aria-label="Rectangle rearranged into a square with a corner missing"></svg>
+</div>
+<div class="lab" id="lab8">
+  <div class="lab-title">🎬 Animation: (x + y)² = x² + 2xy + y²</div>
+  <svg viewBox="0 0 800 320" role="img" aria-label="Square of side x plus y split into four pieces"></svg>
+</div>
+<div class="callout think"><div class="title">💡 And (x − y)²</div>
+<p>(x − y)² = x² − 2xy + y². Check with numbers: (5 − 2)² = 9 and 25 − 20 + 4 = 9 ✓. Check with an irrational: (√2 − 1)² = 2 − 2√2 + 1 = 3 − 2√2 ≈ 0.172, and (1.414 − 1)² = 0.414² ≈ 0.171 ✓.</p></div>
+
+<div class="lab">
+  <div class="lab-title">🖐️ Factorise a difference of squares</div>
+  <div class="pick" id="facPick"></div>
+  <div class="readout" id="facOut"></div>
+  <p class="hint">Whenever you see "something squared minus something squared", write it as (sum)(difference). The textbook uses exactly this with x² − (8 − x)² = (x + 8 − x)(x − 8 + x) = 8(2x − 8).</p>
+</div>
+
+<h2>8. Check yourself</h2>
+<div id="q1"></div>
+<div id="q2"></div>
+<div id="q3"></div>
+<div id="q4"></div>
+<div id="q5"></div>
+<div id="q6"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li>Pythagoras: a² + b² = c²; legs 1, 1 → √2; legs 1, √2 → √3; legs 3, 4 → 5.</li>
+<li>Rectangle: length × breadth. Triangle: ½ × base × height. Trapezium: ½ × (sum of parallel sides) × height.</li>
+<li>The height of an isosceles (or equilateral) triangle meets the base at its midpoint.</li>
+<li>Regular hexagon of side a = 6 equilateral triangles of side a.</li>
+<li>(x+y)(x−y) = x² − y², (x+y)² = x² + 2xy + y², (x−y)² = x² − 2xy + y² – true for irrational numbers too.</li>
+</ul></div>
+<p>Next: <a href="05_multiplication.html">Section 1 of the chapter – Multiplication ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Irrational Numbers · Class 9", "icon": "√", "key": "irrational_numbers_ch5_progress", "pages": [["index.html", "Home"], ["01_square_roots_basics.html", "1 · Square Roots & Perfect Squares"], ["02_rational_irrational.html", "2 · Rational vs Irrational Numbers"], ["03_adding_irrationals.html", "3 · Adding Irrationals & Decimals"], ["04_geometry_toolkit.html", "4 · Geometry & Algebra Toolkit"], ["05_multiplication.html", "5 · Multiplication (Section 1)"], ["06_exercise_1_solutions.html", "6 · Exercise 1 – Solutions"], ["07_division.html", "7 · Division (Section 2)"], ["08_exercise_2_solutions.html", "8 · Exercise 2 – Solutions"], ["09_triangle_areas.html", "9 · Areas of Triangles & Heron (Section 3)"], ["10_exercise_3_solutions.html", "10 · Exercise 3 – Solutions"], ["11_applications.html", "11 · Real-World Applications"], ["12_summary_revision.html", "12 · Summary & Quick Quiz"], ["13_model_test_paper.html", "13 · Model Test Paper"], ["14_model_test_solutions.html", "14 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Similar Triangles – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+const {P, fmt, text, seg, dot, multiText, polygon, rightMark, sideLabel, lerpPt, add, sub, scale, sqrt} = K;
+const R2 = Math.SQRT2, R3 = Math.sqrt(3);
+
+/* ---------- Lab 1: Pythagoras ---------- */
+(function(){
+  const svg = document.getElementById('pySvg'), out = document.getElementById('pyOut'), pick = document.getElementById('pyPick'); const u = 60; const C = P(100,280);
+  const pts = [P(100+4*u, 280), P(100, 280-3*u)];   // A on floor, B on wall
+  function draw(){ pts[0].y = C.y; pts[0].x = Math.max(C.x+30, Math.min(540, pts[0].x)); pts[1].x = C.x; pts[1].y = Math.min(C.y-30, Math.max(30, pts[1].y)); K.clear(svg);
+    const [A,B] = pts; const a = (A.x-C.x)/u, b = (C.y-B.y)/u, c = Math.hypot(a,b);
+    seg(svg, P(20,C.y), P(560,C.y), {class:'ln-muted'}); seg(svg, P(C.x,10), P(C.x,C.y), {class:'ln-muted'});
+    polygon(svg, [C,A,B], {class:'tri-big'}); rightMark(svg, C, A, B);
+    sideLabel(svg, C, A, `a = ${fmt(a,2)}`, 16, {class:'lbl blue'}); sideLabel(svg, B, C, `b = ${fmt(b,2)}`, 16, {class:'lbl blue'}); sideLabel(svg, A, B, `c = ${fmt(c,3)}`, 16, {class:'lbl red'});
+    K.labelTriangle(svg, [C,A,B], ['C','A','B'], 18); dot(svg, A, {class:'pt drag'}); dot(svg, B, {class:'pt drag'});
+    const nice = v => { const s = v*v; const r = Math.round(s); return Math.abs(s-r) < 0.02 ? (Number.isInteger(Math.sqrt(r)) ? `${Math.sqrt(r)}` : `√${r}`) : fmt(v,3); };
+    out.textContent = `a² + b² = ${fmt(a*a,2)} + ${fmt(b*b,2)} = ${fmt(a*a+b*b,2)}\nc² = ${fmt(c*c,2)}      c = ${nice(c)} ≈ ${fmt(c,3)}`; }
+  K.draggable(svg, () => pts, draw);
+  [['legs 1, 1 → √2', 1, 1], ['legs 1, √2 → √3', R2, 1], ['legs 3, 4 → 5', 4, 3], ['legs 3, 3 → √18 = 3√2', 3, 3], ['legs 2, √5 → 3', 2, Math.sqrt(5)]].forEach(([lab, a, b]) => { const btn = document.createElement('button'); btn.textContent = lab; btn.addEventListener('click', () => { pts[0].x = C.x + a*u; pts[1].y = C.y - b*u; draw(); }); pick.appendChild(btn); });
+  draw();
+})();
+
+/* ---------- Lab 2: rectangle counting ---------- */
+(function(){
+  const svg = document.getElementById('rectSvg'), out = document.getElementById('rectOut'); let L = 5, B = 2.5; const u = 56, x0 = 60, y0 = 240;
+  function draw(){ K.clear(svg); for (let r = 0; r < Math.ceil(B); r++) for (let c = 0; c < Math.ceil(L); c++){ const w = Math.min(1, L-c), h = Math.min(1, B-r); const full = w === 1 && h === 1; K.el('rect', {x:x0+c*u, y:y0-(r+h)*u, width:w*u, height:h*u, class: full ? 'tri-big' : 'tri-amber'}, svg); if (!full) text(svg, P(x0+c*u+w*u/2, y0-(r+h)*u+h*u/2), `${w*h}`, {class:'lbl sm'}); }
+    sideLabel(svg, P(x0,y0), P(x0+L*u,y0), `length ${L}`, 18, {class:'lbl'}); text(svg, P(x0+L*u+12, y0-B*u/2), `breadth ${B}`, {class:'lbl', 'text-anchor':'start'});
+    const full = Math.floor(L)*Math.floor(B); const area = L*B;
+    out.textContent = `whole unit squares: ${full}   +  partial pieces: ${fmt(area-full,2)}\narea = length × breadth = ${L} × ${B} = ${fmt(area,2)} square units`; }
+  K.slider('#rectL', v => { L = v; draw(); }, 1); K.slider('#rectB', v => { B = v; draw(); }, 1);
+})();
+
+/* ---------- Lab 3: triangle area ---------- */
+(function(){
+  const u = 40; const A = P(80,280), B = P(80+6*u,280), C = P(80+6*u,280-4*u), D = P(80,280-4*u);
+  const A2 = P(440,280), B2 = P(440+7*u,280), T = P(440+2*u,280-4*u), F = P(440+2*u,280);
+  const steps = [
+    'A rectangle 6 by 4 has area 6 × 4 = <b>24</b> square units.',
+    'Its diagonal cuts it into two identical right triangles. Each has area 24 ÷ 2 = <b>12</b> = ½ × 6 × 4.',
+    'Now a general triangle with base 7 and height 4 (the apex is not above a corner). Drop the height: it splits the triangle into two right triangles.',
+    'Each right triangle is half of its own small rectangle (2 × 4 and 5 × 4). Total = ½ × 2 × 4 + ½ × 5 × 4 = ½ × (2 + 5) × 4 = <b>½ × base × height</b> = 14.'
+  ];
+  new K.Stepper('#lab3', {steps, draw(svg, i, t){
+    polygon(svg, [A,B,C,D], {class:'tri-big'}); sideLabel(svg, A, B, '6', 16, {class:'lbl'}); sideLabel(svg, B, C, '4', 16, {class:'lbl'});
+    if (i >= 1){ seg(svg, A, C, {class:'ln-red thick', opacity: i===1 ? t : 1}); polygon(svg, [A,B,C], {class:'tri-amber', opacity: i===1 ? .7*t : .7}); text(svg, P(80+4*u, 280-1.2*u), '12', {class:'lbl big'}); text(svg, P(80+2*u, 280-2.8*u), '12', {class:'lbl big'}); }
+    else text(svg, P(80+3*u, 280-2*u), 'area 24', {class:'lbl big'});
+    if (i >= 2){ const o = i===2 ? t : 1; polygon(svg, [A2,B2,T], {class:'tri-small', opacity:o}); sideLabel(svg, A2, B2, 'base 7', 16, {class:'lbl', opacity:o}); seg(svg, T, F, {class:'ln-red dash', opacity:o}); rightMark(svg, F, B2, T, 9, {opacity:o}); sideLabel(svg, F, T, 'height 4', 14, {class:'lbl red', opacity:o}); }
+    if (i >= 3){ const o = t; polygon(svg, [P(440,280-4*u), T, F, A2], {class:'tri-none dash', opacity:o}); polygon(svg, [T, P(440+7*u,280-4*u), B2, F], {class:'tri-none dash', opacity:o}); text(svg, P(440+1.3*u, 280-1.4*u), '½·2·4', {class:'lbl sm', opacity:o}); text(svg, P(440+3.6*u, 280-1.4*u), '½·5·4', {class:'lbl sm', opacity:o}); text(svg, P(440+3.5*u, 60), 'area = ½ × 7 × 4 = 14', {class:'lbl big', opacity:o}); }
+  }});
+})();
+
+/* ---------- Lab 4: isosceles height ---------- */
+(function(){
+  const Ap = P(400,50), B = P(230,300), C = P(570,300), D = P(400,300);
+  const steps = [
+    'Triangle ABC with AB = AC (isosceles). Draw the perpendicular from A to BC; call its foot D.',
+    'Look at the two right triangles ABD and ACD. AB = AC (given), AD is common to both, and both have a right angle at D.',
+    'Right angle, hypotenuse and one side equal ⇒ the triangles are <b>congruent</b> (RHS, Class 8). So their remaining sides match: <b>BD = DC</b>.',
+    'Hence D is the midpoint: the height always lands on the <b>middle of the base</b>, and the half-base is a leg of a right triangle with the equal side as hypotenuse: (½ base)² + height² = side².',
+    'For an <b>equilateral</b> triangle of side a: (a/2)² + h² = a², so h² = a² − a²/4 = ¾a² and h = (√3/2)a ≈ 0.866a. This formula is proved again in Section 3 of the chapter.'
+  ];
+  new K.Stepper('#lab4', {steps, draw(svg, i, t){
+    polygon(svg, [Ap,B,C], {class:'tri-big'}); K.labelTriangle(svg, [Ap,B,C], ['A','B','C'], 18); K.ticks(svg, Ap, B, 1, 6); K.ticks(svg, Ap, C, 1, 6);
+    seg(svg, Ap, D, {class:'ln-red thick', opacity: i===0 ? t : 1}); rightMark(svg, D, C, Ap, 10); text(svg, P(400, 322), 'D', {class:'lbl big'});
+    if (i >= 1){ polygon(svg, [Ap,B,D], {class:'tri-amber', opacity: i===1 ? .6*t : .6}); polygon(svg, [Ap,D,C], {class:'tri-small', opacity: i===1 ? .6*t : .6}); multiText(svg, P(660,120), ['AB = AC', 'AD = AD', '∠D = 90°'], {class:'lbl', opacity: i===1 ? t : 1}, 24); }
+    if (i >= 2){ multiText(svg, P(660,220), ['⇒ ΔABD ≅ ΔACD', '⇒ BD = DC'], {class:'lbl big', opacity: i===2 ? t : 1}, 26); K.ticks(svg, B, D, 2, 6, {class:'ln-red'}); K.ticks(svg, D, C, 2, 6, {class:'ln-red'}); }
+    if (i >= 3){ sideLabel(svg, B, D, '½ base', 18, {class:'lbl red', opacity: i===3 ? t : 1}); sideLabel(svg, D, C, '½ base', 18, {class:'lbl red', opacity: i===3 ? t : 1}); sideLabel(svg, D, Ap, 'h', -14, {class:'lbl red i'}); }
+    if (i === 4) multiText(svg, P(140, 120), ['equilateral, side a:', '(a/2)² + h² = a²', 'h = (√3/2)·a'], {class:'lbl', opacity:t}, 24);
+  }});
+})();
+
+/* ---------- Lab 5: hexagon ---------- */
+(function(){
+  const O = P(330,180), r = 120; const V = []; for (let k = 0; k < 6; k++) V.push(K.polar(O, r, 60*k - 180));
+  const steps = [
+    'A <b>regular hexagon</b>: six equal sides, six equal angles. Mark its centre O.',
+    'Join O to the six corners. This makes six triangles around O.',
+    'The six angles at O share 360°, so each is 360° ÷ 6 = <b>60°</b>. The two sides from O are equal (same distance from the centre), so the other two angles are equal: (180° − 60°) ÷ 2 = 60° each.',
+    'All three angles are 60°: every triangle is <b>equilateral</b>, with side equal to the hexagon\'s side a. So area of hexagon = 6 × area of one equilateral triangle, and the distance between opposite sides = 2 × (height of one triangle).'
+  ];
+  new K.Stepper('#lab5', {steps, draw(svg, i, t){
+    const cols = ['tri-big','tri-small','tri-amber','tri-purple','tri-big','tri-small'];
+    if (i >= 1){ for (let k = 0; k < 6; k++){ const o = i===1 ? K.sub01(t, k/6, (k+1)/6) : 1; polygon(svg, [O, V[k], V[(k+1)%6]], {class: cols[k], opacity:o}); } }
+    polygon(svg, V, {class: i>=1 ? 'tri-none thick' : 'tri-big'}); sideLabel(svg, V[0], V[1], 'a', 16, {class:'lbl i'});
+    dot(svg, O, {class:'pt red'}); text(svg, P(O.x, O.y-16), 'O', {class:'lbl big'});
+    if (i >= 2){ for (let k = 0; k < 6; k++) K.angleArc(svg, O, V[k], V[(k+1)%6], 22, {cls: k===0 ? 'red' : '', label: k===0 ? '60°' : null}); if (i >= 2){ K.angleArc(svg, V[0], O, V[1], 20, {label:'60°'}); K.angleArc(svg, V[1], V[0], O, 20, {label:'60°'}); } }
+    if (i >= 3){ seg(svg, K.mid(V[0],V[1]), K.mid(V[3],V[4]), {class:'ln-green dash', opacity:t}); multiText(svg, P(640, 150), ['6 equilateral', 'triangles of side a', 'area = 6 × (√3/4)a²', 'width between', 'parallel sides = √3·a'], {class:'lbl', opacity:t}, 24); }
+    else if (i === 2) multiText(svg, P(640, 150), ['360° ÷ 6 = 60°', 'other angles:', '(180° − 60°) ÷ 2 = 60°'], {class:'lbl', opacity:t}, 24);
+  }});
+})();
+
+/* ---------- Lab 6: trapezium ---------- */
+(function(){
+  const u = 40; const A = P(80,250), B = P(80+5*u,250), C = P(80+4*u,250-3*u), D = P(80+1.2*u,250-3*u);
+  const steps = [
+    'A trapezium with parallel sides a = 5 and b = 2.8, and height h = 3 (the distance between the parallel sides).',
+    'Make a copy, turn it upside down, and slide it next to the first one.',
+    'The two together form a <b>parallelogram</b> with base a + b and height h, so its area is (a + b) × h.',
+    'Our trapezium is exactly half of that: area = <b>½ (a + b) h</b> = ½ × (5 + 2.8) × 3 = 11.7 square units.'
+  ];
+  new K.Stepper('#lab6', {steps, draw(svg, i, t){
+    polygon(svg, [A,B,C,D], {class:'tri-big'}); sideLabel(svg, A, B, 'a = 5', 16, {class:'lbl'}); sideLabel(svg, C, D, 'b = 2.8', 16, {class:'lbl'});
+    seg(svg, P(80+1.2*u,250), D, {class:'ln-red dash'}); sideLabel(svg, P(80+1.2*u,250), D, 'h = 3', 30, {class:'lbl red'}); rightMark(svg, P(80+1.2*u,250), B, D, 9);
+    if (i >= 1){ const tt = i===1 ? t : 1; const ctr = K.centroid([A,B,C,D]);
+      /* the copy is the trapezium rotated 180° about the midpoint of BC – it shares side BC and completes a parallelogram */
+      const M = K.mid(B, C); const rot = [A,B,C,D].map(p => K.rotateAround(p, M, 180));
+      const cur = [A,B,C,D].map((p,k) => { const q = K.rotateAround(p, ctr, 180*tt); const shift = scale(sub(K.centroid(rot), K.centroid([A,B,C,D])), tt); return add(q, shift); });
+      polygon(svg, cur, {class:'tri-amber', opacity:.85}); }
+    if (i >= 2){ const o = i===2 ? t : 1; polygon(svg, [A, P(80+7.8*u,250), P(80+9*u,250-3*u), D], {class:'tri-none thick', stroke:'var(--green)', opacity:o}); sideLabel(svg, A, P(80+7.8*u,250), 'a + b = 7.8', 36, {class:'lbl green', opacity:o}); }
+    if (i === 2) multiText(svg, P(640, 100), ['parallelogram', 'area = (a + b) × h', '= 7.8 × 3 = 23.4'], {class:'lbl', opacity:t}, 24);
+    if (i === 3) multiText(svg, P(640, 100), ['trapezium = half', 'area = ½ (a + b) h', '= ½ × 7.8 × 3', '= 11.7'], {class:'lbl big', opacity:t}, 28);
+  }});
+})();
+
+/* ---------- Lab 7: (x+y)(x−y) ---------- */
+(function(){
+  const u = 28, x = 5*u, y = 2*u; const ox = 60, oy = 236;
+  const steps = [
+    'A rectangle with length x + y and breadth x − y. Its area is <b>(x + y)(x − y)</b>. (Here x = 5, y = 2.)',
+    'Cut off the strip on the right: it is y wide and x − y tall.',
+    'Turn the strip and attach it below the remaining piece. The new shape is a square of side x with a small square of side y missing from the corner.',
+    'So (x + y)(x − y) = x² − y². With numbers: 7 × 3 = 21 = 25 − 4 ✓. With irrationals: (√2 + 1)(√2 − 1) = 2 − 1 = 1 ✓.'
+  ];
+  new K.Stepper('#lab7', {steps, draw(svg, i, t){
+    const main = [P(ox,oy), P(ox+x,oy), P(ox+x,oy-(x-y)), P(ox,oy-(x-y))];
+    if (i === 0) polygon(svg, [P(ox,oy), P(ox+x+y,oy), P(ox+x+y,oy-(x-y)), P(ox,oy-(x-y))], {class:'tri-big'}); else polygon(svg, main, {class:'tri-big'});
+    sideLabel(svg, main[3], main[0], 'x − y', 30, {class:'lbl'}); sideLabel(svg, main[0], P(ox+x,oy), 'x', 16, {class:'lbl'});
+    const strip0 = [P(ox+x,oy), P(ox+x+y,oy), P(ox+x+y,oy-(x-y)), P(ox+x,oy-(x-y))];
+    const strip1 = [P(ox,oy+y), P(ox,oy), P(ox+x-y,oy), P(ox+x-y,oy+y)];     // rotated: lies below main, width x−y, height y
+    if (i === 0){ sideLabel(svg, P(ox+x,oy), P(ox+x+y,oy), 'y', 16, {class:'lbl'}); text(svg, P(ox+(x+y)/2, oy-(x-y)/2), '(x + y)(x − y)', {class:'lbl big'}); }
+    if (i === 1){ const g = 10*t; polygon(svg, strip0.map(p => P(p.x+g, p.y)), {class:'tri-amber'}); sideLabel(svg, P(ox+x+g,oy), P(ox+x+y+g,oy), 'y', 16, {class:'lbl'}); }
+    if (i >= 2){ const tt = i===2 ? t : 1; const c0 = K.centroid(strip0), c1 = K.centroid(strip1); const cur = strip0.map(p => { const q = K.rotateAround(p, c0, 90*tt); return add(q, scale(sub(c1,c0), tt)); }); polygon(svg, cur, {class:'tri-amber'});
+      if (tt > .95){ sideLabel(svg, P(ox,oy+y), P(ox+x-y,oy+y), 'x − y', 16, {class:'lbl'}); sideLabel(svg, P(ox+x-y,oy+y), P(ox+x-y,oy), 'y', 14, {class:'lbl'}); polygon(svg, [P(ox+x-y,oy), P(ox+x,oy), P(ox+x,oy+y), P(ox+x-y,oy+y)], {class:'tri-none dash'}); text(svg, P(ox+x-y/2, oy+y+16), 'y² missing', {class:'lbl sm red'}); polygon(svg, [P(ox,oy+y), P(ox+x,oy+y), P(ox+x,oy-(x-y)), P(ox,oy-(x-y))], {class:'tri-none thick', stroke:'var(--red)'}); sideLabel(svg, P(ox+x,oy+y), P(ox+x,oy-(x-y)), 'x', 16, {class:'lbl red'}); } }
+    if (i >= 2) multiText(svg, P(600, 120), ['square x²', 'minus corner y²', '= x² − y²'], {class:'lbl big', opacity: i===2 ? t : 1}, 30);
+    if (i === 3) multiText(svg, P(600, 230), ['7 × 3 = 25 − 4 = 21 ✔', '(√2+1)(√2−1) = 2 − 1 = 1 ✔'], {class:'lbl', opacity:t}, 24);
+  }});
+})();
+
+/* ---------- Lab 8: (x+y)² ---------- */
+(function(){
+  const u = 30, x = 5*u, y = 2*u, ox = 80, oy = 280;
+  const steps = [
+    'A square of side x + y. Its area is (x + y)².',
+    'Draw one line x from the left and one line x from the bottom. The square splits into four pieces.',
+    'The pieces: a square x², two rectangles x × y, and a square y². So <b>(x + y)² = x² + 2xy + y²</b>.',
+    'Check: (5 + 2)² = 49 and 25 + 20 + 4 = 49 ✓. For irrationals: (√2 + 1)² = 2 + 2√2 + 1 = 3 + 2√2 ≈ 5.83, and (2.414)² ≈ 5.83 ✓.'
+  ];
+  new K.Stepper('#lab8', {steps, draw(svg, i, t){
+    const s = x+y; polygon(svg, [P(ox,oy), P(ox+s,oy), P(ox+s,oy-s), P(ox,oy-s)], {class:'tri-big'});
+    sideLabel(svg, P(ox,oy), P(ox+s,oy), 'x + y', 18, {class:'lbl'}); sideLabel(svg, P(ox+s,oy), P(ox+s,oy-s), 'x + y', 34, {class:'lbl'});
+    if (i === 0) text(svg, P(ox+s/2, oy-s/2), '(x + y)²', {class:'lbl big'});
+    if (i >= 1){ const o = i===1 ? t : 1; seg(svg, P(ox+x,oy), P(ox+x,oy-s), {class:'ln-red thick', opacity:o}); seg(svg, P(ox,oy-x), P(ox+s,oy-x), {class:'ln-red thick', opacity:o}); sideLabel(svg, P(ox,oy-s), P(ox+x,oy-s), 'x', -16, {class:'lbl red'}); sideLabel(svg, P(ox+x,oy-s), P(ox+s,oy-s), 'y', -16, {class:'lbl red'}); sideLabel(svg, P(ox,oy), P(ox,oy-x), 'x', 16, {class:'lbl red'}); sideLabel(svg, P(ox,oy-x), P(ox,oy-s), 'y', 16, {class:'lbl red'}); }
+    if (i >= 2){ const o = i===2 ? t : 1; polygon(svg, [P(ox,oy),P(ox+x,oy),P(ox+x,oy-x),P(ox,oy-x)], {class:'tri-amber', opacity:o}); polygon(svg, [P(ox+x,oy),P(ox+s,oy),P(ox+s,oy-x),P(ox+x,oy-x)], {class:'tri-small', opacity:o}); polygon(svg, [P(ox,oy-x),P(ox+x,oy-x),P(ox+x,oy-s),P(ox,oy-s)], {class:'tri-small', opacity:o}); polygon(svg, [P(ox+x,oy-x),P(ox+s,oy-x),P(ox+s,oy-s),P(ox+x,oy-s)], {class:'tri-purple', opacity:o});
+      text(svg, P(ox+x/2, oy-x/2), 'x²', {class:'lbl big'}); text(svg, P(ox+x+y/2, oy-x/2), 'xy', {class:'lbl'}); text(svg, P(ox+x/2, oy-x-y/2), 'xy', {class:'lbl'}); text(svg, P(ox+x+y/2, oy-x-y/2), 'y²', {class:'lbl'});
+      multiText(svg, P(580, 120), ['(x + y)²', '= x² + xy + xy + y²', '= x² + 2xy + y²'], {class:'lbl big', opacity:o}, 30); }
+    if (i === 3) multiText(svg, P(580, 230), ['7² = 25 + 20 + 4 = 49 ✔', '(√2+1)² = 3 + 2√2 ✔'], {class:'lbl', opacity:t}, 24);
+  }});
+})();
+
+/* ---------- factorising lab ---------- */
+(function(){
+  const items = [
+    ['x² − 16', 'x² − 16 = x² − 4²\n= (x + 4)(x − 4)'],
+    ['49 − y²', '49 − y² = 7² − y²\n= (7 + y)(7 − y)'],
+    ['a² − (a − x)²', 'a² − (a − x)² = (a + (a − x))(a − (a − x))\n= (2a − x)(x)\n= x(2a − x)      ← used in the Heron proof'],
+    ['x² − (8 − x)²', 'x² − (8 − x)² = (x + 8 − x)(x − 8 + x)\n= 8(2x − 8)      ← textbook page 94'],
+    ['4x² − 9', '4x² − 9 = (2x)² − 3²\n= (2x + 3)(2x − 3)'],
+    ['25 − 9t²', '25 − 9t² = 5² − (3t)²\n= (5 + 3t)(5 − 3t)'],
+    ['2 − 1 (as squares)', '2 − 1 = (√2)² − 1²\n= (√2 + 1)(√2 − 1)      ← Exercise 2, Q1']
+  ];
+  const pick = document.getElementById('facPick'), out = document.getElementById('facOut');
+  items.forEach(([lab, txt], k) => { const b = document.createElement('button'); b.textContent = lab; b.addEventListener('click', () => { pick.querySelectorAll('button').forEach(x => x.classList.remove('on')); b.classList.add('on'); out.textContent = txt; }); pick.appendChild(b); if (k===0){ b.classList.add('on'); out.textContent = txt; } });
+})();
+
+/* ---------- quizzes ---------- */
+K.numq('#q1', {q:'A right triangle has legs 6 cm and 8 cm. Its hypotenuse is (cm)?', answer:10, tol:0.001, explain:'6² + 8² = 36 + 64 = 100 = 10².', hint:'Add the squares of the legs, then take the square root.'});
+K.mcq('#q2', {q:'A right triangle has legs 1 and √3. Its hypotenuse is', options:['2','√2','√3','4'], answer:0, explain:'1² + (√3)² = 1 + 3 = 4, so the hypotenuse is √4 = 2.', hint:'(√3)² = 3.'});
+K.numq('#q3', {q:'Area of a triangle with base 10 cm and height 7 cm (sq cm)?', answer:35, tol:0.001, explain:'½ × 10 × 7 = 35.', hint:'Half of base × height.'});
+K.numq('#q4', {q:'A trapezium has parallel sides 4 cm and 6 cm and height 5 cm. Its area (sq cm)?', answer:25, tol:0.001, explain:'½ × (4 + 6) × 5 = 25.', hint:'½ × (sum of parallel sides) × height.'});
+K.mcq('#q5', {q:'(x + 3)(x − 3) = ?', options:['x² − 9','x² + 9','x² − 6x + 9','x² − 3'], answer:0, explain:'Difference of squares: x² − 3².', hint:'(x + y)(x − y) = x² − y².'});
+K.mcq('#q6', {q:'a² − 2ab + b² equals', options:['(a − b)²','(a + b)²','(a − b)(a + b)','a² − b²'], answer:0, explain:'(a − b)² = a² − 2ab + b².', hint:'Compare with (x − y)² = x² − 2xy + y².'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practice Set 1 · Solutions – New Numbers</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+
+</style>
+<style>
+.qbox{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.qbox .qn{display:inline-block;background:var(--primary);color:#fff;font-weight:700;border-radius:8px;padding:.05rem .5rem;margin-right:.4rem}
+.qbox .qt{font-weight:600}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.6rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+table.sq td, table.sq th{text-align:center;font-family:ui-monospace,Menlo,Consolas,monospace}
+table.sq td.lt{color:var(--blue)} table.sq td.gt{color:var(--red)}
+.presets .btn{margin:.15rem .2rem .15rem 0}
+</style>
+</head>
+<body data-page="07_practice_1_solutions">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 2 · Practice set 1</span><span class="chip amber">Textbook pages 25–26</span>
+<h1>Practice Set 1 – Animated Solutions <span class="ml">ചിന്തിക്കാം</span></h1>
+<p class="lead">Four questions from the "think" box on pages 25–26, each turning an area into a side: squares of area 7, 10 and 11, the fan of right triangles, and fractions trapped between √2 and √3. Read each question, try it in your notebook (use the hint if you are stuck), then press <b>Next ▶</b> and watch the construction and the reasoning grow. The page ends with the textbook's side box on drawing √x for <em>any</em> x.</p>
+
+<div class="callout book"><div class="title">📖 Tools you will use</div>
+<ul style="margin:0">
+<li><b>Pythagoras</b> (page 3): square on the hypotenuse = squares on the two perpendicular sides; so (third side)² = (hypotenuse)² − (side)².</li>
+<li><b>Odd numbers are differences of consecutive squares</b> (page 4): 2n + 1 = (n + 1)² − n², e.g. 7 = 16 − 9, 11 = 36 − 25.</li>
+<li><b>Squeezing</b> (page 6): find the decimals whose squares are just below and just above the area.</li>
+<li><b>Drawing</b>: a perpendicular at a point and a compass arc give a right triangle with a chosen hypotenuse and side.</li>
+</ul></div>
+
+<h2>Question 1 · Squares of area 7 and 11</h2>
+<div class="qbox"><span class="qn">Q1</span><span class="qt">In Class 8 you saw that every odd number is the difference of two perfect squares. Using this, draw squares of area 7 sq cm and 11 sq cm. What are the lengths of their sides?</span>
+<p class="ml" style="margin:.4rem 0 0">(ഏത് ഒറ്റസംഖ്യയെയും രണ്ടു പൂർണവർഗങ്ങളുടെ വ്യത്യാസമായി എഴുതാമെന്ന് എട്ടാം ക്ലാസിൽ കണ്ടല്ലോ. ഇതുപയോഗിച്ച്, 7 ചതുരശ്രസെന്റിമീറ്റർ, 11 ചതുരശ്രസെന്റിമീറ്റർ എന്നീ പരപ്പളവുകളുള്ള സമചതുരങ്ങൾ വരയ്ക്കുക. അവയുടെ വശങ്ങളുടെ നീളം എന്തൊക്കെയാണ്?)</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>7 = 16 − 9 = 4² − 3². A right triangle with hypotenuse 4 cm and one side 3 cm has its third side squared equal to 16 − 9 = 7. Draw that triangle, then the square on the third side. For 11 use 36 − 25.</p></div>
+</div>
+<div class="lab" id="e1q1">
+  <div class="lab-title">🎬 Solution animation</div>
+  <svg viewBox="0 0 800 400" role="img" aria-label="Constructing right triangles with hypotenuse 4 and side 3, and hypotenuse 6 and side 5, with squares on the third sides"></svg>
+</div>
+<div class="card">
+<h3 style="margin-top:0">Squeezing the two sides</h3>
+<table class="sq">
+<tr><th>below</th><th>square</th><th></th><th>above</th><th>square</th><th>so</th></tr>
+<tr><td>2.6</td><td>6.76</td><td>&lt; 7 &lt;</td><td>2.7</td><td>7.29</td><td>2.6 &lt; √7 &lt; 2.7</td></tr>
+<tr><td>2.64</td><td>6.9696</td><td>&lt; 7 &lt;</td><td>2.65</td><td>7.0225</td><td>√7 ≈ 2.65</td></tr>
+<tr><td>3.3</td><td>10.89</td><td>&lt; 11 &lt;</td><td>3.4</td><td>11.56</td><td>3.3 &lt; √11 &lt; 3.4</td></tr>
+<tr><td>3.31</td><td>10.9561</td><td>&lt; 11 &lt;</td><td>3.32</td><td>11.0224</td><td>√11 ≈ 3.32</td></tr>
+</table>
+</div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> 7 = 4² − 3²: a right triangle with hypotenuse 4 cm and one side 3 cm has third side √7 cm; the square on it has area 7 sq cm, side √7 ≈ <b>2.65 cm</b>. 11 = 6² − 5²: hypotenuse 6 cm, side 5 cm, third side √11 cm; square of area 11 sq cm, side √11 ≈ <b>3.32 cm</b>.</div></div>
+<div class="callout real"><div class="title">🌍 Why this matters</div><p>You cannot measure √7 cm with a ruler, but you can <em>draw</em> it exactly with ruler and compass. Draughtsmen and tile-cutters use exactly this: build the right triangle, and the awkward length appears by itself.</p></div>
+
+<h2>Question 2 · The square in the figure</h2>
+<div class="qbox"><span class="qn">Q2</span><span class="qt">What is the area of the square in the figure? And the length of its side?</span>
+<div class="reveal" data-btn="💡 Show a hint"><p>The square stands on one perpendicular side of a right triangle whose hypotenuse is 3.5 cm and whose other side is 1.5 cm. Pythagoras gives the area at once; squeeze for the side.</p></div>
+</div>
+<div class="lab" id="e1q2">
+  <div class="lab-title">🎬 Solution animation</div>
+  <svg viewBox="0 0 800 360" role="img" aria-label="Right triangle with hypotenuse 3.5 and side 1.5, square on the other side"></svg>
+</div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> area = 3.5² − 1.5² = 12.25 − 2.25 = <b>10 sq cm</b> (or (3.5 + 1.5)(3.5 − 1.5) = 5 × 2 = 10). Side = √10 cm; 3.1² = 9.61 &lt; 10 &lt; 10.24 = 3.2² and 3.16² = 9.9856 &lt; 10 &lt; 10.0489 = 3.17², so the side is <b>√10 ≈ 3.16 cm</b>.</div></div>
+
+<h2>Question 3 · The fan of triangles</h2>
+<div class="qbox"><span class="qn">Q3</span><span class="qt">Find the area of the square in each of the figures below, and the length of its side.</span>
+<p class="small muted" style="margin:.3rem 0 0">(The three textbook figures: one, two and three right triangles, each with a 1 m side, with a square on the last hypotenuse.)</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Each new triangle uses the previous hypotenuse as one side and 1 m as the other. So each hypotenuse² is the previous hypotenuse² plus 1.</p></div>
+</div>
+<div class="lab" id="e1q3">
+  <div class="lab-title">🎬 Solution animation</div>
+  <svg viewBox="0 0 800 400" role="img" aria-label="Fan of right triangles with unit sides and the square on the last hypotenuse"></svg>
+</div>
+<div class="lab">
+  <div class="lab-title">🎚️ Keep adding triangles</div>
+  <svg id="fanSvg" viewBox="0 0 800 440" role="img" aria-label="Fan of n right triangles with the square on the last hypotenuse"></svg>
+  <div class="controls"><label>number of triangles <input id="fanN" type="range" min="1" max="7" step="1" value="3"><output></output></label></div>
+  <div class="readout" id="fanOut"></div>
+  <p class="hint">With n triangles the last hypotenuse² is n + 1, so the square has area n + 1 sq m and side √(n + 1) m. Natural numbers appear at n = 3 (√4 = 2) and n = 8 (√9 = 3); everything in between is a new number.</p>
+</div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> (a) one triangle: hypotenuse² = 1 + 1 = 2 ⇒ square of area <b>2 sq m</b>, side √2 ≈ 1.41 m. (b) two triangles: 2 + 1 = 3 ⇒ area <b>3 sq m</b>, side √3 ≈ 1.73 m. (c) three triangles: 3 + 1 = 4 ⇒ area <b>4 sq m</b>, side √4 = <b>2 m</b> exactly.</div></div>
+
+<h2>Question 4 · Between √2 and √3</h2>
+<div class="qbox"><span class="qn">Q4</span><span class="qt">Find three fractions larger than √2 and smaller than √3.</span>
+<div class="reveal" data-btn="💡 Show a hint"><p>A number s is between √2 and √3 exactly when its square is between 2 and 3. So pick decimals and square them.</p></div>
+</div>
+<div class="lab">
+  <div class="lab-title">🎚️ Is s between √2 and √3? Square it!</div>
+  <div class="controls presets"><span class="small muted">try:</span> <button class="btn" data-s="1.5">1.5</button><button class="btn" data-s="1.6">1.6</button><button class="btn" data-s="1.7">1.7</button><button class="btn" data-s="1.42">1.42</button><button class="btn" data-s="1.45">1.45</button><button class="btn" data-s="1.73">1.73</button><button class="btn" data-s="1.41">1.41</button><button class="btn" data-s="1.74">1.74</button></div>
+  <svg id="betweenSvg" viewBox="0 0 800 220" role="img" aria-label="Number line from 1.3 to 1.9 with root 2 and root 3 marked"></svg>
+  <div class="controls"><label>s <input id="betweenS" type="range" min="1.30" max="1.90" step="0.01" value="1.60"><output></output></label></div>
+  <div class="readout" id="betweenOut"></div>
+</div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer (one of many):</b> 1.5, 1.6 and 1.7, because 1.5² = 2.25, 1.6² = 2.56 and 1.7² = 2.89 all lie between 2 and 3. As mixed numbers: 1½, 1⅗, 1 7/10. (Also 1.42, 1.45, 1.73, …)</div></div>
+
+<h2>Side box · Drawing √x for any x <span class="ml">വരയും വർഗമൂലവും</span></h2>
+<p>Question 1 worked because 7 and 11 are odd. The textbook's side box (page 26) shows that <em>every</em> positive number is a difference of two squares, so √x can always be drawn.</p>
+<div class="lab" id="sidebox">
+  <div class="lab-title">🎬 Animation: x = (½(x + 1))² − (½(x − 1))², shown for x = 5</div>
+  <svg viewBox="0 0 800 360" role="img" aria-label="Right triangle with hypotenuse 3 and side 2; square of area 5 on the third side"></svg>
+</div>
+<div class="lab">
+  <div class="lab-title">🎚️ Draw √x for your own x</div>
+  <svg id="rootSvg" viewBox="0 0 800 360" role="img" aria-label="Right triangle with hypotenuse half of x plus 1 and side half of x minus 1"></svg>
+  <div class="controls"><label>x <input id="rootX" type="range" min="1.2" max="20" step="0.1" value="5"><output></output></label></div>
+  <div class="readout" id="rootOut"></div>
+  <p class="hint">Hypotenuse ½(x + 1), one side ½(x − 1): the third side is always √x, because (½(x + 1))² − (½(x − 1))² = x. For x between 0 and 1 the side would be negative – use ½(1 − x) instead, which is the same length.</p>
+</div>
+<div class="callout key"><div class="title">⭐ The identity behind it (Class 8)</div>
+<span class="eq">(x + 1)² − (x − 1)² = 4x &nbsp;&nbsp; so &nbsp;&nbsp; x = (½(x + 1))² − (½(x − 1))²</span>
+<p>Check with x = 5: 3² − 2² = 9 − 4 = 5 ✔. With x = 10: 5.5² − 4.5² = 30.25 − 20.25 = 10 ✔. With x = 2: 1.5² − 0.5² = 2.25 − 0.25 = 2 ✔ – the triangle of Practice set 2, Question 1.</p></div>
+
+<h2>Check yourself</h2>
+<div id="q1"></div>
+<div id="q2"></div>
+<div id="q3"></div>
+<div id="q4"></div>
+
+<div class="callout"><div class="title">🧭 What these questions taught</div>
+<ul style="margin:0">
+<li>To draw a square of area A, find a right triangle whose hypotenuse² − side² = A; the third side is √A.</li>
+<li>Odd A: use consecutive squares (A = (n + 1)² − n²). Any A: use hypotenuse ½(A + 1) and side ½(A − 1).</li>
+<li>In the fan of unit triangles the areas go 2, 3, 4, 5, … and the sides √2, √3, 2, √5, …</li>
+<li>s lies between √2 and √3 exactly when s² lies between 2 and 3.</li>
+</ul></div>
+<p>Next: <a href="08_adding_subtracting.html">Section 3 – adding and subtracting lengths like 2 + √2 ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "New Numbers · Class 9", "icon": "√2", "key": "new_numbers_ch2_progress", "pages": [["index.html", "Home"], ["01_squares_and_roots.html", "1 · Squares, Square Roots & Perfect Squares"], ["02_fractions_and_decimals.html", "2 · Fractions, Mixed Numbers & Decimals"], ["03_pythagoras_and_areas.html", "3 · Right Triangles, Pythagoras & Squares on Sides"], ["04_odd_even_and_identities.html", "4 · Odd & Even, Lowest Terms, Square Identities"], ["05_lengths_and_numbers.html", "5 · Lengths and Numbers (Section 1)"], ["06_measures_and_numbers.html", "6 · Measures and Numbers: √2, √3, √x (Section 2)"], ["07_practice_1_solutions.html", "7 · Practice Set 1 – Solutions"], ["08_adding_subtracting.html", "8 · Adding and Subtracting (Section 3)"], ["09_practice_2_solutions.html", "9 · Practice Set 2 – Solutions"], ["10_appendix_proof.html", "10 · Appendix: Why No Fraction Squares to 2"], ["11_applications.html", "11 · Real-World Applications"], ["12_summary_revision.html", "12 · Summary & Quick Quiz"], ["13_model_test_paper.html", "13 · Model Test Paper"], ["14_model_test_solutions.html", "14 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Similar Triangles – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+const {P, polygon, seg, text, dot, sideLabel, rightMark, multiText, el, group, lerpPt, sub01, fmt, compassArc, polar, dist, unit, deg} = K;
+const R2 = Math.SQRT2, R3 = Math.sqrt(3);
+
+/* square on segment a→b, on the side away from point `away` */
+function squareOn(svg, a, b, away, attrs){ const dx = b.x - a.x, dy = b.y - a.y; const n1 = P(-dy, dx), n2 = P(dy, -dx); const c1 = P((a.x + b.x)/2 + n1.x/2, (a.y + b.y)/2 + n1.y/2), c2 = P((a.x + b.x)/2 + n2.x/2, (a.y + b.y)/2 + n2.y/2); const n = dist(c1, away) > dist(c2, away) ? n1 : n2; const q = [a, b, P(b.x + n.x, b.y + n.y), P(a.x + n.x, a.y + n.y)]; polygon(svg, q, attrs); return q; }
+
+/* ---------- Q1: squares of area 7 and 11 ---------- */
+(function(){
+  const u = 40;
+  const Pa = P(70, 330), Qa = P(70 + 3*u, 330), Ra = P(Qa.x, 330 - Math.sqrt(7)*u);
+  const Pb = P(420, 330), Qb = P(420 + 5*u, 330), Rb = P(Qb.x, 330 - Math.sqrt(11)*u);
+  const steps = [
+    'Odd numbers are differences of consecutive squares: <b>7 = 16 − 9 = 4² − 3²</b>. So a right triangle with hypotenuse 4 cm and one side 3 cm has third side² = 7.',
+    'Draw PQ = <b>3 cm</b> and a perpendicular to it at Q.',
+    'With centre P and radius <b>4 cm</b> draw an arc; it cuts the perpendicular at R. PR = 4 cm is the hypotenuse.',
+    'QR² = 4² − 3² = 7, so QR = <b>√7 cm</b>. Draw the square on QR: its area is 7 sq cm.',
+    'Squeeze: 2.6² = 6.76 &lt; 7 &lt; 7.29 = 2.7², then 2.64² = 6.9696 &lt; 7 &lt; 7.0225 = 2.65². So the side is <b>√7 ≈ 2.65 cm</b>.',
+    'For 11: <b>11 = 36 − 25 = 6² − 5²</b>. Draw 5 cm, a perpendicular, an arc of radius 6 cm: the third side is √11 cm and the square on it has area 11 sq cm.',
+    'Squeeze: 3.3² = 10.89 &lt; 11 &lt; 11.56 = 3.4², then 3.31² = 10.9561 &lt; 11 &lt; 11.0224 = 3.32². So the side is <b>√11 ≈ 3.32 cm</b>.'
+  ];
+  new K.Stepper('#e1q1', {steps, draw(svg, i, t){
+    text(svg, P(190, 30), '7 = 4² − 3²', {class:'lbl big'});
+    if (i >= 1){ const e = i === 1 ? lerpPt(Pa, Qa, Math.min(1, t*2)) : Qa; seg(svg, Pa, e, {class:'ln thick'}); dot(svg, Pa); text(svg, P(Pa.x - 16, Pa.y + 18), 'P', {class:'lbl big'});
+      if (i > 1 || t > .5){ const top = P(Qa.x, 120); seg(svg, Qa, i === 1 ? lerpPt(Qa, top, (t - .5)*2) : top, {class:'ln-muted'}); dot(svg, Qa); text(svg, P(Qa.x + 14, Qa.y + 18), 'Q', {class:'lbl big'}); rightMark(svg, Qa, Pa, P(Qa.x, Qa.y - 30), 10); }
+      sideLabel(svg, Pa, Qa, '3 cm', 20, {class:'lbl blue'}); }
+    if (i >= 2){ const o = i === 2 ? t : 1; compassArc(svg, Pa, 4*u, deg(Math.atan2(Ra.y - Pa.y, Ra.x - Pa.x)), 12, {class:'ln-red', opacity:o}); dot(svg, Ra, {class:'pt red', opacity:o}); text(svg, P(Ra.x - 16, Ra.y - 10), 'R', {class:'lbl big', opacity:o}); seg(svg, Pa, Ra, {class:'ln-red thick', opacity:o}); sideLabel(svg, Pa, Ra, '4 cm', -18, {class:'lbl red', opacity:o}); }
+    if (i >= 3){ const o = i === 3 ? t : 1; const g = group(svg, {opacity:o}); seg(g, Qa, Ra, {class:'ln-green thick'}); squareOn(g, Qa, Ra, Pa, {class:'tri-small'}); const sq = Math.sqrt(7)*u; text(g, P(Qa.x + sq/2, Ra.y + sq/2 - 10), 'area 7', {class:'lbl'}); text(g, P(Qa.x + sq/2, Ra.y + sq/2 + 12), '√7 cm', {class:'lbl green'}); }
+    if (i >= 4) multiText(svg, P(190, 60), ['2.64² = 6.9696 < 7 < 7.0225 = 2.65²', '√7 ≈ 2.65 cm'], {class:'lbl sm', opacity: i === 4 ? t : 1}, 20);
+    if (i >= 5){ const o = i === 5 ? t : 1; const g = group(svg, {opacity:o});
+      text(g, P(580, 30), '11 = 6² − 5²', {class:'lbl big'});
+      seg(g, Pb, Qb, {class:'ln thick'}); seg(g, Qb, P(Qb.x, 100), {class:'ln-muted'}); rightMark(g, Qb, Pb, P(Qb.x, Qb.y - 30), 10); sideLabel(g, Pb, Qb, '5 cm', 20, {class:'lbl blue'});
+      compassArc(g, Pb, 6*u, deg(Math.atan2(Rb.y - Pb.y, Rb.x - Pb.x)), 12, {class:'ln-red'}); seg(g, Pb, Rb, {class:'ln-red thick'}); sideLabel(g, Pb, Rb, '6 cm', -18, {class:'lbl red'});
+      seg(g, Qb, Rb, {class:'ln-green thick'}); squareOn(g, Qb, Rb, Pb, {class:'tri-small'}); const sq = Math.sqrt(11)*u; text(g, P(Qb.x + sq/2, Rb.y + sq/2 - 10), 'area 11', {class:'lbl'}); text(g, P(Qb.x + sq/2, Rb.y + sq/2 + 12), '√11 cm', {class:'lbl green'}); dot(g, Pb); dot(g, Qb); dot(g, Rb, {class:'pt red'}); }
+    if (i >= 6) multiText(svg, P(580, 60), ['3.31² = 10.9561 < 11 < 11.0224 = 3.32²', '√11 ≈ 3.32 cm'], {class:'lbl sm', opacity:t}, 20);
+  }});
+})();
+
+/* ---------- Q2: the square of area 10 ---------- */
+(function(){
+  const u = 50; const C = P(230, 310), B = P(230 - 1.5*u, 310), A = P(230, 310 - Math.sqrt(10)*u);
+  const steps = [
+    'The figure: a right triangle with hypotenuse <b>3.5 cm</b> and one perpendicular side <b>1.5 cm</b>; the square stands on the other perpendicular side.',
+    'Pythagoras: (other side)² = 3.5² − 1.5² = 12.25 − 2.25 = <b>10</b>. (Quicker: (3.5 + 1.5)(3.5 − 1.5) = 5 × 2 = 10.)',
+    'So the square has area <b>10 sq cm</b> and its side is <b>√10 cm</b>.',
+    'Squeeze: 3.1² = 9.61 &lt; 10 &lt; 10.24 = 3.2², then 3.16² = 9.9856 &lt; 10 &lt; 10.0489 = 3.17². So the side is <b>√10 ≈ 3.16 cm</b>.'
+  ];
+  new K.Stepper('#e1q2', {steps, draw(svg, i, t){
+    const sq = Math.sqrt(10)*u;
+    el('rect', {x: C.x, y: A.y, width: sq, height: sq, class:'tri-small'}, svg);
+    polygon(svg, [A, B, C], {class:'tri-amber'}); rightMark(svg, C, B, A, 10);
+    sideLabel(svg, B, C, '1.5 cm', 18, {class:'lbl blue'}); sideLabel(svg, A, B, '3.5 cm', 16, {class:'lbl red'});
+    text(svg, P(C.x + sq/2, A.y + sq/2 - 12), i >= 2 ? 'area 10' : 'area ?', {class:'lbl big'});
+    if (i >= 2) text(svg, P(C.x + sq/2, A.y + sq/2 + 14), i >= 3 ? 'side √10 ≈ 3.16 cm' : 'side √10 cm', {class:'lbl green', opacity: i === 2 ? t : 1});
+    if (i >= 1) multiText(svg, P(620, 110), ['3.5² − 1.5²', '= 12.25 − 2.25', '= 10'], {class:'lbl big', opacity: i === 1 ? t : 1}, 28);
+    if (i >= 3) multiText(svg, P(620, 230), ['3.1² = 9.61 < 10 < 10.24 = 3.2²', '3.16² = 9.9856 < 10 < 10.0489 = 3.17²'], {class:'lbl sm', opacity:t}, 20);
+  }});
+})();
+
+/* ---------- fan drawing shared by Q3 stepper and slider lab ---------- */
+function fan(svg, O, u, n, opts={}){ const pts = [P(O.x + u, O.y)]; const cols = ['tri-amber','tri-small','tri-big','tri-purple','tri-red'];
+  for (let k = 1; k <= n; k++){ const prev = pts[k-1]; const d = unit(O, prev); const perp = P(d.y, -d.x); pts.push(P(prev.x + perp.x*u, prev.y + perp.y*u)); }
+  for (let k = 0; k < n; k++){ polygon(svg, [O, pts[k], pts[k+1]], {class: cols[k % cols.length], opacity:.9}); rightMark(svg, pts[k], O, pts[k+1], 7); if (opts.unitLabels !== false) sideLabel(svg, pts[k], pts[k+1], '1', 9, {class:'lbl sm muted'}); }
+  const last = pts[n]; const q = squareOn(svg, O, last, pts[n-1], {class: 'tri-' + (opts.sqCls || 'big'), opacity:.75});
+  const c = P((q[0].x + q[2].x)/2, (q[0].y + q[2].y)/2);
+  text(svg, c, opts.areaLabel || ('area ' + (n + 1)), {class:'lbl big'}); if (opts.sideLabel) text(svg, P(c.x, c.y + 20), opts.sideLabel, {class:'lbl sm'});
+  dot(svg, O); return pts; }
+
+/* ---------- Q3 stepper ---------- */
+(function(){
+  const O = P(330, 330), u = 80;
+  const steps = [
+    'Figure (a): one right triangle with sides 1 m and 1 m. Hypotenuse² = 1 + 1 = <b>2</b>: the square on it has area 2 sq m and side <b>√2 m ≈ 1.41 m</b>.',
+    'Figure (b): a second triangle uses that hypotenuse (√2) as one side and 1 m as the other. Hypotenuse² = 2 + 1 = <b>3</b>: square of area 3 sq m, side <b>√3 m ≈ 1.73 m</b>.',
+    'Figure (c): a third triangle on √3 and 1. Hypotenuse² = 3 + 1 = <b>4</b>: square of area 4 sq m, side <b>√4 = 2 m</b> – an ordinary natural number this time.',
+    'The pattern: every new triangle adds 1 to the area – 2, 3, 4, 5, 6, … The sides are √2, √3, 2, √5, √6, …: new numbers, with an old one now and then.'
+  ];
+  new K.Stepper('#e1q3', {steps, draw(svg, i, t){
+    const n = Math.min(i + 1, 3); const sides = ['√2 ≈ 1.41 m', '√3 ≈ 1.73 m', '√4 = 2 m'];
+    fan(svg, O, u, n, {sideLabel: 'side ' + sides[n-1], sqCls: n === 3 ? 'amber' : 'big'});
+    const lines = [['(a) 1 + 1 = 2', 'side √2'], ['(b) 2 + 1 = 3', 'side √3'], ['(c) 3 + 1 = 4', 'side 2']];
+    multiText(svg, P(660, 80), lines.slice(0, n).flat(), {class:'lbl', opacity: i === n - 1 ? t : 1}, 22);
+    if (i >= 3) multiText(svg, P(660, 250), ['areas 2, 3, 4, 5, …', 'sides √2, √3, 2, √5, …'], {class:'lbl green', opacity:t}, 22);
+  }});
+  const svg2 = document.getElementById('fanSvg'), out = document.getElementById('fanOut');
+  K.slider('#fanN', n => { K.clear(svg2); const a = n + 1; const r = Math.sqrt(a); const nat = Number.isInteger(r);
+    fan(svg2, P(400, 235), 48, n, {areaLabel: 'area ' + a, sideLabel: nat ? 'side ' + r : 'side √' + a, sqCls: nat ? 'amber' : 'big', unitLabels: n <= 5});
+    out.textContent = `${n} triangle${n > 1 ? 's' : ''}: last hypotenuse² = ${n} + 1 = ${a}  →  square of area ${a} sq m, side √${a} = ${nat ? r + ' m exactly' : r.toFixed(4) + '… m'}`; }, 0);
+})();
+
+/* ---------- Q4: between √2 and √3 ---------- */
+(function(){
+  const svg = document.getElementById('betweenSvg'), out = document.getElementById('betweenOut');
+  const lo = 1.3, hi = 1.9, x0 = 60, x1 = 740, y = 130; const X = v => x0 + (v - lo)/(hi - lo)*(x1 - x0);
+  function draw(s){ K.clear(svg);
+    seg(svg, P(X(R2), y), P(X(R3), y), {class:'ln-green', 'stroke-width': 10, opacity:.5});
+    seg(svg, P(x0, y), P(x1, y), {class:'ln thick'});
+    for (let v = 1.3; v <= 1.901; v += 0.1){ seg(svg, P(X(v), y - 8), P(X(v), y + 8), {class:'ln'}); text(svg, P(X(v), y + 26), v.toFixed(1), {class:'lbl sm'}); }
+    [[R2, '√2 ≈ 1.414'], [R3, '√3 ≈ 1.732']].forEach(([v, l]) => { seg(svg, P(X(v), y - 40), P(X(v), y), {class:'ln-amber thick'}); text(svg, P(X(v), y - 52), l, {class:'lbl amber'}); });
+    const s2 = s*s; const ok = s2 > 2 && s2 < 3;
+    dot(svg, P(X(s), y), {class: ok ? 'pt green' : 'pt red'}); text(svg, P(X(s), y + 58), 's = ' + s.toFixed(2), {class:'lbl ' + (ok ? 'green' : 'red')});
+    text(svg, P(400, 190), `s² = ${s2.toFixed(4)}  →  ${ok ? '2 < s² < 3 ✔  so √2 < s < √3' : s2 <= 2 ? 's² ≤ 2 ✘  s is not above √2' : 's² ≥ 3 ✘  s is not below √3'}`, {class:'lbl ' + (ok ? 'green' : 'red')});
+    out.textContent = `${s.toFixed(2)}² = ${s2.toFixed(4)}   ${ok ? 'lies between 2 and 3: a fraction between √2 and √3 ✔' : 'does not lie between 2 and 3 ✘'}`;
+  }
+  const run = K.slider('#betweenS', draw, 2);
+  document.querySelectorAll('.presets .btn').forEach(b => b.addEventListener('click', () => { document.getElementById('betweenS').value = b.dataset.s; run(); }));
+})();
+
+/* ---------- side box: x = 5 stepper ---------- */
+(function(){
+  const u = 50; const Q = P(230, 310), Pp = P(230 - 2*u, 310), R = P(230, 310 - Math.sqrt(5)*u);
+  const steps = [
+    'Class 8 identity: <b>(x + 1)² − (x − 1)² = 4x</b>. Divide by 4: <b>x = (½(x + 1))² − (½(x − 1))²</b>. Every positive x is a difference of two squares!',
+    'A difference of two squares is a hypotenuse² minus a side². Take x = 5: hypotenuse ½(5 + 1) = <b>3</b>, side ½(5 − 1) = <b>2</b>.',
+    'Draw PQ = 2 cm, a perpendicular at Q, and an arc of radius 3 cm from P cutting it at R.',
+    'QR² = 3² − 2² = 9 − 4 = 5, so QR = <b>√5 cm</b>; the square on QR has area 5 sq cm. The same recipe draws √x for any x &gt; 1 (for x &lt; 1 use side ½(1 − x)).'
+  ];
+  new K.Stepper('#sidebox', {steps, draw(svg, i, t){
+    multiText(svg, P(600, 60), ['(x + 1)² − (x − 1)² = 4x', 'x = (½(x+1))² − (½(x−1))²'], {class:'lbl'}, 26);
+    if (i >= 1) multiText(svg, P(600, 140), ['x = 5:', 'hypotenuse 3, side 2'], {class:'lbl big', opacity: i === 1 ? t : 1}, 26);
+    if (i >= 2){ const o = i === 2 ? t : 1; const g = group(svg, {opacity:o}); seg(g, Pp, Q, {class:'ln thick'}); seg(g, Q, P(Q.x, 120), {class:'ln-muted'}); rightMark(g, Q, Pp, P(Q.x, Q.y - 30), 10); sideLabel(g, Pp, Q, '2 cm', 20, {class:'lbl blue'}); compassArc(g, Pp, 3*u, deg(Math.atan2(R.y - Pp.y, R.x - Pp.x)), 12, {class:'ln-red'}); seg(g, Pp, R, {class:'ln-red thick'}); sideLabel(g, Pp, R, '3 cm', -18, {class:'lbl red'}); dot(g, Pp); dot(g, Q); dot(g, R, {class:'pt red'}); text(g, P(Pp.x - 16, Pp.y + 18), 'P', {class:'lbl big'}); text(g, P(Q.x + 14, Q.y + 18), 'Q', {class:'lbl big'}); text(g, P(R.x - 16, R.y - 8), 'R', {class:'lbl big'}); }
+    if (i >= 3){ const o = i === 3 ? t : 1; const g = group(svg, {opacity:o}); seg(g, Q, R, {class:'ln-green thick'}); squareOn(g, Q, R, Pp, {class:'tri-small'}); const sq = Math.sqrt(5)*u; text(g, P(Q.x + sq/2, R.y + sq/2 - 10), 'area 5', {class:'lbl big'}); text(g, P(Q.x + sq/2, R.y + sq/2 + 14), '√5 cm', {class:'lbl green'}); multiText(g, P(600, 230), ['QR² = 9 − 4 = 5', 'QR = √5 ≈ 2.236 cm'], {class:'lbl green'}, 24); }
+  }});
+  /* slider lab */
+  const svg = document.getElementById('rootSvg'), out = document.getElementById('rootOut');
+  K.slider('#rootX', x => { K.clear(svg);
+    const hyp = (x + 1)/2, side = (x - 1)/2, third = Math.sqrt(x); const u = Math.min(40, 230/Math.max(hyp, third)); const Q = P(60 + side*u + 20, 320), Pp = P(Q.x - side*u, 320), R = P(Q.x, 320 - third*u);
+    polygon(svg, [Pp, Q, R], {class:'tri-amber'}); rightMark(svg, Q, Pp, R, 9);
+    const sq = third*u; el('rect', {x: Q.x, y: R.y, width: sq, height: sq, class:'tri-small', opacity:.8}, svg); text(svg, P(Q.x + sq/2, R.y + sq/2), 'area ' + fmt(x, 1), {class:'lbl'});
+    sideLabel(svg, Pp, Q, '½(x − 1) = ' + fmt(side, 2), 20, {class:'lbl blue'}); sideLabel(svg, Pp, R, '½(x + 1) = ' + fmt(hyp, 2), -18, {class:'lbl red'}); text(svg, P(Q.x - 46, (Q.y + R.y)/2), '√' + fmt(x, 1), {class:'lbl green'});
+    multiText(svg, P(640, 120), [`x = ${fmt(x, 1)}`, `${fmt(hyp, 2)}² − ${fmt(side, 2)}² = ${fmt(hyp*hyp - side*side, 2)}`, `third side = √${fmt(x, 1)}`, `≈ ${third.toFixed(4)}`], {class:'lbl'}, 26);
+    out.textContent = `hypotenuse ½(${fmt(x,1)} + 1) = ${fmt(hyp,2)},  side ½(${fmt(x,1)} − 1) = ${fmt(side,2)}  →  third side² = ${fmt(hyp*hyp,4)} − ${fmt(side*side,4)} = ${fmt(x,4)}  →  √${fmt(x,1)} ≈ ${third.toFixed(4)}`; }, 1);
+})();
+
+/* ---------- quizzes ---------- */
+K.numq('#q1', {q:'A right triangle has hypotenuse 5 cm and one perpendicular side 2 cm. What is the area (in sq cm) of the square drawn on the other perpendicular side?', answer:21, tol:0.01, explain:'5² − 2² = 25 − 4 = 21 sq cm; the side is √21 ≈ 4.58 cm.', hint:'Square on the third side = hypotenuse² − side².'});
+K.mcq('#q2', {q:'Which of these fractions lies between √2 and √3?', options:['1.6','1.3','1.8','1.4'], answer:0, explain:'1.6² = 2.56 is between 2 and 3. 1.3² = 1.69 and 1.4² = 1.96 are below 2; 1.8² = 3.24 is above 3.', hint:'Square each one and compare with 2 and 3.'});
+K.numq('#q3', {q:'To draw a square of area 13 sq cm using 13 = 7² − 6², what hypotenuse (in cm) should the right triangle have?', answer:7, tol:0.01, explain:'Hypotenuse 7 cm and one side 6 cm: third side² = 49 − 36 = 13.', hint:'The larger of the two squares is the hypotenuse².'});
+K.mcq('#q4', {q:'In the fan of right triangles with 1 m sides, the square on the hypotenuse of the 5th triangle has area', options:['6 sq m','5 sq m','25 sq m','√6 sq m'], answer:0, explain:'Each triangle adds 1: the areas are 2, 3, 4, 5, 6 – the 5th gives 6 sq m, side √6 m.', hint:'Area after n triangles is n + 1.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

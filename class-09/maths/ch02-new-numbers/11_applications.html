@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Real-World Applications – New Numbers</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+
+</style>
+<style>
+.exam{border-left:4px solid var(--purple);background:var(--purple-soft);padding:.5rem .9rem;border-radius:8px;margin:.6rem 0 1.2rem;font-size:.95rem}
+.exam b{color:var(--purple)}
+</style>
+</head>
+<body data-page="11_applications">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 2 · Applications</span><span class="chip green">Use it in real life</span>
+<h1>Real-World Applications <span class="ml">പ്രയോഗങ്ങൾ</span></h1>
+<p class="lead">Numbers like √2 and √3 are not a classroom curiosity. They appear every time a square is measured corner to corner, every time a sheet of paper is folded in half, in every screen size and every ladder. This page shows where they turn up, how much of their decimal is really needed, and why a calculator can never show the whole number.</p>
+
+<div class="callout book"><div class="title">📖 The facts behind every application</div>
+<ul style="margin:0">
+<li><b>The diagonal of a square of side 1 is √2</b>, the side of the square of area 2; it is not a fraction (<a href="05_lengths_and_numbers.html">page 5</a>).</li>
+<li><b>√2 = 1.41421…, √3 = 1.73205…</b> – found by squeezing with decimals, one place at a time (<a href="06_measures_and_numbers.html">page 6</a>).</li>
+<li><b>√x is the side of the square of area x</b>; the hypotenuse of a right triangle with perpendicular sides a and b is √(a² + b²) (<a href="06_measures_and_numbers.html">page 6</a>, <a href="07_practice_1_solutions.html">page 7</a>).</li>
+<li><b>Adding and subtracting</b> such lengths: 2 + √2 = 3.4142…, and we round to the precision the job needs (<a href="08_adding_subtracting.html">page 8</a>).</li>
+</ul></div>
+
+<h2>1. The diagonal of a square room</h2>
+<p>A square room with sides 3 m: how far is it from corner to corner? The diagonal is 3 × √2 = 4.2426… m. A tape measure shows centimetres and millimetres – fractions of a metre – and the far corner never sits exactly on a mark. Everyone in the building trade simply reads 4.24 m or 4.243 m, depending on how precise the job must be.</p>
+<div class="lab">
+  <div class="lab-title">📐 Corner to corner</div>
+  <svg id="roomSvg" viewBox="0 0 800 320" role="img" aria-label="A square room with its diagonal and a tape measure"></svg>
+  <div class="controls"><label>Side of the room (m) <input id="roomS" type="range" min="1" max="6" step="0.5" value="3"><output></output></label></div>
+  <div class="readout" id="roomOut"></div>
+  <p class="hint">The diagonal is always side × √2 – the square on the diagonal has twice the area of the room, so its side is √2 times longer. Whatever the side, the decimal never ends.</p>
+</div>
+<div class="exam"><b>In the exam this looks like:</b> "The side of a square is 5 m. Find the length of its diagonal correct to a centimetre." → 5 × 1.4142 = 7.071 → <b>7.07 m</b>.</div>
+
+<h2>2. The two set squares in your geometry box</h2>
+<p>One set square has angles 45°, 45°, 90°: its two short sides are equal, so its sides are in the ratio 1 : 1 : √2. The other has angles 30°, 60°, 90°: it is half an equilateral triangle, so its sides are 1 : √3 : 2. Measure yours – the long sides are never a "nice" number of centimetres.</p>
+<div class="lab">
+  <div class="lab-title">📏 Sides of the set squares</div>
+  <svg id="setSvg" viewBox="0 0 800 320" role="img" aria-label="The 45 degree and the 30-60 degree set squares with their side lengths"></svg>
+  <div class="controls"><label>Short side (cm) <input id="setS" type="range" min="4" max="12" step="1" value="8"><output></output></label></div>
+  <div class="readout" id="setOut"></div>
+</div>
+<div class="exam"><b>In the exam this looks like:</b> "The perpendicular sides of a right triangle are 1 m and 1 m / 1 m and √3 m. Find the hypotenuse." → √2 m / √(1 + 3) = 2 m.</div>
+
+<h2>3. A4 paper: the √2 rectangle</h2>
+<p>An A4 sheet is 210 mm by 297 mm, and 297 ÷ 210 = 1.4142… = √2. That is no accident: a rectangle whose sides are in the ratio 1 : √2 keeps the same shape when folded in half – the half sheet (A5) is again 1 : √2. Any other ratio would change shape at every fold.</p>
+<div class="lab" id="paperLab">
+  <div class="lab-title">🎬 Fold an A4 sheet in half</div>
+  <svg viewBox="0 0 800 340" role="img" aria-label="An A4 sheet folded into two A5 sheets with the side ratios"></svg>
+</div>
+<div class="exam"><b>In the exam this looks like:</b> "The sides of a rectangle are 1 m and √2 m. Show that half of it (cut parallel to the short side) has sides in the same ratio." → half has sides √2/2 and 1; 1 ÷ (√2/2) = 2/√2 = √2 ✓ (because √2 × √2 = 2).</div>
+
+<h2>4. Screen sizes: the diagonal is the number they sell</h2>
+<p>A "55-inch" television is 55 inches corner to corner. Its width and height are in the ratio 16 : 9, so the diagonal of a 16 × 9 rectangle is √(16² + 9²) = √337 = 18.357… units. Width = 55 × 16 ÷ 18.357 and height = 55 × 9 ÷ 18.357 – both involve √337, so they are never exact fractions of an inch.</p>
+<div class="lab">
+  <div class="lab-title">📺 From the diagonal to width and height</div>
+  <svg id="tvSvg" viewBox="0 0 800 330" role="img" aria-label="A 16 by 9 screen with its diagonal"></svg>
+  <div class="controls"><label>Diagonal (inches) <input id="tvD" type="range" min="5" max="85" step="1" value="55"><output></output></label></div>
+  <div class="readout" id="tvOut"></div>
+</div>
+<div class="exam"><b>In the exam this looks like:</b> "The perpendicular sides of a right triangle are 16 cm and 9 cm. Between which two natural numbers does the hypotenuse lie?" → √337: 18² = 324 &lt; 337 &lt; 361 = 19², so between 18 and 19.</div>
+
+<h2>5. A ladder against a wall</h2>
+<p>The foot of a ladder is a metres from the wall and its top is b metres up. The ladder is the hypotenuse: √(a² + b²). Sometimes that is a fraction (3, 4 → 5), usually it is not (1, 1 → √2; 2, 3 → √13).</p>
+<div class="lab">
+  <div class="lab-title">🪜 How long is the ladder?</div>
+  <svg id="ladderSvg" viewBox="0 0 800 330" role="img" aria-label="A ladder leaning on a wall forming a right triangle"></svg>
+  <div class="controls"><label>Foot from the wall (m) <input id="ladA" type="range" min="0.5" max="6" step="0.5" value="2"><output></output></label><label>Height reached (m) <input id="ladB" type="range" min="0.5" max="6" step="0.5" value="3"><output></output></label></div>
+  <div class="readout" id="ladOut"></div>
+  <p class="hint">Try 3 and 4, 1.5 and 2, 0.5 and 1.5: when a² + b² is a perfect square the ladder's length is a fraction; otherwise it is a new number like √13.</p>
+</div>
+<div class="exam"><b>In the exam this looks like:</b> "A right triangle has perpendicular sides 2 m and 3 m. Find the hypotenuse and the perimeter correct to a centimetre." → √13 ≈ 3.606; perimeter 5 + √13 ≈ 8.61 m.</div>
+
+<h2>6. How many decimal places does the job need?</h2>
+<p>√2 = 1.41421356… Nobody uses all of it. A tailor marking cloth works to the centimetre, a carpenter to the millimetre, a machinist to a hundredth of a millimetre. Each needs a different number of decimal places – and each stops as soon as the error is smaller than what the tools can measure.</p>
+<div class="lab">
+  <div class="lab-title">🎯 Error when √2 m is cut short</div>
+  <svg id="precSvg" viewBox="0 0 800 300" role="img" aria-label="Error bars for the truncated values of root 2"></svg>
+  <div class="controls"><label>Decimal places kept <input id="precK" type="range" min="1" max="6" step="1" value="2"><output></output></label></div>
+  <div class="readout" id="precOut"></div>
+  <p class="hint">The error is the part of √2 that was thrown away. With 2 places (1.41) a 1 m diagonal is short by about 4 mm – fine for a tailor, not for a carpenter, who keeps 3 places (1.414, short by 0.2 mm).</p>
+</div>
+<div class="exam"><b>In the exam this looks like:</b> "The perimeter of a triangle is 2 + √2 m. Write it correct to a centimetre and to a millimetre." → 3.41 m and 3.414 m.</div>
+
+<h2>7. What your calculator is hiding</h2>
+<p>Press √2 on a calculator and you see 1.4142135 or 1.414213562. That is a rounded value – the display is simply not wide enough for a number whose digits never end. Square the displayed number and you never get back exactly 2.</p>
+<div class="lab">
+  <div class="lab-title">🧮 Square the displayed value</div>
+  <svg id="calcSvg" viewBox="0 0 800 220" role="img" aria-label="A calculator display showing a rounded root 2 and its square"></svg>
+  <div class="controls"><label>Digits on the display <input id="calcK" type="range" min="1" max="12" step="1" value="7"><output></output></label></div>
+  <div class="readout" id="calcOut"></div>
+</div>
+<div class="exam"><b>In the exam this looks like:</b> "Is 1.41421 equal to √2? Why not?" → No: 1.41421² = 1.9999899241, not 2; √2 is only <em>approximately</em> 1.41421 (≈).</div>
+
+<h2>8. The square-root spiral</h2>
+<p>Right triangles with one side 1, each built on the hypotenuse of the last, give hypotenuses √2, √3, √4, √5, … They curl into a spiral that designers, jewellers and architects use as a motif, and that looks remarkably like a snail shell.</p>
+<div class="lab">
+  <div class="lab-title">🐚 Build the spiral</div>
+  <svg id="spiralSvg" viewBox="0 0 800 360" role="img" aria-label="Spiral of right triangles whose hypotenuses are square roots"></svg>
+  <div class="controls"><label>Number of triangles <input id="spiralN" type="range" min="1" max="17" step="1" value="8"><output></output></label></div>
+  <div class="readout" id="spiralOut"></div>
+  <p class="hint">The nth triangle has sides 1, √n and √(n + 1). Only √4 = 2, √9 = 3 and √16 = 4 are natural numbers; all the others are new numbers.</p>
+</div>
+<div class="exam"><b>In the exam this looks like:</b> "In the fan of right triangles with 1 m sides, write the sides of the 7th triangle." → 1, √7, √8 m.</div>
+
+<h2>9. Doubling the cube: the Delian problem</h2>
+<p>An ancient Greek story says the citizens of Delos were told to double the volume of their cubical altar. Doubling the side gives eight times the volume; the side they needed was ∛2 ≈ 1.26 times the old one – a number that, like √2, is not a fraction, and which cannot even be drawn with ruler and compass.</p>
+<div class="lab">
+  <div class="lab-title">🧊 Side of a cube of volume 2</div>
+  <svg id="delSvg" viewBox="0 0 800 260" role="img" aria-label="A cube with adjustable side and its volume"></svg>
+  <div class="controls"><label>Side <input id="delS" type="range" min="1.2" max="1.3" step="0.005" value="1.25"><output></output></label></div>
+  <div class="readout" id="delOut"></div>
+</div>
+<div class="exam"><b>In the exam this looks like:</b> "Between which two decimals, correct to one place, does the side of a cube of volume 2 lie?" → 1.2³ = 1.728 &lt; 2 &lt; 2.197 = 1.3³, so between 1.2 and 1.3.</div>
+
+<h2>10. Fencing a triangular plot</h2>
+<p>Two plots: one is half a 30 m square cut along its diagonal (sides 30 m, 30 m, 30√2 m); the other has sides 30 m, 40 m, 50 m. Fencing is sold by the metre, so the first perimeter must be rounded before the bill can be written.</p>
+<div class="lab">
+  <div class="lab-title">🌾 Cost of the fence</div>
+  <svg id="plotSvg" viewBox="0 0 800 300" role="img" aria-label="Two triangular plots with their side lengths"></svg>
+  <div class="controls"><label>Price per metre (₹) <input id="plotR" type="range" min="50" max="300" step="10" value="150"><output></output></label></div>
+  <div class="readout" id="plotOut"></div>
+</div>
+<div class="exam"><b>In the exam this looks like:</b> "The perpendicular sides of a right triangle are 30 m each. Find its perimeter correct to a metre." → 60 + 30√2 = 60 + 42.426 = 102.43 → 102 m.</div>
+
+<div class="callout book"><div class="title">📜 A little history: the shattered belief (<span class="ml">തകരുന്ന വിശ്വാസങ്ങൾ</span>)</div>
+<p>The followers of Pythagoras (Greece, about 2500 years ago) believed that any two lengths could be compared with whole numbers – that every ratio of lengths was a ratio a : b of natural numbers. The diagonal and the side of a square broke that belief: if diagonal : side = a : b then (a/b)² = 2, which is impossible. The story goes that Hippasus, who revealed this, was thrown into the sea. Today such pairs of lengths are called <em>incommensurable</em>, and the numbers that measure them – √2, √3, π – are the "new numbers" of this chapter.</p></div>
+
+<h2>11. Try these word problems</h2>
+<div id="q1"></div>
+<div id="q2"></div>
+<div id="q3"></div>
+<div id="q4"></div>
+<div id="q5"></div>
+
+<div class="callout"><div class="title">🧭 Take-away</div>
+<ul style="margin:0">
+<li>Square roots appear wherever a diagonal, a slope or a fold is involved: rooms, tiles, paper sizes, screens, ladders.</li>
+<li>They are exact numbers (√2 is <em>exactly</em> the diagonal of the unit square) but their decimals never end, so every measurement uses a rounded value.</li>
+<li>Keep as many decimal places as the tool can measure – and remember that the calculator's display is a rounded value too.</li>
+</ul></div>
+<p>Next: <a href="12_summary_revision.html">Summary, formula sheet and quick quiz ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "New Numbers · Class 9", "icon": "√2", "key": "new_numbers_ch2_progress", "pages": [["index.html", "Home"], ["01_squares_and_roots.html", "1 · Squares, Square Roots & Perfect Squares"], ["02_fractions_and_decimals.html", "2 · Fractions, Mixed Numbers & Decimals"], ["03_pythagoras_and_areas.html", "3 · Right Triangles, Pythagoras & Squares on Sides"], ["04_odd_even_and_identities.html", "4 · Odd & Even, Lowest Terms, Square Identities"], ["05_lengths_and_numbers.html", "5 · Lengths and Numbers (Section 1)"], ["06_measures_and_numbers.html", "6 · Measures and Numbers: √2, √3, √x (Section 2)"], ["07_practice_1_solutions.html", "7 · Practice Set 1 – Solutions"], ["08_adding_subtracting.html", "8 · Adding and Subtracting (Section 3)"], ["09_practice_2_solutions.html", "9 · Practice Set 2 – Solutions"], ["10_appendix_proof.html", "10 · Appendix: Why No Fraction Squares to 2"], ["11_applications.html", "11 · Real-World Applications"], ["12_summary_revision.html", "12 · Summary & Quick Quiz"], ["13_model_test_paper.html", "13 · Model Test Paper"], ["14_model_test_solutions.html", "14 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Similar Triangles – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+const {P, polygon, seg, text, dot, sideLabel, rightMark, ticks, dim, multiText, polar, unit, fmt, lerpPt, sub01} = K;
+const R2 = Math.SQRT2, R3 = Math.sqrt(3);
+
+/* ---------- 1. room ---------- */
+(function(){
+  const svg = document.getElementById('roomSvg'), out = document.getElementById('roomOut');
+  function draw(s){ K.clear(svg);
+    const a = 40*s; const A = P(80, 290), B = P(80 + a, 290), C = P(80 + a, 290 - a), D = P(80, 290 - a);
+    polygon(svg, [A, B, C, D], {class:'tri-amber'}); seg(svg, A, C, {class:'ln-red thick'});
+    sideLabel(svg, A, B, s + ' m', 16, {class:'lbl amber'}); sideLabel(svg, B, C, s + ' m', 16, {class:'lbl amber'});
+    const d = s*R2; sideLabel(svg, A, C, 'diagonal ' + fmt(d, 3) + '… m', -16, {class:'lbl red'});
+    // tape with marks
+    const y = 300 + 0; const x0 = 400, x1 = 760; seg(svg, P(x0, 60), P(x1, 60), {class:'ln', 'stroke-width':10, stroke:'var(--accent)', opacity:.35});
+    for (let i = 0; i <= 10; i++){ const x = x0 + i*(x1 - x0)/10; seg(svg, P(x, 52), P(x, 68), {class:'ln'}); text(svg, P(x, 84), fmt(Math.floor(d*100)/100 - 0.05 + i*0.01, 2), {class:'lbl sm muted'}); }
+    const frac = ((d*100) - Math.floor(d*100));            // position between marks
+    const xm = x0 + (5 + frac)*(x1 - x0)/10; seg(svg, P(xm, 40), P(xm, 70), {class:'ln-red thick'}); text(svg, P(xm, 28), 'corner lands here', {class:'lbl sm red'});
+    multiText(svg, P(580, 170), [`diagonal = ${s} × √2`, `= ${fmt(d, 4)}… m`, `between ${fmt(Math.floor(d*100)/100, 2)} and ${fmt(Math.floor(d*100)/100 + 0.01, 2)} m`], {class:'lbl'}, 26);
+    out.textContent = `side ${s} m  →  diagonal = ${s} × 1.41421… = ${d.toFixed(5)}… m\nto the centimetre: ${d.toFixed(2)} m     to the millimetre: ${d.toFixed(3)} m     (never exactly on a tape mark)`;
+  }
+  K.slider('#roomS', draw, 1);
+})();
+
+/* ---------- 2. set squares ---------- */
+(function(){
+  const svg = document.getElementById('setSvg'), out = document.getElementById('setOut');
+  function draw(s){ K.clear(svg);
+    const u = 20; const a = s*u;
+    const A = P(60, 280), B = P(60 + a, 280), C = P(60, 280 - a); polygon(svg, [A, B, C], {class:'tri-small'}); rightMark(svg, A, B, C, 12);
+    sideLabel(svg, A, B, s + ' cm', 16, {class:'lbl green'}); sideLabel(svg, C, A, s + ' cm', 16, {class:'lbl green'}); sideLabel(svg, B, C, fmt(s*R2, 2) + '… = ' + s + '√2 cm', 16, {class:'lbl red'});
+    K.angleArc(svg, B, A, C, 26, {label:'45°', cls:'green'}); K.angleArc(svg, C, A, B, 26, {label:'45°', cls:'green'});
+    const D = P(440, 280), E = P(440 + a, 280), F = P(440, 280 - a*R3 > 60 ? 280 - a*R3 : 60);
+    const Fh = P(440, 280 - a*R3); polygon(svg, [D, E, Fh], {class:'tri-big'}); rightMark(svg, D, E, Fh, 12);
+    sideLabel(svg, D, E, s + ' cm', 16, {class:'lbl blue'}); sideLabel(svg, Fh, D, fmt(s*R3, 2) + '… = ' + s + '√3 cm', 16, {class:'lbl red'}); sideLabel(svg, E, Fh, (2*s) + ' cm', 16, {class:'lbl blue'});
+    K.angleArc(svg, E, D, Fh, 26, {label:'60°', cls:'blue'}); K.angleArc(svg, Fh, D, E, 30, {label:'30°', cls:'blue'});
+    text(svg, P(170, 30), '45° set square: 1 : 1 : √2', {class:'lbl'}); text(svg, P(560, 30), '30°–60° set square: 1 : √3 : 2', {class:'lbl'});
+    out.textContent = `45°: sides ${s}, ${s}, ${s}√2 = ${(s*R2).toFixed(3)}… cm       30°–60°: sides ${s}, ${s}√3 = ${(s*R3).toFixed(3)}… cm, ${2*s} cm\n(the 30°–60° one is half an equilateral triangle of side ${2*s} cm)`;
+  }
+  K.slider('#setS', draw, 0);
+})();
+
+/* ---------- 3. A4 fold ---------- */
+(function(){
+  const k = 0.9; const W = 210*k, H = 297*k; const X = 60, Y = 20;
+  const steps = [
+    'An A4 sheet: <b>210 mm</b> by <b>297 mm</b>. Divide: 297 ÷ 210 = 1.4142… – the long side is √2 times the short side.',
+    'Fold it in half across the long side. Each half (A5) is 148.5 mm by 210 mm.',
+    'Divide again: 210 ÷ 148.5 = 1.4141… – the same ratio √2! Fold again and A6 is 105 by 148.5, ratio √2 once more.',
+    'Why √2 works: a 1 : √2 rectangle cut in half has sides √2/2 and 1, and 1 ÷ (√2/2) = 2/√2 = √2 (because √2 × √2 = 2). No fraction has this property – exactly the fact of Section 1.'
+  ];
+  new K.Stepper('#paperLab', {steps, draw(svg, i, t){
+    const fold = i >= 1 ? (i === 1 ? t : 1) : 0;
+    const gap = 24*fold;
+    K.el('rect', {x: X, y: Y, width: W, height: H/2 - gap/2, class:'fill-amber', stroke:'var(--accent)'}, svg);
+    K.el('rect', {x: X, y: Y + H/2 + gap/2, width: W, height: H/2 - gap/2, class:'fill-amber', stroke:'var(--accent)'}, svg);
+    if (i === 0) K.el('rect', {x: X, y: Y, width: W, height: H, fill:'none', stroke:'var(--accent)', 'stroke-width':2}, svg);
+    sideLabel(svg, P(X, Y + H), P(X + W, Y + H), '210 mm', 16, {class:'lbl amber'});
+    if (i === 0){ sideLabel(svg, P(X + W, Y + H), P(X + W, Y), '297 mm', 16, {class:'lbl amber'}); text(svg, P(X + W/2, Y + H/2), 'A4', {class:'lbl big'}); }
+    else { sideLabel(svg, P(X + W, Y + H), P(X + W, Y + H/2 + gap/2), '148.5 mm', 16, {class:'lbl amber'}); text(svg, P(X + W/2, Y + H/4), 'A5', {class:'lbl big'}); text(svg, P(X + W/2, Y + 3*H/4), 'A5', {class:'lbl big'}); }
+    const lines = [['297 ÷ 210 = 1.4142…', '= √2'], ['two A5 sheets', '148.5 × 210'], ['210 ÷ 148.5 = 1.4141…', '= √2 again'], ['(√2 ÷ 2) : 1 = 1 : √2', 'the shape never changes']][i];
+    multiText(svg, P(560, 130), lines, {class:'lbl big', opacity:t}, 30);
+    if (i >= 2) multiText(svg, P(560, 230), ['A4 → A5 → A6 → …', 'all 1 : √2'], {class:'lbl muted'}, 24);
+  }});
+})();
+
+/* ---------- 4. TV ---------- */
+(function(){
+  const svg = document.getElementById('tvSvg'), out = document.getElementById('tvOut'); const r = Math.sqrt(337);
+  function draw(D){ K.clear(svg);
+    const w = D*16/r, h = D*9/r; const sc = Math.min(420/w, 240/h, 9); const W = w*sc, H = h*sc; const x0 = 60, y0 = 40 + (240 - H)/2;
+    K.el('rect', {x: x0, y: y0, width: W, height: H, rx: 6, class:'fill-surface', stroke:'var(--text)', 'stroke-width':3}, svg);
+    seg(svg, P(x0, y0 + H), P(x0 + W, y0), {class:'ln-red thick'});
+    sideLabel(svg, P(x0, y0 + H), P(x0 + W, y0 + H), fmt(w, 2) + '″', 16, {class:'lbl blue'}); sideLabel(svg, P(x0 + W, y0 + H), P(x0 + W, y0), fmt(h, 2) + '″', 16, {class:'lbl blue'});
+    text(svg, P(x0 + W/2 - 30, y0 + H/2 - 14), D + '″', {class:'lbl big red'});
+    multiText(svg, P(640, 120), ['16 : 9 screen', 'diagonal of 16 × 9', '= √(256 + 81) = √337', '= 18.357…', `width = ${D} × 16 ÷ 18.357`, `height = ${D} × 9 ÷ 18.357`], {class:'lbl'}, 24);
+    out.textContent = `${D}-inch screen:  width ${w.toFixed(2)} in ≈ ${(w*2.54).toFixed(1)} cm,  height ${h.toFixed(2)} in ≈ ${(h*2.54).toFixed(1)} cm\ncheck: √(${w.toFixed(2)}² + ${h.toFixed(2)}²) = ${Math.sqrt(w*w + h*h).toFixed(2)} ✔   (√337 is not a fraction, so neither width nor height is exact)`;
+  }
+  K.slider('#tvD', draw, 0);
+})();
+
+/* ---------- 5. ladder ---------- */
+(function(){
+  const svg = document.getElementById('ladderSvg'), out = document.getElementById('ladOut'); let a = 2, b = 3;
+  function isSq(m){ const s = Math.round(Math.sqrt(m)); return s*s === m; }
+  function draw(){ K.clear(svg);
+    const u = 36; const O = P(90, 290), F = P(90 + a*u, 290), T = P(90, 290 - b*u);
+    seg(svg, P(60, 290), P(420, 290), {class:'ground'}); seg(svg, P(90, 290), P(90, 40), {class:'ln', 'stroke-width':4});
+    polygon(svg, [O, F, T], {class:'tri-small', opacity:.5}); seg(svg, F, T, {class:'ln-amber', 'stroke-width':7, 'stroke-linecap':'round'}); rightMark(svg, O, F, T, 12);
+    const c2 = a*a + b*b, c = Math.sqrt(c2); const m = Math.round(4*c2); const frac = isSq(m);
+    sideLabel(svg, O, F, a + ' m', 18, {class:'lbl blue'}); sideLabel(svg, T, O, b + ' m', 18, {class:'lbl blue'});
+    sideLabel(svg, F, T, (frac ? fmt(c, 2) : '√' + fmt(c2, 2) + ' = ' + fmt(c, 3) + '…') + ' m', -18, {class:'lbl red'});
+    multiText(svg, P(620, 110), [`ladder² = ${a}² + ${b}²`, `= ${fmt(c2, 2)}`, `ladder = √${fmt(c2, 2)}`, frac ? `= ${fmt(c, 2)} m – a fraction` : `= ${fmt(c, 4)}… m – not a fraction`], {class: frac ? 'lbl green' : 'lbl red'}, 26);
+    out.textContent = `foot ${a} m, top ${b} m  →  ladder = √(${a}² + ${b}²) = √${fmt(c2, 2)} = ${c.toFixed(4)} m` + (frac ? '   (a perfect square under the root – an exact length)' : '   (no fraction squares to ' + fmt(c2, 2) + ')');
+  }
+  K.slider('#ladA', v => { a = v; draw(); }, 1); K.slider('#ladB', v => { b = v; draw(); }, 1);
+})();
+
+/* ---------- 6. precision ---------- */
+(function(){
+  const svg = document.getElementById('precSvg'), out = document.getElementById('precOut');
+  const digits = '1.41421356237';
+  function draw(k){ K.clear(svg);
+    const v = parseFloat(digits.slice(0, 2 + k)); const err = R2 - v; const errmm = err*1000;
+    const rows = [1,2,3,4,5,6]; const x0 = 230, barMax = 400;
+    rows.forEach((kk, i) => { const vv = parseFloat(digits.slice(0, 2 + kk)); const e = (R2 - vv)*1000; const y = 40 + i*40; const len = Math.max(2, Math.log10(e*1e4 + 1)/Math.log10(14.21*1e4 + 1)*barMax);
+      text(svg, P(120, y), vv.toFixed(kk), {class: kk === k ? 'lbl big' : 'lbl muted'});
+      K.el('rect', {x: x0, y: y - 11, width: len, height: 22, class: kk === k ? 'fill-red' : 'fill-surface', stroke: kk === k ? 'var(--red)' : 'var(--border)'}, svg);
+      text(svg, P(x0 + len + 8, y), 'short by ' + (e >= 0.01 ? e.toFixed(2) + ' mm' : (e*1000).toFixed(2) + ' µm'), {class: kk === k ? 'lbl red' : 'lbl sm muted', 'text-anchor':'start'}); });
+    text(svg, P(120, 285), 'value used', {class:'lbl sm muted'}); text(svg, P(430, 285), 'error on a 1 m diagonal (log scale)', {class:'lbl sm muted'});
+    const who = k <= 1 ? 'too rough even for a tailor' : k === 2 ? 'good enough for a tailor (cm)' : k === 3 ? 'good enough for a carpenter (mm)' : k === 4 ? 'better than a carpenter needs' : 'good enough for a machinist (0.01 mm)';
+    out.textContent = `√2 ≈ ${v.toFixed(k)}   →   error = ${R2.toFixed(8)} − ${v.toFixed(k)} = ${err.toFixed(8)} m = ${errmm.toFixed(4)} mm\n${who}`;
+  }
+  K.slider('#precK', draw, 0);
+})();
+
+/* ---------- 7. calculator ---------- */
+(function(){
+  const svg = document.getElementById('calcSvg'), out = document.getElementById('calcOut');
+  const digits = '1.4142135623730950488';
+  function draw(k){ K.clear(svg);
+    const shown = digits.slice(0, 2 + k); const v = parseFloat(shown); const sq = v*v; const diff = 2 - sq;
+    K.el('rect', {x: 60, y: 40, width: 440, height: 70, rx: 10, fill:'#1f2937', stroke:'var(--border)'}, svg);
+    text(svg, P(480, 75), shown, {class:'lbl big', fill:'#a7f3d0', 'text-anchor':'end', 'font-family':'ui-monospace, monospace', 'font-size': k > 9 ? '22px' : '26px'}, svg);
+    text(svg, P(80, 130), 'display² =', {class:'lbl', 'text-anchor':'start'}); text(svg, P(180, 130), sq.toFixed(Math.min(2*k, 16)), {class:'lbl', 'text-anchor':'start', 'font-family':'ui-monospace, monospace'});
+    text(svg, P(80, 165), '2 − display² =', {class:'lbl red', 'text-anchor':'start'}); text(svg, P(220, 165), diff.toExponential(3), {class:'lbl red', 'text-anchor':'start', 'font-family':'ui-monospace, monospace'});
+    multiText(svg, P(650, 110), ['the display is rounded', 'its square is never 2', 'the digits never end'], {class:'lbl muted'}, 22);
+    out.textContent = `shown: ${shown}   (${k} decimal places)\nshown² = ${sq.toFixed(Math.min(2*k, 16))}   →   2 − shown² = ${diff.toExponential(3)}  (small, but never 0)`;
+  }
+  K.slider('#calcK', draw, 0);
+})();
+
+/* ---------- 8. spiral ---------- */
+(function(){
+  const svg = document.getElementById('spiralSvg'), out = document.getElementById('spiralOut');
+  function draw(n){ K.clear(svg);
+    const O = P(330, 190), u = 42; let prev = P(O.x + u, O.y); const cols = ['tri-big', 'tri-small', 'tri-amber', 'tri-purple'];
+    for (let i = 1; i <= n; i++){ const d = unit(O, prev); const perp = P(d.y, -d.x); const next = P(prev.x + perp.x*u, prev.y + perp.y*u);
+      polygon(svg, [O, prev, next], {class: cols[i % 4], opacity:.9}); rightMark(svg, prev, O, next, 7);
+      const m = Math.sqrt(i + 1); const lab = Number.isInteger(m) ? `√${i + 1} = ${m}` : `√${i + 1}`; const dn = unit(O, next); text(svg, P(next.x + dn.x*16, next.y + dn.y*16), lab, {class: Number.isInteger(m) ? 'lbl sm red' : 'lbl sm'}); prev = next; }
+    dot(svg, O, {class:'pt red'});
+    multiText(svg, P(650, 60), [`triangle ${n}:`, `sides 1, √${n}, √${n + 1}`, `hypotenuse ≈ ${Math.sqrt(n + 1).toFixed(3)}`], {class:'lbl'}, 22);
+    out.textContent = `hypotenuses so far: ` + Array.from({length: n}, (_, i) => '√' + (i + 2)).join(', ') + `\nnatural numbers among them: ` + Array.from({length: n}, (_, i) => i + 2).filter(x => Number.isInteger(Math.sqrt(x))).map(x => '√' + x + ' = ' + Math.sqrt(x)).join(', ');
+  }
+  K.slider('#spiralN', draw, 0);
+})();
+
+/* ---------- 9. Delian ---------- */
+(function(){
+  const svg = document.getElementById('delSvg'), out = document.getElementById('delOut');
+  function draw(s){ K.clear(svg);
+    const a = s*110, o = P(110, 220), k = 0.45*a; const f = [o, P(o.x + a, o.y), P(o.x + a, o.y - a), P(o.x, o.y - a)]; const b = f.map(p => P(p.x + k, p.y - k*0.7));
+    polygon(svg, [f[1], b[1], b[2], f[2]], {class:'fill-blue', stroke:'var(--blue)'}); polygon(svg, [f[3], f[2], b[2], b[3]], {class:'fill-green', stroke:'var(--green)'}); polygon(svg, f, {class:'fill-amber', stroke:'var(--accent)'});
+    sideLabel(svg, f[0], f[1], s.toFixed(3), 16, {class:'lbl sm amber'});
+    const vol = s*s*s; multiText(svg, P(560, 110), [`volume = ${s.toFixed(3)}³`, `= ${vol.toFixed(5)}`, vol < 2 ? 'too small' : vol > 2 ? 'too big' : 'exactly 2'], {class:'lbl big ' + (vol < 2 ? 'blue' : 'red')}, 30);
+    out.textContent = `1.25³ = 1.953125 < 2 < 2.000376 = 1.26³        1.259³ = 1.995617 < 2 < 2.000376 = 1.26³\n∛2 = 1.259921… – doubling a cube needs the side multiplied by this number, which is not a fraction`;
+  }
+  K.slider('#delS', draw, 3);
+})();
+
+/* ---------- 10. plots ---------- */
+(function(){
+  const svg = document.getElementById('plotSvg'), out = document.getElementById('plotOut');
+  function draw(rate){ K.clear(svg);
+    const u = 5; const A = P(60, 260), B = P(60 + 30*u, 260), C = P(60, 260 - 30*u); polygon(svg, [A, B, C], {class:'tri-small'}); rightMark(svg, A, B, C, 12);
+    sideLabel(svg, A, B, '30 m', 16, {class:'lbl green'}); sideLabel(svg, C, A, '30 m', 16, {class:'lbl green'}); sideLabel(svg, B, C, '30√2 = 42.43… m', 16, {class:'lbl red'});
+    const D = P(420, 260), E = P(420 + 40*u, 260), F = P(420, 260 - 30*u); polygon(svg, [D, E, F], {class:'tri-big'}); rightMark(svg, D, E, F, 12);
+    sideLabel(svg, D, E, '40 m', 16, {class:'lbl blue'}); sideLabel(svg, F, D, '30 m', 16, {class:'lbl blue'}); sideLabel(svg, E, F, '50 m', 16, {class:'lbl blue'});
+    const p1 = 60 + 30*R2, p2 = 120;
+    text(svg, P(150, 40), `perimeter ${p1.toFixed(2)}… m`, {class:'lbl'}); text(svg, P(540, 40), `perimeter ${p2} m`, {class:'lbl'});
+    out.textContent = `plot 1: 30 + 30 + 30√2 = ${p1.toFixed(3)}… m  →  rounded to ${Math.round(p1)} m  →  ₹${rate} × ${Math.round(p1)} = ₹${(rate*Math.round(p1)).toLocaleString('en-IN')}\nplot 2: 30 + 40 + 50 = 120 m (3-4-5, all exact)      →  ₹${rate} × 120 = ₹${(rate*120).toLocaleString('en-IN')}`;
+  }
+  K.slider('#plotR', draw, 0);
+})();
+
+/* ---------- quizzes ---------- */
+K.numq('#q1', {q:'A square room has sides 4 m. Find its diagonal correct to 2 decimal places (m).', answer:5.66, tol:0.006, explain:'4 × √2 = 4 × 1.41421 = 5.6568… → 5.66 m.', hint:'diagonal = side × √2.'});
+K.numq('#q2', {q:'A 65-inch television has a 16 : 9 screen. Find its width correct to 1 decimal place (inches). Use √337 ≈ 18.36.', answer:56.7, tol:0.15, explain:'width = 65 × 16 ÷ 18.36 = 56.6… ≈ 56.7 in.', hint:'width : diagonal = 16 : √337.'});
+K.numq('#q3', {q:'A ladder has its foot 2 m from a wall and reaches 3 m up. How long is the ladder, correct to 2 decimals (m)?', answer:3.61, tol:0.006, explain:'√(4 + 9) = √13 = 3.6055… ≈ 3.61 m.', hint:'Pythagoras: ladder² = 2² + 3².'});
+K.numq('#q4', {q:'A paper size has short side 210 mm and sides in the ratio 1 : √2. Find the long side to the nearest mm.', answer:297, tol:0.6, explain:'210 × 1.41421 = 296.98… ≈ 297 mm – that is A4.', hint:'long side = 210 × √2.'});
+K.numq('#q5', {q:'In the square-root spiral (every triangle has a side 1 m), the hypotenuse of the 7th triangle is √8 m. Write it correct to 2 decimals.', answer:2.83, tol:0.006, explain:'√8 = 2.828… ≈ 2.83 m (2.8² = 7.84, 2.9² = 8.41; 2.82² = 7.95, 2.83² = 8.01).', hint:'Squeeze: 2.8² = 7.84 and 2.9² = 8.41.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Real-World Applications – Pairs of Equations</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+
+</style>
+<style>
+.exam{border-left:5px solid var(--purple);background:var(--purple-soft);border-radius:8px;padding:.5rem .9rem;margin:.6rem 0 1.4rem;font-size:.93rem}
+.exam b{color:var(--purple)}
+.work{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.02rem}
+</style>
+</head>
+<body data-page="11_applications">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 1 · Applications</span><span class="chip green">Use it in real life</span>
+<h1>Real-World Applications <span class="ml">പ്രയോഗങ്ങൾ</span></h1>
+<p class="lead">Two unknowns and two facts turn up everywhere – at the shop counter, in phone plans, at a ticket window, in a piggy bank, on a river. On every lab below, the sliders secretly choose the unknown numbers; the page then shows only the two facts you would be told, and solves them the way this chapter taught you. Change the sliders and watch the method catch the secret every time.</p>
+
+<div class="callout book"><div class="title">📖 The methods behind every application</div>
+<ul style="margin:0">
+<li><b>Write each fact as an equation</b> with two letters (<a href="05_mental_and_algebra.html">page 5</a>).</li>
+<li><b>Elimination:</b> make one letter's coefficients equal, then subtract (<a href="07_two_equations.html">page 7</a>).</li>
+<li><b>Sum and difference:</b> larger = (sum + difference) ÷ 2, smaller = (sum − difference) ÷ 2 (<a href="09_sum_difference_and_special_cases.html">page 9</a>).</li>
+<li><b>Check</b> the answer in both facts, and make sure it makes sense (no negative prices, whole numbers of coins).</li>
+</ul></div>
+
+<h2>1. Two bills at the shop</h2>
+<p>You buy 3 soaps and 2 brushes, your friend buys 2 soaps and 3 brushes. You know only the two bills. Adding the bills gives 5 soaps and 5 brushes; subtracting them gives "1 soap − 1 brush". That is the sum and the difference of the two prices!</p>
+<div class="lab"><div class="lab-title">🛒 The secret prices</div><svg id="s1" viewBox="0 0 800 280" role="img" aria-label="Two shopping bills"></svg><div class="controls" id="c1"></div><div class="readout" id="o1"></div></div>
+<div class="exam"><b>In the exam this looks like:</b> "3 soaps and 2 brushes cost ₹130; 2 soaps and 3 brushes cost ₹120. Find each price." → add: 5(s + b) = 250, s + b = 50; subtract: s − b = 10 ⇒ soap ₹30, brush ₹20.</div>
+
+<h2>2. Which phone plan is cheaper? (graph view)</h2>
+<p>Plan A charges a small fixed amount plus a high rate per GB; plan B charges more fixed but less per GB. Each plan is an equation: cost = fixed + rate × GB. Drawn on a graph each is a straight line, and the two lines <b>cross</b> where the plans cost the same – that crossing point is the solution of the pair of equations. <span class="chip blue">graph view · beyond the textbook</span></p>
+<div class="lab"><div class="lab-title">📱 Two plans, two lines</div><svg id="s2" viewBox="0 0 800 340" role="img" aria-label="Graph of two plans meeting"></svg><div class="controls" id="c2"></div><div class="readout" id="o2"></div><p class="hint">Left of the crossing the plan with the smaller fixed charge is cheaper; right of it the plan with the smaller rate wins.</p></div>
+<div class="exam"><b>In the exam this looks like:</b> "Plan A: ₹100 + ₹20 per GB. Plan B: ₹200 + ₹10 per GB. For how many GB do they cost the same?" → 100 + 20x = 200 + 10x ⇒ x = 10 GB, cost ₹300.</div>
+
+<h2>3. Tickets at a school play</h2>
+<p>Adult tickets cost ₹50 and child tickets ₹20. The ticket counter knows how many tickets were sold and how much money came in. How many adults came?</p>
+<div class="lab"><div class="lab-title">🎟️ Tickets and money</div><svg id="s3" viewBox="0 0 800 260" role="img" aria-label="Tickets bar model"></svg><div class="controls" id="c3"></div><div class="readout" id="o3"></div></div>
+<div class="exam"><b>In the exam this looks like:</b> "100 tickets were sold for ₹3800. Adults ₹50, children ₹20. How many adult tickets?" → a + c = 100, 50a + 20c = 3800; subtract 20 × (first): 30a = 1800 ⇒ a = 60.</div>
+
+<h2>4. Coins in a piggy bank</h2>
+<p>A piggy bank holds only ₹2 and ₹5 coins. You count the coins and add up their value. If every coin were a ₹2 coin, the value would be 2 × (number of coins); each ₹5 coin adds ₹3 more.</p>
+<div class="lab"><div class="lab-title">🪙 Count and value</div><svg id="s4" viewBox="0 0 800 260" role="img" aria-label="Coins"></svg><div class="controls" id="c4"></div><div class="readout" id="o4"></div></div>
+<div class="exam"><b>In the exam this looks like:</b> "20 coins, ₹2 and ₹5, worth ₹70. How many ₹5 coins?" → x + y = 20, 2x + 5y = 70 ⇒ 3y = 70 − 40 = 30 ⇒ y = 10.</div>
+
+<h2>5. Blending tea</h2>
+<p>A shop mixes tea costing ₹200 a kilogram with tea costing ₹300 a kilogram to sell a blend at a chosen price. How much of each goes in?</p>
+<div class="lab"><div class="lab-title">🍵 The blend</div><svg id="s5" viewBox="0 0 800 260" role="img" aria-label="Tea blend bars"></svg><div class="controls" id="c5"></div><div class="readout" id="o5"></div></div>
+<div class="exam"><b>In the exam this looks like:</b> "10 kg of a blend at ₹240/kg is made from teas at ₹200 and ₹300." → x + y = 10, 200x + 300y = 2400 ⇒ 100y = 400 ⇒ 4 kg of the ₹300 tea and 6 kg of the ₹200 tea.</div>
+
+<h2>6. A boat on a river</h2>
+<p>Going downstream the current helps: speed = boat + current. Going upstream it hinders: speed = boat − current. If you know both speeds, you know a <b>sum</b> and a <b>difference</b>.</p>
+<div class="lab"><div class="lab-title">🚤 Down and up</div><svg id="s6" viewBox="0 0 800 260" role="img" aria-label="River with a boat"></svg><div class="controls" id="c6"></div><div class="readout" id="o6"></div></div>
+<div class="exam"><b>In the exam this looks like:</b> "A boat goes 15 km/h downstream and 9 km/h upstream. Find the speed of the current." → b + c = 15, b − c = 9 ⇒ b = 12, c = 3 km/h.</div>
+
+<h2>7. Auto-rickshaw fares</h2>
+<p>An auto charges a fixed starting fare plus a rate for every kilometre. Two rides of different lengths reveal both: the extra kilometres account for the whole difference in fare.</p>
+<div class="lab"><div class="lab-title">🛺 Two rides</div><svg id="s7" viewBox="0 0 800 260" role="img" aria-label="Two rides as bars"></svg><div class="controls" id="c7"></div><div class="readout" id="o7"></div></div>
+<div class="exam"><b>In the exam this looks like:</b> "A 3 km ride costs ₹55 and a 7 km ride costs ₹95." → F + 3r = 55, F + 7r = 95 ⇒ 4r = 40 ⇒ r = ₹10/km, F = ₹25.</div>
+
+<h2>8. Investing in two schemes</h2>
+<p>₹100000 is split between a scheme paying 8% a year and one paying 5%. The total interest (<span class="ml">പലിശ</span>) after a year tells how the money was split.</p>
+<div class="lab"><div class="lab-title">🏦 The split</div><svg id="s8" viewBox="0 0 800 240" role="img" aria-label="Investment split bar"></svg><div class="controls" id="c8"></div><div class="readout" id="o8"></div></div>
+<div class="exam"><b>In the exam this looks like:</b> "₹100000 in two schemes at 7% and 6% earns ₹6750 in a year." → 0.07x + 0.06(100000 − x) = 6750 ⇒ x = ₹75000 at 7%, ₹25000 at 6% (textbook practice set 1, Q7).</div>
+
+<h2>9. Ages that keep their distance</h2>
+<p>A father and son: you are told the sum of their ages and the difference. Sum and difference give both ages at once – and the difference never changes as the years pass, because both grow older together.</p>
+<div class="lab"><div class="lab-title">👨‍👦 Timeline</div><svg id="s9" viewBox="0 0 800 280" role="img" aria-label="Age timeline"></svg><div class="controls" id="c9"></div><div class="readout" id="o9"></div></div>
+<div class="exam"><b>In the exam this looks like:</b> "Four years ago Rahim was 3 times as old as Ramu; in two years he will be twice as old." → R − 4 = 3(m − 4), R + 2 = 2(m + 2) ⇒ Ramu 10, Rahim 22 (practice set 3, Q3).</div>
+
+<h2>10. Fours and sixes</h2>
+<p>A batter hits only boundaries: fours and sixes. The scoreboard shows the number of boundaries and the runs from them. If all were fours, runs would be 4 × boundaries; every six adds 2 more.</p>
+<div class="lab"><div class="lab-title">🏏 The scorecard</div><svg id="s10" viewBox="0 0 800 240" role="img" aria-label="Fours and sixes"></svg><div class="controls" id="c10"></div><div class="readout" id="o10"></div></div>
+<div class="exam"><b>In the exam this looks like:</b> "12 boundaries brought 58 runs. How many sixes?" → x + y = 12, 4x + 6y = 58 ⇒ 2y = 58 − 48 = 10 ⇒ 5 sixes.</div>
+
+<h2>11. Try these word problems</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div>
+
+<div class="callout"><div class="title">🧭 What all these have in common</div>
+<ul style="margin:0">
+<li>Two unknown amounts, and two facts that link them – so two equations.</li>
+<li>"Totals" facts (bills, tickets, coins, runs) are eliminated by multiplying one equation and subtracting.</li>
+<li>"Sum and difference" facts (boats, ages) are solved by adding and subtracting the equations.</li>
+<li>Graphs show the same thing: the solution is where the two lines cross.</li>
+</ul></div>
+<p>Next: <a href="12_summary_revision.html">Summary &amp; quick quiz ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Pairs of Equations · Class 9", "icon": "x,y", "key": "pairs_of_equations_ch1_progress", "pages": [["index.html", "Home"], ["01_letters_and_expressions.html", "1 · Letters, Expressions & Equations"], ["02_solving_one_equation.html", "2 · Solving One Equation: the Balance"], ["03_words_to_equations.html", "3 · From Words to Equations"], ["04_special_quantities.html", "4 · Digits, Interest, Ages & Speeds"], ["05_mental_and_algebra.html", "5 · Mental Arithmetic & Algebra (Section 1)"], ["06_practice_1_solutions.html", "6 · Practice Set 1 – Solutions"], ["07_two_equations.html", "7 · Two Equations: Elimination (Section 2)"], ["08_practice_2_3_solutions.html", "8 · Practice Sets 2 & 3 – Solutions"], ["09_sum_difference_and_special_cases.html", "9 · Sum & Difference, Special Cases (Section 3)"], ["10_practice_4_solutions.html", "10 · Practice Set 4 – Solutions"], ["11_applications.html", "11 · Real-World Applications"], ["12_summary_revision.html", "12 · Summary & Quick Quiz"], ["13_model_test_paper.html", "13 · Model Test Paper"], ["14_model_test_solutions.html", "14 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Similar Triangles – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+const {P, text, multiText, seg} = K;
+/* helper: build sliders inside a controls div and redraw on change */
+function app(n, defs, render){
+  const ctr = document.getElementById('c' + n), svg = document.getElementById('s' + n), out = document.getElementById('o' + n); const v = {};
+  defs.forEach(d => { const lab = document.createElement('label'); lab.innerHTML = `${d.label} <input type="range" min="${d.min}" max="${d.max}" step="${d.step}" value="${d.value}"><output></output>`; ctr.appendChild(lab); v[d.key] = d.value; });
+  const run = () => { K.clear(svg); render(v, svg, out); };
+  ctr.querySelectorAll('input').forEach((inp, k) => K.slider(inp, val => { v[defs[k].key] = val; run(); }, 0));
+}
+const icons = (svg, x, y, n, cls, w, h, gap, label) => { for (let k = 0; k < n; k++){ K.el('rect', {x: x + k*(w + gap), y, width: w, height: h, rx: 4, class: cls, stroke:'var(--text)', 'stroke-width': 1}, svg); } if (label) text(svg, P(x + n*(w + gap)/2, y + h + 14), label, {class:'lbl sm muted'}); return x + n*(w + gap); };
+const bar = (svg, x, y, w, h, cls, label) => { if (w <= 0) return; K.el('rect', {x, y, width: w, height: h, rx: 4, class: cls, stroke:'var(--text)', 'stroke-width': 1.2}, svg); if (label && w > 40) text(svg, P(x + w/2, y + h/2), label, {class:'lbl sm'}); };
+
+/* 1. shop */
+app(1, [{key:'s', label:'soap ₹', min:10, max:60, step:1, value:30}, {key:'b', label:'brush ₹', min:10, max:60, step:1, value:20}], (v, svg, out) => {
+  const B1 = 3*v.s + 2*v.b, B2 = 2*v.s + 3*v.b;
+  text(svg, P(60, 60), 'Bill 1', {class:'lbl'}); let x = icons(svg, 110, 40, 3, 'fill-amber', 34, 34, 8, 'soaps'); icons(svg, x + 20, 40, 2, 'fill-blue', 18, 40, 8, 'brushes'); text(svg, P(560, 60), `3 soaps + 2 brushes = ₹${B1}`, {class:'lbl big'});
+  text(svg, P(60, 160), 'Bill 2', {class:'lbl'}); x = icons(svg, 110, 140, 2, 'fill-amber', 34, 34, 8, 'soaps'); icons(svg, x + 20, 140, 3, 'fill-blue', 18, 40, 8, 'brushes'); text(svg, P(560, 160), `2 soaps + 3 brushes = ₹${B2}`, {class:'lbl big'});
+  multiText(svg, P(560, 230), [`add: 5 soaps + 5 brushes = ₹${B1 + B2}`, `subtract: 1 soap − 1 brush = ₹${B1 - B2}`], {class:'lbl red'}, 22);
+  out.textContent = `3s + 2b = ${B1}\n2s + 3b = ${B2}\nadd:      5s + 5b = ${B1 + B2}  ⇒  s + b = ${(B1 + B2)/5}\nsubtract: s − b = ${B1 - B2}\nsum and difference ⇒ s = (${(B1 + B2)/5} + ${B1 - B2}) ÷ 2 = ${v.s},  b = (${(B1 + B2)/5} − ${B1 - B2}) ÷ 2 = ${v.b}`;
+});
+
+/* 2. phone plans graph */
+app(2, [{key:'fa', label:'A fixed ₹', min:0, max:200, step:10, value:100}, {key:'ra', label:'A per GB ₹', min:10, max:40, step:1, value:20}, {key:'fb', label:'B fixed ₹', min:100, max:400, step:10, value:200}, {key:'rb', label:'B per GB ₹', min:1, max:20, step:1, value:10}], (v, svg, out) => {
+  const X0 = 70, Y0 = 300, W = 470, H = 270, maxX = 20, maxY = Math.max(v.fa + v.ra*maxX, v.fb + v.rb*maxX);
+  const px = x => X0 + x/maxX*W, py = y => Y0 - y/maxY*H;
+  seg(svg, P(X0, Y0), P(X0 + W, Y0), {class:'ln'}); seg(svg, P(X0, Y0), P(X0, Y0 - H), {class:'ln'});
+  for (let g = 0; g <= maxX; g += 5){ seg(svg, P(px(g), Y0), P(px(g), Y0 + 5), {class:'ln'}); text(svg, P(px(g), Y0 + 18), String(g), {class:'lbl sm muted'}); }
+  text(svg, P(X0 + W/2, Y0 + 34), 'data used (GB)', {class:'lbl sm muted'}); text(svg, P(X0 - 10, Y0 - H - 12), 'cost ₹', {class:'lbl sm muted', 'text-anchor':'start'});
+  seg(svg, P(px(0), py(v.fa)), P(px(maxX), py(v.fa + v.ra*maxX)), {class:'ln-blue thick'}); seg(svg, P(px(0), py(v.fb)), P(px(maxX), py(v.fb + v.rb*maxX)), {class:'ln-amber thick'});
+  text(svg, P(px(maxX) + 8, py(v.fa + v.ra*maxX)), 'A', {class:'lbl big blue', 'text-anchor':'start'}); text(svg, P(px(maxX) + 8, py(v.fb + v.rb*maxX)), 'B', {class:'lbl big amber', 'text-anchor':'start'});
+  let msg;
+  if (v.ra !== v.rb){ const xs = (v.fb - v.fa)/(v.ra - v.rb), ys = v.fa + v.ra*xs;
+    if (xs >= 0 && xs <= maxX){ K.dot(svg, P(px(xs), py(ys)), {class:'pt red', r: 6}); seg(svg, P(px(xs), py(ys)), P(px(xs), Y0), {class:'ln-red dash'}); msg = `the lines cross at ${K.fmt(xs, 2)} GB, cost ₹${K.fmt(ys, 1)}`; }
+    else msg = xs < 0 ? 'the lines cross at a negative amount of data – one plan is always cheaper here' : 'the lines cross beyond 20 GB';
+    out.textContent = `Plan A:  y = ${v.fa} + ${v.ra}x\nPlan B:  y = ${v.fb} + ${v.rb}x\nequal when ${v.fa} + ${v.ra}x = ${v.fb} + ${v.rb}x  ⇒  ${v.ra - v.rb}x = ${v.fb - v.fa}  ⇒  x = ${K.fmt(xs, 2)}\n${msg}`;
+  } else { msg = 'same rate: the lines are parallel and never cross'; out.textContent = `Plan A:  y = ${v.fa} + ${v.ra}x\nPlan B:  y = ${v.fb} + ${v.rb}x\n${msg} – no solution`; }
+  multiText(svg, P(680, 80), ['cost = fixed + rate × GB', 'crossing = same cost'], {class:'lbl'}, 24);
+  const words = msg.split(' '); const lines2 = []; let cur = ''; words.forEach(w => { if ((cur + ' ' + w).trim().length > 26){ lines2.push(cur.trim()); cur = w; } else cur += ' ' + w; }); lines2.push(cur.trim()); multiText(svg, P(680, 170), lines2, {class:'lbl red'}, 22);
+});
+
+/* 3. tickets */
+app(3, [{key:'a', label:'adults', min:0, max:200, step:5, value:60}, {key:'c', label:'children', min:0, max:200, step:5, value:40}], (v, svg, out) => {
+  const T = v.a + v.c, M = 50*v.a + 20*v.c, sc = 460/Math.max(T, 1);
+  text(svg, P(400, 30), `told: ${T} tickets, ₹${M}`, {class:'lbl big'});
+  bar(svg, 60, 70, v.a*sc, 50, 'fill-blue', `${v.a} adults × ₹50`); bar(svg, 60 + v.a*sc, 70, v.c*sc, 50, 'fill-amber', `${v.c} children × ₹20`);
+  text(svg, P(290, 150), 'if all paid ₹20: ' + `₹${20*T}`, {class:'lbl muted'});
+  text(svg, P(290, 180), `extra ₹${M - 20*T} = ₹30 × adults`, {class:'lbl red'});
+  multiText(svg, P(660, 110), ['a + c = ' + T, '50a + 20c = ' + M], {class:'lbl'}, 26);
+  out.textContent = `a + c = ${T}\n50a + 20c = ${M}\nsubtract 20 × (first): 30a = ${M} − ${20*T} = ${M - 20*T}  ⇒  a = ${v.a},  c = ${T} − ${v.a} = ${v.c}`;
+});
+
+/* 4. coins */
+app(4, [{key:'x', label:'₹2 coins', min:0, max:30, step:1, value:10}, {key:'y', label:'₹5 coins', min:0, max:30, step:1, value:10}], (v, svg, out) => {
+  const N = v.x + v.y, V = 2*v.x + 5*v.y;
+  for (let k = 0; k < v.x; k++) K.circle(svg, P(50 + (k % 15)*30, 60 + Math.floor(k/15)*30), 11, {class:'fill-amber', stroke:'var(--accent)'});
+  for (let k = 0; k < v.y; k++) K.circle(svg, P(50 + (k % 15)*30, 150 + Math.floor(k/15)*30), 13, {class:'fill-blue', stroke:'var(--blue)'});
+  text(svg, P(260, 120), '₹2 coins (above) and ₹5 coins (below)', {class:'lbl sm muted'});
+  multiText(svg, P(660, 90), [`told: ${N} coins`, `worth ₹${V}`, '', `if all were ₹2: ₹${2*N}`, `each ₹5 coin adds ₹3`], {class:'lbl'}, 24);
+  out.textContent = `x + y = ${N}\n2x + 5y = ${V}\nsubtract 2 × (first): 3y = ${V} − ${2*N} = ${V - 2*N}  ⇒  y = ${v.y} five-rupee coins,  x = ${v.x} two-rupee coins`;
+});
+
+/* 5. tea */
+app(5, [{key:'T', label:'blend kg', min:5, max:20, step:1, value:10}, {key:'p', label:'blend price ₹/kg', min:200, max:300, step:10, value:240}], (v, svg, out) => {
+  const y = (v.p - 200)*v.T/100, x = v.T - y, sc = 440/v.T;
+  bar(svg, 60, 80, x*sc, 60, 'fill-green', `${K.fmt(x, 2)} kg at ₹200`); bar(svg, 60 + x*sc, 80, y*sc, 60, 'fill-amber', `${K.fmt(y, 2)} kg at ₹300`);
+  K.dim(svg, P(60, 150), P(500, 150), `${v.T} kg of blend at ₹${v.p}/kg = ₹${v.p*v.T}`, 22);
+  multiText(svg, P(660, 100), ['x + y = ' + v.T, `200x + 300y = ${v.p*v.T}`], {class:'lbl'}, 26);
+  out.textContent = `x + y = ${v.T}\n200x + 300y = ${v.p*v.T}\nsubtract 200 × (first): 100y = ${v.p*v.T} − ${200*v.T} = ${v.p*v.T - 200*v.T}  ⇒  y = ${K.fmt(y, 2)} kg (₹300 tea),  x = ${K.fmt(x, 2)} kg (₹200 tea)`;
+});
+
+/* 6. boat */
+app(6, [{key:'b', label:'boat in still water km/h', min:5, max:20, step:1, value:12}, {key:'c', label:'current km/h', min:1, max:4, step:1, value:3}], (v, svg, out) => {
+  K.el('rect', {x: 40, y: 80, width: 520, height: 110, class:'fill-blue', opacity:.6}, svg);
+  for (let k = 0; k < 5; k++) K.arrows(svg, P(80 + k*100, 135), P(130 + k*100, 135), 1, 7, {class:'ln-blue'});
+  text(svg, P(300, 210), `current ${v.c} km/h →`, {class:'lbl sm blue'});
+  const boat = (x, y, flip) => { K.polygon(svg, flip ? [P(x, y), P(x + 60, y), P(x + 50, y + 18), P(x + 6, y + 18)] : [P(x, y), P(x + 60, y), P(x + 54, y + 18), P(x + 10, y + 18)], {class:'tri-amber'}); };
+  boat(110, 95); text(svg, P(300, 104), `downstream: ${v.b} + ${v.c} = ${v.b + v.c} km/h →`, {class:'lbl sm'}); boat(110, 150, true); text(svg, P(300, 162), `← upstream: ${v.b} − ${v.c} = ${v.b - v.c} km/h`, {class:'lbl sm'});
+  multiText(svg, P(680, 100), [`told: down ${v.b + v.c} km/h`, `up ${v.b - v.c} km/h`], {class:'lbl'}, 26);
+  out.textContent = `b + c = ${v.b + v.c}\nb − c = ${v.b - v.c}\nadd: 2b = ${2*v.b} ⇒ b = ${v.b} km/h;   subtract: 2c = ${2*v.c} ⇒ c = ${v.c} km/h\n(a 30 km trip takes ${K.fmt(30/(v.b + v.c), 2)} h downstream and ${K.fmt(30/(v.b - v.c), 2)} h upstream)`;
+});
+
+/* 7. auto */
+app(7, [{key:'F', label:'starting fare ₹', min:20, max:50, step:5, value:25}, {key:'r', label:'per km ₹', min:8, max:20, step:1, value:10}], (v, svg, out) => {
+  const f1 = v.F + 3*v.r, f2 = v.F + 7*v.r, sc = 3.2;
+  text(svg, P(60, 70), '3 km', {class:'lbl'}); bar(svg, 110, 50, v.F*sc, 40, 'fill-purple', 'start'); for (let k = 0; k < 3; k++) bar(svg, 110 + v.F*sc + k*v.r*sc, 50, v.r*sc, 40, 'fill-amber', ''); text(svg, P(560, 70), `₹${f1}`, {class:'lbl big'});
+  text(svg, P(60, 160), '7 km', {class:'lbl'}); bar(svg, 110, 140, v.F*sc, 40, 'fill-purple', 'start'); for (let k = 0; k < 7; k++) bar(svg, 110 + v.F*sc + k*v.r*sc, 140, v.r*sc, 40, k >= 3 ? 'fill-red' : 'fill-amber', ''); text(svg, P(560, 160), `₹${f2}`, {class:'lbl big'});
+  text(svg, P(400, 220), `the 4 red km cost ₹${f2 - f1}`, {class:'lbl red'});
+  multiText(svg, P(690, 90), [`F + 3r = ${f1}`, `F + 7r = ${f2}`], {class:'lbl'}, 26);
+  out.textContent = `F + 3r = ${f1}\nF + 7r = ${f2}\nsubtract: 4r = ${f2 - f1}  ⇒  r = ₹${v.r} per km,  F = ${f1} − ${3*v.r} = ₹${v.F}`;
+});
+
+/* 8. investment */
+app(8, [{key:'x', label:'amount at 8% ₹', min:0, max:100000, step:5000, value:60000}], (v, svg, out) => {
+  const T = 100000, y = T - v.x, I = 0.08*v.x + 0.05*y, sc = 480/T;
+  bar(svg, 60, 70, v.x*sc, 60, 'fill-green', `₹${v.x} at 8%`); bar(svg, 60 + v.x*sc, 70, y*sc, 60, 'fill-blue', `₹${y} at 5%`);
+  K.dim(svg, P(60, 140), P(540, 140), '₹100000 in all', 20);
+  multiText(svg, P(680, 90), [`told: interest ₹${I}`, 'x + y = 100000'], {class:'lbl'}, 26);
+  out.textContent = `x + y = 100000\n0.08x + 0.05y = ${I}\nsubtract 0.05 × (first): 0.03x = ${I} − 5000 = ${K.fmt(I - 5000, 2)}  ⇒  x = ₹${v.x} at 8%,  y = ₹${y} at 5%`;
+});
+
+/* 9. ages */
+app(9, [{key:'S', label:'son now', min:5, max:25, step:1, value:12}, {key:'g', label:'age gap', min:20, max:35, step:1, value:26}], (v, svg, out) => {
+  const F = v.S + v.g, X0 = 60, W = 480; const years = [-5, 0, 5, 10];
+  seg(svg, P(X0, 230), P(X0 + W, 230), {class:'ln'});
+  years.forEach((d, k) => { const x = X0 + 40 + k*140; seg(svg, P(x, 225), P(x, 235), {class:'ln'}); text(svg, P(x, 252), d === 0 ? 'now' : (d < 0 ? `${-d} yrs ago` : `in ${d} yrs`), {class:'lbl sm muted'});
+    bar(svg, x - 22, 210 - (F + d)*1.6, 20, (F + d)*1.6, 'fill-blue', ''); bar(svg, x + 2, 210 - (v.S + d)*1.6, 20, (v.S + d)*1.6, 'fill-amber', '');
+    text(svg, P(x - 12, 202 - (F + d)*1.6), String(F + d), {class:'lbl sm blue'}); text(svg, P(x + 12, 202 - (v.S + d)*1.6), String(v.S + d), {class:'lbl sm amber'}); });
+  multiText(svg, P(680, 80), [`told: sum ${F + v.S}`, `difference ${v.g}`, '', 'the gap is the same', 'at every time'], {class:'lbl'}, 24);
+  out.textContent = `F + S = ${F + v.S}\nF − S = ${v.g}\nadd: 2F = ${2*F} ⇒ father ${F};   subtract: 2S = ${2*v.S} ⇒ son ${v.S}\nfive years ago: ${F - 5} and ${v.S - 5};  in ten years: ${F + 10} and ${v.S + 10} – difference still ${v.g}`;
+});
+
+/* 10. cricket */
+app(10, [{key:'x', label:'fours', min:0, max:20, step:1, value:7}, {key:'y', label:'sixes', min:0, max:15, step:1, value:5}], (v, svg, out) => {
+  const B = v.x + v.y, R = 4*v.x + 6*v.y;
+  let x = 50; for (let k = 0; k < v.x; k++){ K.el('rect', {x, y: 60, width: 22, height: 40, rx: 3, class:'fill-green', stroke:'var(--green)'}, svg); text(svg, P(x + 11, 80), '4', {class:'lbl sm'}); x += 25; }
+  x = 50; for (let k = 0; k < v.y; k++){ K.el('rect', {x, y: 130, width: 22, height: 40, rx: 3, class:'fill-red', stroke:'var(--red)'}, svg); text(svg, P(x + 11, 150), '6', {class:'lbl sm'}); x += 25; }
+  multiText(svg, P(670, 90), [`told: ${B} boundaries`, `${R} runs`, '', `if all fours: ${4*B} runs`, 'each six adds 2'], {class:'lbl'}, 24);
+  out.textContent = `x + y = ${B}\n4x + 6y = ${R}\nsubtract 4 × (first): 2y = ${R} − ${4*B} = ${R - 4*B}  ⇒  y = ${v.y} sixes,  x = ${v.x} fours`;
+});
+
+/* quizzes */
+K.numq('#q1', {q:'An auto ride of 2 km costs ₹45 and one of 6 km costs ₹85. What is the starting fare (₹)?', answer:25, tol:0, explain:'4 extra km cost ₹40, so ₹10 per km; 45 − 20 = ₹25.', hint:'Find the rate per km from the difference first.'});
+K.numq('#q2', {q:'A piggy bank has 20 coins of ₹2 and ₹5, worth ₹70 in all. How many ₹5 coins?', answer:10, tol:0, explain:'All ₹2 would be ₹40; the extra ₹30 ÷ 3 = 10 five-rupee coins.', hint:'Each ₹5 coin adds ₹3 over a ₹2 coin.'});
+K.numq('#q3', {q:'100 tickets were sold for ₹3800; adults pay ₹50 and children ₹20. How many adult tickets?', answer:60, tol:0, explain:'30a = 3800 − 2000 = 1800, so a = 60.', hint:'Subtract 20 × (number of tickets) from the money.'});
+K.numq('#q4', {q:'A boat travels 15 km/h downstream and 9 km/h upstream. Speed of the current (km/h)?', answer:3, tol:0, explain:'(15 − 9) ÷ 2 = 3 km/h; the boat itself does 12 km/h.', hint:'Difference ÷ 2.'});
+K.numq('#q5', {q:'A batter hit 12 boundaries worth 58 runs (fours and sixes only). How many sixes?', answer:5, tol:0, explain:'All fours would give 48; the extra 10 runs ÷ 2 = 5 sixes.', hint:'Each six is 2 more than a four.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

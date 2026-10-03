@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Real-World Applications – Similar Triangles</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+
+</style>
+<style>
+.exam{border-left:4px solid var(--purple);background:var(--purple-soft);padding:.5rem .9rem;border-radius:8px;margin:.6rem 0 1.2rem;font-size:.95rem}
+.exam b{color:var(--purple)}
+</style>
+</head>
+<body data-page="11_applications">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 6 · Applications</span><span class="chip green">Use it in real life</span>
+<h1>Real-World Applications <span class="ml">പ്രയോഗങ്ങൾ</span></h1>
+<p class="lead">Similar triangles are not just a textbook idea. They let you measure things you cannot reach – the height of a coconut tree, the width of a river, the size of the Sun – using only a measuring tape and a little thinking. Every simulator below is a real method people use.</p>
+
+<div class="callout book"><div class="title">📖 The one rule behind every application</div>
+<p>Whenever two triangles have the <b>same angles</b> (usually a right angle plus one shared angle), their sides are in the <b>same ratio</b>. Find the two triangles, pair the sides correctly, write one equation, solve. That is the whole game.</p></div>
+
+<h2>1. Measuring a tree with its shadow (the method of Thales)</h2>
+<p>About 2600 years ago the Greek mathematician <b>Thales</b> visited Egypt and measured the height of the Great Pyramid without climbing it. He waited until his own shadow was exactly as long as his height – at that moment the pyramid's shadow was exactly as long as the pyramid was tall! You can do better: at <em>any</em> time of day, a stick and a tree standing in the same sunlight make two triangles with the same angles.</p>
+<div class="lab">
+  <div class="lab-title">☀️ Shadow simulator</div>
+  <svg id="shadowSvg" viewBox="0 0 800 340" role="img" aria-label="A stick and a tree casting shadows in the same sunlight"></svg>
+  <div class="controls">
+    <label>Sun elevation <input id="sunAng" type="range" min="20" max="70" step="1" value="40" data-fmt="{v}°"><output></output></label>
+    <label>Stick height <input id="stickH" type="range" min="0.5" max="2" step="0.1" value="1.2" data-fmt="{v} m"><output></output></label>
+  </div>
+  <div class="readout" id="shadowOut"></div>
+  <p class="hint">The sun's rays are parallel, so both triangles have the same angle at the shadow tip and a right angle at the base. Same angles ⇒ <b>height ÷ shadow</b> is the same number for the stick and the tree. Change the time of day (sun elevation): the shadows change, the ratio does not.</p>
+</div>
+<div class="exam"><b>In the exam this looks like:</b> "A 1.5 m stick casts a 2 m shadow while a tree casts a 16 m shadow. Find the height of the tree." → tree = 1.5 × 16 ÷ 2 = 12 m.</div>
+
+<h2>2. The mirror on the ground</h2>
+<p>No sun? Put a small mirror on the ground and walk backwards until you see the top of the building in it. Light bounces off a mirror at the same angle it arrives (<b>angle of incidence = angle of reflection</b>), so the two triangles at the mirror have the same angles.</p>
+<div class="lab">
+  <div class="lab-title">🪞 Mirror simulator (eye height 1.5 m)</div>
+  <svg id="mirrorSvg" viewBox="0 0 800 320" role="img" aria-label="Person looking into a mirror on the ground to see the top of a tree"></svg>
+  <div class="controls"><label>Mirror distance from tree <input id="mirrorD" type="range" min="3" max="12" step="0.5" value="8" data-fmt="{v} m"><output></output></label></div>
+  <div class="readout" id="mirrorOut"></div>
+  <p class="hint">Move the mirror; the person walks back until the treetop appears in it. Height of tree = eye height × (mirror-to-tree) ÷ (mirror-to-person).</p>
+</div>
+<div class="exam"><b>In the exam this looks like:</b> "A mirror is 16 m from a building. A student whose eyes are 1.5 m above the ground sees the top of the building when standing 2 m from the mirror." → height = 1.5 × 16 ÷ 2 = 12 m.</div>
+
+<h2>3. Maps and zooming</h2>
+<p>A map is a <b>similar copy</b> of the land, reduced by the map's <b>scale</b>. When you pinch-zoom a phone map, every distance on the screen is multiplied by the same number – the triangle formed by three places keeps its shape, only the scale changes.</p>
+<div class="lab">
+  <div class="lab-title">🗺️ Zooming a sketch map of Ernakulam district</div>
+  <svg id="mapSvg" viewBox="0 0 800 340" role="img" aria-label="Sketch map triangle between three places at different zoom levels"></svg>
+  <div class="controls"><label>Zoom <input id="mapZoom" type="range" min="1" max="2.6" step="0.05" value="1" data-fmt="×{v}"><output></output></label></div>
+  <div class="readout" id="mapOut"></div>
+  <p class="hint">Straight-line distances are approximate. Notice that the three <em>map</em> lengths change together while the three <em>real</em> distances stay fixed – that is exactly "sides in the same ratio".</p>
+</div>
+<div class="exam"><b>In the exam this looks like:</b> "On a map of scale 1 cm : 5 km two towns are 3.6 cm apart. Find the real distance." → 3.6 × 5 = 18 km.</div>
+
+<h2>4. Projectors, cinema screens and the pinhole camera</h2>
+<p>A projector lamp is a point of light. Light from the lamp passes through the small slide and spreads out in straight lines to the screen. The slide and the screen image are similar shapes, and the scale factor is simply <b>(lamp-to-screen) ÷ (lamp-to-slide)</b>. Move the screen back and the picture grows – that is why a cinema needs a long hall!</p>
+<div class="lab">
+  <div class="lab-title">📽️ Projector: slide 2 cm tall, 10 cm from the lamp</div>
+  <svg id="projSvg" viewBox="0 0 800 300" role="img" aria-label="Lamp, slide and screen with rays"></svg>
+  <div class="controls"><label>Screen distance from lamp <input id="projD" type="range" min="100" max="400" step="10" value="250" data-fmt="{v} cm"><output></output></label></div>
+  <div class="readout" id="projOut"></div>
+  <p class="hint">Figure not to scale. The two triangles (lamp–slide and lamp–screen) share the angle at the lamp and both have a right angle, so image ÷ slide = screen distance ÷ slide distance.</p>
+</div>
+<div class="lab">
+  <div class="lab-title">📷 Pinhole camera: the image is upside-down but similar</div>
+  <svg id="pinSvg" viewBox="0 0 800 260" role="img" aria-label="Pinhole camera forming an inverted image"></svg>
+  <div class="controls"><label>Object distance from the pinhole <input id="pinD" type="range" min="40" max="200" step="5" value="100" data-fmt="{v} cm"><output></output></label></div>
+  <div class="readout" id="pinOut"></div>
+  <p class="hint">A 30 cm tall candle in front of a 10 cm deep box. The two triangles at the pinhole have equal (vertically opposite) angles, so image height ÷ object height = box depth ÷ object distance.</p>
+</div>
+<div class="exam"><b>In the exam this looks like:</b> "A slide 2 cm tall is 10 cm from a projector lamp. How tall is the picture on a screen 3 m away?" → 2 × 300 ÷ 10 = 60 cm.</div>
+
+<h2>5. Ladders, ramps and stairs</h2>
+<p>A ladder leaning on a wall makes a right triangle with the wall and the ground. Any point on the ladder, together with its foot and the point directly below it, makes a <em>smaller</em> right triangle with the same angles. So the height you reach is always the same fraction of how far you have climbed. Stair steps work the same way – every step has the same rise ÷ run as the whole staircase.</p>
+<div class="lab">
+  <div class="lab-title">🪜 A 5 m ladder: foot 3 m from the wall, top 4 m up</div>
+  <svg id="ladderSvg" viewBox="0 0 800 340" role="img" aria-label="Ladder against a wall with a person part way up"></svg>
+  <div class="controls"><label>Distance climbed along the ladder <input id="ladderT" type="range" min="0" max="5" step="0.1" value="2" data-fmt="{v} m"><output></output></label></div>
+  <div class="readout" id="ladderOut"></div>
+</div>
+<div class="exam"><b>In the exam this looks like:</b> "A 6 m ladder reaches 5.5 m up a wall. How high is a person who has climbed 3 m along it?" → 5.5 × 3 ÷ 6 = 2.75 m.</div>
+
+<h2>6. How wide is the river? (no boat needed)</h2>
+<p>Surveyors measure across rivers, valleys and busy roads with a right-angle trick. Follow the steps.</p>
+<div class="lab" id="riverLab">
+  <div class="lab-title">🎬 The surveyor's method</div>
+  <svg viewBox="0 0 800 340" role="img" aria-label="Measuring the width of a river using similar triangles"></svg>
+</div>
+<div class="exam"><b>In the exam this looks like:</b> a figure with two right triangles touching at a point, vertically opposite angles marked – "find AT". Pair the sides opposite equal angles and write one ratio.</div>
+
+<h2>7. Why a solar eclipse is possible – the Sun and the Moon</h2>
+<p>The Sun is about <b>400 times wider</b> than the Moon, but it is also about <b>400 times farther</b> away. The two triangles from your eye to the edges of the Moon and to the edges of the Sun have the same angles, so the two discs look almost exactly the same size in the sky. That is why the Moon can cover the Sun perfectly in a total solar eclipse – a beautiful cosmic coincidence explained by similar triangles.</p>
+<div class="lab">
+  <div class="lab-title">🌑 Eclipse simulator (not to scale)</div>
+  <svg id="sunSvg" viewBox="0 0 800 300" role="img" aria-label="Eye, Moon and Sun with sight lines"></svg>
+  <div class="controls"><label>Move the Moon <input id="moonX" type="range" min="130" max="420" step="2" value="300"><output></output></label></div>
+  <div class="readout" id="sunOut"></div>
+  <p class="hint">Real numbers: Sun diameter ≈ 1 392 000 km at ≈ 149 600 000 km; Moon diameter ≈ 3 474 km at ≈ 384 400 km. Diameter ÷ distance is about 1/107 for the Sun and 1/111 for the Moon – nearly equal!</p>
+</div>
+
+<h2>8. Enlarging a drawing: the pantograph</h2>
+<p>Artists and engineers once used a <b>pantograph</b> – a set of hinged rods – to copy a drawing at 2 or 3 times its size. Its secret: a fixed pivot O, and every point P of the drawing is sent to the point P′ on the ray OP with OP′ = k × OP. Triangles OPQ and OP′Q′ then have a common angle at O and two sides scaled by k – the "third way" of this chapter – so every length of the copy is k times the original. Your textbook's GeoGebra tool "Enlarge from Point" does exactly this.</p>
+<div class="lab">
+  <div class="lab-title">🖐️ Enlarge from a point – drag the orange tracing point P</div>
+  <svg id="pantoSvg" viewBox="0 0 800 340" role="img" aria-label="A shape and its enlargement from a pivot point"></svg>
+  <div class="controls"><label>Scale factor k <input id="pantoK" type="range" min="1" max="3" step="0.1" value="2" data-fmt="{v}"><output></output></label></div>
+  <div class="readout" id="pantoOut"></div>
+</div>
+<div class="exam"><b>In the exam this looks like:</b> "The lines joining a point P to the vertices of a triangle are extended to 1½ times their length. Prove the new triangle's sides are 1½ times the old." (Exercise 3, question 3.)</div>
+
+<h2>9. Scale models: building a 1 : 50 house</h2>
+<p>Architects build models before they build houses. A scale of <b>1 : 50</b> means every real length is divided by 50 (equivalently the scale factor is 1/50). Because all lengths shrink by the same factor, every triangle in the roof of the model has the same angles as the real roof – the model looks right.</p>
+<div class="lab">
+  <div class="lab-title">🏠 Real house → model</div>
+  <svg id="houseSvg" viewBox="0 0 800 300" role="img" aria-label="A house and its scale model"></svg>
+  <div class="controls"><label>Scale 1 : <input id="houseN" type="range" min="20" max="100" step="5" value="50"><output></output></label></div>
+  <div class="readout" id="houseOut"></div>
+</div>
+<div class="exam"><b>In the exam this looks like:</b> "A model of a building is made to the scale 1 : 50. The model's door is 4 cm tall. Find the real door height." → 4 × 50 = 200 cm = 2 m.</div>
+
+<h2>10. Try these word problems</h2>
+<div id="w1"></div>
+<div id="w2"></div>
+<div id="w3"></div>
+<div id="w4"></div>
+<div id="w5"></div>
+
+<div class="callout"><div class="title">🧭 The recipe for every application</div>
+<ol style="margin:0">
+<li>Draw the two triangles. Mark the <b>right angles</b> and the <b>equal angle</b> (shared, vertically opposite, alternate, or from parallel sun-rays).</li>
+<li>Pair the sides that face equal angles (or pair by size: short ↔ short, long ↔ long).</li>
+<li>Write one ratio equation: <span class="math">unknown / partner = known / partner</span>.</li>
+<li>Cross-multiply and write the answer with its unit.</li>
+</ol></div>
+<p>Next: <a href="12_summary_revision.html">Summary, formula sheet and quick quiz ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>
+/* ===== Similar Triangles – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = 'similar_triangles_ch6_progress';
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">📐 <span>Similar Triangles · Class 9</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+const {P, add, sub, scale, lerpPt, dist, fmt, polygon, seg, text, sideLabel, angleArc, rightMark, dot, multiText, dim, circle} = K;
+
+function person(svg, foot, hPx, cls){ const neck = P(foot.x, foot.y - hPx + 14); K.seg(svg, foot, P(foot.x, foot.y - hPx*0.45), {class:cls}); K.seg(svg, P(foot.x-9, foot.y), P(foot.x, foot.y - hPx*0.45), {class:cls}); K.seg(svg, P(foot.x+9, foot.y), P(foot.x, foot.y - hPx*0.45), {class:cls}); K.seg(svg, P(foot.x, foot.y - hPx*0.45), neck, {class:cls}); K.seg(svg, P(foot.x-10, foot.y - hPx*0.6), P(foot.x+10, foot.y - hPx*0.6), {class:cls}); K.circle(svg, P(foot.x, foot.y - hPx + 7), 7, {class:cls}); }
+function tree(svg, base, hPx){ K.seg(svg, base, P(base.x, base.y - hPx + 20), {class:'ln-green thick'}); K.circle(svg, P(base.x, base.y - hPx + 24), 24, {class:'fill-green', stroke:'var(--green)', 'stroke-width':2}); K.circle(svg, P(base.x-16, base.y - hPx + 40), 16, {class:'fill-green', stroke:'var(--green)', 'stroke-width':2}); K.circle(svg, P(base.x+16, base.y - hPx + 40), 16, {class:'fill-green', stroke:'var(--green)', 'stroke-width':2}); }
+
+/* 1. shadows */
+(function(){
+  const svg = document.getElementById('shadowSvg'), out = document.getElementById('shadowOut');
+  const ppm = 16, gy = 290, treeX = 700, stickX = 300, H = 7.2;
+  let theta = 40, s = 1.2;
+  function draw(){ K.clear(svg);
+    const tanT = Math.tan(K.rad(theta)); const treeSh = H / tanT, stickSh = s / tanT;
+    const sun = P(750, 44); K.circle(svg, sun, 16, {class:'sun', stroke:'none'}); for (let a=0;a<360;a+=45){ K.seg(svg, K.polar(sun,22,a), K.polar(sun,30,a), {class:'ln-amber'}); }
+    K.seg(svg, P(30, gy), P(780, gy), {class:'ground'});
+    const tb = P(treeX, gy), tt = P(treeX, gy - H*ppm), ts = P(treeX - treeSh*ppm, gy);
+    const sb = P(stickX, gy), st = P(stickX, gy - s*ppm), ss = P(stickX - stickSh*ppm, gy);
+    K.seg(svg, ts, tb, {class:'ln-muted', 'stroke-width':6, opacity:.45}); K.seg(svg, ss, sb, {class:'ln-muted', 'stroke-width':6, opacity:.45});
+    polygon(svg, [ts, tb, tt], {class:'tri-big', 'fill-opacity':.35}); polygon(svg, [ss, sb, st], {class:'tri-small', 'fill-opacity':.5});
+    tree(svg, tb, H*ppm); K.seg(svg, sb, st, {class:'ln-amber thick'});
+    K.seg(svg, tt, ts, {class:'ln-amber dash'}); K.seg(svg, st, ss, {class:'ln-amber dash'});
+    angleArc(svg, ts, tb, tt, 26, {label: theta+'°'}); angleArc(svg, ss, sb, st, 18, {label: theta+'°'});
+    rightMark(svg, tb, ts, tt); rightMark(svg, sb, ss, st);
+    dim(svg, ts, tb, fmt(treeSh,1)+' m shadow', 22); dim(svg, ss, sb, fmt(stickSh,1)+' m', 22);
+    text(svg, P(stickX-6, st.y - 14), 'stick '+fmt(s,1)+' m', {class:'lbl amber', 'text-anchor':'end'}); text(svg, P(treeX+52, (tt.y+tb.y)/2), 'tree = ?', {class:'lbl green'});
+    text(svg, P(120, 60), 'Sun rays are parallel ⇒ same angle at both shadow tips', {class:'lbl sm muted', 'text-anchor':'start'});
+    out.innerHTML = `stick height ÷ stick shadow = ${fmt(s,1)} ÷ ${fmt(stickSh,2)} = ${fmt(s/stickSh,3)}\ntree height ÷ tree shadow must be the same number\n⇒ tree height = ${fmt(s,1)} × ${fmt(treeSh,2)} ÷ ${fmt(stickSh,2)} = <b>${fmt(s*treeSh/stickSh,1)} m</b>`;
+  }
+  K.slider('#sunAng', v => { theta = v; draw(); }, 0); K.slider('#stickH', v => { s = v; draw(); }, 1);
+})();
+
+/* 2. mirror */
+(function(){
+  const svg = document.getElementById('mirrorSvg'), out = document.getElementById('mirrorOut');
+  const ppm = 30, gy = 250, treeX = 690, H = 6, h = 1.5;
+  function draw(D){ K.clear(svg);
+    const d = h * D / H; const mx = treeX - D*ppm, px = mx - d*ppm;
+    K.seg(svg, P(30, gy), P(780, gy), {class:'ground'});
+    const M = P(mx, gy), T = P(treeX, gy - H*ppm), E = P(px, gy - h*ppm);
+    polygon(svg, [M, P(treeX, gy), T], {class:'tri-big', 'fill-opacity':.35}); polygon(svg, [M, P(px, gy), E], {class:'tri-small', 'fill-opacity':.5});
+    tree(svg, P(treeX, gy), H*ppm); person(svg, P(px, gy), h*ppm, 'ln-amber');
+    K.seg(svg, P(mx-12, gy), P(mx+12, gy), {class:'ln-purple', 'stroke-width':6}); text(svg, P(mx, gy+22), 'mirror', {class:'lbl sm purple'});
+    K.seg(svg, E, M, {class:'ln-amber dash'}); K.seg(svg, M, T, {class:'ln-amber dash'});
+    angleArc(svg, M, P(px, gy), E, 22, {label:'α'}); angleArc(svg, M, P(treeX, gy), T, 22, {label:'α'});
+    dim(svg, P(px, gy), M, 'd = '+fmt(d,2)+' m', 30); dim(svg, M, P(treeX, gy), 'D = '+fmt(D,1)+' m', 30);
+    text(svg, P(px-18, E.y-4), 'eye 1.5 m', {class:'lbl sm amber', 'text-anchor':'end'}); text(svg, P(treeX+48, (T.y+gy)/2), 'H = ?', {class:'lbl green'});
+    out.innerHTML = `Same angles at the mirror (α = α) and right angles at the feet ⇒ same ratio\nH ÷ D = 1.5 ÷ d  ⇒  H = 1.5 × ${fmt(D,1)} ÷ ${fmt(d,2)} = <b>${fmt(h*D/d,1)} m</b>`;
+  }
+  K.slider('#mirrorD', draw, 1);
+})();
+
+/* 3. map zoom */
+(function(){
+  const svg = document.getElementById('mapSvg'), out = document.getElementById('mapOut');
+  const base = [P(-30,-90), P(-30,30), P(120,60)]; // Aluva, Kakkanad, Fort Kochi (sketch, map cm at zoom 1 : side lengths 2.1, 2.6, 4 approx)
+  const names = ['Aluva','Kakkanad','Fort Kochi']; const kmPerCm = 5; const pxPerCm = 57;
+  const cm0 = [dist(base[0],base[1])/pxPerCm, dist(base[1],base[2])/pxPerCm, dist(base[2],base[0])/pxPerCm];
+  function draw(z){ K.clear(svg);
+    const c = P(300, 190); const tri = base.map(p => add(c, scale(p, z)));
+    // water on the left
+    K.el('rect', {x:0, y:0, width:800, height:340, class:'fill-blue', opacity:.25}, svg);
+    K.el('rect', {x:0, y:0, width:800, height:340, fill:'var(--svgbg)', opacity:0}, svg);
+    polygon(svg, tri, {class:'tri-amber', 'fill-opacity':.5});
+    tri.forEach((p,i)=>{ dot(svg, p, {class:'pt red'}); text(svg, P(p.x + (i===2?60:-48), p.y - (i===0?12:0) + (i===1?16:0)), names[i], {class:'lbl'}); });
+    const km = cm0.map(v => v*kmPerCm);
+    sideLabel(svg, tri[0], tri[1], fmt(cm0[0]*z,1)+' cm', -20, {class:'lbl sm amber'}); sideLabel(svg, tri[1], tri[2], fmt(cm0[1]*z,1)+' cm', 18, {class:'lbl sm amber'}); sideLabel(svg, tri[2], tri[0], fmt(cm0[2]*z,1)+' cm', -18, {class:'lbl sm amber'});
+    angleArc(svg, tri[0], tri[1], tri[2], 16, {cls:'blue'}); angleArc(svg, tri[1], tri[2], tri[0], 16, {cls:'purple'}); angleArc(svg, tri[2], tri[0], tri[1], 16, {cls:'green'});
+    // scale bar (1 cm of map at current zoom)
+    const bar = pxPerCm; K.seg(svg, P(560, 300), P(560+bar, 300), {class:'ln thick'}); K.seg(svg, P(560, 292), P(560,308), {class:'ln'}); K.seg(svg, P(560+bar,292), P(560+bar,308), {class:'ln'});
+    text(svg, P(560+bar/2, 322), '1 cm = '+fmt(kmPerCm/z,2)+' km', {class:'lbl sm'});
+    multiText(svg, P(640, 60), ['Scale  1 : '+Math.round(500000/z).toLocaleString('en-IN'), 'zoom ×'+fmt(z,2)], {class:'lbl'}, 22);
+    out.innerHTML = `Map lengths (cm):  ${fmt(cm0[0]*z,2)}, ${fmt(cm0[1]*z,2)}, ${fmt(cm0[2]*z,2)}  – all multiplied by ${fmt(z,2)}\nReal distances (km): ${fmt(km[0],1)}, ${fmt(km[1],1)}, ${fmt(km[2],1)}  – unchanged (map cm × ${fmt(kmPerCm/z,2)} km/cm)\nAngles at the three places: unchanged ⇒ the map at every zoom is a similar triangle`;
+  }
+  K.slider('#mapZoom', draw, 2);
+})();
+
+/* 4. projector */
+(function(){
+  const svg = document.getElementById('projSvg'), out = document.getElementById('projOut');
+  const lamp = P(60,150), slideX = 160, hs = 12; // slide half-height px ; lamp-slide 100 px = 10 cm
+  function draw(d){ K.clear(svg);
+    const sx = 160 + (d-100)*1.8 + 40;  // screen x (drawing)
+    const half = hs * (sx - lamp.x) / (slideX - lamp.x);
+    polygon(svg, [lamp, P(sx, 150-half), P(sx, 150+half)], {class:'tri-big', 'fill-opacity':.2});
+    K.seg(svg, lamp, P(sx, 150-half), {class:'ln-amber'}); K.seg(svg, lamp, P(sx, 150+half), {class:'ln-amber'}); K.seg(svg, lamp, P(sx, 150), {class:'ln-muted dash'});
+    K.seg(svg, P(slideX, 150-hs), P(slideX, 150+hs), {class:'ln-green', 'stroke-width':6}); K.seg(svg, P(sx, 150-half), P(sx, 150+half), {class:'ln-blue', 'stroke-width':6});
+    K.circle(svg, lamp, 10, {class:'sun', stroke:'none'}); text(svg, P(lamp.x, 185), 'lamp', {class:'lbl sm'});
+    text(svg, P(slideX, 150-hs-14), 'slide 2 cm', {class:'lbl sm green'}); text(svg, P(sx, 150-half-14), 'image '+fmt(2*d/10,0)+' cm', {class:'lbl sm blue'});
+    dim(svg, P(lamp.x, 240), P(slideX, 240), '10 cm', 0); dim(svg, P(lamp.x, 270), P(sx, 270), d+' cm', 0);
+    text(svg, P(sx+10, 150), 'screen', {class:'lbl sm', 'text-anchor':'start'});
+    out.innerHTML = `image ÷ slide = screen distance ÷ slide distance = ${d} ÷ 10 = ${fmt(d/10,1)}\nimage height = 2 × ${fmt(d/10,1)} = <b>${fmt(2*d/10,0)} cm</b>`;
+  }
+  K.slider('#projD', draw, 0);
+})();
+
+/* 4b. pinhole */
+(function(){
+  const svg = document.getElementById('pinSvg'), out = document.getElementById('pinOut');
+  const hole = P(520, 140), L = 10, Hc = 30; const ppcm = 2.2;
+  function draw(D){ K.clear(svg);
+    const ox = hole.x - D*ppcm; const objTop = P(ox, 140 - Hc*ppcm/2), objBot = P(ox, 140 + Hc*ppcm/2);
+    const hi = Hc * L / D; const ix = hole.x + L*ppcm*3; const imgTop = P(ix, 140 + hi*ppcm*3/2), imgBot = P(ix, 140 - hi*ppcm*3/2);
+    K.el('rect', {x: hole.x, y: 60, width: L*ppcm*3, height:160, class:'fill-amber', stroke:'var(--accent)', 'stroke-width':2}, svg);
+    K.seg(svg, objTop, imgTop, {class:'ln-amber dash'}); K.seg(svg, objBot, imgBot, {class:'ln-amber dash'});
+    K.seg(svg, objBot, objTop, {class:'ln-green', 'stroke-width':7}); K.circle(svg, P(ox, objTop.y-6), 6, {class:'sun', stroke:'none'});
+    K.seg(svg, imgBot, imgTop, {class:'ln-blue', 'stroke-width':6}); K.circle(svg, P(ix, imgTop.y+6), 5, {class:'sun', stroke:'none'});
+    dot(svg, hole, {class:'pt red'}); text(svg, P(hole.x-12, 52), 'pinhole', {class:'lbl sm red', 'text-anchor':'end'});
+    angleArc(svg, hole, objTop, objBot, 18, {label:null}); angleArc(svg, hole, imgTop, imgBot, 18, {label:null});
+    text(svg, P(ox, objBot.y+20), 'candle 30 cm', {class:'lbl sm green'}); text(svg, P(ix, imgBot.y-14), 'image '+fmt(hi,1)+' cm', {class:'lbl sm blue'});
+    dim(svg, P(ox, 240), P(hole.x, 240), 'D = '+D+' cm', 0); dim(svg, P(hole.x, 22), P(ix, 22), '10 cm', 0);
+    out.innerHTML = `image ÷ 30 = 10 ÷ ${D}  ⇒  image = 30 × 10 ÷ ${D} = <b>${fmt(hi,2)} cm</b> (upside-down)`;
+  }
+  K.slider('#pinD', draw, 0);
+})();
+
+/* 5. ladder */
+(function(){
+  const svg = document.getElementById('ladderSvg'), out = document.getElementById('ladderOut');
+  const ppm = 58, gy = 300, wallX = 540; const F = P(wallX - 3*ppm, gy), T = P(wallX, gy - 4*ppm);
+  function draw(t){ K.clear(svg);
+    const Q = lerpPt(F, T, t/5); const Qf = P(Q.x, gy);
+    K.seg(svg, P(40, gy), P(760, gy), {class:'ground'}); K.seg(svg, P(wallX, 30), P(wallX, gy), {class:'ln thick'});
+    polygon(svg, [F, P(wallX, gy), T], {class:'tri-big', 'fill-opacity':.25}); polygon(svg, [F, Qf, Q], {class:'tri-small', 'fill-opacity':.6});
+    K.seg(svg, F, T, {class:'ln-amber', 'stroke-width':7}); for (let i=1;i<10;i++){ const p = lerpPt(F,T,i/10); K.seg(svg, P(p.x-7,p.y-5), P(p.x+7,p.y+5), {class:'ln-amber'}); }
+    K.seg(svg, Q, Qf, {class:'ln-green dash'}); person(svg, P(Q.x, Q.y+2), 40, 'ln-red');
+    rightMark(svg, P(wallX, gy), F, T); rightMark(svg, Qf, F, Q); angleArc(svg, F, P(wallX,gy), T, 34, {label:'θ'});
+    dim(svg, F, P(wallX, gy), '3 m', 46); dim(svg, P(wallX, gy), T, '4 m', -30); sideLabel(svg, F, T, '5 m ladder', -22, {class:'lbl amber'});
+    if (t > 0.3){ dim(svg, F, Qf, fmt(3*t/5,2)+' m', 18); dim(svg, Qf, Q, fmt(4*t/5,2)+' m', 22); }
+    out.innerHTML = `Climbed t = ${fmt(t,1)} m along the ladder. Small and big triangles share angle θ and a right angle ⇒ same ratios\nheight ÷ t = 4 ÷ 5  ⇒  height = ${fmt(t,1)} × 4 ÷ 5 = <b>${fmt(4*t/5,2)} m</b>;   horizontal distance from the foot = ${fmt(t,1)} × 3 ÷ 5 = ${fmt(3*t/5,2)} m`;
+  }
+  K.slider('#ladderT', draw, 1);
+})();
+
+/* 6. river stepper */
+(function(){
+  const A = P(300,200), T = P(300,72), B = P(460,200), C = P(540,200), D = P(540,264);
+  const steps = [
+    'You want the width of the river without crossing it. Stand at <b>A</b> on the near bank, directly opposite a tree <b>T</b> on the far bank (so AT is at right angles to the bank).',
+    'Walk <b>20 m</b> along the bank to <b>B</b> and plant a stick there.',
+    'Walk <b>10 m</b> more along the bank to <b>C</b>.',
+    'At C turn 90° and walk <em>away</em> from the river until the stick at B and the tree T are in one line. That point is <b>D</b>. Measure CD = <b>8 m</b>.',
+    'Look at ΔABT and ΔCBD: right angles at A and C, and the angles at B are equal (vertically opposite). Same angles ⇒ sides in the same ratio.',
+    'AT faces the angle at B in the first triangle, CD faces it in the second: <b>AT ÷ CD = AB ÷ CB</b> ⇒ AT = 8 × 20 ÷ 10 = <b>16 m</b>. The river is 16 m wide.'
+  ];
+  new K.Stepper('#riverLab', {steps, draw(svg, i, t){
+    K.el('rect', {x:0, y:72, width:800, height:128, class:'fill-blue', opacity:.6}, svg);
+    for (let x=40;x<800;x+=90){ K.el('path', {d:`M${x},136 q10,-8 20,0 t20,0`, class:'ln-blue thin', opacity:.6}, svg); }
+    K.seg(svg, P(0,72), P(800,72), {class:'ln-muted'}); K.seg(svg, P(0,200), P(800,200), {class:'ln-muted'});
+    text(svg, P(80, 100), 'far bank', {class:'lbl sm muted'}); text(svg, P(80, 224), 'near bank', {class:'lbl sm muted'});
+    tree(svg, P(T.x, T.y+8), 60); text(svg, P(T.x+26, T.y-6), 'T', {class:'lbl big'});
+    dot(svg, A); text(svg, P(A.x-16, A.y+16), 'A', {class:'lbl big'});
+    if (i >= 0) K.seg(svg, A, T, {class:'ln-red dash'});
+    if (i === 0) text(svg, P(A.x-40, 136), 'width = ?', {class:'lbl red'});
+    if (i >= 1){ const e = i===1 ? lerpPt(A,B,t) : B; K.seg(svg, A, e, {class:'ln thick'}); if (i>1||t>.9){ dot(svg, B); text(svg, P(B.x, B.y+18), 'B', {class:'lbl big'}); K.seg(svg, B, P(B.x, B.y-26), {class:'ln-amber', 'stroke-width':4}); dim(svg, A, B, '20 m', 44); } }
+    if (i >= 2){ const e = i===2 ? lerpPt(B,C,t) : C; K.seg(svg, B, e, {class:'ln thick'}); if (i>2||t>.9){ dot(svg, C); text(svg, P(C.x+16, C.y-12), 'C', {class:'lbl big'}); dim(svg, B, C, '10 m', 44); } }
+    if (i >= 3){ const e = i===3 ? lerpPt(C,D,t) : D; K.seg(svg, C, e, {class:'ln thick'}); rightMark(svg, C, B, D); if (i>3||t>.9){ dot(svg, D); text(svg, P(D.x+16, D.y+8), 'D', {class:'lbl big'}); K.seg(svg, D, T, {class:'ln-amber dash'}); dim(svg, C, D, '8 m', -30); } }
+    if (i >= 4){ polygon(svg, [A,B,T], {class:'tri-big', 'fill-opacity':.45}); polygon(svg, [C,B,D], {class:'tri-small', 'fill-opacity':.6}); rightMark(svg, A, B, T); rightMark(svg, C, B, D); angleArc(svg, B, A, T, 20, {label:'β'}); angleArc(svg, B, C, D, 20, {label:'β'}); }
+    if (i === 5) multiText(svg, P(660, 110), ['AT / CD = AB / CB', 'AT / 8 = 20 / 10', 'AT = 16 m'], {class:'lbl big'}, 26);
+  }});
+})();
+
+/* 7. eclipse */
+(function(){
+  const svg = document.getElementById('sunSvg'), out = document.getElementById('sunOut');
+  const eye = P(40,150), sunC = P(700,150), Rs = 90, Rm = 30;
+  function draw(x){ K.clear(svg);
+    const moon = P(x,150);
+    const ratS = Rs/(sunC.x-eye.x), ratM = Rm/(moon.x-eye.x);
+    K.circle(svg, sunC, Rs, {class:'sun', stroke:'var(--accent)'}); text(svg, P(sunC.x, sunC.y), 'Sun', {class:'lbl big'});
+    // sight lines to the sun edge (ideal) and to the moon edge
+    const top = P(sunC.x, sunC.y-Rs), bot = P(sunC.x, sunC.y+Rs);
+    K.seg(svg, eye, top, {class:'ln-amber dash'}); K.seg(svg, eye, bot, {class:'ln-amber dash'});
+    K.seg(svg, eye, P(760, 150 - ratM*720), {class:'ln-purple'}); K.seg(svg, eye, P(760, 150 + ratM*720), {class:'ln-purple'});
+    K.circle(svg, moon, Rm, {fill:'var(--muted)', stroke:'var(--text)'}); text(svg, P(moon.x, moon.y+Rm+16), 'Moon', {class:'lbl sm'});
+    K.circle(svg, eye, 7, {class:'pt red'}); text(svg, P(eye.x, 178), 'your eye', {class:'lbl sm red'});
+    const same = Math.abs(ratM-ratS) < 0.004;
+    text(svg, P(400, 40), same ? '✔ Moon exactly covers the Sun – total eclipse!' : (ratM > ratS ? 'Moon looks bigger than the Sun' : 'Moon looks smaller – a ring of Sun shows'), {class:'lbl big '+(same?'green':'muted')});
+    out.innerHTML = `Angle to Moon's edge: Moon radius ÷ distance = ${Rm} ÷ ${moon.x-eye.x} = ${fmt(ratM,3)}\nAngle to Sun's edge:  Sun radius ÷ distance = ${Rs} ÷ ${sunC.x-eye.x} = ${fmt(ratS,3)}\nSame ratio ⇒ same angle at the eye ⇒ the two triangles (eye–centre–edge) are similar and the discs look the same size.`;
+  }
+  K.slider('#moonX', draw, 0);
+})();
+
+/* 8. pantograph */
+(function(){
+  const svg = document.getElementById('pantoSvg'), out = document.getElementById('pantoOut');
+  const O = P(60,180); const shape = [P(170,215), P(240,215), P(240,170), P(205,135), P(170,170)];
+  const pts = [P(240,170)]; let k = 2;
+  function draw(){ K.clear(svg);
+    const big = shape.map(p => add(O, scale(sub(p,O), k)));
+    shape.forEach((p,i)=> K.seg(svg, O, big[i], {class:'ln-muted thin dash'}));
+    polygon(svg, big, {class:'tri-big', 'fill-opacity':.3}); polygon(svg, shape, {class:'tri-small'});
+    const Pp = pts[0]; const P2 = add(O, scale(sub(Pp,O), k));
+    K.seg(svg, O, P2, {class:'ln-red'}); dot(svg, O, {class:'pt red'}); text(svg, P(O.x-4, O.y-16), 'O (pivot)', {class:'lbl'});
+    dot(svg, Pp, {class:'pt drag'}); text(svg, P(Pp.x, Pp.y-16), 'P', {class:'lbl big'}); dot(svg, P2, {class:'pt blue'}); text(svg, P(P2.x, P2.y-16), 'P′', {class:'lbl big blue'});
+    const d1 = dist(O,Pp)/40, d2 = dist(O,P2)/40;
+    text(svg, P(560, 40), 'OP′ = k × OP', {class:'lbl big'});
+    out.innerHTML = `OP = ${fmt(d1,2)} units,  OP′ = ${fmt(d2,2)} units,  OP′ ÷ OP = ${fmt(d2/d1,2)} = k\nEvery side of the blue copy = ${fmt(k,1)} × the matching side of the green original; all angles unchanged.`;
+  }
+  K.draggable(svg, () => pts, draw); K.slider('#pantoK', v => { k = v; draw(); }, 1);
+})();
+
+/* 9. house model */
+(function(){
+  const svg = document.getElementById('houseSvg'), out = document.getElementById('houseOut');
+  function house(svg, x0, y0, s){ // s = px per metre; house 10 m wide, walls 3 m, peak 5 m
+    const w=10*s, hw=3*s, hp=5*s;
+    polygon(svg, [P(x0,y0), P(x0+w,y0), P(x0+w,y0-hw), P(x0,y0-hw)], {class:'tri-amber', 'fill-opacity':.5});
+    polygon(svg, [P(x0-0.5*s,y0-hw), P(x0+w+0.5*s,y0-hw), P(x0+w/2,y0-hp)], {class:'tri-red', 'fill-opacity':.5});
+    K.el('rect', {x:x0+4*s, y:y0-2*s, width:1*s, height:2*s, class:'fill-blue', stroke:'var(--blue)'}, svg);
+    K.el('rect', {x:x0+1.2*s, y:y0-2.4*s, width:1.2*s, height:1*s, class:'fill-blue', stroke:'var(--blue)'}, svg);
+    K.el('rect', {x:x0+7.2*s, y:y0-2.4*s, width:1.2*s, height:1*s, class:'fill-blue', stroke:'var(--blue)'}, svg);
+  }
+  function draw(n){ K.clear(svg);
+    K.seg(svg, P(20,250), P(780,250), {class:'ground'});
+    house(svg, 60, 250, 30); text(svg, P(210, 280), 'real house (10 m wide, roof peak 5 m)', {class:'lbl sm'});
+    const s = 500/n; house(svg, 560, 250, s); text(svg, P(560+5*s, 280), 'model 1 : '+n+' (drawn larger than true size)', {class:'lbl sm'});
+    dim(svg, P(60,250), P(360,250), '10 m', -232); dim(svg, P(560,250), P(560+10*s,250), fmt(1000/n,1)+' cm', -(5*s+16));
+    out.innerHTML = `Scale 1 : ${n}  ⇒ every real length ÷ ${n}\nwidth 10 m = 1000 cm → ${fmt(1000/n,1)} cm;   wall 3 m → ${fmt(300/n,1)} cm;   roof peak 5 m → ${fmt(500/n,1)} cm;   door 2 m → ${fmt(200/n,1)} cm;   window 1.2 m → ${fmt(120/n,1)} cm\nRoof triangle angles: unchanged`;
+  }
+  K.slider('#houseN', draw, 0);
+})();
+
+/* quizzes */
+K.numq('#w1', {q:'A 1.2 m stick casts a shadow 0.8 m long. At the same time a tree casts a shadow 6 m long. Find the height of the tree (m).', answer:9, tol:0.01, unit:'m', explain:'tree = 1.2 × 6 ÷ 0.8 = 9 m.', hint:'height ÷ shadow is the same for both: tree ÷ 6 = 1.2 ÷ 0.8.'});
+K.numq('#w2', {q:'A mirror lies 16 m from a building. A student whose eyes are 1.5 m above the ground sees the top of the building in the mirror when standing 2 m from it. Height of the building (m)?', answer:12, tol:0.01, unit:'m', explain:'H ÷ 16 = 1.5 ÷ 2 ⇒ H = 12 m.', hint:'Equal angles at the mirror: H ÷ 16 = 1.5 ÷ 2.'});
+K.numq('#w3', {q:'On a map of scale 1 cm : 5 km, two towns are 3.6 cm apart. Real distance (km)?', answer:18, tol:0.01, unit:'km', explain:'3.6 × 5 = 18 km.', hint:'Multiply the map length by the number of km per cm.'});
+K.numq('#w4', {q:'A slide 2 cm tall is 10 cm from a projector lamp. How tall (cm) is the picture on a screen 300 cm from the lamp?', answer:60, tol:0.01, unit:'cm', explain:'image ÷ 2 = 300 ÷ 10 ⇒ image = 60 cm.', hint:'Scale factor = 300 ÷ 10 = 30.'});
+K.numq('#w5', {q:'A 6 m ladder reaches 5.5 m up a wall. A person has climbed 3 m along the ladder. How high (m) above the ground are they?', answer:2.75, tol:0.01, unit:'m', explain:'height ÷ 3 = 5.5 ÷ 6 ⇒ height = 2.75 m.', hint:'The small triangle (person) and the big one (whole ladder) have the same angles.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

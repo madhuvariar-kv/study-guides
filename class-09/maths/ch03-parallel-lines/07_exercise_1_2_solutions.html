@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exercises 1 &amp; 2 · Animated Solutions – Parallel Lines</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+
+</style>
+<style>
+.qbadge{display:inline-block;background:var(--primary);color:#fff;font-weight:700;border-radius:8px;padding:.1rem .55rem;margin-right:.45rem;font-size:.9rem;vertical-align:middle}
+.qtext{font-weight:600}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.6rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+</style>
+</head>
+<body data-page="07_exercise_1_2_solutions">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 3 · Exercises 1 &amp; 2</span><span class="chip amber">Textbook pages 39 and 46</span>
+<h1>Exercises 1 &amp; 2 – Animated Solutions <span class="ml">സമഭാഗം · അസമഭാഗങ്ങൾ</span></h1>
+<p class="lead">Six constructions and one proof. Every construction here starts the same way: draw the perimeter as one straight line, cut it into the right parts with a slanted ray and parallels, then swing compass arcs. Read each question, try it on paper (use the hint if you are stuck), then press <b>Next ▶</b> and draw along.</p>
+
+<div class="callout book"><div class="title">📖 Tools you will use</div>
+<ul style="margin:0">
+<li><b>Equal parts:</b> ray from one end, n equal compass steps, join the last mark to the other end, parallels through the other marks (page 5).</li>
+<li><b>Parts in a ratio m : n:</b> the same, with steps of m units and n units (page 6, Key idea 4).</li>
+<li><b>Triangle from three sides:</b> one side on the line, arcs of the other two lengths from its ends (page 4). <b>Square:</b> perpendiculars at both ends, arcs of the side length. <b>Regular hexagon:</b> side = radius of its circle; step the compass six times round the circle.</li>
+<li>Pieces: 11 ÷ 3 = 3⅔, 15 ÷ 4 = 3¾, 20 ÷ 6 = 3⅓, 7½ × 3/7 = 3 3/14, 13 × 5/12 = 5 5/12 … (mixed numbers, page 3).</li>
+</ul></div>
+
+<h2>Exercise 1 · Question 1 – Equilateral triangle, perimeter 11 cm</h2>
+<div class="card"><span class="qbadge">Q1</span><span class="qtext">Draw an equilateral triangle of perimeter 11 cm.</span>
+<p class="ml" style="margin:.4rem 0 .2rem">(11 സെന്റിമീറ്റർ ചുറ്റളവുള്ള സമഭുജത്രികോണം വരയ്ക്കുക.)</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Each side is 11 ÷ 3 = 3⅔ cm. You cannot measure that with a ruler, but you can divide an 11 cm line into three equal parts with parallels and use one part as the side.</p></div></div>
+<div class="lab" id="e1q1"><div class="lab-title">🎬 Solution animation</div><svg viewBox="0 0 800 400" role="img" aria-label="Constructing an equilateral triangle of perimeter 11 cm"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> side = 11 ÷ 3 = 3⅔ cm ≈ 3.67 cm. Draw AB = 11 cm, a ray from A with three equal steps, join the last mark to B, parallels through the other two marks; AP is 3⅔ cm. Arcs of radius AP from A and P meet at C; triangle APC is equilateral with perimeter 11 cm.</div></div>
+
+<h2>Exercise 1 · Question 2 – Square, perimeter 15 cm</h2>
+<div class="card"><span class="qbadge">Q2</span><span class="qtext">Draw a square of perimeter 15 cm.</span>
+<div class="reveal" data-btn="💡 Show a hint"><p>Side = 15 ÷ 4 = 3¾ cm. Divide a 15 cm line into four equal parts (four equal steps on the ray) and build the square on the first part.</p></div></div>
+<div class="lab" id="e1q2"><div class="lab-title">🎬 Solution animation</div><svg viewBox="0 0 800 360" role="img" aria-label="Constructing a square of perimeter 15 cm"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> side = 15 ÷ 4 = 3¾ cm = 3.75 cm. Divide AB = 15 cm into four equal parts; AP = 3¾ cm. Draw perpendiculars at A and P, cut them with arcs of radius AP at D and C, join DC: APCD is the square, perimeter 4 × 3¾ = 15 cm.</div></div>
+
+<h2>Exercise 1 · Question 3 – Regular hexagon, perimeter 20 cm</h2>
+<div class="card"><span class="qbadge">Q3</span><span class="qtext">Draw a regular hexagon of perimeter 20 cm.</span>
+<div class="reveal" data-btn="💡 Show a hint"><p>Side = 20 ÷ 6 = 3⅓ cm. A regular hexagon is six equilateral triangles around a centre, so its side equals the radius of the circle through its corners: draw a circle of radius 3⅓ cm and step the same compass opening round it.</p></div></div>
+<div class="lab" id="e1q3"><div class="lab-title">🎬 Solution animation</div><svg viewBox="0 0 800 400" role="img" aria-label="Constructing a regular hexagon of perimeter 20 cm"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> side = 20 ÷ 6 = 3⅓ cm ≈ 3.33 cm. Divide a 20 cm line into six equal parts to get 3⅓ cm; draw a circle of that radius; with the same opening mark six points round the circle starting anywhere; join them in order. Perimeter 6 × 3⅓ = 20 cm.</div></div>
+<div class="callout think"><div class="title">💡 Why side = radius</div><p>Joining the centre of a regular hexagon to its six corners makes six triangles with angle 360° ÷ 6 = 60° at the centre and two equal sides (radii). Equal sides give equal base angles, (180° − 60°) ÷ 2 = 60° each – so each triangle is equilateral and the side of the hexagon equals the radius.</p></div>
+
+<h2>Exercise 2 · Question 1 – Rectangle, perimeter 15 cm, sides 3 : 4</h2>
+<div class="card"><span class="qbadge">Q1</span><span class="qtext">Draw a rectangle of perimeter 15 cm with breadth and length in the ratio 3 : 4.</span>
+<p class="ml" style="margin:.4rem 0 .2rem">(ചുറ്റളവ് 15 സെന്റിമീറ്ററും വീതിയും നീളവും 3 : 4 എന്ന അംശബന്ധത്തിലുമായ ചതുരം വരയ്ക്കുക.)</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Length + breadth = half the perimeter = 7½ cm. Divide a 7½ cm line in the ratio 3 : 4 (steps of 3 cm and 4 cm on the ray). The two pieces are the breadth and the length.</p></div></div>
+<div class="lab" id="e2q1"><div class="lab-title">🎬 Solution animation</div><svg viewBox="0 0 800 400" role="img" aria-label="Constructing a rectangle of perimeter 15 cm with sides in the ratio 3 to 4"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> breadth = 7½ × 3/7 = 45/14 = 3 3/14 cm ≈ 3.21 cm; length = 7½ × 4/7 = 30/7 = 4 2/7 cm ≈ 4.29 cm. Divide AB = 7½ cm in 3 : 4 at P; draw perpendiculars at P and B and cut them with arcs of radius AP; join. Check: 2(3 3/14 + 4 2/7) = 2 × 7½ = 15 cm.</div></div>
+
+<h2>Exercise 2 · Question 2 – Triangles of perimeter 13 cm</h2>
+<div class="card"><span class="qbadge">Q2</span><span class="qtext">Draw each of the following triangles with perimeter 13 cm: (i) an equilateral triangle; (ii) sides in the ratio 3 : 4 : 5; (iii) an isosceles triangle whose lateral sides are 1½ times the base.</span>
+<div class="reveal" data-btn="💡 Show a hint"><p>Straighten the perimeter into a 13 cm line and cut it in the ratio of the sides: (i) 1 : 1 : 1, (ii) 3 : 4 : 5, (iii) base : side : side = 1 : 1½ : 1½ = 2 : 3 : 3. Then keep the first piece as the base and swing arcs equal to the other two pieces.</p></div></div>
+<h3>(i) Equilateral: sides 1 : 1 : 1</h3>
+<div class="lab" id="e2q2a"><div class="lab-title">🎬 Solution animation</div><svg viewBox="0 0 800 400" role="img" aria-label="Equilateral triangle of perimeter 13 cm"></svg></div>
+<h3>(ii) Sides 3 : 4 : 5</h3>
+<div class="lab" id="e2q2b"><div class="lab-title">🎬 Solution animation</div><svg viewBox="0 0 800 400" role="img" aria-label="Triangle of perimeter 13 cm with sides 3 to 4 to 5"></svg></div>
+<h3>(iii) Isosceles, lateral sides 1½ × base: sides 2 : 3 : 3</h3>
+<div class="lab" id="e2q2c"><div class="lab-title">🎬 Solution animation</div><svg viewBox="0 0 800 400" role="img" aria-label="Isosceles triangle of perimeter 13 cm with lateral sides one and a half times the base"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> (i) side 13 ÷ 3 = 4⅓ cm. (ii) 13 × 3/12 = 3¼ cm, 13 × 4/12 = 4⅓ cm, 13 × 5/12 = 5 5/12 cm – a right triangle (3-4-5 shape), right angle between the 3¼ and 4⅓ sides. (iii) base 13 × 2/8 = 3¼ cm, lateral sides 13 × 3/8 = 4⅞ cm each (4⅞ = 1½ × 3¼ ✓). In each case divide a 13 cm line in the given ratio, keep the first piece as base and swing arcs of the other two pieces.</div></div>
+<div class="callout real"><div class="title">🌍 Why this matters</div><p>Builders are often given a total length and a ratio – a 13 m roll of fencing for a plot whose sides must be 3 : 4 : 5 (a right-angled corner for free), a frame of fixed perimeter with sides 3 : 4 for a photo. "Divide the total in the ratio, then build" is exactly what you have just practised.</p></div>
+
+<h2>Exercise 2 · Question 3 – Diagonals of a trapezium</h2>
+<div class="card"><span class="qbadge">Q3</span><span class="qtext">Prove that the diagonals of any trapezium (<span class="ml">ലംബകം</span>) cut each other in the same ratio.</span>
+<div class="reveal" data-btn="💡 Show a hint"><p>You need three parallel lines to use Key idea 4. The two parallel sides of the trapezium are two of them. Where could the third one go so that it passes through the crossing point of the diagonals?</p></div></div>
+<div class="lab" id="e2q3"><div class="lab-title">🎬 Proof animation</div><svg viewBox="0 0 800 360" role="img" aria-label="Trapezium with diagonals and a parallel through their intersection"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Proof:</b> Let ABCD be a trapezium with AB ∥ DC, and let the diagonals AC and BD meet at O. Draw through O the line parallel to AB. Now AB, this line and DC are three parallel lines, and they cut the two lines AC and BD. By Key idea 4 they cut both in the same ratio: <b>AO : OC = BO : OD</b>. ∎ (In fact both ratios equal AB : DC.)</div></div>
+<div class="lab">
+  <div class="lab-title">🖐️ Drag the corners (AB and DC stay parallel) – the two ratios stay equal</div>
+  <div class="split">
+    <svg id="trapSvg" viewBox="0 0 800 340" role="img" aria-label="Draggable trapezium with its diagonals"></svg>
+    <div><div class="readout" id="trapOut"></div><p class="hint">Move A and B along the bottom line and C and D along the top line. AO/OC and BO/OD are always the same number – and that number is AB/DC. Make AB = DC and the figure becomes a parallelogram: the diagonals bisect each other (ratio 1).</p></div>
+  </div>
+</div>
+
+<h2>Check yourself</h2>
+<div id="q1"></div>
+<div id="q2"></div>
+<div id="q3"></div>
+<div id="q4"></div>
+
+<div class="callout"><div class="title">🧭 What these exercises taught</div>
+<ul style="margin:0">
+<li>Any regular figure with a given perimeter: divide the perimeter into equal parts first (3 for a triangle, 4 for a square, 6 for a hexagon).</li>
+<li>Any figure with given perimeter and side ratio: divide the perimeter (or half of it, for a rectangle) in that ratio, then construct with arcs and perpendiculars.</li>
+<li>To prove a ratio statement, look for – or <em>draw</em> – a third parallel line, and then use "parallels cut any two lines in the same ratio".</li>
+</ul></div>
+<p>Next: <a href="08_triangle_division_midpoints.html">Sections 3 and 4 – a parallel inside a triangle, and the midpoint theorem ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Parallel Lines · Class 9", "icon": "∥", "key": "parallel_lines_ch3_progress", "pages": [["index.html", "Home"], ["01_lines_and_angles.html", "1 · Lines, Angles & Parallel Lines"], ["02_triangles_congruence_parallelograms.html", "2 · Triangles, Congruence & Parallelograms"], ["03_ratio_fractions_area.html", "3 · Ratios, Fractions & Areas of Triangles"], ["04_construction_toolkit.html", "4 · Ruler & Compass Construction Toolkit"], ["05_equal_division.html", "5 · Equal Division (Section 1)"], ["06_ratio_division.html", "6 · Division in a Ratio (Section 2)"], ["07_exercise_1_2_solutions.html", "7 · Exercises 1 & 2 – Solutions"], ["08_triangle_division_midpoints.html", "8 · Dividing a Triangle & the Midpoint Theorem (Sections 3–4)"], ["09_exercise_3_4_solutions.html", "9 · Exercises 3 & 4 – Solutions"], ["10_triangle_centres.html", "10 · Centres of a Triangle (Section 5)"], ["11_exercise_5_solutions.html", "11 · Exercise 5 – Solutions"], ["12_applications.html", "12 · Real-World Applications"], ["13_summary_revision.html", "13 · Summary & Quick Quiz"], ["14_model_test_paper.html", "14 · Model Test Paper"], ["15_model_test_solutions.html", "15 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Similar Triangles – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const f = vul[r + '/' + den] || (r + '/' + den); return (w ? w : '') + f; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+const {P, seg, text, dot, polygon, sideLabel, rightMark, angleArc, ticks, arrows, dim, multiText, intersect, polar, along, compassArc, arc, extendLine, fmt, dist, rad, deg, sub01, lerpPt, triSSS, circle} = K;
+function mixed2(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num/den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const f = vul[r + '/' + den]; return f ? (w ? w : '') + f : (w ? w + ' ' : '') + r + '/' + den; }
+
+/* AB, ray from A, compass marks at cumulative steps (cm), join last mark to B, parallels through the other marks.
+   stage: 0 ray, 1 marks, 2 join, 3 parallels + cuts. Returns {marks, cuts}. */
+function divideFig(svg, A, B, steps, u, rayAng, stage, t, opts={}){
+  const {lenLabel = null, markNames = null, stepLabel = true, firstStepOff = -13} = opts;
+  seg(svg, A, B, {class:'ln thick'}); dot(svg, A); dot(svg, B); text(svg, P(A.x - 16, A.y + 18), 'A', {class:'lbl big'}); text(svg, P(B.x + 16, B.y + 18), 'B', {class:'lbl big'});
+  if (lenLabel) sideLabel(svg, A, B, lenLabel, 22, {class:'lbl blue'});
+  const total = steps.reduce((a, b) => a + b, 0); const rayEnd = polar(A, total*u + 36, rayAng);
+  seg(svg, A, stage === 0 ? lerpPt(A, rayEnd, t) : rayEnd, {class:'ln-muted'});
+  const marks = []; let acc = 0; steps.forEach(s => { acc += s; marks.push(polar(A, acc*u, rayAng)); });
+  if (stage >= 1){ marks.forEach((m, k) => { const o = stage === 1 ? sub01(t, k/steps.length, (k+1)/steps.length) : 1; const prev = k === 0 ? A : marks[k-1]; compassArc(svg, prev, steps[k]*u, rayAng, 12, {opacity:o}); dot(svg, m, {class:'pt green', opacity:o}); if (markNames) text(svg, P(m.x - 14, m.y - 14), markNames[k], {class:'lbl green', opacity:o}); if (stepLabel) sideLabel(svg, prev, m, steps[k] + ' cm', k === 0 ? firstStepOff : -13, {class:'lbl sm green', opacity:o}); }); }
+  const last = marks[marks.length-1]; const cuts = [];
+  if (stage >= 2){ const e = stage === 2 ? lerpPt(last, B, t) : B; seg(svg, last, e, {class:'ln-red thick'}); }
+  if (stage >= 3){ const d = K.sub(B, last); arrows(svg, last, B, 1, 7, {class:'ln-red'});
+    marks.slice(0, -1).forEach((m, k) => { const o = stage === 3 ? sub01(t, k/(marks.length-1), (k+1)/(marks.length-1)) : 1; const c = intersect(m, K.add(m, d), A, B); cuts.push(c); seg(svg, m, c, {class:'ln-red dash', opacity:o}); arrows(svg, m, c, 1, 7, {class:'ln-red', opacity:o}); dot(svg, c, {class:'pt red', opacity:o}); }); }
+  return {marks, cuts};
+}
+/* stage/t mapping for steppers whose step 2 does "join + parallels" in one go */
+const joinStage = (i, t, k) => i < k ? Math.min(i, 1) : i === k ? (t < .5 ? 2 : 3) : 3;
+const joinT = (i, t, k) => i === k ? (t < .5 ? t*2 : (t - .5)*2) : t;
+
+/* ---------- E1 Q1: equilateral triangle, perimeter 11 ---------- */
+(function(){
+  const u = 50; const A = P(90, 215), B = P(90 + 11*u, 215); const Pp = P(A.x + (11/3)*u, A.y);
+  const C = triSSS(dist(A, Pp), dist(A, Pp), dist(A, Pp), A, 1, false)[2];
+  const steps = [
+    'Draw AB = <b>11 cm</b> – the whole perimeter in one line. Draw a ray from A.',
+    'Three equal compass steps on the ray (3 cm each is convenient): A₁, A₂, A₃.',
+    'Join A₃ to B; through A₂ and A₁ draw parallels. They cut AB at Q and P: three equal parts.',
+    `AP = 11 ÷ 3 = <b>${mixed2(11,3)} cm</b> – the side of the triangle.`,
+    'Open the compass to AP. Arcs with centres A and P (below the line, to keep the picture clear) meet at C.',
+    `Join AC and PC. AP = PC = CA = ${mixed2(11,3)} cm: an equilateral triangle with perimeter 3 × ${mixed2(11,3)} = 11 cm ✓.`
+  ];
+  new K.Stepper('#e1q1', {steps, draw(svg, i, t){
+    const {cuts} = divideFig(svg, A, B, [3, 3, 3], u, -25, joinStage(i, t, 2), joinT(i, t, 2), {lenLabel:'11 cm', markNames:['A₁','A₂','A₃']});
+    if (i >= 2 && cuts.length === 2){ text(svg, P(cuts[0].x, cuts[0].y - 18), 'P', {class:'lbl big'}); text(svg, P(cuts[1].x, cuts[1].y - 18), 'Q', {class:'lbl big'}); }
+    if (i >= 3){ const o = i === 3 ? t : 1; [[A, Pp], [Pp, P(A.x + (22/3)*u, A.y)], [P(A.x + (22/3)*u, A.y), B]].forEach(([p, q], k) => { ticks(svg, p, q, 1, 6, {class:'ln-blue thick', opacity:o}); if (k === 0) sideLabel(svg, p, q, mixed2(11,3) + ' cm', -14, {class:'lbl sm blue', opacity:o}); }); }
+    const r = dist(A, Pp);
+    if (i >= 4){ const o = i === 4 ? t : 1; compassArc(svg, A, r, deg(Math.atan2(C.y - A.y, C.x - A.x)), 15, {class:'ln-green', opacity:o}); compassArc(svg, Pp, r, deg(Math.atan2(C.y - Pp.y, C.x - Pp.x)), 15, {class:'ln-green', opacity:o}); dot(svg, C, {class:'pt green', opacity:o}); text(svg, P(C.x, C.y + 20), 'C', {class:'lbl big', opacity:o}); }
+    if (i >= 5){ polygon(svg, [A, Pp, C], {class:'tri-small', opacity:(i === 5 ? t : 1)*.9}); sideLabel(svg, C, A, mixed2(11,3) + ' cm', -16, {class:'lbl sm green'}); sideLabel(svg, Pp, C, mixed2(11,3) + ' cm', -16, {class:'lbl sm green'}); multiText(svg, P(620, 330), ['equilateral,', 'perimeter 11 cm'], {class:'lbl big green', opacity:t}, 26); }
+  }});
+})();
+
+/* ---------- E1 Q2: square, perimeter 15 ---------- */
+(function(){
+  const u = 40; const A = P(90, 150), B = P(90 + 15*u, 150); const s = 3.75*u; const Pp = P(A.x + s, A.y), D = P(A.x, A.y + s), C = P(Pp.x, Pp.y + s);
+  const steps = [
+    'Draw AB = <b>15 cm</b> (the perimeter) and a ray from A.',
+    'Four equal compass steps on the ray (3 cm each).',
+    'Join the last mark to B; parallels through the other three marks cut AB into four equal parts at P, Q, R.',
+    `AP = 15 ÷ 4 = <b>${mixed2(15,4)} cm</b> = 3.75 cm – the side of the square.`,
+    'Draw perpendiculars at A and at P (downwards). With the compass opened to AP, cut them at D and C.',
+    `Join DC. APCD has four equal sides of ${mixed2(15,4)} cm and right angles: a square with perimeter 4 × 3¾ = 15 cm ✓.`
+  ];
+  new K.Stepper('#e1q2', {steps, draw(svg, i, t){
+    const {cuts} = divideFig(svg, A, B, [3, 3, 3, 3], u, -15, joinStage(i, t, 2), joinT(i, t, 2), {lenLabel:'15 cm', firstStepOff:-30});
+    if (i >= 2 && cuts.length === 3) ['P','Q','R'].forEach((n, k) => text(svg, P(cuts[k].x, cuts[k].y - 18), n, {class:'lbl big'}));
+    if (i >= 3){ const o = i === 3 ? t : 1; ticks(svg, A, Pp, 1, 6, {class:'ln-blue thick', opacity:o}); sideLabel(svg, A, Pp, mixed2(15,4) + ' cm', -14, {class:'lbl sm blue', opacity:o}); }
+    if (i >= 4){ const o = i === 4 ? t : 1; seg(svg, A, P(A.x, A.y + s + 22), {class:'ln-muted', opacity:o}); seg(svg, Pp, P(Pp.x, Pp.y + s + 22), {class:'ln-muted', opacity:o}); rightMark(svg, A, B, D, 10, {opacity:o}); rightMark(svg, Pp, B, C, 10, {opacity:o}); compassArc(svg, A, s, 90, 14, {class:'ln-green', opacity:o}); compassArc(svg, Pp, s, 90, 14, {class:'ln-green', opacity:o}); dot(svg, D, {class:'pt green', opacity:o}); dot(svg, C, {class:'pt green', opacity:o}); text(svg, P(D.x - 16, D.y + 12), 'D', {class:'lbl big', opacity:o}); text(svg, P(C.x + 16, C.y + 12), 'C', {class:'lbl big', opacity:o}); }
+    if (i >= 5){ polygon(svg, [A, Pp, C, D], {class:'tri-amber', opacity:(i === 5 ? t : 1)*.9}); sideLabel(svg, C, D, mixed2(15,4) + ' cm', 18, {class:'lbl amber'}); multiText(svg, P(560, 250), ['square, side 3¾ cm', 'perimeter 15 cm'], {class:'lbl big green', opacity:t}, 26); }
+  }});
+})();
+
+/* ---------- E1 Q3: regular hexagon, perimeter 20 ---------- */
+(function(){
+  const u = 28; const A = P(120, 120), B = P(120 + 20*u, 120); const r = (20/6)*u; const O = P(400, 285);
+  const hex = [0,1,2,3,4,5].map(k => polar(O, r, -150 + 60*k));
+  const steps = [
+    'Draw AB = <b>20 cm</b> (the perimeter) and a ray from A.',
+    'Six equal compass steps on the ray (2½ cm each is enough).',
+    'Join the last mark to B; parallels through the other five marks cut AB into six equal parts.',
+    `AP = 20 ÷ 6 = <b>${mixed2(20,6)} cm</b> – the side of the hexagon.`,
+    `A regular hexagon fits in a circle whose radius equals its side. Draw a circle with centre O and radius AP = ${mixed2(20,6)} cm.`,
+    'Keep the same compass opening. From any point on the circle cut off the next point, and again – six points in all (the sixth step lands back where you started).',
+    `Join the six points in order: a regular hexagon with side ${mixed2(20,6)} cm, perimeter 6 × ${mixed2(20,6)} = 20 cm ✓.`
+  ];
+  new K.Stepper('#e1q3', {steps, draw(svg, i, t){
+    const {cuts} = divideFig(svg, A, B, [2.5,2.5,2.5,2.5,2.5,2.5], u, -12, joinStage(i, t, 2), joinT(i, t, 2), {lenLabel:'20 cm', stepLabel:false});
+    if (i >= 1) sideLabel(svg, A, polar(A, 2.5*u, -12), '2½ cm', -30, {class:'lbl sm green'});
+    const Pp = P(A.x + r, A.y);
+    if (i >= 2 && cuts.length) text(svg, P(cuts[0].x, cuts[0].y - 18), 'P', {class:'lbl big'});
+    if (i >= 3){ const o = i === 3 ? t : 1; ticks(svg, A, Pp, 1, 6, {class:'ln-blue thick', opacity:o}); sideLabel(svg, A, Pp, mixed2(20,6) + ' cm', -14, {class:'lbl sm blue', opacity:o}); }
+    if (i >= 4){ const o = i === 4 ? t : 1; circle(svg, O, r, {class:'ln-muted', opacity:o}); dot(svg, O, {opacity:o}); text(svg, P(O.x + 14, O.y + 14), 'O', {class:'lbl', opacity:o}); seg(svg, O, hex[0], {class:'ln-green dash', opacity:o}); sideLabel(svg, O, hex[0], 'r = ' + mixed2(20,6) + ' cm', -14, {class:'lbl sm green', opacity:o}); }
+    if (i >= 5){ const nShow = i === 5 ? Math.max(1, Math.ceil(t*6)) : 6; for (let k = 0; k < nShow; k++){ const c = hex[k], nxt = hex[(k+1)%6]; compassArc(svg, c, r, deg(Math.atan2(nxt.y - c.y, nxt.x - c.x)), 12, {class:'ln-green'}); dot(svg, nxt, {class:'pt green'}); } dot(svg, hex[0], {class:'pt green'}); }
+    if (i >= 6){ polygon(svg, hex, {class:'tri-small', opacity:(i === 6 ? t : 1)*.9}); sideLabel(svg, hex[1], hex[2], mixed2(20,6) + ' cm', 16, {class:'lbl sm green'}); multiText(svg, P(640, 300), ['regular hexagon', 'side ' + mixed2(20,6) + ' cm', 'perimeter 20 cm'], {class:'lbl big green', opacity:t}, 26); }
+  }});
+})();
+
+/* ---------- E2 Q1: rectangle 3 : 4, perimeter 15 ---------- */
+(function(){
+  const u = 70; const A = P(90, 130), B = P(90 + 7.5*u, 130); const bw = (45/14)*u, ln = (30/7)*u; const Pp = P(A.x + bw, A.y), D = P(Pp.x, Pp.y + bw), C = P(B.x, B.y + bw);
+  const steps = [
+    'Perimeter 15 cm ⇒ length + breadth = <b>7½ cm</b>. Draw AB = 7½ cm; it must be cut in the ratio 3 : 4.',
+    'Ray from A; compass steps of <b>3 cm</b> then <b>4 cm</b>.',
+    'Join the 7 cm mark to B; the parallel through the 3 cm mark cuts AB at P with AP : PB = 3 : 4.',
+    `AP = 7½ × 3/7 = <b>${mixed2(45,14)} cm</b> (breadth ≈ 3.21 cm); PB = 7½ × 4/7 = <b>${mixed2(30,7)} cm</b> (length ≈ 4.29 cm).`,
+    'Use PB as the length. Draw perpendiculars at P and B; with the compass opened to AP cut them at D and C.',
+    `Join DC. PBCD is a rectangle ${mixed2(30,7)} cm × ${mixed2(45,14)} cm: perimeter 2 × 7½ = 15 cm ✓, breadth : length = 3 : 4 ✓.`
+  ];
+  new K.Stepper('#e2q1', {steps, draw(svg, i, t){
+    divideFig(svg, A, B, [3, 4], u, -14, joinStage(i, t, 2), joinT(i, t, 2), {lenLabel:'7½ cm', firstStepOff:-28});
+    if (i >= 2) text(svg, P(Pp.x, Pp.y - 18), 'P', {class:'lbl big'});
+    if (i >= 3){ const o = i === 3 ? t : 1; sideLabel(svg, A, Pp, mixed2(45,14) + ' cm', -14, {class:'lbl sm blue', opacity:o}); sideLabel(svg, Pp, B, mixed2(30,7) + ' cm', -14, {class:'lbl sm blue', opacity:o}); }
+    if (i >= 4){ const o = i === 4 ? t : 1; seg(svg, Pp, P(Pp.x, Pp.y + bw + 22), {class:'ln-muted', opacity:o}); seg(svg, B, P(B.x, B.y + bw + 22), {class:'ln-muted', opacity:o}); rightMark(svg, Pp, B, D, 10, {opacity:o}); rightMark(svg, B, A, C, 10, {opacity:o}); compassArc(svg, Pp, bw, 90, 14, {class:'ln-green', opacity:o}); compassArc(svg, B, bw, 90, 14, {class:'ln-green', opacity:o}); dot(svg, D, {class:'pt green', opacity:o}); dot(svg, C, {class:'pt green', opacity:o}); text(svg, P(D.x - 16, D.y + 12), 'D', {class:'lbl big', opacity:o}); text(svg, P(C.x + 16, C.y + 12), 'C', {class:'lbl big', opacity:o}); }
+    if (i >= 5){ polygon(svg, [Pp, B, C, D], {class:'tri-amber', opacity:(i === 5 ? t : 1)*.9}); sideLabel(svg, C, D, mixed2(30,7) + ' cm', 18, {class:'lbl amber'}); sideLabel(svg, B, C, mixed2(45,14) + ' cm', -22, {class:'lbl amber'}); multiText(svg, P(160, 300), ['perimeter 15 cm', 'breadth : length', '= 3 : 4'], {class:'lbl big green', opacity:t}, 26); }
+  }});
+})();
+
+/* ---------- E2 Q2: triangles of perimeter 13 (factory) ---------- */
+function triLab(id, ratio, rayAng, stepTexts, finalLines, extra){
+  const u = 38; const A = P(100, 160), B = P(100 + 13*u, 160); const sum = ratio.reduce((a, b) => a + b, 0);
+  const pieces = ratio.map(r => 13*r/sum);                       // cm
+  const Pp = P(A.x + pieces[0]*u, A.y), Q = P(Pp.x + pieces[1]*u, A.y);
+  const C = triSSS(pieces[2]*u, pieces[1]*u, pieces[0]*u, A, 1, false)[2];   // base AP, AC = piece 2, PC = piece 3
+  const lab = k => mixed2(13*ratio[k], sum);
+  const steps = [
+    stepTexts[0],
+    `Ray from A; compass steps of ${ratio.map(r => r + ' cm').join(', ')} (ratio ${ratio.join(' : ')}).`,
+    'Join the last mark to B; parallels through the other marks cut AB at P and Q.',
+    `AP = ${lab(0)} cm, PQ = ${lab(1)} cm, QB = ${lab(2)} cm – the three sides (they add up to 13 cm).`,
+    `Keep AP as the base. Arc of radius PQ (${lab(1)} cm) from A and arc of radius QB (${lab(2)} cm) from P meet at C.`,
+    stepTexts[1]
+  ];
+  new K.Stepper(id, {steps, draw(svg, i, t){
+    divideFig(svg, A, B, ratio, u, rayAng, joinStage(i, t, 2), joinT(i, t, 2), {lenLabel:'13 cm', firstStepOff:-28});
+    if (i >= 2){ text(svg, P(Pp.x, Pp.y - 18), 'P', {class:'lbl big'}); text(svg, P(Q.x, Q.y - 18), 'Q', {class:'lbl big'}); }
+    if (i >= 3){ const o = i === 3 ? t : 1; sideLabel(svg, A, Pp, lab(0), -14, {class:'lbl sm blue', opacity:o}); sideLabel(svg, Pp, Q, lab(1), -14, {class:'lbl sm blue', opacity:o}); sideLabel(svg, Q, B, lab(2), -14, {class:'lbl sm blue', opacity:o}); }
+    if (i >= 4){ const o = i === 4 ? t : 1; compassArc(svg, A, pieces[1]*u, deg(Math.atan2(C.y - A.y, C.x - A.x)), 14, {class:'ln-green', opacity:o}); compassArc(svg, Pp, pieces[2]*u, deg(Math.atan2(C.y - Pp.y, C.x - Pp.x)), 14, {class:'ln-green', opacity:o}); dot(svg, C, {class:'pt green', opacity:o}); text(svg, P(C.x + 4, C.y + 20), 'C', {class:'lbl big', opacity:o}); }
+    if (i >= 5){ polygon(svg, [A, Pp, C], {class:'tri-small', opacity:(i === 5 ? t : 1)*.9}); sideLabel(svg, C, A, lab(1) + ' cm', -16, {class:'lbl sm green'}); sideLabel(svg, Pp, C, lab(2) + ' cm', -16, {class:'lbl sm green'}); if (extra) extra(svg, A, Pp, C, t); multiText(svg, P(640, 310), finalLines, {class:'lbl big green', opacity:t}, 26); }
+  }});
+}
+triLab('#e2q2a', [3, 3, 3], -22, ['Equilateral: all three sides equal, so cut a <b>13 cm</b> line into three equal parts (ratio 1 : 1 : 1).', `Join AC and PC: an equilateral triangle, each side ${mixed2(13,3)} cm, perimeter 13 cm ✓.`], ['equilateral', 'side ' + mixed2(13,3) + ' cm'], null);
+triLab('#e2q2b', [3, 4, 5], -17, ['Sides 3 : 4 : 5: cut a <b>13 cm</b> line in the ratio 3 : 4 : 5 (12 parts).', `Join AC and PC: sides ${mixed2(13,4)}, ${mixed2(13,3)} and ${mixed2(65,12)} cm. Because 3² + 4² = 5², the angle at A is a right angle – a right triangle for free.`], ['sides 3 : 4 : 5', 'right angle at A'], (svg, A, Pp, C, t) => rightMark(svg, A, Pp, C, 12, {opacity:t}));
+triLab('#e2q2c', [2, 3, 3], -22, ['Lateral sides 1½ × base means base : side : side = 1 : 1½ : 1½ = <b>2 : 3 : 3</b> (8 parts of 13 cm).', `Join AC and PC: base ${mixed2(13,4)} cm, lateral sides ${mixed2(39,8)} cm each (= 1½ × ${mixed2(13,4)} ✓). Isosceles, perimeter 13 cm.`], ['isosceles', 'sides ' + mixed2(39,8) + ', ' + mixed2(39,8) + ', ' + mixed2(13,4)], (svg, A, Pp, C, t) => { ticks(svg, A, C, 1, 7, {class:'ln-green', opacity:t}); ticks(svg, Pp, C, 1, 7, {class:'ln-green', opacity:t}); });
+
+/* ---------- E2 Q3: trapezium diagonals ---------- */
+(function(){
+  const yB = 300, yT = 120; const A = P(110, yB), B = P(550, yB), C = P(430, yT), D = P(210, yT);
+  const O = intersect(A, C, B, D);
+  const steps = [
+    'Trapezium ABCD with AB ∥ DC. The diagonals AC and BD cross at O. We must prove AO : OC = BO : OD.',
+    'We know a theorem about three parallel lines – but a trapezium has only two parallel sides. So <b>draw the third one</b>: the line through O parallel to AB.',
+    'Now DC, the new line and AB are three parallel lines, and the diagonals AC and BD are two lines crossing them.',
+    'Three parallels cut any two lines in the same ratio (Key idea 4). AC is cut into AO and OC; BD is cut into BO and OD. Therefore <b>AO/OC = BO/OD</b>. ∎',
+    `In this figure AB = ${fmt(dist(A,B)/40,1)} cm and DC = ${fmt(dist(D,C)/40,1)} cm; measure: AO/OC = ${fmt(dist(A,O)/dist(O,C),2)} and BO/OD = ${fmt(dist(B,O)/dist(O,D),2)} – equal, and equal to AB/DC. Drag the corners in the lab below.`
+  ];
+  new K.Stepper('#e2q3', {steps, draw(svg, i, t){
+    polygon(svg, [A, B, C, D], {class:'tri-none', fill:'var(--surface2)'});
+    arrows(svg, A, B, 1, 7); arrows(svg, D, C, 1, 7);
+    seg(svg, A, C, {class:'ln-blue thick'}); seg(svg, B, D, {class:'ln-green thick'}); dot(svg, O, {class:'pt red'});
+    [[A,'A',-16,18],[B,'B',16,18],[C,'C',14,-14],[D,'D',-14,-14]].forEach(([p,n,dx,dy]) => text(svg, P(p.x + dx, p.y + dy), n, {class:'lbl big'})); text(svg, P(O.x + 14, O.y - 12), 'O', {class:'lbl big red'});
+    if (i >= 1){ const o = i === 1 ? t : 1; seg(svg, P(60, O.y), P(600, O.y), {class:'ln-red dash', opacity:o}); arrows(svg, P(60, O.y), P(600, O.y), 1, 7, {class:'ln-red', opacity:o}); }
+    if (i >= 2){ const o = i === 2 ? t : 1; [yT, O.y, yB].forEach(y => seg(svg, P(60, y), P(600, y), {class:'ln-red', opacity:o*.5})); multiText(svg, P(690, 130), ['three parallels:', 'DC, the new line, AB'], {class:'lbl', opacity:o}, 24); }
+    if (i >= 3){ const o = i === 3 ? t : 1; sideLabel(svg, A, O, 'AO', -14, {class:'lbl sm blue', opacity:o}); sideLabel(svg, O, C, 'OC', -14, {class:'lbl sm blue', opacity:o}); sideLabel(svg, B, O, 'BO', 14, {class:'lbl sm green', opacity:o}); sideLabel(svg, O, D, 'OD', 14, {class:'lbl sm green', opacity:o}); multiText(svg, P(690, 230), ['AO/OC = BO/OD', '(Key idea 4)'], {class:'lbl big green', opacity:o}, 26); }
+    if (i === 4) multiText(svg, P(690, 310), [`both = ${fmt(dist(A,O)/dist(O,C),2)} = AB/DC`], {class:'lbl', opacity:t});
+  }});
+  /* draggable lab */
+  const svg = document.getElementById('trapSvg'), out = document.getElementById('trapOut');
+  const pts = [P(110, 290), P(560, 290), P(450, 110), P(220, 110)]; const fixedY = [290, 290, 110, 110];
+  function draw(){ K.clear(svg);
+    const [a, b, c, d] = pts; const o = intersect(a, c, b, d);
+    polygon(svg, pts, {class:'tri-none', fill:'var(--surface2)'}); arrows(svg, a, b, 1, 7); arrows(svg, d, c, 1, 7);
+    seg(svg, a, c, {class:'ln-blue thick'}); seg(svg, b, d, {class:'ln-green thick'});
+    if (o){ dot(svg, o, {class:'pt red'}); seg(svg, P(40, o.y), P(760, o.y), {class:'ln-red dash thin'}); text(svg, P(o.x + 14, o.y - 12), 'O', {class:'lbl big red'}); }
+    ['A','B','C','D'].forEach((n, k) => text(svg, P(pts[k].x + (k === 0 || k === 3 ? -16 : 16), pts[k].y + (k < 2 ? 18 : -16)), n, {class:'lbl big'}));
+    pts.forEach(p => dot(svg, p, {class:'pt drag'}));
+    if (o){ const r1 = dist(a, o)/dist(o, c), r2 = dist(b, o)/dist(o, d), r3 = dist(a, b)/dist(d, c); text(svg, P(400, 325), `AO/OC = ${fmt(r1,3)}    BO/OD = ${fmt(r2,3)}    AB/DC = ${fmt(r3,3)}`, {class:'lbl'}); out.textContent = `AO/OC = ${fmt(r1,3)}\nBO/OD = ${fmt(r2,3)}   ← always equal\nAB/DC = ${fmt(r3,3)}   ← and equal to this` + (Math.abs(r3 - 1) < .02 ? '\n(a parallelogram: the diagonals bisect each other)' : ''); }
+  }
+  K.draggable(svg, () => pts, idx => { pts[idx].y = fixedY[idx]; pts[idx].x = Math.max(50, Math.min(750, pts[idx].x)); if (idx === 0 && pts[0].x > pts[1].x - 40) pts[0].x = pts[1].x - 40; if (idx === 1 && pts[1].x < pts[0].x + 40) pts[1].x = pts[0].x + 40; if (idx === 3 && pts[3].x > pts[2].x - 40) pts[3].x = pts[2].x - 40; if (idx === 2 && pts[2].x < pts[3].x + 40) pts[2].x = pts[3].x + 40; draw(); }); draw();
+})();
+
+/* ---------- quizzes ---------- */
+K.numq('#q1', {q:'A regular hexagon has perimeter 27 cm. What is its side in cm?', answer:4.5, tol:0.01, explain:'27 ÷ 6 = 4½ cm. Divide a 27 cm line into six equal parts, then draw a circle of radius 4½ cm and step round it.', hint:'A regular hexagon has six equal sides.'});
+K.numq('#q2', {q:'A 12 cm line is divided in the ratio 1 : 3. What is the shorter piece in cm?', answer:3, tol:0.01, explain:'12 × 1/4 = 3 cm (and the longer piece is 9 cm).', hint:'1 : 3 means 4 equal parts in all.'});
+K.mcq('#q3', {q:'To draw a rectangle of perimeter 20 cm with sides in the ratio 2 : 3, you first divide a line of length', options:['10 cm in the ratio 2 : 3','20 cm in the ratio 2 : 3','20 cm into 5 equal parts','10 cm into 2 equal parts'], answer:0, explain:'Length + breadth = half the perimeter = 10 cm; cut it 2 : 3 to get 4 cm and 6 cm.', hint:'Which two sides add up to half the perimeter?'});
+K.mcq('#q4', {q:'In trapezium ABCD (AB ∥ DC) the diagonals meet at O. If AB = 8 cm and DC = 4 cm, then AO : OC =', options:['2 : 1','1 : 2','1 : 1','8 : 1'], answer:0, explain:'The diagonals are cut in the same ratio as the parallel sides: AO : OC = AB : DC = 2 : 1 (Exercise 2, Q3).', hint:'The ratio equals AB : DC.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>
