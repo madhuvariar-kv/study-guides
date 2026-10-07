@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Acceleration and Retardation – Equations of Motion</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.qa{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.6rem 1rem;margin:.7rem 0;box-shadow:var(--shadow)}
+.qa p{margin:.25em 0}
+.qbox{background:var(--surface);border:1px solid var(--border);border-left:6px solid var(--accent);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.why{font-size:.93rem;color:var(--muted);margin-top:.3rem}
+.diary{background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:1rem 0}
+.diary h3{margin:.1rem 0 .4rem;color:var(--accent-ink)}
+.obs td,.obs th{text-align:center}
+.obs tr.hl td{background:var(--accent-soft)}
+.obs td.q{color:var(--muted)}
+.bubble{background:var(--surface);border:2px solid var(--purple);border-radius:18px;padding:.6rem .9rem;font-size:.95rem;margin:.8rem 0}
+.tblwrap{overflow-x:auto}
+svg .ah-red{fill:var(--red)}svg .ah-blue{fill:var(--blue)}svg .ah-green{fill:var(--green)}svg .ah-purple{fill:var(--purple)}svg .ah-amber{fill:var(--accent)}svg .ah-text{fill:var(--text)}
+svg .body-fill{fill:var(--surface2);stroke:var(--text);stroke-width:1.8}
+svg .gp-mi{stroke:var(--red);stroke-opacity:.14;stroke-width:.7}
+svg .gp-ma{stroke:var(--red);stroke-opacity:.38;stroke-width:1.1}
+svg .gp-bg{fill:var(--red-soft);opacity:.25}
+/* page-specific */
+svg .road{fill:var(--surface2);stroke:var(--muted);stroke-width:1.2}
+.sorter{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.5rem;margin:.6rem 0}
+.sorter .it{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:.5rem .7rem;font-size:.95rem}
+.sorter .it .btns{display:flex;gap:.4rem;margin-top:.35rem;flex-wrap:wrap}
+.sorter .it .btn{padding:.25rem .6rem;font-size:.85rem}
+.sorter .it.ok{border-color:var(--green);background:var(--green-soft)}
+.sorter .it.no{border-color:var(--red);background:var(--red-soft)}
+.sorter .it .fbk{font-size:.85rem;margin-top:.25rem}
+</style>
+</head>
+<body data-page="08_acceleration_retardation">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 2 · Section 4</span><span class="chip amber">Textbook pages 34–37</span>
+<h1>Acceleration and Retardation <span class="ml">ത്വരണം, മന്ദീകരണം</span></h1>
+<p class="lead">A KSRTC bus pulls out of the stand: its velocity goes 0, 4, 8, 12 m/s… A motorbike brakes near a signal: 20, 15, 10, 5, 0 m/s. How <em>fast</em> does the velocity change? That rate is the <b>acceleration</b> (<span class="ml">ത്വരണം</span>). When the velocity falls, we get a <b>negative acceleration</b> – the <b>retardation</b> (<span class="ml">മന്ദീകരണം</span>).</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 2, 4, 6 and 7 of this guide)</div>
+<ul style="margin:0">
+<li>Velocity (<span class="ml">പ്രവേഗം</span>) = displacement ÷ time, in m/s, with a direction (<a href="06_velocity.html">page 6</a>). Uniform velocity = equal displacements in equal times (<a href="07_uniform_nonuniform_velocity.html">page 7</a>).</li>
+<li>"Per second" means "divide by the time" (<a href="02_units_and_conversions.html">page 2</a>); rearranging a = (v − u)/t into v = u + at (<a href="04_formulas_and_areas.html">page 4</a>).</li>
+<li>Subtracting signed numbers: 15 − 20 = −5 (<a href="01_directions_number_line.html">page 1</a>).</li>
+</ul></div>
+
+<h2>1. The accelerator – Fig 2.6</h2>
+<div class="bubble"><span class="ml">വാഹനങ്ങളിൽ പ്രവേഗം വർധിപ്പിക്കാൻ ഉപയോഗിക്കുന്ന ഒരു സംവിധാനമാണ് ആക്സിലറേറ്റർ.</span><br>The <b>accelerator</b> (<span class="ml">ആക്സിലറേറ്റർ</span>) is a device used in vehicles to <b>increase the velocity</b>. On a motorbike it is the twist-grip on the right handle; in a bus or car it is the pedal on the right.</div>
+<p><span class="ml">ഒരു ബസ്സിൽ നിങ്ങൾ ഇരിക്കുന്നതായി സങ്കല്പിക്കൂ.</span> Imagine you are sitting in a bus. It starts and moves forward along a straight road – its velocity keeps changing. Let us measure <em>how</em> it changes.</p>
+
+<h2>2. A bus leaving the stand – Fig 2.7 and Table 2.6</h2>
+<p>The bus is at <b>A</b> (0 s, at rest), at <b>B</b> after 2 s (4 m/s), at <b>C</b> after 4 s (8 m/s) and at <b>D</b> after 6 s (12 m/s). Step through and watch Table 2.6 fill in. The marks are drawn <b>to scale</b>: notice that the bus covers more ground in each 2 s, because it is getting faster.</p>
+<div class="lab" id="busLab">
+  <div class="lab-title">🚌 Bus lab – velocity every 2 seconds</div>
+  <svg viewBox="0 0 800 385" role="img" aria-label="A bus starting from rest at A and passing B, C and D, with its velocity–time graph"></svg>
+</div>
+<div class="tblwrap"><table class="obs" id="t26">
+<thead><tr><th rowspan="2">Stage of the bus's journey</th><th>Initial velocity <span class="ml">ആദ്യപ്രവേഗം</span></th><th>Final velocity <span class="ml">അന്ത്യപ്രവേഗം</span></th><th rowspan="2">Change in velocity (v − u) m/s</th><th rowspan="2">Time for the change (t) s</th><th rowspan="2">Rate of change of velocity (v − u)/t, m/s²</th></tr>
+<tr><th>(u) m/s</th><th>(v) m/s</th></tr></thead>
+<tbody><tr><td>A to B</td><td>0</td><td>4</td><td>4</td><td>2</td><td>4 ÷ 2 = 2</td></tr>
+<tr><td>B to C</td><td class="q">?</td><td class="q">?</td><td class="q">?</td><td class="q">?</td><td class="q">?</td></tr>
+<tr><td>C to D</td><td class="q">?</td><td class="q">?</td><td class="q">?</td><td class="q">?</td><td class="q">?</td></tr></tbody></table></div>
+<p class="small muted">Table 2.6 – the first row is given in the textbook; the lab fills the rest.</p>
+
+<h3>Textbook questions (page 34)</h3>
+<div class="qa"><p><b>Q1.</b> <span class="ml">A മുതൽ B വരെ ബസ്സ് സഞ്ചരിക്കുമ്പോൾ A യിലെ പ്രവേഗമാണ് ……… (ആദ്യപ്രവേഗം/അന്ത്യപ്രവേഗം)</span> – When the bus goes from A to B, the velocity at A is the ……… (initial / final velocity).</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">The velocity at A is the <b>initial velocity</b> (u = 0 m/s).<div class="why">Why: "initial" means at the <em>start</em> of the stage we are looking at. The stage A → B starts at A.</div></div></div></div>
+<div class="qa"><p><b>Q2.</b> <span class="ml">B യിലെ പ്രവേഗമോ?</span> – And the velocity at B?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">For the stage A → B, the velocity at B is the <b>final velocity</b> (v = 4 m/s).<div class="why">Why: B is where the stage A → B ends.</div></div></div></div>
+<div class="qa"><p><b>Q3.</b> <span class="ml">B മുതൽ C വരെ പരിഗണിക്കുമ്പോൾ B യിലെ പ്രവേഗം ………</span> – When we consider B to C, the velocity at B is ………</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">The <b>initial velocity</b> (u = 4 m/s) of the stage B → C.<div class="why">Why: the same velocity can be "final" for one stage and "initial" for the next – it depends only on which stage you choose.</div></div></div></div>
+
+<h2>3. Acceleration – the rate of change of velocity</h2>
+<p>In every 2 s the bus gained 4 m/s, so in every second it gained <b>2 m/s</b>. This change in velocity per second is the bus's acceleration.</p>
+<div class="callout key"><div class="title">⭐ Acceleration (textbook page 35)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">ഒരു വസ്തുവിന് യൂണിറ്റ് സമയത്തിലുണ്ടായ പ്രവേഗമാറ്റത്തിന്റെ അളവ് അഥവാ പ്രവേഗമാറ്റത്തിന്റെ നിരക്കാണ് ത്വരണം (acceleration). ത്വരണം ഒരു സദിശ അളവാണ്.</p>
+<p><b>Acceleration is the change in velocity per unit time, i.e. the rate of change of velocity. Acceleration is a vector quantity.</b></p>
+<div class="eq">acceleration = <span class="frac"><span>change in velocity</span><span>time</span></span> ; &nbsp; a = <span class="frac"><span>v − u</span><span>t</span></span></div></div>
+<p><b>Unit:</b> <span class="ml">ത്വരണത്തിന്റെ യൂണിറ്റ് = പ്രവേഗമാറ്റത്തിന്റെ യൂണിറ്റ് ÷ സമയത്തിന്റെ യൂണിറ്റ്</span></p>
+<div class="eq">unit of a = <span class="frac"><span>m/s</span><span>s</span></span> = <b>m/s²</b> &nbsp;(read "metre per second squared")</div>
+<p>An acceleration of 2 m/s² means: <b>every second, the velocity grows by 2 m/s</b>. Because acceleration is a vector, it has a direction too: when the bus speeds up, its acceleration points the same way as its motion (forward, +).</p>
+
+<h3>Worked example · A car at 10 m/s (page 35)</h3>
+<div class="qbox"><p><b>Textbook:</b> <span class="ml">10 m/s പ്രവേഗത്തിൽ നേർരേഖാ പാതയിൽ സഞ്ചരിക്കുന്ന ഒരു കാറിന് 5 m/s² ത്വരണം നൽകുന്നു. 2 s നു ശേഷം കാറിന്റെ പ്രവേഗം കണക്കാക്കുക.</span> – A car moving along a straight road at 10 m/s is given an acceleration of 5 m/s². Find its velocity after 2 s.</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Every second the velocity grows by 5 m/s. Rearrange a = (v − u)/t into v − u = at, so v = u + at.</p></div></div>
+<div class="lab" id="we1"><div class="lab-title">🎬 Exam layout, step by step</div><svg viewBox="0 0 800 310" role="img" aria-label="Velocity–time graph rising from 10 to 20 metres per second in 2 seconds"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> v = u + at = 10 + 5 × 2 = <b>20 m/s</b>.</div></div>
+<div class="callout key"><div class="title">⭐ Equation for the final velocity (textbook page 35)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">v = u + at എന്നത് അന്ത്യപ്രവേഗം കാണാനുള്ള സമവാക്യമായി ഉപയോഗിക്കാം.</p>
+<div class="eq">v = u + at</div>
+<p style="margin:0">final velocity = initial velocity + (acceleration × time). This is the first of the three equations of motion (<a href="11_equations_of_motion.html">page 11</a>).</p></div>
+
+<h3>Textbook question · 4 m/s to 28 m/s (page 35)</h3>
+<div class="qbox"><p><b>Q4.</b> <span class="ml">4 m/s പ്രവേഗത്തിൽ സഞ്ചരിക്കുന്ന ഒരു വസ്തുവിന്റെ പ്രവേഗം 4 s കൊണ്ട് 28 m/s ആയി മാറിയെങ്കിൽ ത്വരണം കണക്കാക്കുക.</span> – The velocity of an object moving at 4 m/s becomes 28 m/s in 4 s. Calculate its acceleration.</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>u = 4 m/s, v = 28 m/s, t = 4 s. Use a = (v − u)/t.</p></div></div>
+<div class="lab" id="we2"><div class="lab-title">🎬 Exam layout, step by step</div><svg viewBox="0 0 800 310" role="img" aria-label="Velocity–time graph rising from 4 to 28 metres per second in 4 seconds"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> a = (28 − 4) ÷ 4 = 24 ÷ 4 = <b>6 m/s²</b>.<div class="why">Why: the velocity grew by 24 m/s in 4 s, i.e. by 6 m/s every second. Full animated solution: <a href="12_intext_numericals_solutions.html">page 12</a>.</div></div></div>
+
+<h2>4. Accelerator and brake lab</h2>
+<p>Ride a motorbike on a straight road. Set the twist-grip with the slider: to the <b>right</b> = accelerator (velocity grows), to the <b>left</b> = brake (velocity falls), the middle = constant velocity. Press <b>Start</b> and change the setting while it runs. The velocity–time graph draws itself; its <b>slope</b> is the acceleration.</p>
+<div class="lab">
+  <div class="lab-title">🏍️ Twist the grip, press the brake</div>
+  <svg id="abSvg" viewBox="0 0 800 400" role="img" aria-label="A motorbike on a road with a live velocity–time graph"></svg>
+  <div class="controls"><label>◀ brake · accelerator ▶ <input id="abA" type="range" min="-3" max="3" step="0.5" value="2" data-fmt="a = {v} m/s²"><output></output></label></div>
+  <div class="controls"><button class="btn primary" id="abGo">▶ Start</button><button class="btn" id="abReset">⟲ Reset</button></div>
+  <div class="readout" id="abOut"></div>
+  <p class="hint">Model: the road is straight and forward is +. The brake can only bring the bike to rest – it does not make it go backwards. Top speed is capped at 30 m/s (108 km/h). Green = speeding up, red = slowing down, blue = uniform velocity.</p>
+</div>
+
+<h2>5. Where do we see acceleration?</h2>
+<div class="qa"><p><b>Q5 (Fig 2.8).</b> <span class="ml">അമ്യൂസ്മെന്റ് പാർക്കിലെ ഒരു ദൃശ്യമാണ് ചിത്രീകരിച്ചിരിക്കുന്നത്. ത്വരണമുണ്ടാകുന്ന സന്ദർഭങ്ങൾ ലിസ്റ്റ് ചെയ്യൂ.</span> – A scene in an amusement park. List the situations in which there is acceleration. (Given: <span class="ml">ജയന്റ് വീലിന്റെ ചലനം</span> – the motion of the giant wheel.)</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><ul style="margin:0">
+<li>the <b>giant wheel</b> turning (direction of motion keeps changing)</li>
+<li>a child sliding down the <b>slide</b> (speeds up on the slope, slows down at the bottom)</li>
+<li>the <b>merry-go-round</b> going round (direction changes)</li>
+<li>a <b>swing</b> (speeds up going down, slows going up, changes direction)</li>
+<li>the <b>toy train</b> starting and stopping; a child <b>running and stopping</b></li></ul>
+<div class="why">Why: acceleration is any change of velocity – speeding up, slowing down <em>or</em> turning. Velocity is a vector, so a change of direction alone is enough.</div></div></div></div>
+
+<div class="qa"><p><b>Q6 (page 36).</b> <span class="ml">നിത്യജീവിതത്തിൽ ത്വരണം ഉണ്ടാകുന്ന സന്ദർഭങ്ങൾ കണ്ടെത്തി സയൻസ് ഡയറിയിൽ രേഖപ്പെടുത്തുക.</span> – Find situations in daily life where there is acceleration and write them in your science diary. (Given: <span class="ml">തെങ്ങിൽ നിന്ന് താഴേക്ക് പതിക്കുന്ന തേങ്ങയുടെ ചലനം</span> – a coconut falling from a coconut tree.)</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><ul style="margin:0">
+<li>a coconut falling from the tree (it gains about 10 m/s every second)</li>
+<li>a bus or car starting from a stop; the Kochi Metro leaving a station</li>
+<li>a ball rolling down a slope; a cyclist pedalling harder</li>
+<li>a rocket lifting off from Sriharikota</li></ul>
+<div class="why">Why: in each case the velocity increases as time passes.</div></div></div></div>
+
+<div class="qa"><p><b>Q7 (page 36).</b> <span class="ml">പ്രവേഗം കുറഞ്ഞു വരുന്ന ചില സന്ദർഭങ്ങളും നിത്യജീവിതത്തിൽ ഇല്ലേ? കൂടുതൽ ഉദാഹരണങ്ങൾ എഴുതി ലിസ്റ്റ് വിപുലീകരിക്കൂ.</span> – There are also situations where velocity decreases. Extend the list. (Given: a train arriving at a station; a stone thrown upwards, while it goes up.)</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><ul style="margin:0">
+<li>a train arriving at a station (<span class="ml">സ്റ്റേഷനിൽ എത്തിച്ചേർന്നുകൊണ്ടിരിക്കുന്ന ട്രെയിൻ</span>)</li>
+<li>a stone thrown upwards, on its way up</li>
+<li>a ball rolling on grass and slowing down; a braking motorbike</li>
+<li>an autorickshaw stopping at a signal; a parachutist just after the parachute opens</li></ul>
+<div class="why">Why: in all of these the velocity becomes smaller as time passes – the next section gives this a name.</div></div></div></div>
+
+<p>Quick sort – does the velocity <b>increase</b> or <b>decrease</b>?</p>
+<div class="lab"><div class="lab-title">🗂️ Speeding up or slowing down?</div><div class="sorter" id="sorter"></div><div class="readout" id="sortOut">Sort all eight.</div></div>
+
+<h2>6. Retardation – a motorbike slowing down (Fig 2.9, Table 2.7)</h2>
+<div class="bubble"><span class="ml">വേഗം കുറയുന്ന അവസരത്തിലും ത്വരണം തന്നെയാണോ?</span> – The thinking girl asks: <em>is it still acceleration when the speed decreases?</em></div>
+<p>A motorbike passes P at 20 m/s (0 s), Q at 15 m/s (10 s), R at 10 m/s (15 s), S at 5 m/s (20 s) and stops at T (0 m/s, 40 s). Step through; Table 2.7 fills in. Distances between the marks are to scale (worked out from the velocities).</p>
+<div class="lab" id="bikeLab">
+  <div class="lab-title">🏍️ Motorbike lab – velocity falling</div>
+  <svg viewBox="0 0 800 440" role="img" aria-label="A motorbike slowing from 20 metres per second at P to rest at T, with its velocity–time graph"></svg>
+</div>
+<div class="tblwrap"><table class="obs" id="t27">
+<thead><tr><th>Stage</th><th>Initial velocity (u) m/s</th><th>Final velocity (v) m/s</th><th>Change (v − u) m/s</th><th>Time (t) s</th><th>Acceleration a = (v − u)/t, m/s²</th></tr></thead>
+<tbody><tr><td>P to Q</td><td>20</td><td>15</td><td>−5</td><td>10</td><td>−5 ÷ 10 = −0.5</td></tr>
+<tr><td>Q to R</td><td class="q">?</td><td class="q">?</td><td class="q">?</td><td class="q">?</td><td class="q">?</td></tr>
+<tr><td>R to S</td><td class="q">?</td><td class="q">?</td><td class="q">?</td><td class="q">?</td><td class="q">?</td></tr>
+<tr><td>S to T</td><td class="q">?</td><td class="q">?</td><td class="q">?</td><td class="q">?</td><td class="q">?</td></tr></tbody></table></div>
+<p class="small muted">Table 2.7 – the first row is given in the textbook.</p>
+<p><span class="ml">ഇവിടെ പ്രവേഗം കുറഞ്ഞുവരുന്നതായി കണ്ടുവല്ലോ.</span> Here the velocity keeps falling, so every value of (v − u) – and so every acceleration – is <b>negative</b>. Answer to the girl: <b>yes</b>, it is still acceleration – a <b>negative</b> one.</p>
+<div class="callout key"><div class="title">⭐ Retardation (textbook page 36)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">പ്രവേഗം കുറഞ്ഞുവരുന്നതിന്റെ നിരക്കാണ് നെഗറ്റീവ് ത്വരണം അഥവാ മന്ദീകരണം (retardation). ഇതിന്റെ യൂണിറ്റും m/s² ആയിരിക്കും.</p>
+<p style="margin:0"><b>The rate at which velocity decreases is the negative acceleration, or retardation. Its unit is also m/s².</b></p></div>
+
+<h3>Textbook questions (page 37)</h3>
+<div class="qa"><p><b>Q8.</b> <span class="ml">മന്ദീകരണമെഴുതുമ്പോൾ നെഗറ്റീവ് ചിഹ്നം നൽകേണ്ടതുണ്ടോ?</span> – When we write a retardation, should we put a negative sign?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>No.</b> The word "retardation" already means "negative acceleration". Write either <b>a = −0.5 m/s²</b> or <b>retardation = 0.5 m/s²</b> – never "retardation = −0.5 m/s²".<div class="why">Why: writing a minus sign with the word retardation would say "negative of a negative" – i.e. speeding up, which is wrong.</div></div></div></div>
+
+<div class="qa"><p><b>Q9.</b> <span class="ml">ഒരു വസ്തു നിശ്ചലാവസ്ഥയിൽ നിന്ന് ചലനം ആരംഭിച്ച് 5 s കൊണ്ട് 10 m/s പ്രവേഗം ആർജിക്കുന്നു. a) ഇപ്പോൾ ത്വരണമെത്ര? b) അടുത്ത 5 s കൊണ്ട് നിശ്ചലാവസ്ഥയിലാകുന്നുവെങ്കിൽ ഈ സന്ദർഭത്തിലെ ത്വരണമെത്ര? മന്ദീകരണമെത്ര?</span> – An object starts from rest and reaches 10 m/s in 5 s. (a) What is its acceleration? (b) If it comes to rest in the next 5 s, what is the acceleration then? What is the retardation?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">(a) a = (10 − 0) ÷ 5 = <b>2 m/s²</b>. (b) a = (0 − 10) ÷ 5 = <b>−2 m/s²</b>, so the retardation is <b>2 m/s²</b>.<div class="why">Why: in (b) the initial velocity is 10 m/s and the final velocity 0 – the velocity falls, so the acceleration is negative. Full animated solution: <a href="12_intext_numericals_solutions.html">page 12</a>.</div></div></div></div>
+
+<div class="qa"><p><b>Q10.</b> <span class="ml">5 m/s പ്രവേഗത്തിൽ സഞ്ചരിക്കുന്ന ഒരു വാഹനം ബ്രേക്ക് ചെയ്ത് 2 s കൊണ്ട് നിർത്തുന്നു. വാഹനത്തിന്റെ മന്ദീകരണമെത്ര?</span> – A vehicle moving at 5 m/s brakes and stops in 2 s. What is its retardation?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">a = (0 − 5) ÷ 2 = −2.5 m/s², so the retardation is <b>2.5 m/s²</b>.<div class="why">Why: u = 5 m/s, v = 0 (it stops), t = 2 s. The negative acceleration of 2.5 m/s² is the retardation. Full animated solution: <a href="12_intext_numericals_solutions.html">page 12</a>.</div></div></div></div>
+
+<div class="qa"><p><b>Q11.</b> <span class="ml">ഒരു വസ്തുവിന്റെ രണ്ടാം സെക്കന്റിലെ പ്രവേഗം 40 m/s ഉം നാലാം സെക്കന്റിലെ പ്രവേഗം 30 m/s ഉം ആയാൽ അതിന്റെ ത്വരണമെത്ര? മന്ദീകരണമെത്ര? എട്ടാം സെക്കന്റിലെ പ്രവേഗമെത്ര?</span> – An object's velocity is 40 m/s at the 2nd second and 30 m/s at the 4th second. Find its acceleration and retardation. What is its velocity at the 8th second?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">t = 4 − 2 = 2 s; a = (30 − 40) ÷ 2 = <b>−5 m/s²</b>, retardation <b>5 m/s²</b>. From the 4th to the 8th second (4 s more): v = u + at = 30 + (−5) × 4 = <b>10 m/s</b>.<div class="why">Why: the time is the <em>interval</em> between the two readings (2 s), not 4 s. We assume the same uniform acceleration continues after the 4th second. Full animated solution: <a href="12_intext_numericals_solutions.html">page 12</a>.</div></div></div></div>
+
+<div class="callout real"><div class="title">🌴 Kerala connection</div>
+<p style="margin:0">A coconut falling from a 10 m tree gains about 10 m/s every second – an acceleration of about 10 m/s² – and hits the ground at about 14 m/s, which is why nobody parks under a coconut tree. A Kochi Metro train leaves a station with a gentle acceleration of roughly 1 m/s² so that standing passengers do not fall, and brakes just as gently (a retardation of about 1 m/s²) as it reaches the next platform. On a wet monsoon road the tyres grip less, so the largest retardation the brakes can give is smaller – the vehicle needs a longer distance to stop.</p></div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.physicsclassroom.com/tutorial/1d-kinematics/language-of-kinematics/acceleration" target="_blank" rel="noopener noreferrer">📄 Physics Tutorial - 1D Kinematics - Language of Kinematics - Acceleration</a> <span class="src">The Physics Classroom</span><br><span class="note">Acceleration = change in velocity per second; slowing down (retardation) is acceleration opposite to motion.</span></li><li><a href="https://www.youtube.com/watch?v=TAtCs9ifRRY" target="_blank" rel="noopener noreferrer">▶️ Acceleration | Motion | Physics class 9 | Khan Academy</a> <span class="src">Khan Academy India - English (YouTube) · 8:35</span><br><span class="note">Class 9 video on acceleration, its unit m/s^2, and negative acceleration (retardation).</span></li><li><a href="https://phet.colorado.edu/en/simulations/moving-man" target="_blank" rel="noopener noreferrer">🧪 The Moving Man (PhET simulation)</a> <span class="src">PhET Interactive Simulations, University of Colorado Boulder</span><br><span class="note">Move the man and watch his position, velocity and acceleration graphs draw live. Older Java sim - it runs in the browser via CheerpJ and may take a minute to load.</span></li></ul></div>
+
+<h2>7. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li><b>Acceleration</b> = rate of change of velocity: a = (v − u)/t. It is a vector; unit <b>m/s²</b>.</li>
+<li>u = initial velocity (start of the stage), v = final velocity (end of the stage). <b>v = u + at</b>.</li>
+<li>Speeding up → a positive; slowing down → a negative = <b>retardation</b> (write a = −2 m/s² <em>or</em> retardation 2 m/s²).</li>
+<li>Turning at constant speed is also acceleration, because the direction of velocity changes.</li>
+</ul></div>
+<p>Next: <a href="09_uniform_acceleration_road_safety.html">Uniform acceleration and road safety ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Equations of Motion · Class 9 Physics", "icon": "🚆", "key": "physics_ch2_progress", "pages": [["index.html", "Home"], ["01_directions_number_line.html", "1 · Directions, Number Line & Signs"], ["02_units_and_conversions.html", "2 · Units, Time & Conversions"], ["03_drawing_reading_graphs.html", "3 · Drawing & Reading Graphs"], ["04_formulas_and_areas.html", "4 · Rearranging Formulas, Squares & Areas"], ["05_distance_displacement.html", "5 · Distance and Displacement"], ["06_velocity.html", "6 · Speed and Velocity"], ["07_uniform_nonuniform_velocity.html", "7 · Uniform & Non-uniform Velocity"], ["08_acceleration_retardation.html", "8 · Acceleration & Retardation"], ["09_uniform_acceleration_road_safety.html", "9 · Uniform Acceleration & Road Safety"], ["10_motion_graphs.html", "10 · Position–Time & Velocity–Time Graphs"], ["11_equations_of_motion.html", "11 · The Equations of Motion"], ["12_intext_numericals_solutions.html", "12 · In-text Questions – Solutions"], ["13_assess_q1_q9_solutions.html", "13 · Let Us Assess Q1–9 – Solutions"], ["14_assess_q10_q17_solutions.html", "14 · Let Us Assess Q10–17 & Extended Activities"], ["15_applications_explore.html", "15 · Applications & Explore Online"], ["16_summary_revision.html", "16 · Summary & Quick Quiz"], ["17_model_test_paper.html", "17 · Model Test Paper"], ["18_model_test_solutions.html", "18 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+const {P, seg, text, el, circle, polyline, polygon, multiText} = K;
+const COL = {red:'var(--red)', blue:'var(--blue)', green:'var(--green)', amber:'var(--accent)', purple:'var(--purple)', text:'var(--text)', muted:'var(--muted)'};
+/* line with its own stroke (seg() carries class 'ln', which overrides stroke attributes) */
+const sline = (svg, a, b, attrs={}) => el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+/* number → string with ≤ d decimals and a true minus sign */
+const fx = (v, d=2) => K.num(K.fmt(v, d));
+/* left-anchored SVG text */
+const L = (svg, x, y, s, cls='lbl', extra={}) => text(svg, P(x, y), s, {class: cls, 'text-anchor': 'start', ...extra});
+/* arrow a→b with a filled head; o.c colour name, o.w width, o.label, o.lo {x,y} label offset from the tip, o.op opacity, o.head size */
+function arrow(svg, a, b, o={}){ const c = COL[o.c || 'red'], w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const Ln = K.dist(a, b); if (Ln < 1) return g; const u = K.unit(a, b), hs = Math.min(o.head ?? 11, Ln * .6), base = P(b.x - u.x * hs, b.y - u.y * hs);
+  el('line', {x1: a.x, y1: a.y, x2: base.x, y2: base.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round'}, g);
+  el('polygon', {points: `${b.x},${b.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g);
+  if (o.label) text(g, P(b.x + (o.lo ? o.lo.x : 0), b.y + (o.lo ? o.lo.y : -12)), o.label, {class: 'lbl sm ' + (o.lc || o.c || 'red'), 'text-anchor': o.anchor || 'middle'});
+  return g; }
+/* exam-layout stepper: rows [{h: heading, s: svg line, html: step text}], fig(svg,i,t) draws the figure; working is written at x0 */
+function examStepper(sel, rows, fig, x0=380, dy=62){
+  new K.Stepper(sel, {steps: rows.map(r => r.html), draw(svg, i, t){
+    fig(svg, i, t);
+    rows.forEach((r, k) => { if (k > i) return; const o = k === i ? t : 1, y = 30 + k * dy;
+      L(svg, x0, y, r.h, 'lbl sm muted', {opacity: o});
+      L(svg, x0, y + 22, r.s, k === rows.length - 1 ? 'lbl big green' : 'lbl', {opacity: o}); });
+  }});
+}
+/* textbook-style graph paper. O = origin (px); o = {xMax, yMax, sx, sy (px per unit), xStep, yStep (labelled major lines), minor (subdivisions per major, default 5),
+   xl, yl (axis titles), xf, yf (label formatters), noLabels} */
+function graphPaper(svg, O, o){ const g = K.group(svg), n = o.minor ?? 5, W = o.xMax * o.sx, H = o.yMax * o.sy;
+  el('rect', {x: O.x, y: O.y - H, width: W, height: H, class: 'gp-bg'}, g);
+  const nx = Math.round(o.xMax / o.xStep) * n, ny = Math.round(o.yMax / o.yStep) * n;
+  for (let k = 0; k <= nx; k++){ const x = O.x + k * W / nx; el('line', {x1: x, y1: O.y, x2: x, y2: O.y - H, class: k % n ? 'gp-mi' : 'gp-ma'}, g); }
+  for (let k = 0; k <= ny; k++){ const y = O.y - k * H / ny; el('line', {x1: O.x, y1: y, x2: O.x + W, y2: y, class: k % n ? 'gp-mi' : 'gp-ma'}, g); }
+  arrow(g, P(O.x, O.y), P(O.x + W + 22, O.y), {c: 'text', w: 1.8, head: 9}); arrow(g, P(O.x, O.y), P(O.x, O.y - H - 22), {c: 'text', w: 1.8, head: 9});
+  if (!o.noLabels){
+    const xf = o.xf || (v => fx(v)), yf = o.yf || (v => fx(v));
+    for (let v = 0; v <= o.xMax + 1e-9; v += o.xStep) text(g, P(O.x + v * o.sx, O.y + 15), v === 0 ? 'O' : xf(v), {class: 'lbl sm'});
+    for (let v = o.yStep; v <= o.yMax + 1e-9; v += o.yStep) text(g, P(O.x - 7, O.y - v * o.sy), yf(v), {class: 'lbl sm', 'text-anchor': 'end'});
+  }
+  if (o.xl) text(g, P(O.x + W / 2, O.y + 36), o.xl, {class: 'lbl sm blue'});
+  if (o.yl) text(g, P(O.x - 44, O.y - H / 2), o.yl, {class: 'lbl sm blue', transform: `rotate(-90 ${O.x - 44} ${O.y - H / 2})`});
+  return g; }
+/* stick figure with feet at p (height ≈ 62·s) */
+function person(svg, p, s=1, o={}){ const c = o.c ? COL[o.c] : 'var(--text)', g = K.group(svg, o.lean ? {transform: `rotate(${o.lean} ${p.x} ${p.y})`} : {});
+  const hip = P(p.x, p.y - 28 * s), neck = P(p.x, p.y - 50 * s), st = {stroke: c, 'stroke-width': 2.6, 'stroke-linecap': 'round'};
+  el('circle', {cx: p.x, cy: p.y - 57 * s, r: 7 * s, fill: 'var(--svgbg)', stroke: c, 'stroke-width': 2.4}, g);
+  el('line', {x1: neck.x, y1: neck.y, x2: hip.x, y2: hip.y, ...st}, g);
+  const sw = o.walk ? Math.sin(o.walk) * 8 : 8;
+  el('line', {x1: hip.x, y1: hip.y, x2: p.x - sw * s, y2: p.y, ...st}, g); el('line', {x1: hip.x, y1: hip.y, x2: p.x + sw * s, y2: p.y, ...st}, g);
+  const ar = o.arms || [[-12, 14], [12, 14]]; ar.forEach(([dx, dy]) => el('line', {x1: neck.x, y1: neck.y + 4 * s, x2: neck.x + dx * s, y2: neck.y + 4 * s + dy * s, ...st}, g));
+  return g; }
+/* side-view car, front to the right (dir=-1 flips), wheels touching y; w = length px; fill colour (CSS colour string) */
+function car(svg, x, y, w=80, fill='var(--blue)', dir=1, label=''){ const g = K.group(svg, dir < 0 ? {transform: `translate(${2 * x + w} 0) scale(-1 1)`} : {}), h = w * .28;
+  el('path', {d: `M${x},${y - 8} L${x},${y - 8 - h * .7} Q${x + w * .05},${y - 8 - h} ${x + w * .25},${y - 8 - h} L${x + w * .32},${y - 8 - h * 1.75} L${x + w * .68},${y - 8 - h * 1.75} L${x + w * .8},${y - 8 - h} L${x + w * .95},${y - 8 - h * .9} Q${x + w},${y - 8 - h * .7} ${x + w},${y - 8} Z`, fill, stroke: 'var(--text)', 'stroke-width': 1.3}, g);
+  el('path', {d: `M${x + w * .35},${y - 8 - h * 1.6} L${x + w * .5},${y - 8 - h * 1.6} L${x + w * .5},${y - 8 - h * 1.05} L${x + w * .29},${y - 8 - h * 1.05} Z M${x + w * .54},${y - 8 - h * 1.6} L${x + w * .66},${y - 8 - h * 1.6} L${x + w * .76},${y - 8 - h * 1.05} L${x + w * .54},${y - 8 - h * 1.05} Z`, fill: 'var(--blue-soft)', stroke: 'var(--text)', 'stroke-width': .8}, g);
+  [x + w * .22, x + w * .78].forEach(cx => { el('circle', {cx, cy: y - 8, r: w * .1, fill: '#334155', stroke: 'var(--text)', 'stroke-width': 1}, g); el('circle', {cx, cy: y - 8, r: w * .04, fill: '#cbd5e1'}, g); });
+  if (label) text(g, P(x + w * .5, y - 8 - h * .45), label, {class: 'lbl sm', 'font-weight': 700, transform: dir < 0 ? `translate(${2 * (x + w * .5)} 0) scale(-1 1)` : null});
+  return g; }
+/* side-view bus, front at the right, wheels touching y */
+function bus(svg, x, y, w=150, o={}){ const g = K.group(svg, o.attrs || {}), h = w * .36;
+  el('rect', {x, y: y - 14 - h, width: w, height: h, rx: 8, fill: o.fill || 'var(--red)', stroke: 'var(--text)', 'stroke-width': 1.5}, g);
+  el('rect', {x, y: y - 14 - h * .32, width: w, height: h * .12, fill: '#fbbf24'}, g);
+  const nw = Math.max(3, Math.round(w / 34)); for (let k = 0; k < nw; k++) el('rect', {x: x + 8 + k * (w - 30) / nw, y: y - 10 - h + 4, width: (w - 30) / nw - 6, height: h * .34, rx: 2, fill: 'var(--blue-soft)', stroke: 'var(--text)', 'stroke-width': .8}, g);
+  el('rect', {x: x + w - 18, y: y - 10 - h + 4, width: 14, height: h * .5, rx: 2, fill: 'var(--blue-soft)', stroke: 'var(--text)', 'stroke-width': .8}, g);
+  [x + w * .2, x + w * .8].forEach(cx => { el('circle', {cx, cy: y - 9, r: 9, fill: '#334155', stroke: 'var(--text)', 'stroke-width': 1.2}, g); el('circle', {cx, cy: y - 9, r: 3, fill: '#cbd5e1'}, g); });
+  if (o.label) text(g, P(x + w / 2, y - 14 - h * .44), o.label, {class: 'lbl sm', 'font-weight': 700});
+  return g; }
+/* side-view motorbike with rider, front at the right, wheels touching y */
+function bike(svg, x, y, s=1){ const g = K.group(svg), st = {stroke: 'var(--text)', 'stroke-width': 2.2, fill: 'none', 'stroke-linecap': 'round'};
+  [x + 8 * s, x + 58 * s].forEach(cx => { el('circle', {cx, cy: y - 11 * s, r: 11 * s, fill: '#334155', stroke: 'var(--text)', 'stroke-width': 1.2}, g); el('circle', {cx, cy: y - 11 * s, r: 4 * s, fill: '#cbd5e1'}, g); });
+  el('path', {d: `M${x + 8 * s},${y - 11 * s} L${x + 26 * s},${y - 24 * s} L${x + 46 * s},${y - 24 * s} L${x + 58 * s},${y - 11 * s}`, ...st}, g);
+  el('path', {d: `M${x + 18 * s},${y - 26 * s} Q${x + 34 * s},${y - 38 * s} ${x + 50 * s},${y - 28 * s} L${x + 46 * s},${y - 20 * s} L${x + 22 * s},${y - 20 * s} Z`, fill: 'var(--accent)', stroke: 'var(--text)', 'stroke-width': 1.2}, g);
+  el('line', {x1: x + 50 * s, y1: y - 28 * s, x2: x + 54 * s, y2: y - 40 * s, ...st}, g);
+  el('circle', {cx: x + 30 * s, cy: y - 62 * s, r: 7 * s, fill: 'var(--red)', stroke: 'var(--text)', 'stroke-width': 1.2}, g);
+  el('path', {d: `M${x + 28 * s},${y - 55 * s} L${x + 26 * s},${y - 34 * s} L${x + 40 * s},${y - 30 * s} L${x + 42 * s},${y - 16 * s} M${x + 28 * s},${y - 50 * s} L${x + 52 * s},${y - 40 * s}`, ...st}, g);
+  return g; }
+
+/* ---------- page helpers ---------- */
+function road(svg, y, x0=0, x1=800){ el('rect', {x: x0, y: y - 2, width: x1 - x0, height: 26, class: 'road'}, svg); }
+/* fill table rows: rows = [[cells...], ...], shown = number of rows (after the given first one) to reveal; hl = row index to highlight */
+function fillTable(id, rows, shown, hl){ const trs = document.querySelectorAll(`#${id} tbody tr`);
+  rows.forEach((r, k) => { const tr = trs[k + 1]; if (!tr) return; const tds = tr.querySelectorAll('td');
+    r.forEach((c, j) => { const td = tds[j + 1]; const show = k < shown; td.textContent = show ? c : '?'; td.className = show ? '' : 'q'; }); });
+  trs.forEach((tr, k) => tr.classList.toggle('hl', k === hl)); }
+
+/* ---------- 1. bus lab ---------- */
+(function(){
+  const X0 = 130, SC = 17.5, RY = 120; /* road y; s = t² (a = 2 m/s², from rest) */
+  const marks = [['A', 0, 0, 0], ['B', 2, 4, 4], ['C', 4, 8, 16], ['D', 6, 12, 36]];
+  const ROWS = [['4', '8', '4', '2', '4 ÷ 2 = 2'], ['8', '12', '4', '2', '4 ÷ 2 = 2']];
+  const O = P(80, 335), sx = 40, sy = 11;
+  new K.Stepper('#busLab', {ms: 1400, steps: [
+    'The bus is at rest at <b>A</b> (t = 0 s, velocity 0 m/s). The driver presses the accelerator.',
+    '<b>A → B</b> (0 s to 2 s): initial velocity u = 0, final velocity v = 4 m/s. Change = 4 m/s in 2 s → <b>2 m/s every second</b> = 2 m/s².',
+    '<b>B → C</b> (2 s to 4 s): now the velocity at B is the <b>initial</b> velocity: u = 4 m/s, v = 8 m/s. Change = 4 m/s in 2 s → <b>2 m/s²</b>.',
+    '<b>C → D</b> (4 s to 6 s): u = 8 m/s, v = 12 m/s. Change = 4 m/s in 2 s → <b>2 m/s²</b>.',
+    'Every 2 s the velocity rose by the same 4 m/s, so the rate of change of velocity is <b>2 m/s² all the time</b>. The v–t graph is a straight line; the gaps A–B, B–C, C–D (4 m, 12 m, 20 m) grow because the bus is faster each time.'
+  ], draw(svg, i, t){
+    const tt = i === 0 ? 0 : i >= 4 ? 6 : 2 * (i - 1) + 2 * t, s = tt * tt, v = 2 * tt;
+    road(svg, RY); sline(svg, P(0, RY + 11), P(800, RY + 11), {stroke: 'var(--muted)', 'stroke-width': 1.5, 'stroke-dasharray': '14 12'});
+    marks.forEach(([n, ts, vs, ss], k) => { const x = X0 + ss * SC; const on = k === 0 || tt >= ts - 1e-6;
+      sline(svg, P(x, RY + 24), P(x, RY + 40), {stroke: 'var(--text)', 'stroke-width': 2});
+      text(svg, P(x, RY + 54), n, {class: 'lbl big'}); text(svg, P(x, RY + 74), ts + ' s', {class: 'lbl sm muted'});
+      text(svg, P(x, 22), vs + ' m/s', {class: 'lbl sm ' + (on ? 'blue' : 'muted'), 'font-weight': 700});
+      text(svg, P(x, 40), ss + ' m', {class: 'lbl sm muted'}); });
+    bus(svg, X0 + s * SC - 110, RY, 110, {fill: '#eab308'});
+    if (v > 0.05) arrow(svg, P(X0 + s * SC - 70, RY - 63), P(X0 + s * SC - 70 + v * 4, RY - 63), {c: 'green', w: 3, head: 9});
+    /* v–t graph */
+    graphPaper(svg, O, {xMax: 6, yMax: 12, sx, sy, xStep: 1, yStep: 2, xl: 'time t (s)', yl: 'velocity v (m/s)'});
+    sline(svg, O, P(O.x + tt * sx, O.y - v * sy), {stroke: 'var(--green)', 'stroke-width': 3});
+    marks.forEach(([n, ts, vs], k) => { if (tt >= ts - 1e-6) { K.dot(svg, P(O.x + ts * sx, O.y - vs * sy), {r: 5, class: 'pt blue'}); if (k) text(svg, P(O.x + ts * sx - 10, O.y - vs * sy - 12), n, {class: 'lbl sm blue', 'text-anchor': 'end'}); } });
+    if (i >= 1 && i <= 3){ const t0 = 2 * (i - 1), v0 = 2 * t0;
+      sline(svg, P(O.x + t0 * sx, O.y - v0 * sy), P(O.x + (t0 + 2) * sx, O.y - v0 * sy), {stroke: 'var(--purple)', 'stroke-width': 2, 'stroke-dasharray': '5 4', opacity: t});
+      sline(svg, P(O.x + (t0 + 2) * sx, O.y - v0 * sy), P(O.x + (t0 + 2) * sx, O.y - (v0 + 4) * sy), {stroke: 'var(--purple)', 'stroke-width': 2, 'stroke-dasharray': '5 4', opacity: t}); }
+    L(svg, 440, 245, `t = ${fx(tt, 1)} s`, 'lbl big'); L(svg, 440, 275, `velocity = ${fx(v, 1)} m/s`, 'lbl blue');
+    L(svg, 440, 302, `distance from A = ${fx(s, 1)} m`, 'lbl muted');
+    if (i >= 1 && i <= 3) L(svg, 440, 338, `a = (${4 * i} − ${4 * (i - 1)}) ÷ 2 = 2 m/s²`, 'lbl purple', {opacity: t});
+    if (i === 4) L(svg, 440, 338, 'a = 2 m/s² in every stage', 'lbl big green');
+    if (t >= 1 || i === 0) fillTable('t26', ROWS, Math.max(0, Math.min(2, i - 1)), i >= 1 && i <= 3 ? i - 1 : -1);
+  }});
+})();
+
+/* ---------- 2. worked example: 10 m/s, 5 m/s², 2 s ---------- */
+examStepper('#we1', [
+  {h: 'Given', s: 'u = 10 m/s,  a = 5 m/s²,  t = 2 s,  v = ?', html: '<b>Given:</b> initial velocity u = 10 m/s, acceleration a = 5 m/s², time t = 2 s. To find: final velocity v.'},
+  {h: 'Formula', s: 'a = (v − u) ÷ t  ⇒  v − u = at  ⇒  v = u + at', html: '<b>Formula:</b> a = (v − u)/t, so v − u = at, i.e. <b>v = u + at</b>.'},
+  {h: 'Substitution', s: 'v = 10 + 5 × 2 = 10 + 10', html: '<b>Substitution:</b> v = 10 m/s + 5 m/s² × 2 s = 10 + 10.'},
+  {h: 'Answer', s: 'v = 20 m/s', html: '<b>Answer:</b> v = <b>20 m/s</b> (forward).'}
+], (svg, i, t) => { const O = P(70, 270), sx = 120, sy = 9;
+  graphPaper(svg, O, {xMax: 2, yMax: 25, sx, sy, xStep: 1, yStep: 5, xl: 'time t (s)', yl: 'velocity v (m/s)'});
+  const e = i === 0 ? 0 : i === 1 ? t : 1;
+  K.dot(svg, P(O.x, O.y - 10 * sy), {r: 5, class: 'pt blue'}); text(svg, P(O.x + 8, O.y - 10 * sy + 16), 'u = 10', {class: 'lbl sm blue', 'text-anchor': 'start'});
+  if (e > 0) sline(svg, P(O.x, O.y - 10 * sy), P(O.x + 2 * sx * e, O.y - (10 + 10 * e) * sy), {stroke: 'var(--green)', 'stroke-width': 3});
+  if (i >= 2){ sline(svg, P(O.x + 2 * sx, O.y - 10 * sy), P(O.x + 2 * sx, O.y - 20 * sy), {stroke: 'var(--purple)', 'stroke-width': 2, 'stroke-dasharray': '5 4'});
+    text(svg, P(O.x + 2 * sx - 8, O.y - 15 * sy), 'at = 5 × 2 = 10', {class: 'lbl sm purple', 'text-anchor': 'end'}); }
+  if (i >= 3){ K.dot(svg, P(O.x + 2 * sx, O.y - 20 * sy), {r: 6, class: 'pt green'}); text(svg, P(O.x + 2 * sx - 6, O.y - 20 * sy - 16), 'v = 20 m/s', {class: 'lbl sm green', 'text-anchor': 'end'}); }
+});
+
+/* ---------- 3. worked example: 4 → 28 m/s in 4 s ---------- */
+examStepper('#we2', [
+  {h: 'Given', s: 'u = 4 m/s,  v = 28 m/s,  t = 4 s,  a = ?', html: '<b>Given:</b> u = 4 m/s, v = 28 m/s, t = 4 s. To find: acceleration a.'},
+  {h: 'Formula', s: 'a = (v − u) ÷ t', html: '<b>Formula:</b> a = (v − u)/t.'},
+  {h: 'Substitution', s: 'a = (28 − 4) ÷ 4 = 24 ÷ 4', html: '<b>Substitution:</b> a = (28 m/s − 4 m/s) ÷ 4 s = 24 ÷ 4.'},
+  {h: 'Answer', s: 'a = 6 m/s²', html: '<b>Answer:</b> a = <b>6 m/s²</b> – the velocity grows by 6 m/s every second.'}
+], (svg, i, t) => { const O = P(70, 270), sx = 60, sy = 7.5;
+  graphPaper(svg, O, {xMax: 4, yMax: 30, sx, sy, xStep: 1, yStep: 5, xl: 'time t (s)', yl: 'velocity v (m/s)'});
+  const e = i === 0 ? t : 1;
+  sline(svg, P(O.x, O.y - 4 * sy), P(O.x + 4 * sx * e, O.y - (4 + 24 * e) * sy), {stroke: 'var(--green)', 'stroke-width': 3});
+  K.dot(svg, P(O.x, O.y - 4 * sy), {r: 5, class: 'pt blue'});
+  if (i >= 2){ sline(svg, P(O.x, O.y - 4 * sy), P(O.x + 4 * sx, O.y - 4 * sy), {stroke: 'var(--purple)', 'stroke-width': 2, 'stroke-dasharray': '5 4'});
+    sline(svg, P(O.x + 4 * sx, O.y - 4 * sy), P(O.x + 4 * sx, O.y - 28 * sy), {stroke: 'var(--purple)', 'stroke-width': 2, 'stroke-dasharray': '5 4'});
+    text(svg, P(O.x + 2 * sx, O.y - 4 * sy + 14), 't = 4 s', {class: 'lbl sm purple'});
+    text(svg, P(O.x + 4 * sx - 8, O.y - 16 * sy), 'v − u = 24', {class: 'lbl sm purple', 'text-anchor': 'end'}); }
+  if (i >= 3) { K.dot(svg, P(O.x + 4 * sx, O.y - 28 * sy), {r: 6, class: 'pt green'}); text(svg, P(O.x + 2 * sx, O.y - 22 * sy), 'slope = 6 m/s²', {class: 'lbl sm green', 'text-anchor': 'end'}); }
+});
+
+/* ---------- 4. accelerator / brake lab ---------- */
+(function(){
+  const svg = document.getElementById('abSvg'), out = document.getElementById('abOut'), btn = document.getElementById('abGo');
+  const TMAX = 30, VMAX = 30, O = P(80, 360), sx = 20, sy = 6, RY = 110;
+  let pedal = 2, st, running = false, raf = null, last = 0;
+  function reset(){ st = {t: 0, v: 0, x: 0, a: Math.max(0, pedal), pts: [{t: 0, v: 0, a: 0}]}; running = false; btn.textContent = '▶ Start'; if (raf) cancelAnimationFrame(raf); raf = null; draw(); }
+  function draw(){ K.clear(svg);
+    /* road scrolling with the bike */
+    road(svg, RY); const off = (st.x * 8) % 60;
+    for (let k = -1; k < 15; k++) sline(svg, P(k * 60 - off, RY + 11), P(k * 60 - off + 30, RY + 11), {stroke: 'var(--muted)', 'stroke-width': 1.5});
+    for (let k = -1; k < 6; k++){ const px = k * 200 - (st.x * 8) % 200; sline(svg, P(px, RY - 70), P(px, RY - 2), {stroke: 'var(--muted)', 'stroke-width': 3}); }
+    bike(svg, 340, RY, 1.1);
+    if (st.v > 0.05) arrow(svg, P(430, RY - 50), P(430 + st.v * 6, RY - 50), {c: 'blue', w: 3, label: `v = ${fx(st.v, 1)} m/s`, lo: {x: 0, y: -14}, anchor: 'end'});
+    const aShow = st.a; if (Math.abs(aShow) > 0.01) arrow(svg, P(370, RY - 90), P(370 + aShow * 25, RY - 90), {c: aShow > 0 ? 'green' : 'red', w: 3, label: `a = ${fx(aShow, 1)} m/s²`, lo: {x: 0, y: -12}});
+    L(svg, 16, 26, `t = ${fx(st.t, 1)} s`, 'lbl big'); L(svg, 16, 52, `${fx(st.v * 3.6, 0)} km/h`, 'lbl sm muted');
+    /* graph */
+    graphPaper(svg, O, {xMax: TMAX, yMax: VMAX, sx, sy, xStep: 5, yStep: 10, xl: 'time t (s)', yl: 'v (m/s)'});
+    for (let k = 1; k < st.pts.length; k++){ const p0 = st.pts[k - 1], p1 = st.pts[k];
+      sline(svg, P(O.x + p0.t * sx, O.y - p0.v * sy), P(O.x + p1.t * sx, O.y - p1.v * sy), {stroke: p1.a > 0.01 ? 'var(--green)' : p1.a < -0.01 ? 'var(--red)' : 'var(--blue)', 'stroke-width': 3}); }
+    K.dot(svg, P(O.x + st.t * sx, O.y - st.v * sy), {r: 5, class: 'pt'});
+    const kind = st.a > 0.01 ? 'speeding up (positive acceleration)' : st.a < -0.01 ? 'slowing down (negative acceleration = retardation ' + fx(-st.a, 1) + ' m/s²)' : (st.v > 0 ? 'uniform velocity (a = 0)' : 'at rest');
+    out.textContent = `Grip setting: ${pedal > 0 ? 'accelerator' : pedal < 0 ? 'brake' : 'steady'}  →  a = ${fx(st.a, 1)} m/s²\nv = ${fx(st.v, 1)} m/s after ${fx(st.t, 1)} s: ${kind}` + (pedal !== 0 ? `\nEvery second the velocity changes by ${fx(Math.abs(pedal), 1)} m/s ${pedal > 0 ? 'more' : 'less'}.` : '') + (st.t >= TMAX ? '\nTime up – press Reset to ride again.' : '');
+  }
+  function step(dt){ let a = pedal; if (a < 0 && st.v <= 0) a = 0; if (a > 0 && st.v >= VMAX) a = 0;
+    st.v = Math.max(0, Math.min(VMAX, st.v + a * dt)); st.x += st.v * dt; st.t = Math.min(TMAX, st.t + dt); st.a = a;
+    const lp = st.pts[st.pts.length - 1]; if (st.t - lp.t >= 0.2 || Math.abs(lp.a - a) > 0.01) st.pts.push({t: st.t, v: st.v, a}); }
+  function loop(now){ if (!running) return; const dt = Math.min(0.05, (now - last) / 1000); last = now; step(dt); draw();
+    if (st.t >= TMAX){ running = false; btn.textContent = '▶ Start'; st.pts.push({t: st.t, v: st.v, a: st.a}); draw(); return; } raf = requestAnimationFrame(loop); }
+  btn.addEventListener('click', () => { if (running){ running = false; btn.textContent = '▶ Start'; return; } if (st.t >= TMAX) reset(); running = true; btn.textContent = '⏸ Pause'; last = performance.now(); raf = requestAnimationFrame(loop); });
+  document.getElementById('abReset').addEventListener('click', reset);
+  reset();
+  K.slider('#abA', v => { pedal = v; if (!running){ st.a = (v < 0 && st.v <= 0) || (v > 0 && st.v >= VMAX) ? 0 : v; draw(); } }, 1);
+})();
+
+/* ---------- 5. sorter ---------- */
+(function(){
+  const box = document.getElementById('sorter'), out = document.getElementById('sortOut');
+  const items = [['A coconut falling from the tree', 1], ['A train arriving at a station', -1], ['A KSRTC bus leaving the bus stand', 1], ['A stone thrown upwards, while going up', -1],
+    ['A ball rolling down a slope', 1], ['An autorickshaw stopping at a red signal', -1], ['The Kochi Metro leaving a station', 1], ['A ball rolling on grass and slowing down', -1]];
+  let done = 0, right = 0;
+  items.forEach(([s, ans]) => { const d = document.createElement('div'); d.className = 'it';
+    d.innerHTML = `<div>${s}</div><div class="btns"><button class="btn" data-v="1">⬆ speeding up</button><button class="btn" data-v="-1">⬇ slowing down</button></div><div class="fbk"></div>`;
+    d.addEventListener('click', e => { const b = e.target.closest('button'); if (!b || d.dataset.done) return; d.dataset.done = 1; done++;
+      const ok = +b.dataset.v === ans; if (ok) right++; d.classList.add(ok ? 'ok' : 'no');
+      d.querySelector('.fbk').textContent = (ok ? '✅ ' : '❌ ') + (ans > 0 ? 'Velocity increases → positive acceleration.' : 'Velocity decreases → negative acceleration (retardation).');
+      out.textContent = `${right} of ${done} correct` + (done === items.length ? ' – all sorted! Both groups have acceleration; only its sign differs.' : ''); });
+    box.appendChild(d); });
+})();
+
+/* ---------- 6. motorbike retardation lab ---------- */
+(function(){
+  const segs = [[20, 15, 10], [15, 10, 5], [10, 5, 5], [5, 0, 20]], names = ['P', 'Q', 'R', 'S', 'T'], times = [0, 10, 15, 20, 40];
+  const pos = [0]; segs.forEach(([u, v, t]) => pos.push(pos[pos.length - 1] + (u + v) / 2 * t)); /* 0, 175, 237.5, 275, 325 m */
+  const X0 = 100, SC = 1.95, RY = 115, O = P(80, 395), sx = 15, sy = 8;
+  const ROWS = [['15', '10', '−5', '5', '−5 ÷ 5 = −1'], ['10', '5', '−5', '5', '−5 ÷ 5 = −1'], ['5', '0', '−5', '20', '−5 ÷ 20 = −0.25']];
+  function at(tt){ for (let k = 0; k < 4; k++){ const [u, v, T] = segs[k]; if (tt <= times[k + 1] + 1e-9){ const tau = tt - times[k], a = (v - u) / T; return {x: pos[k] + u * tau + .5 * a * tau * tau, v: u + a * tau, a}; } } return {x: pos[4], v: 0, a: 0}; }
+  new K.Stepper('#bikeLab', {ms: 1500, steps: [
+    'The motorbike passes <b>P</b> at 20 m/s (t = 0 s). The rider starts braking gently.',
+    '<b>P → Q</b> (0–10 s): 20 → 15 m/s. Change v − u = 15 − 20 = −5 m/s in 10 s → a = <b>−0.5 m/s²</b>.',
+    '<b>Q → R</b> (10–15 s): 15 → 10 m/s. Change −5 m/s in 5 s → a = <b>−1 m/s²</b>. Harder braking: steeper fall on the graph.',
+    '<b>R → S</b> (15–20 s): 10 → 5 m/s. Change −5 m/s in 5 s → a = <b>−1 m/s²</b>.',
+    '<b>S → T</b> (20–40 s): 5 → 0 m/s. Change −5 m/s in 20 s → a = <b>−0.25 m/s²</b>. The bike rolls gently to a stop.',
+    'All the accelerations are <b>negative</b>: the velocity decreases. A negative acceleration is called <b>retardation</b>. (The values are not equal – page 9 calls this non-uniform acceleration.)'
+  ], draw(svg, i, t){
+    const tt = i === 0 ? 0 : i >= 5 ? 40 : times[i - 1] + (times[i] - times[i - 1]) * t, q = at(tt);
+    road(svg, RY);
+    names.forEach((n, k) => { const x = X0 + pos[k] * SC, on = tt >= times[k] - 1e-6;
+      sline(svg, P(x, RY + 24), P(x, RY + 38), {stroke: 'var(--text)', 'stroke-width': 2});
+      text(svg, P(x, RY + 52), n, {class: 'lbl big'}); text(svg, P(x, RY + 72), times[k] + ' s', {class: 'lbl sm muted'});
+      text(svg, P(x, 26), [20, 15, 10, 5, 0][k] + ' m/s', {class: 'lbl sm ' + (on ? 'blue' : 'muted'), 'font-weight': 700}); });
+    const bx = X0 + q.x * SC; bike(svg, bx - 70, RY, 1);
+    if (q.v > 0.05) arrow(svg, P(bx + 4, RY - 48), P(bx + 4 + q.v * 3, RY - 48), {c: 'blue', w: 3, head: 8});
+    if (i >= 1 && i <= 4) arrow(svg, P(bx - 74, RY - 72), P(bx - 74 + q.a * 50, RY - 72), {c: 'red', w: 3, head: 8});
+    graphPaper(svg, O, {xMax: 40, yMax: 20, sx, sy, xStep: 5, yStep: 5, xl: 'time t (s)', yl: 'velocity v (m/s)'});
+    const pts = []; for (let k = 0; k <= 80; k++){ const s = tt * k / 80; pts.push(P(O.x + s * sx, O.y - at(s).v * sy)); }
+    polyline(svg, pts, {stroke: 'var(--red)', 'stroke-width': 3});
+    names.forEach((n, k) => { if (tt >= times[k] - 1e-6) { const p = P(O.x + times[k] * sx, O.y - [20, 15, 10, 5, 0][k] * sy); K.dot(svg, p, {r: 5, class: 'pt blue'}); text(svg, P(p.x + 9, p.y - 11), n, {class: 'lbl sm blue', 'text-anchor': 'start'}); } });
+    if (i >= 1 && i <= 4) L(svg, 300, 222, ['−0.5', '−1', '−1', '−0.25'][i - 1] + ' m/s²', 'lbl big red', {opacity: t});
+    if (i === 5) L(svg, 220, 222, 'all negative → retardation', 'lbl big red');
+    L(svg, 520, 222, `t = ${fx(tt, 1)} s,  v = ${fx(q.v, 1)} m/s`, 'lbl');
+    if (t >= 1 || i === 0) fillTable('t27', ROWS, Math.max(0, Math.min(3, i - 1)), i >= 1 && i <= 4 ? i - 1 : -1);
+  }});
+})();
+
+/* ---------- quiz ---------- */
+K.numq('#q1', {q: 'An autorickshaw starts from rest and reaches 15 m/s in 5 s. Its acceleration is … m/s².', answer: 3, tol: 0.01, unit: 'm/s²', explain: 'a = (15 − 0) ÷ 5 = 3 m/s².', hint: 'a = (v − u) ÷ t, with u = 0.'});
+K.mcq('#q2', {q: 'The unit of acceleration is', options: ['m/s', 'm/s²', 'm²/s', 's/m'], answer: 1, explain: '(m/s) ÷ s = m/s².', hint: 'Change of velocity (m/s) divided by time (s).'});
+K.numq('#q3', {q: 'A car moving at 5 m/s accelerates at 2 m/s² for 3 s. Its final velocity is … m/s.', answer: 11, tol: 0.01, unit: 'm/s', explain: 'v = u + at = 5 + 2 × 3 = 11 m/s.', hint: 'v = u + at.'});
+K.mcq('#q4', {q: 'A bus slows from 12 m/s to 4 m/s in 4 s. Which statement is correct?', options: ['a = 2 m/s²', 'a = −2 m/s², i.e. retardation 2 m/s²', 'retardation = −2 m/s²', 'a = −8 m/s²'], answer: 1, explain: 'a = (4 − 12) ÷ 4 = −2 m/s²; the retardation is 2 m/s² (no minus sign with the word retardation).', hint: 'v − u = 4 − 12. And remember the rule about writing retardation.'});
+K.mcq('#q5', {q: 'A giant wheel turns at a steady speed. Do the riders have an acceleration?', options: ['No – the speed is constant', 'Yes – the direction of their velocity keeps changing', 'Only when it stops', 'Only at the top'], answer: 1, explain: 'Velocity is a vector; a change in direction is a change in velocity, so there is acceleration.', hint: 'Acceleration = rate of change of velocity, and velocity includes direction.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

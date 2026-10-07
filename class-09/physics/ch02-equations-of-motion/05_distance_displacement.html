@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Distance and Displacement – Equations of Motion</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.qa{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.6rem 1rem;margin:.7rem 0;box-shadow:var(--shadow)}
+.qa p{margin:.25em 0}
+.qbox{background:var(--surface);border:1px solid var(--border);border-left:6px solid var(--accent);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.why{font-size:.93rem;color:var(--muted);margin-top:.3rem}
+.diary{background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:1rem 0}
+.diary h3{margin:.1rem 0 .4rem;color:var(--accent-ink)}
+.obs td,.obs th{text-align:center}
+.obs tr.hl td{background:var(--accent-soft)}
+.obs td.q{color:var(--muted)}
+.bubble{background:var(--surface);border:2px solid var(--purple);border-radius:18px;padding:.6rem .9rem;font-size:.95rem;margin:.8rem 0}
+.tblwrap{overflow-x:auto}
+svg .ah-red{fill:var(--red)}svg .ah-blue{fill:var(--blue)}svg .ah-green{fill:var(--green)}svg .ah-purple{fill:var(--purple)}svg .ah-amber{fill:var(--accent)}svg .ah-text{fill:var(--text)}
+svg .body-fill{fill:var(--surface2);stroke:var(--text);stroke-width:1.8}
+svg .gp-mi{stroke:var(--red);stroke-opacity:.14;stroke-width:.7}
+svg .gp-ma{stroke:var(--red);stroke-opacity:.38;stroke-width:1.1}
+svg .gp-bg{fill:var(--red-soft);opacity:.25}
+/* page-specific */
+.bubbles{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.7rem;margin:.8rem 0}
+.bubbles .bubble{margin:0}
+.bubble .ml{display:block;font-weight:600;margin-bottom:.2rem}
+.sorter{display:grid;gap:.45rem;margin:.6rem 0}
+.sorter .row{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .6rem;padding:.45rem .7rem;border-radius:10px;background:var(--surface2);border-left:5px solid transparent}
+.sorter .row .txt{flex:1 1 220px}
+.sorter .row.ok{border-left-color:var(--green);background:var(--green-soft)}
+.sorter .row.bad{border-left-color:var(--red);background:var(--red-soft)}
+.sorter .row .fbk{flex-basis:100%;font-size:.9rem}
+.score{font-weight:700;color:var(--primary-ink)}
+svg .post{fill:var(--muted)}
+svg .road{fill:var(--surface2)}
+svg .room{fill:var(--surface2);stroke:var(--text);stroke-width:1.2}
+svg .room-hl{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2}
+svg .lawn{fill:var(--green-soft)}
+svg .walk{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+svg .pathbg{fill:none;stroke:var(--muted);stroke-width:9;stroke-linecap:round;opacity:.28}
+</style>
+</head>
+<body data-page="05_distance_displacement">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 2 · Section 1</span><span class="chip amber">Textbook pages 27–30</span>
+<h1>Distance and Displacement <span class="ml">ദൂരം, സ്ഥാനാന്തരം</span></h1>
+<p class="lead">A child walks between the electric posts along a road, a girl goes round the school garden at interval time. How far did each of them <b>travel</b>? And how far – and in which direction – did each of them really <b>get</b> from where they started? These two answers have two different names: <b>distance</b> and <b>displacement</b>. This page is the foundation for everything else in the chapter.</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 1 and 2 of this guide)</div>
+<ul style="margin:0">
+<li>The four directions: north <span class="ml">വടക്ക്</span>, south <span class="ml">തെക്ക്</span>, east <span class="ml">കിഴക്ക്</span>, west <span class="ml">പടിഞ്ഞാറ്</span> – <a href="01_directions_number_line.html">page 1</a>.</li>
+<li>Positions on a number line; going forward is +, going back is − – <a href="01_directions_number_line.html">page 1</a>.</li>
+<li>Length is measured in metres (m) – <a href="02_units_and_conversions.html">page 2</a>.</li>
+</ul></div>
+
+<h2>1. Can we time a train on a bridge? (page 27)</h2>
+<p>The chapter opens with a train on a long bridge. A child and her grandfather are watching it.</p>
+<div class="bubbles">
+<div class="bubble"><span class="ml">ഈ ട്രെയിൻ പാലം മുഴുവനായും കടന്ന് പോകാൻ എടുക്കുന്ന സമയം കണക്കാക്കാനാകുമോ?</span>The child: <em>Can we calculate the time this train takes to cross the bridge completely?</em></div>
+<div class="bubble"><span class="ml">അത് കൃത്യമായി കണക്കാക്കാൻ കഴിയും. പക്ഷെ അതിന് ചലനത്തിന്റെ സവിശേഷതകളെക്കുറിച്ചുള്ള ഏതാനും കാര്യങ്ങൾ മനസ്സിലാക്കേണ്ടതുണ്ട്.</span>Grandfather: <em>It can be calculated exactly. But for that you need to understand some features of motion.</em></div>
+</div>
+<p>We will answer it on the next page (it takes <b>50 s</b> – and you will see why the length of the train itself matters). First, the features of motion: <span class="term">distance</span> and <span class="term">displacement</span>.</p>
+
+<h2>2. The electric posts – Fig 2.1</h2>
+<p><span class="ml">A, B, C, D എന്നിവ റോഡരികിൽ സ്ഥാപിച്ചിരിക്കുന്ന 4 ഇലക്ട്രിക് പോളുകളാണ്. അടുത്തടുത്ത രണ്ട് പോളുകൾ തമ്മിലുള്ള അകലം 40 m വീതമാണ്.</span> – A, B, C and D are four electric posts along a road; neighbouring posts are <b>40 m</b> apart. East is to the right.</p>
+<p><span class="ml">പോൾ B യുടെ ചുവട്ടിൽ നിന്ന് ഒരു കുട്ടി C യും കടന്ന് D യിൽ എത്തി. അതിനുശേഷം D യിൽ നിന്നും തിരിച്ച് C എന്ന പോളിനരികെ എത്തി.</span> – A child starts at the foot of post B, walks past C to D, then turns back and stops near post C.</p>
+
+<div class="lab" id="postsLab">
+  <div class="lab-title">🧪 Posts lab – walk the child and watch the two counters</div>
+  <svg id="poSvg" viewBox="0 0 800 260" role="img" aria-label="Four electric posts A, B, C, D 40 metres apart along an east–west road, with a child walking between them"></svg>
+  <div class="controls">
+    <button class="btn" id="poW">◀ Walk 40 m west</button>
+    <button class="btn" id="poE">Walk 40 m east ▶</button>
+    <button class="btn primary" id="poPlay">▶ Textbook walk: B → D → C</button>
+    <button class="btn ghost" id="poReset">⟲ Back to B</button>
+  </div>
+  <div class="readout" id="poOut"></div>
+  <p class="hint">The <b style="color:var(--accent)">orange</b> trail is every metre walked – its total length is the <b>distance travelled</b>. The <b style="color:var(--green)">green</b> arrow always runs straight from the start B to where the child is now – that is the <b>displacement</b>. Try: walk east, then west, then west again. Does the green arrow ever get longer than the orange trail?</p>
+</div>
+
+<h3>Textbook questions (page 27)</h3>
+<div class="qa"><p><b>Q1.</b> <span class="ml">കുട്ടി സഞ്ചരിച്ച ആകെ ദൂരമെത്ര?</span> – What is the total distance the child travelled (B → D → C)?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">B → C 40 m, C → D 40 m, D → C 40 m: total distance = 40 + 40 + 40 = <b>120 m</b>.<div class="why">Why: distance counts every metre walked, including the walk back from D to C.</div></div></div></div>
+<div class="qa"><p><b>Q2.</b> <span class="ml">കുട്ടിയുടെ ആദ്യസ്ഥാനമായ B യും ഇപ്പോഴത്തെ സ്ഥാനമായ C യും തമ്മിലുള്ള അകലം എത്രയാണ്?</span> – How far apart are the child's initial position B and present position C?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>40 m</b>.<div class="why">Why: only the start (B) and the end (C) matter here, not the path in between. B and C are neighbouring posts.</div></div></div></div>
+<div class="qa"><p><b>Q3.</b> <span class="ml">B യിൽ നിന്ന് 40 m ദൂരം സഞ്ചരിച്ചാൽ കുട്ടിയുടെ സ്ഥാനം എവിടെയെല്ലാമാകാം?</span> – If the child travels 40 m from B (in a straight line along the road), where could the child be?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">At <b>A</b> (40 m west) <b>or</b> at <b>C</b> (40 m east).<div class="why">Why: "40 m" alone does not fix the position – you also need the direction. Try both buttons in the lab.</div></div></div></div>
+<div class="qa"><p><b>Q4.</b> <span class="ml">B യിൽ നിന്ന് 40 m ദൂരം ഏത് ദിശയിൽ യാത്രചെയ്താൽ C യിൽ എത്തും? (കിഴക്ക് / പടിഞ്ഞാറ്)</span> – In which direction must the child travel 40 m from B to reach C? (east / west)</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>East</b>. So the child's change of position is "<b>40 m east</b>, from B to C".<div class="why">Why: C is to the east (right) of B. A size (40 m) together with a direction (east) tells us exactly where the child ended up – this is the displacement.</div></div></div></div>
+
+<h2>3. Displacement <span class="ml">സ്ഥാനാന്തരം</span> – a distance with a direction</h2>
+<p><span class="ml">കുട്ടിയുടെ ആദ്യസ്ഥാനമായ B യും ഇപ്പോഴത്തെ സ്ഥാനമായ C യും തമ്മിലുള്ള അകലമാണല്ലോ കുട്ടിയുടെ സ്ഥാനമാറ്റത്തിന്റെ അളവ്.</span> The gap between the initial position <span class="ml">ആദ്യസ്ഥാനം</span> B and the final position <span class="ml">അന്ത്യസ്ഥാനം</span> C measures how much the child's position changed. Together with the direction, it is called the displacement.</p>
+<div class="callout key"><div class="title">⭐ Displacement (textbook page 28)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">രണ്ട് സ്ഥാനങ്ങൾ തമ്മിലുള്ള നേർരേഖാ അകലം ഒരു നിശ്ചിത ദിശയോടു കൂടി പ്രതിപാദിക്കുന്നതാണ് സ്ഥാനാന്തരം (displacement). സ്ഥാനാന്തരം s എന്ന അക്ഷരം കൊണ്ടാണ് സൂചിപ്പിക്കുന്നത്. ദൂരത്തിന്റെ യൂണിറ്റായ മീറ്റർ (m) തന്നെയാണ് സ്ഥാനാന്തരത്തിന്റെയും യൂണിറ്റ്.</p>
+<p style="margin:0"><b>Displacement is the straight-line distance between two positions, stated with a definite direction.</b> Its symbol is <b>s</b>; its unit is the same as that of distance – the <b>metre (m)</b>.</p></div>
+
+<h3>Vector and scalar quantities <span class="ml">സദിശ അളവുകൾ, അദിശ അളവുകൾ</span></h3>
+<p><span class="ml">അളവിനോടൊപ്പം ദിശ കൂടി പ്രതിപാദിക്കേണ്ട അളവുകളാണ് സദിശ അളവുകൾ (vector quantities). ദിശ ആവശ്യമില്ലാത്ത അളവുകളാണ് അദിശ അളവുകൾ (scalar quantities).</span></p>
+<div class="grid">
+<div class="card"><b>Vector quantity</b> <span class="ml">സദിശ അളവ്</span><br>has a <b>magnitude</b> (size) <b>and a direction</b>. Example: "40 m east".</div>
+<div class="card"><b>Scalar quantity</b> <span class="ml">അദിശ അളവ്</span><br>has <b>only a magnitude</b>; no direction is needed. Example: "a mass of 5 kg", "10 s".</div>
+</div>
+<div class="qa"><p><b>Q5.</b> <span class="ml">അങ്ങനെയെങ്കിൽ സ്ഥാനാന്തരം സദിശമാണോ അതോ അദിശമാണോ?</span> – So, is displacement a vector or a scalar?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">Displacement is a <b>vector</b> quantity. (Distance is a scalar.)<div class="why">Why: "40 m" is not enough to say where the child is (it could be A or C) – the direction must be stated, so displacement has both size and direction.</div></div></div></div>
+
+<div class="lab">
+  <div class="lab-title">🧩 Sorter – vector or scalar?</div>
+  <p class="small" style="margin-top:0">Ask yourself: <em>does the answer still make full sense without a direction?</em> Then it is a scalar.</p>
+  <div class="sorter" id="vsSort"></div>
+  <p>Score: <span class="score" id="vsScore">0 / 8</span></p>
+</div>
+
+<h3>Positive and negative directions <span class="ml">പോസിറ്റീവ് / നെഗറ്റീവ്</span></h3>
+<div class="qa"><p><b>Q6.</b> <span class="ml">കുട്ടി B യിൽ നിന്ന് 40 m പടിഞ്ഞാറ് ദിശയിൽ സഞ്ചരിക്കുന്നുവെങ്കിൽ കുട്ടിയുടെ ഇപ്പോഴത്തെ സ്ഥാനം ............ ആണ്.</span> – If the child walks 40 m west from B, the child is now at ……… .</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">At post <b>A</b>. Taking east as positive, the displacement is <b>−40 m</b> (40 m west, B → A).<div class="why">Why: A is the post just west (left) of B. West is the opposite of the direction we chose as positive, so the displacement gets a minus sign.</div></div></div></div>
+<p><span class="ml">B യിൽ നിന്ന് മുന്നോട്ട്/കിഴക്ക് ദിശയിലേക്കുള്ള സ്ഥാനാന്തരം പോസിറ്റീവ് (positive) ആയി പരിഗണിക്കുകയാണെങ്കിൽ പുറകിലേക്ക്/പടിഞ്ഞാറ് ദിശയിലേക്കുള്ള സ്ഥാനാന്തരം നെഗറ്റീവ് (negative) ആയി പരിഗണിക്കാം.</span> If displacement forward / to the east is taken as <b>positive</b>, displacement backward / to the west is <b>negative</b>. (You may choose the other way round.) <span class="ml">ഒരിക്കൽ ദിശ നിർണ്ണയിച്ചു കഴിഞ്ഞാൽ … പോസിറ്റീവ്, നെഗറ്റീവ് ദിശകൾക്ക് മാറ്റം വരുത്താൻ പാടില്ല.</span> But <b>once you have chosen, you must not change it</b> in the middle of a problem.</p>
+<div class="callout think"><div class="title">🧭 Our rule for this whole guide</div><p>East / forward / up = <b>+</b>; west / backward / down = <b>−</b>. With B as the zero, the posts sit at A = −40 m, B = 0, C = +40 m, D = +80 m. Displacement = final position − initial position.</p></div>
+
+<h2>4. Table 2.1 – distance and displacement on each trip</h2>
+<p><span class="ml">കുട്ടിയുടെ സഞ്ചാരത്തെ ആസ്പദമാക്കി ചുവടെ കൊടുത്തിരിക്കുന്ന പട്ടിക പൂർത്തീകരിക്കുക.</span> – Complete the table based on the child's trips. Step through: each trip is drawn, and its row fills in.</p>
+<div class="lab" id="t21Lab">
+  <div class="lab-title">🎬 Five trips from post B</div>
+  <svg viewBox="0 0 800 230" role="img" aria-label="A number line with posts A to D showing the path walked (orange) and the displacement (green) for each trip"></svg>
+</div>
+<div class="tblwrap"><table class="obs" id="t21"><thead><tr><th>Stage of the path <span class="ml">സഞ്ചാരപാതയുടെ ഘട്ടങ്ങൾ</span></th><th>Distance travelled <span class="ml">സഞ്ചരിച്ച ദൂരം</span></th><th>Displacement <span class="ml">സ്ഥാനാന്തരം</span></th></tr></thead><tbody></tbody></table></div>
+
+<div class="qa"><p><b>Q7.</b> <span class="ml">കുട്ടി A യിൽ നിന്ന് D യിൽ എത്തിയ ശേഷം A യിൽ തിരിച്ചെത്തിയപ്പോൾ സഞ്ചരിച്ച ദൂരം എത്ര? സ്ഥാനാന്തരമെത്ര? ഇവിടെ ആദ്യസ്ഥാനവും അന്ത്യസ്ഥാനവും ഒന്നുതന്നെയല്ലേ?</span> – The child goes from A to D and comes back to A. What is the distance travelled? The displacement? Aren't the initial and final positions the same here?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">A → D is 3 × 40 = 120 m, and back again 120 m: distance = <b>240 m</b>. Displacement = <b>zero</b>.<div class="why">Why: yes – the child starts and ends at the same post A, so there is no change of position at all, however far the walk was.</div></div></div></div>
+<p><span class="ml">ഒരു വസ്തുവിന്റെ സ്ഥാനാന്തരത്തിന്റെ അളവ് സഞ്ചരിച്ച ദൂരത്തിന് തുല്യമോ കുറവോ പൂജ്യമോ ആകാം.</span> From the table: the size of the displacement can be <b>equal to</b>, <b>less than</b>, or <b>zero</b> compared with the distance travelled – but <b>never more</b> than the distance (a straight line is the shortest path between two points).</p>
+<div class="qa"><p><b>Q8.</b> <span class="ml">സഞ്ചരിച്ച ദൂരവും സ്ഥാനാന്തരവും തുല്യമായി വരുന്ന സന്ദർഭങ്ങളെഴുതുക.</span> – Write situations in which the distance travelled and the displacement are equal (in size).</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">Whenever something moves along a <b>straight line in one direction without turning back</b>: a KSRTC bus on a straight stretch of road that does not turn back; a stone dropped straight down from a height; a sprinter running the 100 m race; a lift going straight up from the ground floor to the third floor; the child walking straight from B to D.<div class="why">Why: if the path is straight and never reverses, the path itself <em>is</em> the straight line from start to end, so the two lengths are the same.</div></div></div></div>
+
+<h2>5. Two paths from P – Fig 2.2</h2>
+<p><span class="ml">ഒരു കുട്ടി P എന്ന സ്ഥാനത്തു നിന്ന് Q വഴി സഞ്ചരിച്ച രണ്ട് വ്യത്യസ്ത പാതകൾ ചിത്രീകരിച്ചിരിക്കുന്നു.</span> – Two different paths of a child who starts at P and goes via Q. In (a) the child turns at Q (PQ = 60 m, QR = 40 m, PR = 80 m); in (b) the child goes straight on from P through Q to S (60 m + 40 m).</p>
+<div class="lab">
+  <div class="lab-title">🧪 Same 100 m walked – two different displacements</div>
+  <svg id="ppSvg" viewBox="0 0 800 280" role="img" aria-label="Left: a triangular path P to Q to R with PR 80 metres. Right: a straight path P to Q to S"></svg>
+  <div class="controls"><label>metres walked <input id="ppS" type="range" min="0" max="100" step="1" value="100"><output></output> m</label>
+    <button class="btn primary" id="ppGo">▶ Walk both</button></div>
+  <div class="readout" id="ppOut"></div>
+</div>
+<div class="qa"><p><b>(a)</b> <span class="ml">ചിത്രം 2.2 (a) യിൽ സഞ്ചരിച്ച ദൂരം എത്ര? സ്ഥാനാന്തരം എത്ര?</span> – In Fig 2.2(a), what is the distance travelled? The displacement?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">Distance = 60 + 40 = <b>100 m</b>; displacement = <b>80 m, from P to R</b>.<div class="why">Why: the displacement is the straight line PR joining the start and the end, not the bent path P → Q → R.</div></div></div></div>
+<div class="qa"><p><b>(b)</b> <span class="ml">ചിത്രം 2.2 (b) യിൽ സഞ്ചരിച്ച ദൂരം എത്ര? സ്ഥാനാന്തരം എത്ര?</span> – In Fig 2.2(b)?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">Distance = 60 + 40 = <b>100 m</b>; displacement = <b>100 m, from P to S</b>.<div class="why">Why: P, Q and S are on one straight line and the child never turns back, so the straight line PS is exactly the path walked.</div></div></div></div>
+<div class="qa"><p><b>(c)</b> <span class="ml">ഇവിടെ ഏത് സന്ദർഭത്തിലാണ് സ്ഥാനാന്തരത്തിന്റെ അളവും ദൂരത്തിന്റെ അളവും തുല്യമായത്?</span> – In which case are the size of the displacement and the distance equal?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">In <b>Fig 2.2(b)</b> – the straight path in one direction.<div class="why">Why: in (a) the path turns at Q, so the straight line PR (80 m) is shorter than the path (100 m).</div></div></div></div>
+<div class="callout key"><div class="title">⭐ When are they equal? (textbook page 29)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">ഒരു വസ്തു നേർരേഖാ പാതയിലൂടെ ഒരേ ദിശയിൽ സഞ്ചരിക്കുമ്പോൾ മാത്രമാണ് സ്ഥാനാന്തരത്തിന്റെയും സഞ്ചരിച്ച ദൂരത്തിന്റെയും മൂല്യം തുല്യമാകുന്നത്.</p>
+<p style="margin:0"><b>The magnitude of the displacement equals the distance travelled only when an object moves along a straight path in one direction.</b></p></div>
+
+<h2>6. Table 2.2 – distance vs displacement</h2>
+<p><span class="ml">ഒരാളുടെ സഞ്ചാരവുമായി ബന്ധപ്പെട്ട ദൂരം, സ്ഥാനാന്തരം ഇവ തമ്മിലുള്ള വ്യത്യാസങ്ങൾ പട്ടിക 2.2 ൽ രേഖപ്പെടുത്തൂ.</span> – Record the differences between distance and displacement. First sort these statements yourself.</p>
+<div class="lab">
+  <div class="lab-title">🧩 Sorter – which one is it about?</div>
+  <div class="sorter" id="ddSort"></div>
+  <p>Score: <span class="score" id="ddScore">0 / 8</span></p>
+</div>
+<div class="reveal" data-btn="Show the completed Table 2.2"><div class="tblwrap"><table class="obs"><thead><tr><th>Distance <span class="ml">ദൂരം</span></th><th>Displacement <span class="ml">സ്ഥാനാന്തരം</span></th></tr></thead><tbody>
+<tr><td>Total length of the path travelled <span class="ml">സഞ്ചരിച്ച പാതയുടെ ആകെ നീളം</span></td><td>Shortest (straight-line) distance from the initial to the final position, with its direction</td></tr>
+<tr><td>Never zero once the object has moved</td><td>Can be zero too <span class="ml">പൂജ്യവും ആകാം</span> (start = end)</td></tr>
+<tr><td>Scalar <span class="ml">അദിശം</span> – magnitude only</td><td>Vector <span class="ml">സദിശം</span> – magnitude and direction</td></tr>
+<tr><td>Always positive</td><td>Can be positive, negative or zero</td></tr>
+<tr><td>Depends on the path taken</td><td>Does not depend on the path – only on the start and end</td></tr>
+<tr><td>Always ≥ the size of the displacement</td><td>Its size is never more than the distance</td></tr>
+</tbody></table></div></div>
+
+<h2>7. Round the school garden – Fig 2.3 and Table 2.3</h2>
+<p><span class="ml">ഇന്റർവെൽ സമയത്ത് 9 B ക്ലാസിൽ നിന്ന് ഒരു കുട്ടി സ്റ്റാഫ് റൂമിൽ പോയ ശേഷം സ്കൂൾ ഗാർഡനിലെ രാഷ്ട്രപിതാവിന്റെ പ്രതിമയുടെ സമീപവും തുടർന്ന് സ്കൂൾ ഓഫീസ് വഴി തിരികെ ക്ലാസിലും എത്തി.</span> – During the interval a child goes from class 9B to the staff room, then to the statue of the Father of the Nation (Mahatma Gandhi) in the school garden, and then back to the class via the school office.</p>
+<p>From the corridor in front of 9B: the staff room front is <b>15 m east</b>, the office front <b>15 m west</b>; the statue is <b>60 m south</b> of 9B (straight line). The curved garden path from the staff room to the statue is <b>70 m</b>; the curved path from the statue to the office is <b>80 m</b>.</p>
+<div class="lab">
+  <div class="lab-title">🧪 Interval walk – odometer and displacement arrow</div>
+  <svg id="scSvg" viewBox="0 0 800 600" role="img" aria-label="School building with Office, 9A, 9B, 9C and Staff room on the ground floor, a garden with curved paths and the statue 60 metres south of 9B"></svg>
+  <div class="controls"><label>metres walked <input id="scS" type="range" min="0" max="180" step="1" value="0"><output></output> m</label>
+    <button class="btn primary" id="scGo">▶ Walk the route</button></div>
+  <div class="readout" id="scOut"></div>
+  <p class="hint">Drawing not to scale (like Fig 2.3: the 15 m corridor is drawn long so you can see it). The numbers in the readout are the real ones in metres.</p>
+</div>
+<div class="tblwrap"><table class="obs" id="t23"><thead><tr><th>Child's path <span class="ml">കുട്ടിയുടെ സഞ്ചാരപാത</span></th><th>Distance (m)</th><th>Displacement (m)</th></tr></thead><tbody>
+<tr><td>9B → in front of the staff room</td><td class="q">?</td><td class="q">?</td></tr>
+<tr><td>9B → via the staff room → near the statue</td><td class="q">?</td><td class="q">?</td></tr>
+<tr><td>back in 9B (via the statue and the office)</td><td class="q">?</td><td class="q">?</td></tr>
+</tbody></table></div>
+<p class="small">The table fills in as the child reaches each place. Answers with reasons:</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">Row 1: distance <b>15 m</b>, displacement <b>15 m east</b>.<br>Row 2: distance 15 + 70 = <b>85 m</b>, displacement <b>60 m south</b> (straight from 9B to the statue).<br>Row 3: distance 15 + 70 + 80 + 15 = <b>180 m</b>, displacement <b>0</b>.<div class="why">Why: the displacement only looks at where the child started (9B) and where she is now. The curved paths add to the distance but not to the displacement; back in 9B, the start and end are the same point.</div></div></div>
+
+<div class="callout real"><div class="title">🌴 Kerala connection</div>
+<p style="margin:0">Along a village road in Kerala the KSEB electric posts are a handy ruler – they are roughly 30–40 m apart. A milk vendor who cycles from the junction to the last house and back has covered several kilometres of <b>distance</b> every morning, but by the time he is home again his <b>displacement</b> is zero. An autorickshaw meter charges you for the distance, not the displacement – that is why a round trip is not free!</p></div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.physicsclassroom.com/tutorial/1d-kinematics/language-of-kinematics/distance-and-displacement" target="_blank" rel="noopener noreferrer">📄 Physics Tutorial - 1D Kinematics - Language of Kinematics - Distance and Displacement</a> <span class="src">The Physics Classroom</span><br><span class="note">Walk around a block and back home: distance is big, displacement is zero - this page shows why.</span></li><li><a href="https://phet.colorado.edu/en/simulations/vector-addition" target="_blank" rel="noopener noreferrer">🧪 Vector Addition (PhET simulation)</a> <span class="src">PhET Interactive Simulations, University of Colorado Boulder</span><br><span class="note">Drag arrows (vectors) and add them - see how direction changes the total, unlike plain numbers.</span></li><li><a href="https://www.youtube.com/watch?v=vQCkYm3v3aA" target="_blank" rel="noopener noreferrer">▶️ Distance and displacement introduction | One-dimensional motion | Physics | Khan Academy</a> <span class="src">Khan Academy (YouTube) · 4:14</span><br><span class="note">A 4-minute picture-based intro to distance vs displacement.</span></li><li><a href="https://www.youtube.com/watch?v=ihNZlp7iUHE" target="_blank" rel="noopener noreferrer">▶️ Intro to vectors &amp; scalars | One-dimensional motion | Physics | Khan Academy</a> <span class="src">Khan Academy (YouTube) · 8:39</span><br><span class="note">Sal Khan explains scalars and vectors using distance/displacement and speed/velocity.</span></li></ul></div>
+
+<h2>8. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li><b>Distance</b> <span class="ml">ദൂരം</span>: total length of the path – a scalar, always positive.</li>
+<li><b>Displacement</b> <span class="ml">സ്ഥാനാന്തരം</span> (s): straight-line distance from the initial to the final position <em>with direction</em> – a vector; unit m.</li>
+<li>Choose east/forward as + and keep it: west/backward displacement is −.</li>
+<li>|displacement| ≤ distance; equal only on a straight path in one direction; zero when you return to the start.</li>
+</ul></div>
+<p>Next: <a href="06_velocity.html">Speed and velocity – and the train on the bridge ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Equations of Motion · Class 9 Physics", "icon": "🚆", "key": "physics_ch2_progress", "pages": [["index.html", "Home"], ["01_directions_number_line.html", "1 · Directions, Number Line & Signs"], ["02_units_and_conversions.html", "2 · Units, Time & Conversions"], ["03_drawing_reading_graphs.html", "3 · Drawing & Reading Graphs"], ["04_formulas_and_areas.html", "4 · Rearranging Formulas, Squares & Areas"], ["05_distance_displacement.html", "5 · Distance and Displacement"], ["06_velocity.html", "6 · Speed and Velocity"], ["07_uniform_nonuniform_velocity.html", "7 · Uniform & Non-uniform Velocity"], ["08_acceleration_retardation.html", "8 · Acceleration & Retardation"], ["09_uniform_acceleration_road_safety.html", "9 · Uniform Acceleration & Road Safety"], ["10_motion_graphs.html", "10 · Position–Time & Velocity–Time Graphs"], ["11_equations_of_motion.html", "11 · The Equations of Motion"], ["12_intext_numericals_solutions.html", "12 · In-text Questions – Solutions"], ["13_assess_q1_q9_solutions.html", "13 · Let Us Assess Q1–9 – Solutions"], ["14_assess_q10_q17_solutions.html", "14 · Let Us Assess Q10–17 & Extended Activities"], ["15_applications_explore.html", "15 · Applications & Explore Online"], ["16_summary_revision.html", "16 · Summary & Quick Quiz"], ["17_model_test_paper.html", "17 · Model Test Paper"], ["18_model_test_solutions.html", "18 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+const {P, seg, text, el, circle, polyline, polygon, multiText} = K;
+const COL = {red:'var(--red)', blue:'var(--blue)', green:'var(--green)', amber:'var(--accent)', purple:'var(--purple)', text:'var(--text)', muted:'var(--muted)'};
+/* line with its own stroke (seg() carries class 'ln', which overrides stroke attributes) */
+const sline = (svg, a, b, attrs={}) => el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+/* number → string with ≤ d decimals and a true minus sign */
+const fx = (v, d=2) => K.num(K.fmt(v, d));
+/* left-anchored SVG text */
+const L = (svg, x, y, s, cls='lbl', extra={}) => text(svg, P(x, y), s, {class: cls, 'text-anchor': 'start', ...extra});
+/* arrow a→b with a filled head; o.c colour name, o.w width, o.label, o.lo {x,y} label offset from the tip, o.op opacity, o.head size */
+function arrow(svg, a, b, o={}){ const c = COL[o.c || 'red'], w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const Ln = K.dist(a, b); if (Ln < 1) return g; const u = K.unit(a, b), hs = Math.min(o.head ?? 11, Ln * .6), base = P(b.x - u.x * hs, b.y - u.y * hs);
+  el('line', {x1: a.x, y1: a.y, x2: base.x, y2: base.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round'}, g);
+  el('polygon', {points: `${b.x},${b.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g);
+  if (o.label) text(g, P(b.x + (o.lo ? o.lo.x : 0), b.y + (o.lo ? o.lo.y : -12)), o.label, {class: 'lbl sm ' + (o.lc || o.c || 'red'), 'text-anchor': o.anchor || 'middle'});
+  return g; }
+/* stick figure with feet at p (height ≈ 62·s) */
+function person(svg, p, s=1, o={}){ const c = o.c ? COL[o.c] : 'var(--text)', g = K.group(svg, o.lean ? {transform: `rotate(${o.lean} ${p.x} ${p.y})`} : {});
+  const hip = P(p.x, p.y - 28 * s), neck = P(p.x, p.y - 50 * s), st = {stroke: c, 'stroke-width': 2.6, 'stroke-linecap': 'round'};
+  el('circle', {cx: p.x, cy: p.y - 57 * s, r: 7 * s, fill: 'var(--svgbg)', stroke: c, 'stroke-width': 2.4}, g);
+  el('line', {x1: neck.x, y1: neck.y, x2: hip.x, y2: hip.y, ...st}, g);
+  const sw = o.walk ? Math.sin(o.walk) * 8 : 8;
+  el('line', {x1: hip.x, y1: hip.y, x2: p.x - sw * s, y2: p.y, ...st}, g); el('line', {x1: hip.x, y1: hip.y, x2: p.x + sw * s, y2: p.y, ...st}, g);
+  const ar = o.arms || [[-12, 14], [12, 14]]; ar.forEach(([dx, dy]) => el('line', {x1: neck.x, y1: neck.y + 4 * s, x2: neck.x + dx * s, y2: neck.y + 4 * s + dy * s, ...st}, g));
+  return g; }
+/* compass rose with N up */
+function compass(svg, c, r=22){ arrow(svg, c, P(c.x, c.y - r), {c: 'muted', w: 1.6, head: 7}); arrow(svg, c, P(c.x + r, c.y), {c: 'muted', w: 1.6, head: 7}); sline(svg, c, P(c.x - r, c.y), {stroke: 'var(--muted)', 'stroke-width': 1.6}); sline(svg, c, P(c.x, c.y + r), {stroke: 'var(--muted)', 'stroke-width': 1.6});
+  text(svg, P(c.x, c.y - r - 10), 'N', {class: 'lbl sm muted'}); text(svg, P(c.x + r + 10, c.y), 'E', {class: 'lbl sm muted'}); text(svg, P(c.x - r - 10, c.y), 'W', {class: 'lbl sm muted'}); text(svg, P(c.x, c.y + r + 10), 'S', {class: 'lbl sm muted'}); }
+const posName = x => ({'-40': 'A', '0': 'B', '40': 'C', '80': 'D'})[String(Math.round(x))] || null;
+const dispStr = s => Math.abs(s) < 1e-9 ? 'zero' : `${s > 0 ? '+' : '−'}${fx(Math.abs(s), 0)} m (${s > 0 ? 'east' : 'west'})`;
+
+/* ---------- shared road with posts (x = 320 + 4·position, B = 0) ---------- */
+const XB = 320, PXM = 4;
+const X = m => XB + PXM * m;
+function road(svg, GY, o={}){
+  el('rect', {x: 0, y: GY, width: 800, height: 18, class: 'road'}, svg); sline(svg, P(0, GY), P(800, GY), {stroke: 'var(--muted)', 'stroke-width': 2});
+  const PH = o.postH || 110;
+  if (o.wires) { sline(svg, P(0, GY - PH + 4), P(800, GY - PH + 4), {stroke: 'var(--muted)', 'stroke-width': 1, opacity: .7}); sline(svg, P(0, GY - PH + 12), P(800, GY - PH + 12), {stroke: 'var(--muted)', 'stroke-width': 1, opacity: .7}); }
+  [-40, 0, 40, 80].forEach(m => { const x = X(m);
+    el('rect', {x: x - 3, y: GY - PH, width: 6, height: PH, class: 'post'}, svg);
+    if (!o.short) sline(svg, P(x - 14, GY - PH + 6), P(x + 14, GY - PH + 6), {stroke: 'var(--muted)', 'stroke-width': 3});
+    text(svg, P(x, GY + 32), posName(m), {class: 'lbl big'});
+    text(svg, P(x, GY + 52), (m > 0 ? '+' : m < 0 ? '−' : '') + Math.abs(m) + ' m', {class: 'lbl sm muted'}); });
+  [-40, 0, 40].forEach(m => { /* 40 m gaps */ text(svg, P(X(m + 20), GY + 32), '40 m', {class: 'lbl sm muted'}); });
+}
+/* draw legs (list of [from, to]) as stacked orange arrows; last one drawn to fraction t */
+function legs(svg, list, t, y0, gap=16){
+  list.forEach((lg, k) => { const f = k === list.length - 1 ? t : 1; const y = y0 - k * gap; const a = P(X(lg[0]), y), b = P(X(lg[0] + (lg[1] - lg[0]) * f), y);
+    if (Math.abs(b.x - a.x) > 2) arrow(svg, a, b, {c: 'amber', w: 4, head: 10}); });
+}
+
+/* ---------- 1. posts lab ---------- */
+(function(){
+  const svg = document.getElementById('poSvg'), out = document.getElementById('poOut');
+  const GY = 180; let done = [], queue = [], active = null, pos = 0, stop = null;
+  function draw(t=1){
+    K.clear(svg); road(svg, GY, {wires: true}); compass(svg, P(748, 36), 16);
+    const path = active ? done.concat([active]) : done, last = active;
+    let cur = done.length ? done[done.length - 1][1] : 0, dist = done.reduce((s, l) => s + Math.abs(l[1] - l[0]), 0);
+    if (last){ cur = last[0] + (last[1] - last[0]) * t; dist += Math.abs(last[1] - last[0]) * t; } else t = 1;
+    legs(svg, path.slice(-8), t, GY - 18, 12);
+    if (Math.abs(cur) > .5) arrow(svg, P(X(0), GY + 8), P(X(cur), GY + 8), {c: 'green', w: 4, head: 10});
+    person(svg, P(X(cur), GY - 2), .9, {c: 'blue', walk: last && t < 1 ? t * 40 : 0});
+    L(svg, 16, 26, `distance travelled = ${fx(dist, 0)} m`, 'lbl amber', {'font-weight': 700});
+    L(svg, 16, 50, `displacement from B = ${dispStr(cur)}`, 'lbl green', {'font-weight': 700});
+    const nm = posName(cur);
+    out.textContent = `Now at ${nm ? 'post ' + nm : fx(cur, 0) + ' m'} · distance travelled = ${fx(dist, 0)} m · displacement = ${dispStr(cur)}` +
+      (!active && done.length ? `\nTrail: B` + done.map(l => ' → ' + posName(l[1])).join('') : active ? '' : '\nStart: the child stands at post B.');
+  }
+  /* finish any running walk instantly */
+  function settle(){ if (stop){ stop(); stop = null; } if (active){ done.push(active); active = null; } done = done.concat(queue); queue = []; }
+  function runNext(){ if (!queue.length){ active = null; draw(1); return; } active = queue.shift(); stop = K.animate(900, e => draw(e), () => { done.push(active); active = null; stop = null; runNext(); }); }
+  function go(newLegs){ settle(); queue = newLegs.slice(); pos = newLegs[newLegs.length - 1][1]; runNext(); }
+  const here = () => done.length ? done[done.length - 1][1] : 0;
+  document.getElementById('poE').addEventListener('click', () => { settle(); pos = here(); if (pos + 40 > 80) { draw(1); out.textContent = 'D is the last post on this stretch – walk west instead.'; return; } go([[pos, pos + 40]]); });
+  document.getElementById('poW').addEventListener('click', () => { settle(); pos = here(); if (pos - 40 < -40) { draw(1); out.textContent = 'A is the last post on this stretch – walk east instead.'; return; } go([[pos, pos - 40]]); });
+  document.getElementById('poPlay').addEventListener('click', () => { settle(); done = []; go([[0, 40], [40, 80], [80, 40]]); });
+  document.getElementById('poReset').addEventListener('click', () => { settle(); done = []; pos = 0; draw(1); });
+  draw(1);
+})();
+
+/* ---------- 2. vector / scalar sorter ---------- */
+function sorter(boxId, scoreId, items, cats){
+  const box = document.getElementById(boxId), sc = document.getElementById(scoreId); let right = 0;
+  items.forEach(it => { const row = document.createElement('div'); row.className = 'row';
+    row.innerHTML = `<span class="txt">${it.t}</span>` + cats.map((c, i) => `<button class="btn" data-i="${i}">${c}</button>`).join('') + '<span class="fbk"></span>';
+    row.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const ok = +b.dataset.i === it.a;
+      if (ok && !row.classList.contains('ok')) right++; if (!ok && row.classList.contains('ok')) right--;
+      row.classList.toggle('ok', ok); row.classList.toggle('bad', !ok);
+      row.querySelector('.fbk').innerHTML = (ok ? '✅ ' : '❌ Not quite – ') + it.why; sc.textContent = `${right} / ${items.length}`; });
+    box.appendChild(row); });
+}
+sorter('vsSort', 'vsScore', [
+  {t: '40 m east, from B to C', a: 0, why: 'it gives a size and a direction – a displacement.'},
+  {t: 'The total length of the walk B → D → C (120 m)', a: 1, why: 'distance only says how much path was covered.'},
+  {t: 'The mass of a bag of rice, 5 kg', a: 1, why: '"5 kg to the north" makes no sense – mass has no direction.'},
+  {t: 'The time taken, 18 s', a: 1, why: 'time has only a size.'},
+  {t: 'The displacement of the child from B to A, −40 m', a: 0, why: 'the minus sign itself carries the direction (west).'},
+  {t: 'A temperature of 30 °C', a: 1, why: 'temperature has no direction.'},
+  {t: 'The statue is 60 m south of 9B', a: 0, why: 'a straight-line distance with a direction.'},
+  {t: 'The length of a curved garden path, 70 m', a: 1, why: 'a path length is a distance – a scalar.'}
+], ['Vector (സദിശം)', 'Scalar (അദിശം)']);
+
+/* ---------- 3. Table 2.1 stepper ---------- */
+(function(){
+  const ROWS = [
+    {name: 'B straight to C', legs: [[0, 40]], d: '40 m', s: '40 m (B → C)', end: 40, ml: 'B യിൽ നിന്ന് C വരെ നേരിട്ട്'},
+    {name: 'B → D, then back to C', legs: [[0, 80], [80, 40]], d: '120 m', s: '40 m (B → C)', end: 40, ml: 'B യിൽ നിന്ന് പുറപ്പെട്ട് D യിൽ എത്തി തിരികെ C യിൽ എത്തുമ്പോൾ'},
+    {name: 'B to D', legs: [[0, 80]], d: '80 m', s: '80 m (B → D)', end: 80, ml: 'B യിൽ നിന്ന് പുറപ്പെട്ട് D യിൽ എത്തുമ്പോൾ'},
+    {name: 'B to A', legs: [[0, -40]], d: '40 m', s: '−40 m (B → A)', end: -40, ml: 'B യിൽ നിന്ന് A വരെ'},
+    {name: 'B → A, then back to B', legs: [[0, -40], [-40, 0]], d: '80 m', s: 'zero', end: 0, ml: 'B യിൽ നിന്ന് A യിൽ എത്തി തിരികെ B യിൽ എത്തുമ്പോൾ'}
+  ];
+  const tb = document.querySelector('#t21 tbody');
+  new K.Stepper('#t21Lab', {steps: ROWS.map((r, k) => `<b>Trip ${k + 1}: ${r.name}.</b> Orange = path walked → distance <b>${r.d}</b>. Green = straight from start to end → displacement <b>${r.s}</b>.` +
+      (k === 1 ? ' The extra 80 m (C → D → C) adds to the distance but not to the displacement.' : k === 3 ? ' West is our negative direction, so the displacement is negative; the distance is still positive.' : k === 4 ? ' Back at the start: the displacement is zero, though the child walked 80 m.' : '')),
+    ms: 1100, draw(svg, i, t){
+      const GY = 150, r = ROWS[i];
+      road(svg, GY, {postH: 60, short: true});
+      legs(svg, r.legs, t, GY - 24, 18);
+      const tot = r.legs.reduce((s, l) => s + Math.abs(l[1] - l[0]), 0); let acc = 0, cur = 0, dd = 0;
+      r.legs.forEach((l, k) => { const f = k === r.legs.length - 1 ? t : 1; cur = l[0] + (l[1] - l[0]) * f; dd += Math.abs(l[1] - l[0]) * f; });
+      if (Math.abs(cur) > .5) arrow(svg, P(X(0), GY + 8), P(X(cur), GY + 8), {c: 'green', w: 4, head: 10});
+      person(svg, P(X(cur), GY - 2), .7, {c: 'blue'});
+      L(svg, 16, 22, `Trip ${i + 1}: ${r.name}`, 'lbl', {'font-weight': 700});
+      L(svg, 16, 46, `distance = ${fx(dd, 0)} m`, 'lbl amber'); L(svg, 230, 46, `displacement = ${t === 1 ? r.s : dispStr(cur)}`, 'lbl green');
+      tb.innerHTML = ROWS.map((q, k) => k <= i ? `<tr class="${k === i ? 'hl' : ''}"><td style="text-align:left">${q.name}<br><span class="ml small">${q.ml}</span></td><td>${q.d}</td><td>${q.s}</td></tr>` : `<tr><td style="text-align:left">${q.name}<br><span class="ml small">${q.ml}</span></td><td class="q">?</td><td class="q">?</td></tr>`).join('');
+    }});
+})();
+
+/* ---------- 4. Fig 2.2 paths ---------- */
+(function(){
+  const svg = document.getElementById('ppSvg'), out = document.getElementById('ppOut'), S = 3.4;
+  /* (a) P(0,0) R(80,0) Q(52.5, 29.05) – metres, y up */
+  const Qa = {x: 52.5, y: Math.sqrt(3600 - 52.5 * 52.5)};
+  const A0 = P(40, 230), B0 = P(440, 170);
+  const ma = p => P(A0.x + p.x * S, A0.y - p.y * S), mb = x => P(B0.x + x * S, B0.y);
+  function posA(s){ if (s <= 60) return {x: Qa.x * s / 60, y: Qa.y * s / 60}; const f = (s - 60) / 40; return {x: Qa.x + (80 - Qa.x) * f, y: Qa.y * (1 - f)}; }
+  let sNow = 100, stop = null;
+  function draw(s){
+    K.clear(svg);
+    text(svg, P(176, 22), 'Fig 2.2 (a)', {class: 'lbl', 'font-weight': 700}); text(svg, P(610, 22), 'Fig 2.2 (b)', {class: 'lbl', 'font-weight': 700});
+    sline(svg, P(400, 36), P(400, 270), {stroke: 'var(--border)', 'stroke-width': 1.5});
+    /* (a) */
+    el('polygon', {points: [ma({x: 0, y: 0}), ma(Qa), ma({x: 80, y: 0})].map(p => p.x + ',' + p.y).join(' '), fill: 'var(--accent-soft)', stroke: 'var(--muted)', 'stroke-width': 1.5}, svg);
+    text(svg, ma({x: -4, y: -3}), 'P', {class: 'lbl big'}); text(svg, ma({x: Qa.x, y: Qa.y + 6}), 'Q', {class: 'lbl big'}); text(svg, ma({x: 84, y: -3}), 'R', {class: 'lbl big'});
+    text(svg, ma({x: 22, y: 21}), '60 m', {class: 'lbl sm'}); text(svg, ma({x: 72, y: 18}), '40 m', {class: 'lbl sm'}); text(svg, ma({x: 40, y: -8}), '80 m', {class: 'lbl sm muted'});
+    const pa = posA(s);
+    if (s > 0){ const pts = [ma({x: 0, y: 0})]; if (s > 60) pts.push(ma(Qa)); pts.push(ma(pa)); polyline(svg, pts, {class: 'walk'}); }
+    const da = Math.hypot(pa.x, pa.y); if (da > .5) arrow(svg, ma({x: 0, y: 0}), ma(pa), {c: 'green', w: 3.5, head: 10});
+    K.dot(svg, ma(pa), {r: 6, class: 'pt blue'});
+    L(svg, 20, 56, `distance = ${fx(s, 0)} m`, 'lbl amber', {'font-weight': 700}); L(svg, 20, 78, `displacement = ${fx(da, 1)} m` + (s >= 100 ? ' (P → R)' : ''), 'lbl green', {'font-weight': 700});
+    /* (b) */
+    sline(svg, mb(0), mb(100), {stroke: 'var(--muted)', 'stroke-width': 2});
+    [[0, 'P'], [60, 'Q'], [100, 'S']].forEach(([x, n]) => { sline(svg, P(mb(x).x, B0.y - 8), P(mb(x).x, B0.y + 8), {stroke: 'var(--text)', 'stroke-width': 2}); text(svg, P(mb(x).x, B0.y + 26), n, {class: 'lbl big'}); });
+    text(svg, P(mb(30).x, B0.y + 26), '60 m', {class: 'lbl sm'}); text(svg, P(mb(80).x, B0.y + 26), '40 m', {class: 'lbl sm'});
+    if (s > 0) sline(svg, P(mb(0).x, B0.y - 14), P(mb(s).x, B0.y - 14), {stroke: 'var(--accent)', 'stroke-width': 5, opacity: .9});
+    if (s > .5) arrow(svg, P(mb(0).x, B0.y + 44), P(mb(s).x, B0.y + 44), {c: 'green', w: 3.5, head: 10});
+    K.dot(svg, mb(s), {r: 6, class: 'pt blue'});
+    L(svg, 440, 56, `distance = ${fx(s, 0)} m`, 'lbl amber', {'font-weight': 700}); L(svg, 440, 78, `displacement = ${fx(s, 1)} m` + (s >= 100 ? ' (P → S)' : ''), 'lbl green', {'font-weight': 700});
+    out.textContent = `After ${fx(s, 0)} m of walking:\n(a) displacement ${fx(da, 1)} m  – ` + (s > 60 ? 'smaller than the distance, because the path turned at Q' : 'equal to the distance so far (still on the straight part PQ)') +
+      `\n(b) displacement ${fx(s, 1)} m – always equal to the distance (straight line, one direction)`;
+  }
+  const inp = document.getElementById('ppS');
+  K.slider(inp, v => { if (stop){ stop(); stop = null; } sNow = v; draw(v); }, 0);
+  document.getElementById('ppGo').addEventListener('click', () => { if (stop) stop(); stop = K.animate(3000, (e, t) => { const s = 100 * t; inp.value = Math.round(s); inp.parentElement.querySelector('output').textContent = Math.round(s); draw(s); }, () => { stop = null; }); });
+})();
+
+/* ---------- 5. Table 2.2 sorter ---------- */
+sorter('ddSort', 'ddScore', [
+  {t: 'The total length of the path travelled', a: 0, why: 'that is the definition of distance.'},
+  {t: 'The straight-line length from the start to the end, with its direction', a: 1, why: 'that is displacement.'},
+  {t: 'Can be zero even after a long walk', a: 1, why: 'if you come back to the start, the displacement is zero.'},
+  {t: 'A scalar – only a size', a: 0, why: 'distance needs no direction.'},
+  {t: 'A vector – size and direction', a: 1, why: 'displacement must say which way.'},
+  {t: 'Can be negative', a: 1, why: 'with east as +, a displacement to the west is negative.'},
+  {t: 'Depends on the path taken', a: 0, why: 'a longer, curvier path means more distance.'},
+  {t: 'Is the same for every path between the same two points', a: 1, why: 'it depends only on the start and the end.'}
+], ['Distance (ദൂരം)', 'Displacement (സ്ഥാനാന്തരം)']);
+
+/* ---------- 6. School route, Fig 2.3 ---------- */
+(function(){
+  const svg = document.getElementById('scSvg'), out = document.getElementById('scOut'), rows = document.querySelectorAll('#t23 tbody tr');
+  const SX = 14, SY = 4.6, OX = 400, OY = 196;   /* metres → px: x east, y north (non-uniform, not to scale) */
+  const M = p => P(OX + p.x * SX, OY - p.y * SY);
+  const bez = (p, t) => { const m = 1 - t; return {x: m*m*m*p[0].x + 3*m*m*t*p[1].x + 3*m*t*t*p[2].x + t*t*t*p[3].x, y: m*m*m*p[0].y + 3*m*m*t*p[1].y + 3*m*t*t*p[2].y + t*t*t*p[3].y}; };
+  const RC = [{x: 15, y: 0}, {x: 23, y: -30}, {x: 20, y: -60}, {x: 0, y: -60}];          /* staff room → statue, ≈ 70 m */
+  const LC = [{x: 0, y: -60}, {x: -33.7, y: -60}, {x: -33.7, y: -25}, {x: -15, y: 0}];  /* statue → office, ≈ 80 m */
+  /* arc-length tables so the odometer runs evenly along the curves */
+  function table(p){ const n = 200, acc = [0]; let prev = bez(p, 0), s = 0; for (let k = 1; k <= n; k++){ const q = bez(p, k / n); s += Math.hypot(q.x - prev.x, q.y - prev.y); acc.push(s); prev = q; } return {acc, tot: s}; }
+  const TR = table(RC), TL = table(LC);
+  const atFrac = (p, T, f) => { const goal = f * T.tot; let k = 0; while (k < T.acc.length - 1 && T.acc[k + 1] < goal) k++; const seg = T.acc[k + 1] - T.acc[k] || 1; return bez(p, (k + (goal - T.acc[k]) / seg) / (T.acc.length - 1)); };
+  /* route: 15 m east, 70 m curve, 80 m curve, 15 m east back to 9B; total 180 m */
+  function where(d){
+    if (d <= 15) return {x: d, y: 0};
+    if (d <= 85) return atFrac(RC, TR, (d - 15) / 70);
+    if (d <= 165) return atFrac(LC, TL, (d - 85) / 80);
+    return {x: -15 + (d - 165), y: 0};
+  }
+  function dirName(p){ const r = Math.hypot(p.x, p.y); if (r < .5) return ''; const ang = Math.atan2(p.y, p.x) * 180 / Math.PI; const names = ['east', 'north-east', 'north', 'north-west', 'west', 'south-west', 'south', 'south-east']; return names[((Math.round(ang / 45) % 8) + 8) % 8]; }
+  const pathD = (p) => `M${M(p[0]).x},${M(p[0]).y} C${M(p[1]).x},${M(p[1]).y} ${M(p[2]).x},${M(p[2]).y} ${M(p[3]).x},${M(p[3]).y}`;
+  let stop = null;
+  function building(){
+    const rooms1 = ['10A', '10B', '10C', 'IT Lab', 'Library'], rooms0 = ['Office', '9A', '9B', '9C', 'Staff room'];
+    const W = 7.5 * SX, x0 = OX - 2.5 * W;
+    el('rect', {x: x0 - 6, y: 22, width: 5 * W + 12, height: 140, rx: 4, class: 'fill-blue', opacity: .55}, svg);
+    rooms1.forEach((n, k) => { el('rect', {x: x0 + k * W + 4, y: 30, width: W - 8, height: 54, class: 'room'}, svg); text(svg, P(x0 + k * W + W / 2, 48), n, {class: 'lbl sm'}); });
+    rooms0.forEach((n, k) => { el('rect', {x: x0 + k * W + 4, y: 98, width: W - 8, height: 56, class: (n === '9B') ? 'room-hl' : 'room'}, svg); text(svg, P(x0 + k * W + W / 2, 116), n, {class: 'lbl sm', 'font-weight': n === '9B' ? 700 : 400}); el('rect', {x: x0 + k * W + W / 2 - 9, y: 126, width: 18, height: 28, class: 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1}, svg); });
+    sline(svg, P(x0 - 6, 164), P(x0 + 5 * W + 6, 164), {stroke: 'var(--muted)', 'stroke-width': 3});
+  }
+  function statue(c){ const g = K.group(svg); el('rect', {x: c.x - 22, y: c.y + 4, width: 44, height: 12, class: 'fill-surface', stroke: 'var(--text)', 'stroke-width': 1}, g); el('rect', {x: c.x - 14, y: c.y - 6, width: 28, height: 10, class: 'fill-surface', stroke: 'var(--text)', 'stroke-width': 1}, g);
+    person(g, P(c.x, c.y - 6), .62, {c: 'amber', arms: [[-6, 18], [10, 16]]}); sline(g, P(c.x + 9, c.y - 40), P(c.x + 12, c.y - 6), {stroke: 'var(--accent)', 'stroke-width': 2}); return g; }
+  function draw(d){
+    K.clear(svg);
+    el('rect', {x: 30, y: 170, width: 740, height: 350, rx: 14, class: 'lawn'}, svg);
+    building(); compass(svg, P(740, 230));
+    /* paths */
+    el('path', {d: `M${M({x: -15, y: 0}).x},${M({x: 0, y: 0}).y} L${M({x: 15, y: 0}).x},${M({x: 0, y: 0}).y}`, class: 'pathbg'}, svg);
+    el('path', {d: pathD(RC), class: 'pathbg'}, svg); el('path', {d: pathD(LC), class: 'pathbg'}, svg);
+    sline(svg, M({x: 0, y: 0}), M({x: 0, y: -60}), {stroke: 'var(--muted)', 'stroke-width': 1.5, 'stroke-dasharray': '6 5'});
+    text(svg, M({x: 7.5, y: 4}), '15 m', {class: 'lbl sm'}); text(svg, M({x: -7.5, y: 4}), '15 m', {class: 'lbl sm'});
+    text(svg, M({x: 3.2, y: -30}), '60 m', {class: 'lbl sm muted'}); text(svg, M({x: 15.5, y: -32}), '70 m', {class: 'lbl', 'font-weight': 700}); text(svg, M({x: -18, y: -32}), '80 m', {class: 'lbl', 'font-weight': 700});
+    statue(M({x: 0, y: -62})); text(svg, P(M({x: 0, y: -60}).x, M({x: 0, y: -60}).y + 36), 'statue of the Father of the Nation', {class: 'lbl sm muted'});
+    /* walked trail */
+    if (d > 0){ const pts = []; for (let q = 0; q <= d; q += 1) pts.push(M(where(q))); pts.push(M(where(d))); polyline(svg, pts, {class: 'walk'}); }
+    const p = where(d), r = Math.hypot(p.x, p.y);
+    if (r > .5) arrow(svg, M({x: 0, y: 0}), M(p), {c: 'green', w: 3.5, head: 11});
+    person(svg, P(M(p).x, M(p).y + 6), .55, {c: 'blue'});
+    /* odometer box */
+    el('rect', {x: 30, y: 532, width: 740, height: 58, rx: 10, class: 'fill-surface', stroke: 'var(--border)'}, svg);
+    L(svg, 48, 561, `distance = ${fx(d, 0)} m`, 'lbl amber', {'font-weight': 700});
+    const exact = Math.abs(d - 15) < .5 ? '15 m east' : Math.abs(d - 85) < .5 ? '60 m south' : (d < .5 || d > 179.5) ? '0' : `${fx(r, 1)} m ${dirName(p)}`;
+    L(svg, 330, 561, `displacement from 9B = ${exact}`, 'lbl green', {'font-weight': 700});
+    /* table */
+    [[15, '15', '15 m east'], [85, '15 + 70 = 85', '60 m south'], [180, '15 + 70 + 80 + 15 = 180', '0']].forEach((row, k) => { const tds = rows[k].querySelectorAll('td');
+      if (d >= row[0] - .5){ tds[1].textContent = row[1]; tds[2].textContent = row[2]; tds[1].className = ''; tds[2].className = ''; } else { tds[1].textContent = '?'; tds[2].textContent = '?'; tds[1].className = 'q'; tds[2].className = 'q'; }
+      rows[k].className = (d >= row[0] - .5 && (k === 2 || d < [85, 180][k] - .5)) ? 'hl' : ''; });
+    const stage = d < 15 ? 'walking along the corridor to the staff room' : d < 85 ? 'on the curved path to the statue' : d < 165 ? 'on the curved path to the office' : d < 180 ? 'walking back along the corridor to 9B' : 'back in 9B';
+    out.textContent = `${stage} · distance = ${fx(d, 0)} m · displacement from 9B = ${exact}` + (d >= 179.5 ? '\nA 180 m walk, but zero displacement: she is back where she started.' : '');
+  }
+  const inp = document.getElementById('scS');
+  K.slider(inp, v => { if (stop){ stop(); stop = null; } draw(v); }, 0);
+  document.getElementById('scGo').addEventListener('click', () => { if (stop) stop(); stop = K.animate(9000, (e, t) => { const d = 180 * t; inp.value = Math.round(d); inp.parentElement.querySelector('output').textContent = Math.round(d); draw(d); }, () => { stop = null; }); });
+})();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'A child walks 30 m east and then 30 m west. Distance travelled and displacement are', options: ['60 m and 60 m', '60 m and 0', '0 and 60 m', '30 m and 30 m'], answer: 1, explain: 'Distance adds every metre (60 m); she is back at the start, so the displacement is 0.', hint: 'Where does she end up?'});
+K.mcq('#q2', {q: 'Which of these is a vector quantity?', options: ['Distance', 'Time', 'Displacement', 'Mass'], answer: 2, explain: 'Displacement needs both a size and a direction.', hint: 'Which one needs a direction?'});
+K.numq('#q3', {q: 'Taking east as positive, a boy walks from post C to post A in Fig 2.1 (posts 40 m apart). His displacement is … m.', answer: -80, tol: 0.01, unit: 'm', explain: 'C → A is 80 m to the west: −80 m.', hint: 'Two gaps of 40 m, towards the west (negative).'});
+K.mcq('#q4', {q: 'When is the size of the displacement equal to the distance travelled?', options: ['Always', 'When the path is a circle', 'Only on a straight path in one direction', 'Never'], answer: 2, explain: 'Key box (page 29): straight path, one direction.', hint: 'Compare Fig 2.2 (a) and (b).'});
+K.mcq('#q5', {q: 'In Fig 2.3 the child walks 85 m from 9B to the statue. Her displacement is', options: ['85 m south', '60 m south', '70 m south', '15 m east'], answer: 1, explain: 'The statue is 60 m straight south of 9B; the path length does not matter.', hint: 'Straight line from the start to the end.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Applications &amp; Explore Online – Equations of Motion</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.exam{font-size:.92rem;background:var(--purple-soft);border-left:4px solid var(--purple);border-radius:8px;padding:.45rem .8rem;margin:.5rem 0 0}
+.exam b{color:var(--purple)}
+.lab select{padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem}
+.btnrow{display:flex;flex-wrap:wrap;gap:.4rem;margin:.3rem 0}
+</style>
+</head>
+<body data-page="15_applications_explore">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 2 · Applications</span><span class="chip green">Motion in real life</span><span class="chip blue">Explore online</span>
+<h1>Applications &amp; Explore Online <span class="ml">ചലനസമവാക്യങ്ങൾ</span></h1>
+<p class="lead">Displacement, velocity, acceleration, graphs and the three equations of motion are not only for the exam. They decide how far a car needs to stop before a zebra crossing, how long a train takes to cross the Bharathapuzha bridge, how the Kochi Metro runs from one station to the next, how a sprinter wins a 100 m race, why a speedometer does not show velocity and how high a ball goes. Every lab below uses only the ideas of this chapter.</p>
+
+<div class="callout book"><div class="title">📖 The ideas behind every lab</div>
+<ul style="margin:0">
+<li><b>Displacement</b> (<span class="ml">സ്ഥാനാന്തരം</span>) and <b>velocity</b> (<span class="ml">പ്രവേഗം</span>) v = s/t – <a href="05_distance_displacement.html">page 5</a>, <a href="06_velocity.html">page 6</a>, <a href="07_uniform_nonuniform_velocity.html">page 7</a>.</li>
+<li><b>Acceleration</b> (<span class="ml">ത്വരണം</span>) a = (v − u)/t and <b>retardation</b> (<span class="ml">മന്ദീകരണം</span>) – <a href="08_acceleration_retardation.html">page 8</a>; road safety – <a href="09_uniform_acceleration_road_safety.html">page 9</a>.</li>
+<li><b>Graphs</b>: slope of a position–time graph = velocity; slope of a velocity–time graph = acceleration; <b>area under a v–t graph = displacement</b> – <a href="10_motion_graphs.html">page 10</a>.</li>
+<li><b>Equations of motion</b> (uniform acceleration only): v = u + at, s = ut + ½at<sup>2</sup>, v<sup>2</sup> = u<sup>2</sup> + 2as; 1 km/h = 5/18 m/s – <a href="11_equations_of_motion.html">page 11</a>.</li>
+</ul>
+<p style="margin:.4rem 0 0">Sign convention everywhere on this page: forward, east and up are <b>positive</b>.</p></div>
+
+<h2 id="stopping">1. Stopping distance – why speed kills</h2>
+<p>When a driver sees a child step onto a zebra crossing, the car does not stop at once. First the driver needs a moment to see the danger and move the foot to the brake – the <b>reaction time</b>. During that time the car keeps its full speed and covers the <b>reaction distance = u × reaction time</b>. Only then do the brakes give a retardation a, and the car covers the <b>braking distance</b>. From v<sup>2</sup> = u<sup>2</sup> + 2as with v = 0, the braking distance is <b>s = u<sup>2</sup>/2a</b>.</p>
+<p><b>Stopping distance = reaction distance + braking distance.</b> The reaction distance grows in step with the speed, but the braking distance grows with the <b>square</b> of the speed: double the speed and the car needs <b>four times</b> the braking distance.</p>
+<div class="lab"><div class="lab-title">🚗 Stopping-distance lab: u × t<sub>r</sub> + u²/2a</div>
+  <svg id="s1" viewBox="0 0 800 340" role="img" aria-label="A car approaching a zebra crossing 40 m ahead near a school, with the reaction and braking distances, and a bar chart of stopping distance at different speeds"></svg>
+  <div class="controls"><label>speed (km/h) <input id="v1" type="range" min="18" max="126" step="6" value="54"><output></output></label>
+    <label>reaction time (s) <input id="r1" type="range" min="0.5" max="2.5" step="0.1" value="1"><output></output></label>
+    <label>retardation of the brakes (m/s²) <input id="a1" type="range" min="2" max="8" step="0.5" value="5"><output></output></label></div>
+  <div class="btnrow"><button class="btn primary" id="go1">▶ Drive and brake</button><button class="btn" data-set1="v1:30">🏫 School zone: 30 km/h</button><button class="btn" data-set1="a1:4">🌧️ Wet monsoon road (4 m/s²)</button><button class="btn" data-set1="a1:7">☀️ Dry road (7 m/s²)</button><button class="btn" data-set1="r1:2">📱 Driver looking at a phone (2 s)</button><button class="btn ghost" data-set1="v1:54,r1:1,a1:5">⟲ Reset</button></div>
+  <div class="readout" id="o1"></div>
+  <p class="hint">The road is drawn to scale (one mark = 10 m); the car is drawn bigger than its real size so you can see it. The bars below use your reaction time and retardation at six different speeds; the purple bar is your speed. Reaction times and retardations are typical rough values (about 4 m/s² on a wet road, about 7 m/s² on a dry road with good tyres), used only to compare.</p>
+  <div class="safety">⚠ Near schools, crossings and in the monsoon: slow down. A car at 30 km/h stops in about 15 m; at 60 km/h it needs about 44 m – and still hits a child 40 m ahead at about 24 km/h. Never use a phone while driving or crossing the road.</div>
+  <p class="exam"><b>📝 In the exam this looks like:</b> “A car is moving at 72 km/h. The driver’s reaction time is 1 s and the brakes produce a retardation of 5 m/s<sup>2</sup>. Find the stopping distance.” → u = 72 × 5/18 = 20 m/s; reaction distance = 20 × 1 = 20 m; braking distance: 0 = 20<sup>2</sup> − 2 × 5 × s ⇒ s = 400/10 = 40 m; stopping distance = 20 + 40 = <b>60 m</b>. At 36 km/h the braking distance is only 10 m – a quarter.</p></div>
+
+<h2 id="train">2. A train crossing a bridge or a platform</h2>
+<p>The opening question of the chapter: how long does a 200 m train at 20 m/s take to cross an 800 m bridge? The train has crossed only when its <b>last coach</b> leaves the bridge. By then the engine has travelled the bridge’s length <b>plus the train’s own length</b>: s = 800 + 200 = 1000 m, so t = s/v = 1000/20 = 50 s. Picture a train crossing the long bridge over the Bharathapuzha – or sliding past a station platform.</p>
+<div class="lab"><div class="lab-title">🚆 Train calculator: t = (length of train + length of bridge) ÷ v</div>
+  <svg id="s2" viewBox="0 0 800 250" role="img" aria-label="A train crossing a bridge over a river, with a timer and distance markers"></svg>
+  <div class="controls"><label>crossing <select id="k2"><option value="bridge" selected>a bridge over a river</option><option value="platform">a railway platform</option><option value="post">a signal post (no length)</option></select></label>
+    <label>length of the train (m) <input id="L2" type="range" min="50" max="500" step="10" value="200"><output></output></label>
+    <label>length of the bridge / platform (m) <input id="B2" type="range" min="100" max="1500" step="50" value="800"><output></output></label>
+    <label>speed (km/h) <input id="v2" type="range" min="18" max="126" step="9" value="72"><output></output></label>
+    <label>time (% of the crossing) <input id="p2" type="range" min="0" max="100" step="1" value="0"><output></output></label></div>
+  <div class="btnrow"><button class="btn primary" id="go2">▶ Run the train</button></div>
+  <div class="readout" id="o2"></div>
+  <p class="hint">Watch the moment the engine reaches the far end: the clock shows only (length of bridge) ÷ v, and part of the train is still on the bridge. Lengths are to scale; the picture shrinks to fit long bridges.</p>
+  <p class="exam"><b>📝 In the exam this looks like:</b> “A train 150 m long moving at 54 km/h crosses a platform 300 m long. Find the time taken.” → v = 54 × 5/18 = 15 m/s; s = 300 + 150 = 450 m; t = 450/15 = <b>30 s</b>. Turned around: “A 200 m train crosses a 400 m bridge in 30 s. Find its speed.” → v = 600/30 = 20 m/s = 20 × 18/5 = <b>72 km/h</b>. Passing a signal post, only the train’s length counts: 200 m at 20 m/s takes 10 s.</p></div>
+
+<h2 id="metro">3. Kochi Metro – from one station to the next</h2>
+<p>A metro train between two stations has three stages: it <b>accelerates uniformly</b> from rest, <b>cruises</b> at a uniform velocity and then <b>retards uniformly</b> to stop at the next platform. Its velocity–time graph is a trapezium, and the <b>area under it is the distance between the stations</b>. The numbers in this lab are example values to learn from, not official Kochi Metro data.</p>
+<div class="lab"><div class="lab-title">🚇 Metro lab: accelerate – cruise – brake, area = distance</div>
+  <svg id="s3" viewBox="0 0 800 340" role="img" aria-label="A metro train moving between two stations above a live velocity–time graph whose shaded area is the distance travelled"></svg>
+  <div class="controls"><label>distance between stations (m) <input id="D3" type="range" min="600" max="2000" step="100" value="1200"><output></output></label>
+    <label>top speed (km/h) <input id="v3" type="range" min="36" max="90" step="9" value="72"><output></output></label>
+    <label>acceleration (m/s²) <input id="a3" type="range" min="0.5" max="1.5" step="0.1" value="1"><output></output></label>
+    <label>retardation (m/s²) <input id="b3" type="range" min="0.5" max="1.5" step="0.1" value="1"><output></output></label></div>
+  <div class="btnrow"><button class="btn primary" id="go3">▶ Run from station to station</button></div>
+  <div class="readout" id="o3"></div>
+  <p class="hint">If the stations are too close for the train to reach its top speed, the graph becomes a triangle: it starts braking as soon as it must. The three coloured areas always add up to the distance between the stations.</p>
+  <p class="exam"><b>📝 In the exam this looks like:</b> “A metro train starts from rest and accelerates uniformly to 20 m/s in 20 s, runs at this velocity for 40 s and then stops uniformly in 20 s. Draw the velocity–time graph and find the total distance.” → areas: ½ × 20 × 20 = 200 m; 20 × 40 = 800 m; ½ × 20 × 20 = 200 m; total = <b>1200 m</b>. Acceleration = 20/20 = 1 m/s<sup>2</sup>; retardation = 1 m/s<sup>2</sup>; average speed = 1200/80 = 15 m/s.</p></div>
+
+<h2 id="sprint">4. The 100 m sprint – acceleration, then uniform velocity</h2>
+<p>A sprinter starts from rest in the blocks, <b>accelerates</b> for the first few seconds and then runs at a nearly <b>uniform velocity</b> to the finish. On a position–time graph the line first curves upwards (the slope – the velocity – is growing) and then becomes a sloping straight line. On a velocity–time graph it is a rising line followed by a horizontal line. The area under the v–t graph is exactly 100 m.</p>
+<div class="lab"><div class="lab-title">🏃 Sprint lab: position–time and velocity–time graphs</div>
+  <svg id="s4" viewBox="0 0 800 360" role="img" aria-label="A runner on a 100 m track with dots every second, a position–time graph and a velocity–time graph"></svg>
+  <div class="controls"><label>top speed (m/s) <input id="v4" type="range" min="6" max="12" step="0.5" value="10"><output></output></label>
+    <label>time to reach top speed (s) <input id="t4" type="range" min="2" max="6" step="0.5" value="4"><output></output></label></div>
+  <div class="btnrow"><button class="btn primary" id="go4">▶ On your marks… go!</button></div>
+  <div class="readout" id="o4"></div>
+  <p class="hint">Simple model: uniform acceleration until the top speed, then uniform velocity. The purple dots mark the runner’s position every second – their gaps grow while accelerating and become equal at uniform velocity (compare Car A and Car B in Fig 2.5).</p>
+  <p class="exam"><b>📝 In the exam this looks like:</b> “A sprinter starts from rest, accelerates uniformly and reaches 10 m/s in 4 s, then runs with uniform velocity. Find (a) the acceleration (b) the distance covered in the first 4 s (c) the time taken for the 100 m race.” → a = 10/4 = <b>2.5 m/s<sup>2</sup></b>; s = ½ × 2.5 × 4<sup>2</sup> = <b>20 m</b> (area of the triangle ½ × 4 × 10); the remaining 80 m at 10 m/s takes 8 s, so the race takes 4 + 8 = <b>12 s</b>.</p></div>
+
+<h2 id="ghat">5. Speedometer vs velocity – a car on a ghat road</h2>
+<p>A car climbs a hill road with hairpin bends, like the Thamarassery churam. The driver keeps the <b>speedometer</b> steady at 36 km/h. Is the car’s velocity uniform? No! A speedometer shows only the <b>speed</b> – a scalar. The <b>velocity</b> also has a direction, and on every bend the direction of motion (<span class="ml">ചലനദിശ</span>) changes. A changing direction means a changing velocity – <b>non-uniform velocity</b>, and so there is an acceleration even though the speed is constant (just like Car C on the circular track). The odometer adds up the distance; the displacement is only the straight line from the start.</p>
+<div class="lab"><div class="lab-title">🛣️ Ghat-road lab: same speed, changing velocity</div>
+  <svg id="s5" viewBox="0 0 800 340" role="img" aria-label="Map of a winding hill road with a car, its velocity arrow and displacement arrow, a speedometer and a compass showing the direction of velocity"></svg>
+  <div class="controls"><label>speedometer reading (km/h) <input id="v5" type="range" min="18" max="54" step="9" value="36"><output></output></label>
+    <label>position along the road (%) <input id="p5" type="range" min="0" max="100" step="1" value="30"><output></output></label></div>
+  <div class="btnrow"><button class="btn primary" id="go5">▶ Drive up the ghat</button></div>
+  <div class="readout" id="o5"></div>
+  <p class="hint">Map scale: the whole road is about 3 km long (north is up). The blue arrow is the velocity – always along the road, same length (same speed), changing direction. The red dashed arrow is the displacement from the start.</p>
+  <p class="exam"><b>📝 In the exam this looks like:</b> “A car on a ghat road shows a steady 40 km/h on its speedometer. Is its velocity uniform? Does it have an acceleration?” → No: its direction of motion changes at every bend, so its velocity changes (non-uniform velocity) and it has an acceleration, although its speed is constant. With numbers (Let us assess Q5): half a round of a 440 m track (radius 70 m) in 40 s – speed = 220/40 = <b>5.5 m/s</b>, but velocity = 140/40 = <b>3.5 m/s</b> along the diameter.</p></div>
+
+<h2 id="throw">6. A ball thrown straight up – the v–t line through zero</h2>
+<p>Throw a ball straight up at u. Gravity gives it a uniform acceleration of about 10 m/s<sup>2</sup> <b>downwards</b> all the time, so taking up as positive, a = −10 m/s<sup>2</sup>. Going up it slows down (retardation), stops for an instant at the top, and comes back down faster and faster. Its velocity v = u − 10t is <b>one straight line</b> on the v–t graph: from +u, through zero at the top, to −u when it is back in the hand. The area above the time axis is the height; the area below is the same size but negative, so the total displacement is zero.</p>
+<div class="lab"><div class="lab-title">⚾ Throw-up lab: v = u − 10t</div>
+  <svg id="s6" viewBox="0 0 800 320" role="img" aria-label="A ball rising and falling beside a height scale, and its velocity–time graph crossing the time axis"></svg>
+  <div class="controls"><label>throwing velocity u (m/s) <input id="u6" type="range" min="10" max="30" step="5" value="20"><output></output></label>
+    <label>time t (s) <input id="t6" type="range" min="0" max="6" step="0.1" value="1.5"><output></output></label></div>
+  <div class="btnrow"><button class="btn primary" id="go6">▶ Throw!</button></div>
+  <div class="readout" id="o6"></div>
+  <p class="hint">Air resistance is ignored and g is taken as 10 m/s², as in the textbook. Once the ball is back in the hand (t = 2u/10) the clock stops.</p>
+  <p class="exam"><b>📝 In the exam this looks like:</b> extended activity 2 – “An object thrown up at 30 m/s returns to the same place. Draw its v–t graph.” → a straight line from (0, 30 m/s) through (3 s, 0) to (6 s, −30 m/s); maximum height = area of the first triangle = ½ × 3 × 30 = <b>45 m</b>; total displacement = 0. Let us assess Q12: thrown up at 20 m/s – maximum height 20 m; after 3 s it is 15 m high, having travelled 25 m.</p></div>
+
+<h2 id="check">✅ Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div>
+
+<h2 id="explore">🌐 Explore online – resources hub</h2>
+<p>Everything in this guide works offline. The links below are extras: simulations, short videos and articles from trusted sources (PhET and others), grouped by topic. They <b>need internet</b> and open in a <b>new tab</b>, so you will not lose your place here. <b>Ask a parent or teacher before you go online.</b> The PhET simulations run directly in your browser – nothing to install.</p>
+<h3>Distance, displacement and vectors</h3><div class="explore"><div class="title">🌐 Distance, displacement and vectors <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.physicsclassroom.com/tutorial/1d-kinematics/language-of-kinematics/distance-and-displacement" target="_blank" rel="noopener noreferrer">📄 Physics Tutorial - 1D Kinematics - Language of Kinematics - Distance and Displacement</a> <span class="src">The Physics Classroom</span><br><span class="note">Walk around a block and back home: distance is big, displacement is zero - this page shows why.</span></li><li><a href="https://phet.colorado.edu/en/simulations/vector-addition" target="_blank" rel="noopener noreferrer">🧪 Vector Addition (PhET simulation)</a> <span class="src">PhET Interactive Simulations, University of Colorado Boulder</span><br><span class="note">Drag arrows (vectors) and add them - see how direction changes the total, unlike plain numbers.</span></li><li><a href="https://www.youtube.com/watch?v=vQCkYm3v3aA" target="_blank" rel="noopener noreferrer">▶️ Distance and displacement introduction | One-dimensional motion | Physics | Khan Academy</a> <span class="src">Khan Academy (YouTube) · 4:14</span><br><span class="note">A 4-minute picture-based intro to distance vs displacement.</span></li><li><a href="https://www.youtube.com/watch?v=ihNZlp7iUHE" target="_blank" rel="noopener noreferrer">▶️ Intro to vectors &amp; scalars | One-dimensional motion | Physics | Khan Academy</a> <span class="src">Khan Academy (YouTube) · 8:39</span><br><span class="note">Sal Khan explains scalars and vectors using distance/displacement and speed/velocity.</span></li></ul></div><h3>Speed and velocity</h3><div class="explore"><div class="title">🌐 Speed and velocity <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.physicsclassroom.com/tutorial/1d-kinematics/language-of-kinematics/speed-and-velocity" target="_blank" rel="noopener noreferrer">📄 Physics Tutorial - 1D Kinematics - Language of Kinematics - Speed and Velocity</a> <span class="src">The Physics Classroom</span><br><span class="note">Speed tells how fast; velocity tells how fast AND which way - with worked examples.</span></li><li><a href="https://www.youtube.com/watch?v=4-WNdVvTG1s" target="_blank" rel="noopener noreferrer">▶️ Average speed &amp; velocity | Motion | Physics class 9 | Khan Academy</a> <span class="src">Khan Academy India - English (YouTube) · 6:27</span><br><span class="note">Class 9 level: average speed vs average velocity with Indian examples.</span></li><li><a href="https://www.youtube.com/watch?v=W6Ar0ls6tVA" target="_blank" rel="noopener noreferrer">▶️ Speed and velocity | Middle school physics | Khan Academy</a> <span class="src">Khan Academy (YouTube) · 7:51</span><br><span class="note">Short, simple middle-school explanation of speed and velocity.</span></li></ul></div><h3>Acceleration and retardation</h3><div class="explore"><div class="title">🌐 Acceleration and retardation <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.physicsclassroom.com/tutorial/1d-kinematics/language-of-kinematics/acceleration" target="_blank" rel="noopener noreferrer">📄 Physics Tutorial - 1D Kinematics - Language of Kinematics - Acceleration</a> <span class="src">The Physics Classroom</span><br><span class="note">Acceleration = change in velocity per second; slowing down (retardation) is acceleration opposite to motion.</span></li><li><a href="https://www.youtube.com/watch?v=TAtCs9ifRRY" target="_blank" rel="noopener noreferrer">▶️ Acceleration | Motion | Physics class 9 | Khan Academy</a> <span class="src">Khan Academy India - English (YouTube) · 8:35</span><br><span class="note">Class 9 video on acceleration, its unit m/s^2, and negative acceleration (retardation).</span></li><li><a href="https://phet.colorado.edu/en/simulations/moving-man" target="_blank" rel="noopener noreferrer">🧪 The Moving Man (PhET simulation)</a> <span class="src">PhET Interactive Simulations, University of Colorado Boulder</span><br><span class="note">Move the man and watch his position, velocity and acceleration graphs draw live. Older Java sim - it runs in the browser via CheerpJ and may take a minute to load.</span></li></ul></div><h3>Position–time and velocity–time graphs</h3><div class="explore"><div class="title">🌐 Position–time and velocity–time graphs <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.physicsclassroom.com/tutorial/1d-kinematics/position-time-graphs/meaning-of-shape-for-a-p-t-graph" target="_blank" rel="noopener noreferrer">📄 Physics Tutorial - 1D Kinematics - Position Time Graphs - The Meaning of Shape for a p-t Graph</a> <span class="src">The Physics Classroom</span><br><span class="note">Straight line = constant velocity, curve = changing velocity: learn to read position-time graphs.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/1d-kinematics/velocity-time-graphs/meaning-of-shape-for-a-v-t-graph" target="_blank" rel="noopener noreferrer">📄 Physics Tutorial - 1D Kinematics - Velocity Time Graphs - Meaning of Shape for a v-t Graph</a> <span class="src">The Physics Classroom</span><br><span class="note">Slope of a velocity-time graph is the acceleration.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/1d-kinematics/velocity-time-graphs/determining-the-area-on-a-v-t-graph" target="_blank" rel="noopener noreferrer">📄 Physics Tutorial - 1D Kinematics - Velocity Time Graphs - Determining the Area on a v-t Graph</a> <span class="src">The Physics Classroom</span><br><span class="note">Area under a velocity-time graph = displacement - the trick behind the equations of motion.</span></li><li><a href="https://www.youtube.com/watch?v=yB3KxVSxK54" target="_blank" rel="noopener noreferrer">▶️ Velocity time graphs | Motion | Physics Class 9 | Khan Academy</a> <span class="src">Khan Academy India - English (YouTube) · 7:21</span><br><span class="note">Class 9 video: reading velocity-time graphs and finding acceleration from them.</span></li><li><a href="https://www.youtube.com/watch?v=d-_eqgj5-K8" target="_blank" rel="noopener noreferrer">▶️ Why distance is area under velocity-time line | Physics | Khan Academy</a> <span class="src">Khan Academy (YouTube) · 9:25</span><br><span class="note">Why the area under a velocity-time line gives the distance travelled.</span></li></ul></div><h3>Equations of motion</h3><div class="explore"><div class="title">🌐 Equations of motion <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.physicsclassroom.com/tutorial/1d-kinematics/kinematic-equations/kinematic-equations" target="_blank" rel="noopener noreferrer">📄 Physics Tutorial - 1D Kinematics - Kinematic Equations - Kinematic Equations</a> <span class="src">The Physics Classroom</span><br><span class="note">The equations v = u + at, s = ut + 1/2 at^2 and v^2 = u^2 + 2as with how to choose one (they write vi/vf for u/v).</span></li><li><a href="https://www.youtube.com/watch?v=AMhBEPaF7xo" target="_blank" rel="noopener noreferrer">▶️ Deriving 3 equations of motion (from v-t graph)</a> <span class="src">Khan Academy India - English (YouTube) · 13:04</span><br><span class="note">Derives all three equations of motion from a velocity-time graph - exactly the textbook method.</span></li><li><a href="https://www.youtube.com/watch?v=80gApHJd3iY" target="_blank" rel="noopener noreferrer">▶️ Using equations of motion (1 step numerical)</a> <span class="src">Khan Academy India - English (YouTube) · 11:54</span><br><span class="note">Step-by-step practice using the equations of motion in simple numericals.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/1d-kinematics/kinematic-equations/sample-problems-and-solutions" target="_blank" rel="noopener noreferrer">📄 Physics Tutorial - 1D Kinematics - Kinematic Equations - Sample Problems and Solutions</a> <span class="src">The Physics Classroom</span><br><span class="note">Extra solved problems to check your understanding.</span></li></ul></div><h3>Throwing up and falling down</h3><div class="explore"><div class="title">🌐 Throwing up and falling down <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.physicsclassroom.com/tutorial/1d-kinematics/free-fall/introduction" target="_blank" rel="noopener noreferrer">📄 Physics Tutorial - 1D Kinematics - Free Fall - Introduction</a> <span class="src">The Physics Classroom</span><br><span class="note">What &#x27;free fall&#x27; means: an object moving only under gravity.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/1d-kinematics/free-fall/acceleration-of-gravity" target="_blank" rel="noopener noreferrer">📄 Physics Tutorial - 1D Kinematics - Free Fall - Acceleration of Gravity</a> <span class="src">The Physics Classroom</span><br><span class="note">g is about 9.8 m/s^2 downward - a ball thrown up slows by 9.8 m/s every second.</span></li><li><a href="https://www.youtube.com/watch?v=oYEgdZ3iEKA" target="_blank" rel="noopener noreferrer">▶️ Apollo 15 Hammer-Feather Drop</a> <span class="src">NASA Solar System (YouTube) · 1:23</span><br><span class="note">On the Moon (no air) an astronaut drops a hammer and a feather - they land together!</span></li><li><a href="https://www.youtube.com/watch?v=E43-CfukEgs" target="_blank" rel="noopener noreferrer">▶️ Brian Cox visits the world&#x27;s biggest vacuum | Human Universe - BBC</a> <span class="src">BBC (YouTube) · 4:41</span><br><span class="note">A bowling ball and feathers dropped in a huge vacuum chamber fall at the same rate.</span></li></ul></div><h3>Road safety, signs and markings</h3><div class="explore"><div class="title">🌐 Road safety, signs and markings <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.who.int/news-room/fact-sheets/detail/road-traffic-injuries" target="_blank" rel="noopener noreferrer">📄 Road traffic injuries (WHO fact sheet)</a> <span class="src">World Health Organization</span><br><span class="note">Key facts: speeding, helmets, seat belts and why road crashes are a major cause of death for young people.</span></li><li><a href="https://mvd.kerala.gov.in/en/trafficsigns" target="_blank" rel="noopener noreferrer">📄 Traffic Signs | Motor Vehicle Department</a> <span class="src">Motor Vehicles Department, Government of Kerala (official)</span><br><span class="note">Circles give orders, triangles warn, rectangles inform - learn the road signs from Kerala MVD.</span></li><li><a href="https://www.brake.org.uk/get-involved/take-action/mybrake/knowledge-centre/speed/stopping-distances" target="_blank" rel="noopener noreferrer">📄 Stopping distances | Brake</a> <span class="src">Brake (UK road safety charity)</span><br><span class="note">Stopping distance = thinking distance + braking distance; double the speed and braking distance becomes about four times (v^2 = u^2 + 2as in action).</span></li><li><a href="https://www.youtube.com/watch?v=HTANxqGQcfI" target="_blank" rel="noopener noreferrer">▶️ Stopping Distance | Forces &amp; Motion | Physics | FuseSchool</a> <span class="src">FuseSchool - Global Education (YouTube) · 3:43</span><br><span class="note">Short animation on thinking, braking and stopping distance.</span></li><li><a href="https://www.youtube.com/watch?v=GQ2Y0BGT-RM" target="_blank" rel="noopener noreferrer">▶️ Distractions are many | keep your vision alive | road safety awareness short film | MVD Kerala</a> <span class="src">MVD KERALA (official YouTube channel) · 2:05</span><br><span class="note">Kerala MVD short film on how distractions (like phones) cause crashes.</span></li><li><a href="https://natpac.kerala.gov.in/road-safety-materials-2/" target="_blank" rel="noopener noreferrer">📄 Road Safety Materials - NATPAC</a> <span class="src">NATPAC (KSCSTE - National Transportation Planning and Research Centre, Govt. of Kerala)</span><br><span class="note">NATPAC&#x27;s road safety films, booklets, posters and leaflets for students.</span></li><li><a href="https://keralapolice.gov.in/page/road-safety-tips-during-monsoon" target="_blank" rel="noopener noreferrer">📄 Kerala Police - Road safety tips during monsoon (മഴക്കാലത്ത് റോഡില്‍ ശ്രദ്ധിക്കേണ്ട കാര്യങ്ങള്‍)</a> <span class="src">Kerala Police (official)</span><br><span class="note">Malayalam tips for staying safe on wet roads - why vehicles need more distance to stop in rain.</span></li></ul></div><h3>Malayalam explainers</h3><div class="explore"><div class="title">🌐 Malayalam explainers <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.youtube.com/watch?v=qCVkQHbo4AY" target="_blank" rel="noopener noreferrer">▶️ KITE VICTERS STD 09 Physics Class 14 (First Bell-ഫസ്റ്റ് ബെല്‍)</a> <span class="src">KITE VICTERS (official, itsvicters) - First Bell · 22:42</span><br><span class="note">Malayalam class (2020–21 First Bell, may follow the older syllabus; topic judged from the preview): deriving s = ut + 1/2 at^2 from the velocity-time graph.</span></li><li><a href="https://www.youtube.com/watch?v=inPOlwZ-Ekg" target="_blank" rel="noopener noreferrer">▶️ KITE VICTERS STD 09 Physics Class 15 (First Bell-ഫസ്റ്റ് ബെല്‍)</a> <span class="src">KITE VICTERS (official, itsvicters) - First Bell · 28:34</span><br><span class="note">Malayalam class (2020–21 First Bell, may follow the older syllabus; topic judged from the preview): drawing a velocity-time graph and finding displacement as the area under it.</span></li><li><a href="https://www.youtube.com/watch?v=TMBijO4KHMw" target="_blank" rel="noopener noreferrer">▶️ KITE VICTERS STD 09 Physics Class 16 (First Bell-ഫസ്റ്റ് ബെല്‍)</a> <span class="src">KITE VICTERS (official, itsvicters) - First Bell · 20:46</span><br><span class="note">Malayalam class (2020–21 First Bell, may follow the older syllabus; topic judged from the preview): numericals on equations of motion, including km/h to m/s conversion.</span></li><li><a href="https://www.youtube.com/watch?v=ce6Z3L7JwnM" target="_blank" rel="noopener noreferrer">▶️ KITE VICTERS STD 09 Physics Class 17 (First Bell-ഫസ്റ്റ് ബെല്‍)</a> <span class="src">KITE VICTERS (official, itsvicters) - First Bell · 25:57</span><br><span class="note">Malayalam class continuing motion problems - slowing down from 200 m/s to 100 m/s (retardation).</span></li><li><a href="https://www.youtube.com/watch?v=VlP80hNyuXg" target="_blank" rel="noopener noreferrer">▶️ Class 9 Physics | Chapter : Equations of Motion / ചലന സമവാക്യങ്ങൾ | Xylem Class 9</a> <span class="src">Xylem Class 9 (private tuition channel) · 12:48</span><br><span class="note">A 13-minute Malayalam summary of the chapter ചലന സമവാക്യങ്ങൾ.</span></li></ul></div><h3>More to explore</h3><div class="explore"><div class="title">🌐 More to explore <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://expeyes.in/experiments/mechanics/sr04.html" target="_blank" rel="noopener noreferrer">📄 Measuring distance using the SR04 ultrasound echo module - ExpEYES</a> <span class="src">ExpEYES (IUAC / official project site)</span><br><span class="note">The textbook&#x27;s ExpEYES activity: the SR04 sends sound pulses and times the echo to measure distance.</span></li><li><a href="https://expeyes.in/" target="_blank" rel="noopener noreferrer">📄 ExpEYES</a> <span class="src">ExpEYES (IUAC / official project site)</span><br><span class="note">Home of ExpEYES, the low-cost lab kit used in Kerala schools through KITE.</span></li><li><a href="https://www.youtube.com/watch?v=ecunOua_xAU" target="_blank" rel="noopener noreferrer">▶️ ExpEYES Graphical User Interface</a> <span class="src">ExpEYES (official YouTube channel) · 16:58</span><br><span class="note">Tour of the ExpEYES software you use to record and plot experiment data.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/1d-kinematics" target="_blank" rel="noopener noreferrer">📄 Physics Tutorial - 1D Kinematics</a> <span class="src">The Physics Classroom</span><br><span class="note">One place covering the whole chapter: words of motion, graphs, free fall and the equations.</span></li></ul></div>
+
+<div class="callout"><div class="title">🧭 Next</div>
+<p style="margin:0">Now pull the whole chapter together: <a href="16_summary_revision.html">Summary &amp; Quick Quiz ▶</a></p></div>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Equations of Motion · Class 9 Physics", "icon": "🚆", "key": "physics_ch2_progress", "pages": [["index.html", "Home"], ["01_directions_number_line.html", "1 · Directions, Number Line & Signs"], ["02_units_and_conversions.html", "2 · Units, Time & Conversions"], ["03_drawing_reading_graphs.html", "3 · Drawing & Reading Graphs"], ["04_formulas_and_areas.html", "4 · Rearranging Formulas, Squares & Areas"], ["05_distance_displacement.html", "5 · Distance and Displacement"], ["06_velocity.html", "6 · Speed and Velocity"], ["07_uniform_nonuniform_velocity.html", "7 · Uniform & Non-uniform Velocity"], ["08_acceleration_retardation.html", "8 · Acceleration & Retardation"], ["09_uniform_acceleration_road_safety.html", "9 · Uniform Acceleration & Road Safety"], ["10_motion_graphs.html", "10 · Position–Time & Velocity–Time Graphs"], ["11_equations_of_motion.html", "11 · The Equations of Motion"], ["12_intext_numericals_solutions.html", "12 · In-text Questions – Solutions"], ["13_assess_q1_q9_solutions.html", "13 · Let Us Assess Q1–9 – Solutions"], ["14_assess_q10_q17_solutions.html", "14 · Let Us Assess Q10–17 & Extended Activities"], ["15_applications_explore.html", "15 · Applications & Explore Online"], ["16_summary_revision.html", "16 · Summary & Quick Quiz"], ["17_model_test_paper.html", "17 · Model Test Paper"], ["18_model_test_solutions.html", "18 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ---- motion helpers shared by pages 15–18 of Chapter 2 (inlined by _gen/gen.py) ---- */
+const {P, seg, text, dot, polyline, multiText} = K;
+const COL = {red:'var(--red)', blue:'var(--blue)', green:'var(--green)', amber:'var(--accent)', purple:'var(--purple)', text:'var(--text)', muted:'var(--muted)'};
+/* a line with its own stroke attributes (seg() carries class 'ln', whose CSS would override them) */
+const sline = (svg, a, b, attrs={}) => K.el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+/* number with at most d decimals, true minus sign: fx(-2.85, 1) → "−2.9" */
+const fx = (v, d=2) => K.num(K.fmt(v, d));
+/* thousands separator: gr(150000) → "150,000"; negatives get a true minus */
+const gr = (v, d=0) => { const s = Math.abs(v).toFixed(d).replace(/\.0+$/, '').replace(/(\.\d*?)0+$/, '$1'); const [a, b] = s.split('.'); return (v < 0 ? '−' : '') + a.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (b ? '.' + b : ''); };
+const kmh = v => v * 5 / 18;
+/* working lines: rows = [[step, text, cls], …]; rows whose step ≤ i are shown, the newest fades in. o.x, o.y, o.lh, o.anchor */
+function lines(svg, rows, i, t, o={}){ const x = o.x ?? 400, y0 = o.y ?? 36, lh = o.lh ?? 34, an = o.anchor ?? 'middle'; let k = 0;
+  rows.forEach(r => { if (r[0] > i) return; text(svg, P(x, y0 + k * lh), K.num(r[1]), {class: 'lbl ' + (r[2] || ''), 'text-anchor': an, opacity: r[0] === i ? t : 1}); k++; }); }
+/* velocity / displacement arrow from a to b with a filled head; o.c colour name, o.w width, o.label, o.lo label offset {x,y}, o.op opacity */
+function arrow(svg, a, b, o={}){ const c = COL[o.c || 'red'], w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const L = K.dist(a, b); if (L < 1){ return g; } const u = K.unit(a, b), hs = Math.min(o.head ?? 11, L * .6); const base = P(b.x - u.x * hs, b.y - u.y * hs);
+  K.el('line', {x1: a.x, y1: a.y, x2: base.x, y2: base.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round'}, g);
+  K.el('polygon', {points: `${b.x},${b.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g);
+  if (o.label) text(g, P(b.x + (o.lo ? o.lo.x : 0), b.y + (o.lo ? o.lo.y : -12)), K.num(o.label), {class: 'lbl sm ' + (o.lc || o.c || 'red'), 'text-anchor': o.anchor || 'middle'});
+  return g; }
+/* a stick figure standing with its feet at p (height ≈ 62·s); o.lean = degrees (+ = forwards, to the right), o.c colour, o.run = running pose phase */
+function person(svg, p, s=1, o={}){ const c = o.c ? COL[o.c] : 'var(--text)', g = K.group(svg, o.lean ? {transform: `rotate(${o.lean} ${p.x} ${p.y})`} : {});
+  const hip = P(p.x, p.y - 28 * s), neck = P(p.x, p.y - 50 * s), st = {stroke: c, 'stroke-width': 2.6, 'stroke-linecap': 'round'};
+  K.el('circle', {cx: p.x, cy: p.y - 57 * s, r: 7 * s, fill: 'var(--svgbg)', stroke: c, 'stroke-width': 2.4}, g);
+  K.el('line', {x1: neck.x, y1: neck.y, x2: hip.x, y2: hip.y, ...st}, g);
+  if (o.run !== undefined){ const ph = Math.sin(o.run * Math.PI * 2); K.el('line', {x1: hip.x, y1: hip.y, x2: p.x + 12 * s * ph, y2: p.y, ...st}, g); K.el('line', {x1: hip.x, y1: hip.y, x2: p.x - 12 * s * ph, y2: p.y, ...st}, g);
+    K.el('line', {x1: neck.x, y1: neck.y + 4 * s, x2: neck.x - 12 * s * ph, y2: neck.y + 16 * s, ...st}, g); K.el('line', {x1: neck.x, y1: neck.y + 4 * s, x2: neck.x + 12 * s * ph, y2: neck.y + 16 * s, ...st}, g); return g; }
+  K.el('line', {x1: hip.x, y1: hip.y, x2: p.x - 8 * s, y2: p.y, ...st}, g); K.el('line', {x1: hip.x, y1: hip.y, x2: p.x + 8 * s, y2: p.y, ...st}, g);
+  const ar = o.arms || [[-12, 14], [12, 14]]; ar.forEach(([dx, dy]) => K.el('line', {x1: neck.x, y1: neck.y + 4 * s, x2: neck.x + dx * s, y2: neck.y + 4 * s + dy * s, ...st}, g));
+  return g; }
+/* a car seen from the side, w px long, front at the right, left end at x, wheels on yG */
+function car(svg, x, yG, w=120, o={}){ const k = w / 240, g = K.group(svg, o.attrs || {});
+  K.el('path', {d: `M${x},${yG - 22 * k} L${x},${yG - 62 * k} Q${x + 10 * k},${yG - 70 * k} ${x + 40 * k},${yG - 70 * k} L${x + 70 * k},${yG - 118 * k} L${x + 170 * k},${yG - 118 * k} L${x + 205 * k},${yG - 70 * k} L${x + 232 * k},${yG - 66 * k} Q${x + 240 * k},${yG - 62 * k} ${x + 240 * k},${yG - 50 * k} L${x + 240 * k},${yG - 22 * k} Z`, class: o.cls || 'fill-blue', stroke: o.stroke || 'var(--blue)', 'stroke-width': 2}, g);
+  K.el('path', {d: `M${x + 78 * k},${yG - 110 * k} L${x + 165 * k},${yG - 110 * k} L${x + 195 * k},${yG - 72 * k} L${x + 78 * k},${yG - 72 * k} Z`, fill: 'var(--svgbg)', stroke: o.stroke || 'var(--blue)', 'stroke-width': 1, opacity: .85}, g);
+  [x + 48 * k, x + 192 * k].forEach(cx => { K.el('circle', {cx, cy: yG - 16 * k, r: 16 * k, fill: '#334155', stroke: 'var(--text)', 'stroke-width': 1.2}, g); K.el('circle', {cx, cy: yG - 16 * k, r: 5 * k, fill: '#cbd5e1'}, g); });
+  return g; }
+/* a train seen from the side: front (engine) at xF, rear at xF − len, wheels on y; coaches every ~cw px; o.metro = metro colours */
+function train(svg, xF, y, len, o={}){ const g = K.group(svg), h = o.h ?? 26, xR = xF - len, n = Math.max(1, Math.round(len / (o.cw ?? 60))), cw = len / n;
+  for (let q = 0; q < n; q++){ const x = xR + q * cw, front = q === n - 1;
+    K.el('path', {d: front ? `M${x + 1},${y - 4} L${x + 1},${y - 4 - h} L${x + cw - 10},${y - 4 - h} Q${x + cw},${y - 4 - h} ${x + cw},${y - 4 - h * .45} L${x + cw},${y - 4} Z` : `M${x + 1},${y - 4} L${x + 1},${y - 4 - h} L${x + cw - 1},${y - 4 - h} L${x + cw - 1},${y - 4} Z`,
+      fill: o.metro ? 'var(--surface2)' : (front ? 'var(--red)' : 'var(--blue)'), stroke: 'var(--text)', 'stroke-width': 1}, g);
+    if (o.metro) K.el('rect', {x: x + 1, y: y - 4 - h * .35, width: cw - 2, height: h * .14, fill: 'var(--primary)'}, g);
+    if (cw > 18){ const nw = Math.max(1, Math.floor((cw - 8) / 14)); for (let k = 0; k < nw; k++) K.el('rect', {x: x + 5 + k * (cw - 10) / nw, y: y - h, width: Math.max(2, (cw - 10) / nw - 4), height: h * .3, fill: 'var(--blue-soft)', stroke: 'var(--text)', 'stroke-width': .5}, g); }
+    if (cw > 10) [x + cw * .25, x + cw * .75].forEach(cx => K.el('circle', {cx, cy: y - 3, r: 3, fill: '#334155'}, g)); }
+  return g; }
+/* graph paper with axes. o: {L, T, W, H (px box), x0=0, x1, y0=0, y1 (data ranges), xs, ys (major steps), minor=5, xl, yl, lx, ly (label formatters)}
+   returns {X, Y} mapping data → px, and xt() which redraws the time-axis numbers on top (call it after shading below the axis). The X-axis is drawn at v = 0 (in the middle when y0 < 0). */
+function axes(svg, o){ const {L, T, W, H, x1, y1} = o, x0 = o.x0 ?? 0, y0 = o.y0 ?? 0, xs = o.xs, ys = o.ys, mn = o.minor ?? 5, g = K.group(svg);
+  const X = t => L + (t - x0) / (x1 - x0) * W, Y = v => T + H - (v - y0) / (y1 - y0) * H;
+  const nx = Math.round((x1 - x0) / xs * mn), ny = Math.round((y1 - y0) / ys * mn);
+  for (let k = 0; k <= nx; k++){ const xx = L + W * k / nx, mj = k % mn === 0; K.el('line', {x1: xx, y1: T, x2: xx, y2: T + H, stroke: 'var(--red)', 'stroke-opacity': mj ? .3 : .11, 'stroke-width': mj ? 1 : .7}, g); }
+  for (let k = 0; k <= ny; k++){ const yy = T + H - H * k / ny, mj = k % mn === 0; K.el('line', {x1: L, y1: yy, x2: L + W, y2: yy, stroke: 'var(--red)', 'stroke-opacity': mj ? .3 : .11, 'stroke-width': mj ? 1 : .7}, g); }
+  const yA = Y(Math.max(y0, Math.min(y1, 0))), xA = X(Math.max(x0, Math.min(x1, 0)));
+  arrow(g, P(L, yA), P(L + W + 14, yA), {c: 'text', w: 1.6, head: 8}); arrow(g, P(xA, T + H), P(xA, T - 14), {c: 'text', w: 1.6, head: 8});
+  const lx = o.lx || (v => fx(v, 2)), ly = o.ly || (v => fx(v, 2));
+  const xt = par => { for (let k = 0; k <= Math.round((x1 - x0) / xs); k++){ const t = x0 + k * xs; if (Math.abs(t) < 1e-9 && y0 === 0) continue; text(par, P(X(t), yA + 13), lx(t), {class: 'lbl sm muted'}); } }; xt(g);
+  for (let k = 0; k <= Math.round((y1 - y0) / ys); k++){ const v = y0 + k * ys; if (Math.abs(v) < 1e-9 && x0 === 0) continue; text(g, P(xA - 6, Y(v)), ly(v), {class: 'lbl sm muted', 'text-anchor': 'end'}); }
+  if (x0 === 0 && y0 === 0) text(g, P(xA - 7, yA + 12), 'O', {class: 'lbl sm muted', 'text-anchor': 'end'});
+  if (o.xl) text(g, P(L + W + 18, yA), o.xl, {class: 'lbl sm', 'text-anchor': 'start'});
+  if (o.yl) text(g, P(xA + 8, T - 12), o.yl, {class: 'lbl sm', 'text-anchor': 'start'});
+  return {X, Y, xt: () => xt(svg)}; }
+/* a "nice" upper limit and step for an axis: niceMax(83) → [100, 20] */
+function niceMax(v, n=5){ const raw = Math.max(v, 1e-6) / n, p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p, st = (m <= 1 ? 1 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 5 ? 5 : 10) * p; return [Math.ceil(v / st - 1e-9) * st, st]; }
+/* road signs: kind 'mandatory' (red circle), 'cautionary' (red triangle), 'informatory' (blue rectangle); sym = text inside */
+function roadSign(svg, c, r, kind, sym='', o={}){ const g = K.group(svg, o.attrs || {});
+  if (kind === 'mandatory'){ K.el('circle', {cx: c.x, cy: c.y, r, fill: '#ffffff', stroke: '#dc2626', 'stroke-width': r * .2}, g); if (o.bar) K.el('line', {x1: c.x - r * .62, y1: c.y - r * .62, x2: c.x + r * .62, y2: c.y + r * .62, stroke: '#dc2626', 'stroke-width': r * .16}, g); }
+  else if (kind === 'cautionary') K.polygon(g, [P(c.x, c.y - r), P(c.x + r * 1.05, c.y + r * .8), P(c.x - r * 1.05, c.y + r * .8)], {fill: '#ffffff', stroke: '#dc2626', 'stroke-width': r * .16, 'stroke-linejoin': 'round'});
+  else K.el('rect', {x: c.x - r * 1.1, y: c.y - r * .8, width: r * 2.2, height: r * 1.6, rx: r * .15, fill: '#1d4ed8', stroke: '#1e3a8a', 'stroke-width': 1.5}, g);
+  if (sym) K.el('text', {x: c.x, y: c.y + (kind === 'cautionary' ? r * .3 : 0), 'text-anchor': 'middle', 'dominant-baseline': 'middle', 'font-size': r * (o.fs ?? .8), 'font-weight': 700, fill: kind === 'informatory' ? '#ffffff' : '#111827', 'font-family': 'Segoe UI, Roboto, Arial, sans-serif', text: sym}, g);
+  return g; }
+/* a zebra crossing (top view) across a road strip that runs left–right: x = left edge, y = top of road, h = road height, w = crossing width.
+   The white bars run along the road, stacked across it, as on a real crossing. */
+function zebra(svg, x, y, h, w=30){ const g = K.group(svg), n = Math.max(3, Math.floor(h / 9)), gap = h / n; for (let q = 0; q < n; q++) K.el('rect', {x, y: y + q * gap + gap * .25, width: w, height: gap * .5, fill: '#f8fafc'}, g); return g; }
+/* a simple bus seen from the side: front at the right, left end at x, wheels on y */
+function bus(svg, x, y, w=150, o={}){ const g = K.group(svg, o.attrs || {}), h = w * .36;
+  K.el('rect', {x, y: y - 14 - h, width: w, height: h, rx: 8, fill: o.fill || 'var(--red)', stroke: 'var(--text)', 'stroke-width': 1.5}, g);
+  K.el('rect', {x, y: y - 14 - h * .32, width: w, height: h * .12, fill: '#fbbf24'}, g);
+  const nw = Math.max(3, Math.round(w / 34)); for (let k = 0; k < nw; k++) K.el('rect', {x: x + 8 + k * (w - 30) / nw, y: y - 10 - h + 4, width: (w - 30) / nw - 6, height: h * .34, rx: 2, fill: 'var(--blue-soft)', stroke: 'var(--text)', 'stroke-width': .8}, g);
+  K.el('rect', {x: x + w - 18, y: y - 10 - h + 4, width: 14, height: h * .5, rx: 2, fill: 'var(--blue-soft)', stroke: 'var(--text)', 'stroke-width': .8}, g);
+  [x + w * .2, x + w * .8].forEach(cx => { K.el('circle', {cx, cy: y - 9, r: 9 * Math.min(1, w / 120), fill: '#334155', stroke: 'var(--text)', 'stroke-width': 1.2}, g); });
+  if (o.label) text(g, P(x + w / 2, y - 14 - h * .44), o.label, {class: 'lbl sm', 'font-weight': 700});
+  return g; }
+
+const $ = s => document.querySelector(s);
+function anim(ms, fn, done){ let raf = null; const t0 = performance.now(); const step = now => { const f = Math.min(1, (now - t0) / ms); fn(f); if (f < 1) raf = requestAnimationFrame(step); else { raf = null; if (done) done(); } }; raf = requestAnimationFrame(step); return () => { if (raf) cancelAnimationFrame(raf); raf = null; }; }
+const setVal = (id, v) => { const el = $('#' + id); el.value = v; el.dispatchEvent(new Event('input', {bubbles: true})); };
+
+/* ---------- 1. stopping distance ---------- */
+const D1 = 40; let st1 = 1, stop1 = null;
+const stopCalc = (vk, tr, a) => { const u = kmh(vk), sr = u * tr, sb = u * u / (2 * a); return {u, sr, sb, tot: sr + sb}; };
+function draw1(){ const svg = $('#s1'); K.clear(svg); const vk = +$('#v1').value, tr = +$('#r1').value, a = +$('#a1').value, {u, sr, sb, tot} = stopCalc(vk, tr, a);
+  const x0 = 60, k = 5.6, yR = 64, hR = 50, MAXD = 120;
+  K.el('rect', {x: 0, y: yR, width: 800, height: hR, fill: '#475569'}, svg); for (let xx = 0; xx < 800; xx += 40) K.el('rect', {x: xx, y: yR + hR / 2 - 2, width: 22, height: 4, fill: '#f8fafc'}, svg);
+  for (let d = 0; d <= MAXD; d += 10){ sline(svg, P(x0 + d * k, yR + hR), P(x0 + d * k, yR + hR + 5), {stroke: 'var(--muted)'}); text(svg, P(x0 + d * k, yR + hR + 15), d + ' m', {class: 'lbl sm muted'}); }
+  const xz = x0 + D1 * k; zebra(svg, xz - 4, yR, hR, 26); person(svg, P(xz + 9, yR + hR / 2 + 10), .5, {c: 'amber'});
+  roadSign(svg, P(xz - 40, 30), 15, 'cautionary', '🚸', {fs: .7}); sline(svg, P(xz - 40, 42), P(xz - 40, yR), {stroke: 'var(--muted)', 'stroke-width': 2});
+  /* motion at the animation time */
+  const T = tr + u / a, tt = st1 * T, dNow = tt <= tr ? u * tt : sr + u * (tt - tr) - .5 * a * (tt - tr) ** 2, d = Math.min(dNow, tot), vNow = tt <= tr ? u : Math.max(0, u - a * (tt - tr));
+  const yb = yR - 8; sline(svg, P(x0, yb), P(x0 + Math.min(d, sr, MAXD) * k, yb), {stroke: 'var(--accent)', 'stroke-width': 7, 'stroke-linecap': 'butt'});
+  if (d > sr) sline(svg, P(x0 + Math.min(sr, MAXD) * k, yb), P(x0 + Math.min(d, MAXD) * k, yb), {stroke: 'var(--red)', 'stroke-width': 7, 'stroke-linecap': 'butt'});
+  const xf = x0 + Math.min(d, MAXD + 6) * k; car(svg, xf - 46, yR + hR / 2 + 6, 46, {attrs: {opacity: d > MAXD ? .5 : 1}});
+  const hitV = tot <= D1 ? 0 : (sr >= D1 ? u : Math.sqrt(u * u - 2 * a * (D1 - sr)));
+  if (st1 >= 1){ const ok = tot <= D1; text(svg, P(400, 14), ok ? `Stops after ${fx(tot, 1)} m – ${fx(D1 - tot, 1)} m before the crossing ✔` : `Needs ${fx(tot, 1)} m – reaches the crossing at ${fx(hitV * 3.6, 0)} km/h ✘`, {class: 'lbl ' + (ok ? 'green' : 'red'), 'font-weight': 700}); }
+  else text(svg, P(400, 14), `t = ${fx(tt, 2)} s   v = ${fx(vNow * 3.6, 0)} km/h   ` + (tt <= tr ? 'reacting…' : 'braking…'), {class: 'lbl muted'});
+  if (tot > MAXD && st1 >= 1) text(svg, P(790, yR + hR + 32), `stops ${fx(tot, 0)} m away – beyond the picture`, {class: 'lbl sm red', 'text-anchor': 'end'});
+  text(svg, P(x0, yb - 12), 'reaction', {class: 'lbl sm amber', 'text-anchor': 'start'}); if (sr * k > 70) text(svg, P(x0 + Math.min(sr, MAXD) * k + 4, yb - 12), 'braking', {class: 'lbl sm red', 'text-anchor': 'start'});
+  /* bar chart */
+  const L = 70, Tc = 196, W = 690, H = 110, speeds = [20, 40, 60, 80, 100, 120, vk], data = speeds.map(s => stopCalc(s, tr, a));
+  const [ym, ys] = niceMax(Math.max(...data.map(q => q.tot), D1) * 1.05, 4), Yc = v => Tc + H - v / ym * H, bw = W / 7;
+  for (let q = 0; q <= Math.round(ym / ys); q++){ const v = q * ys; sline(svg, P(L, Yc(v)), P(L + W, Yc(v)), {stroke: 'var(--red)', 'stroke-opacity': .15}); text(svg, P(L - 6, Yc(v)), fx(v, 0), {class: 'lbl sm muted', 'text-anchor': 'end'}); }
+  text(svg, P(L - 6, Tc - 14), 'stopping distance (m)', {class: 'lbl sm', 'text-anchor': 'start'});
+  data.forEach((q, n) => { const cx = L + bw * (n + .5), w = bw * .5, me = n === 6;
+    K.el('rect', {x: cx - w / 2, y: Yc(q.sr), width: w, height: Yc(0) - Yc(q.sr), fill: 'var(--accent)', opacity: me ? 1 : .75}, svg);
+    K.el('rect', {x: cx - w / 2, y: Yc(q.tot), width: w, height: Yc(q.sr) - Yc(q.tot), fill: 'var(--red)', opacity: me ? 1 : .7}, svg);
+    if (me) K.el('rect', {x: cx - w / 2 - 3, y: Yc(q.tot) - 3, width: w + 6, height: Yc(0) - Yc(q.tot) + 3, fill: 'none', stroke: 'var(--purple)', 'stroke-width': 3}, svg);
+    text(svg, P(cx, Yc(q.tot) - 10), fx(q.tot, 0), {class: 'lbl sm' + (me ? ' purple' : '')}); text(svg, P(cx, Tc + H + 14), me ? `you: ${speeds[n]} km/h` : `${speeds[n]} km/h`, {class: 'lbl sm ' + (me ? 'purple' : 'muted')}); });
+  sline(svg, P(L, Yc(D1)), P(L + W, Yc(D1)), {stroke: 'var(--green)', 'stroke-dasharray': '6 4', 'stroke-width': 1.5}); text(svg, P(L + 6, Yc(D1) - 8), 'child 40 m ahead', {class: 'lbl sm green', 'text-anchor': 'start'});
+  sline(svg, P(L, Yc(0)), P(L + W, Yc(0)), {stroke: 'var(--text)', 'stroke-width': 1.5});
+  $('#o1').textContent = `u = ${vk} × 5/18 = ${fx(u, 2)} m/s\n`
+    + `reaction distance = u × t = ${fx(u, 2)} × ${fx(tr, 1)} = ${fx(sr, 1)} m\n`
+    + `braking distance  = u²/2a = ${fx(u, 2)}² ÷ (2 × ${fx(a, 1)}) = ${fx(sb, 1)} m   (braking time u/a = ${fx(u / a, 1)} s)\n`
+    + `stopping distance = ${fx(sr, 1)} + ${fx(sb, 1)} = ${fx(tot, 1)} m  → ` + (tot <= D1 ? `stops ${fx(D1 - tot, 1)} m before the child.` : `does NOT stop in 40 m; it reaches the child at ${fx(hitV, 1)} m/s (${fx(hitV * 3.6, 0)} km/h).`); }
+const run1 = () => { if (stop1){ stop1(); stop1 = null; } st1 = 1; draw1(); };
+K.slider('#v1', run1, 0); K.slider('#r1', run1, 1); K.slider('#a1', run1, 1);
+document.querySelectorAll('[data-set1]').forEach(b => b.addEventListener('click', () => { b.dataset.set1.split(',').forEach(p => { const [id, v] = p.split(':'); setVal(id, v); }); }));
+$('#go1').addEventListener('click', () => { if (stop1) stop1(); st1 = 0; const T = +$('#r1').value + kmh(+$('#v1').value) / +$('#a1').value; stop1 = anim(Math.min(7000, 900 * T), f => { st1 = f; draw1(); }, () => { stop1 = null; }); });
+
+/* ---------- 2. train crossing ---------- */
+let stop2 = null;
+function draw2(){ const svg = $('#s2'); K.clear(svg); const kind = $('#k2').value, L = +$('#L2').value, B = kind === 'post' ? 0 : +$('#B2').value, vk = +$('#v2').value, f = +$('#p2').value / 100, v = kmh(vk);
+  const T = (L + B) / v, tt = f * T, d = v * tt, k = 680 / (B + 2 * L), xb = 60 + L * k, xe = xb + B * k, y = 150;
+  $('#B2').disabled = kind === 'post';
+  if (kind === 'bridge'){ K.el('rect', {x: xb - 10, y: y + 20, width: B * k + 20, height: 60, class: 'fill-blue'}, svg); text(svg, P(xb + B * k / Math.max(2, Math.round(B / 100)) / 2, y + 40), 'river', {class: 'lbl sm blue'});
+    K.el('rect', {x: xb, y, width: B * k, height: 10, fill: 'var(--muted)'}, svg); const np = Math.max(2, Math.round(B / 100)); for (let q = 0; q <= np; q++){ const x = xb + q * B * k / np; K.el('rect', {x: x - 3, y: y + 10, width: 6, height: 50, fill: 'var(--muted)'}, svg); }
+    K.el('rect', {x: 0, y: y + 10, width: xb - 10, height: 70, class: 'fill-green'}, svg); K.el('rect', {x: xe + 10, y: y + 10, width: 800 - xe, height: 70, class: 'fill-green'}, svg); }
+  else if (kind === 'platform'){ K.el('rect', {x: xb, y: y + 2, width: B * k, height: 26, class: 'fill-surface', stroke: 'var(--muted)'}, svg); text(svg, P((xb + xe) / 2, y + 15), `platform ${B} m`, {class: 'lbl sm'}); }
+  else { sline(svg, P(xb, y), P(xb, y - 56), {stroke: 'var(--text)', 'stroke-width': 3}); K.el('circle', {cx: xb, cy: y - 60, r: 6, fill: 'var(--red)'}, svg); text(svg, P(xb - 10, y - 60), 'signal post', {class: 'lbl sm', 'text-anchor': 'end'}); }
+  sline(svg, P(0, y), P(800, y), {stroke: 'var(--text)', 'stroke-width': 2});
+  if (B > 0){ sline(svg, P(xb, y + 4), P(xb, 40), {stroke: 'var(--muted)', 'stroke-dasharray': '4 4'}); sline(svg, P(xe, y + 4), P(xe, 40), {stroke: 'var(--muted)', 'stroke-dasharray': '4 4'}); if (kind === 'bridge') K.dim(svg, P(xb, y + 70), P(xe, y + 70), `bridge ${B} m`, 6); }
+  const xf = xb + d * k; train(svg, xf, y, L * k, {cw: Math.max(12, 22 * k)});
+  K.el('circle', {cx: xf - L * k + 3, cy: y - 34, r: 4, fill: 'var(--red)'}, svg);
+  const frontDone = d >= B - 1e-6, done = f >= 1;
+  text(svg, P(400, 20), `t = ${fx(tt, 1)} s     engine has moved ${fx(d, 0)} m of ${L + B} m`, {class: 'lbl', 'font-weight': 700});
+  if (done) text(svg, P(400, 44), `✔ The last coach has left: crossed in ${fx(T, 1)} s`, {class: 'lbl green', 'font-weight': 700});
+  else if (frontDone && B > 0) text(svg, P(400, 44), `engine is past the far end (after ${fx(B / v, 1)} s) – but the train has not crossed yet!`, {class: 'lbl sm amber', 'font-weight': 700});
+  arrow(svg, P(Math.min(xf + 6, 760), y - 16), P(Math.min(xf + 6, 760) + 32, y - 16), {c: 'blue', w: 2.5});
+  $('#o2').textContent = `v = ${vk} × 5/18 = ${fx(v, 2)} m/s\n`
+    + `distance the engine must travel s = length of train + length of ${kind === 'post' ? 'post (0)' : kind} = ${L} + ${B} = ${L + B} m\n`
+    + `time t = s/v = ${L + B} ÷ ${fx(v, 2)} = ${fx(T, 1)} s` + (B > 0 ? `   (the engine alone reaches the far end after ${fx(B / v, 1)} s)` : ''); }
+const run2 = () => { if (stop2){ stop2(); stop2 = null; } draw2(); };
+K.slider('#L2', run2, 0); K.slider('#B2', run2, 0); K.slider('#v2', run2, 0); K.slider('#p2', draw2, 0); $('#k2').addEventListener('change', run2);
+$('#go2').addEventListener('click', () => { if (stop2) stop2(); stop2 = anim(5000, f => { $('#p2').value = Math.round(f * 100); $('#p2').parentElement.querySelector('output').textContent = Math.round(f * 100); draw2(); }, () => { stop2 = null; }); });
+
+/* ---------- 3. Kochi Metro ---------- */
+let st3 = 1, stop3 = null;
+function metro(D, vk, a1, a3){ let v = kmh(vk), s1 = v * v / (2 * a1), s3 = v * v / (2 * a3), tri = false;
+  if (s1 + s3 > D){ v = Math.sqrt(2 * D * a1 * a3 / (a1 + a3)); s1 = v * v / (2 * a1); s3 = v * v / (2 * a3); tri = true; }
+  const t1 = v / a1, t3 = v / a3, s2 = D - s1 - s3, t2 = s2 / v, T = t1 + t2 + t3;
+  const vel = t => t <= t1 ? a1 * t : t <= t1 + t2 ? v : Math.max(0, v - a3 * (t - t1 - t2));
+  const pos = t => t <= t1 ? .5 * a1 * t * t : t <= t1 + t2 ? s1 + v * (t - t1) : (() => { const q = Math.min(t, T) - t1 - t2; return s1 + s2 + v * q - .5 * a3 * q * q; })();
+  return {v, s1, s2, s3, t1, t2, t3, T, vel, pos, tri}; }
+function draw3(){ const svg = $('#s3'); K.clear(svg); const D = +$('#D3').value, vk = +$('#v3').value, a1 = +$('#a3').value, a3 = +$('#b3').value, m = metro(D, vk, a1, a3), tt = st3 * m.T;
+  /* track and stations */
+  const xA = 70, xB = 730, yT = 70, k = (xB - xA) / D; K.el('rect', {x: 20, y: yT + 4, width: 760, height: 10, fill: 'var(--muted)', opacity: .5}, svg);
+  [[xA, 'Station 1'], [xB, 'Station 2']].forEach(([x, n]) => { K.el('rect', {x: x - 40, y: yT + 14, width: 80, height: 14, class: 'fill-surface', stroke: 'var(--muted)'}, svg); text(svg, P(x, yT + 40), n, {class: 'lbl sm'}); });
+  const xf = xA + m.pos(tt) * k + 30; train(svg, xf, yT + 4, 60, {metro: true, cw: 20, h: 24});
+  text(svg, P(400, 20), `t = ${fx(tt, 1)} s   v = ${fx(m.vel(tt), 1)} m/s (${fx(m.vel(tt) * 3.6, 0)} km/h)   distance = ${fx(m.pos(tt), 0)} m`, {class: 'lbl', 'font-weight': 700});
+  /* v–t graph */
+  const [xm, xs] = niceMax(m.T, 8), [ym, ys] = niceMax(Math.max(m.v, 1) * 1.1, 5);
+  const {X, Y} = axes(svg, {L: 70, T: 142, W: 650, H: 160, x1: xm, y1: ym, xs, ys, xl: 't (s)', yl: 'v (m/s)', lx: v => fx(v, 1), ly: v => fx(v, 1)});
+  const area = (ta, tb, cls) => { if (tb <= ta) return; const pts = [P(X(ta), Y(0))]; const N = 30; for (let q = 0; q <= N; q++){ const t = ta + (tb - ta) * q / N; pts.push(P(X(t), Y(m.vel(t)))); } pts.push(P(X(tb), Y(0))); K.polygon(svg, pts, {class: cls, opacity: .9}); };
+  const e1 = Math.min(tt, m.t1), e2 = Math.min(tt, m.t1 + m.t2), e3 = Math.min(tt, m.T);
+  area(0, e1, 'fill-green'); area(m.t1, e2, 'fill-blue'); area(m.t1 + m.t2, e3, 'fill-red');
+  const pts = []; for (let q = 0; q <= 120; q++){ const t = tt * q / 120; pts.push(P(X(t), Y(m.vel(t)))); } if (tt > 0) polyline(svg, pts, {stroke: 'var(--blue)', 'stroke-width': 3});
+  if (st3 >= 1){ text(svg, P(X(m.t1 * .62), Y(m.v * .3)), `${fx(m.s1, 0)} m`, {class: 'lbl sm green', 'font-weight': 700});
+    if (m.t2 > .5) text(svg, P(X(m.t1 + m.t2 / 2), Y(m.v / 2)), `${fx(m.s2, 0)} m`, {class: 'lbl blue', 'font-weight': 700});
+    text(svg, P(X(m.T - m.t3 * .62), Y(m.v * .3)), `${fx(m.s3, 0)} m`, {class: 'lbl sm red', 'font-weight': 700}); }
+  $('#o3').textContent = (m.tri ? `Stations too close to reach ${vk} km/h: the top speed is only ${fx(m.v, 1)} m/s (${fx(m.v * 3.6, 0)} km/h) – a triangle graph.\n` : `top speed ${vk} km/h = ${fx(m.v, 2)} m/s\n`)
+    + `accelerate: t₁ = v/a = ${fx(m.t1, 1)} s, s₁ = ½ × ${fx(m.t1, 1)} × ${fx(m.v, 1)} = ${fx(m.s1, 0)} m (green)\n`
+    + `cruise:     t₂ = ${fx(m.t2, 1)} s, s₂ = ${fx(m.v, 1)} × ${fx(m.t2, 1)} = ${fx(m.s2, 0)} m (blue)\n`
+    + `brake:      t₃ = ${fx(m.t3, 1)} s, s₃ = ${fx(m.s3, 0)} m (red)\n`
+    + `total: ${fx(m.s1, 0)} + ${fx(m.s2, 0)} + ${fx(m.s3, 0)} = ${fx(m.s1 + m.s2 + m.s3, 0)} m in ${fx(m.T, 1)} s; average speed ${fx(D / m.T, 1)} m/s`; }
+['#D3', '#v3', '#a3', '#b3'].forEach(id => K.slider(id, () => { if (stop3){ stop3(); stop3 = null; } st3 = 1; draw3(); }, 1));
+$('#go3').addEventListener('click', () => { if (stop3) stop3(); st3 = 0; stop3 = anim(6000, f => { st3 = f; draw3(); }, () => { stop3 = null; }); });
+
+/* ---------- 4. sprinter ---------- */
+let st4 = 1, stop4 = null;
+function sprint(v, t1){ const a = v / t1, s1 = .5 * v * t1, T = t1 + (100 - s1) / v; return {a, s1, T, pos: t => t <= t1 ? .5 * a * t * t : Math.min(100, s1 + v * (t - t1)), vel: t => t <= t1 ? a * t : (t <= T ? v : 0)}; }
+function draw4(){ const svg = $('#s4'); K.clear(svg); const v = +$('#v4').value, t1 = +$('#t4').value, R = sprint(v, t1), tt = st4 * R.T, s = R.pos(tt);
+  const x0 = 60, k = 6.8, yT = 92; K.el('rect', {x: x0 - 20, y: yT - 4, width: 100 * k + 40, height: 16, class: 'fill-red', opacity: .6}, svg);
+  for (let d = 0; d <= 100; d += 10){ sline(svg, P(x0 + d * k, yT - 4), P(x0 + d * k, yT + 12), {stroke: 'var(--svgbg)', 'stroke-width': 1.5}); text(svg, P(x0 + d * k, yT + 24), d === 100 ? 'finish' : String(d), {class: 'lbl sm muted'}); }
+  for (let q = 1; q <= Math.floor(tt + 1e-6); q++) K.el('circle', {cx: x0 + R.pos(q) * k, cy: yT - 12, r: 3.5, fill: 'var(--purple)'}, svg);
+  person(svg, P(x0 + s * k, yT - 4), .9, st4 >= 1 || tt === 0 ? {} : {run: tt * 1.6});
+  text(svg, P(400, 20), `t = ${fx(tt, 2)} s   position = ${fx(s, 1)} m   v = ${fx(R.vel(tt), 1)} m/s`, {class: 'lbl', 'font-weight': 700});
+  const [xm, xs] = niceMax(R.T, 5);
+  const g1 = axes(svg, {L: 60, T: 150, W: 290, H: 170, x1: xm, y1: 100, xs, ys: 20, xl: 't (s)', yl: 'position (m)'});
+  const g2 = axes(svg, {L: 460, T: 150, W: 290, H: 170, x1: xm, y1: 12, xs, ys: 2, xl: 't (s)', yl: 'v (m/s)'});
+  if (tt > 0){ const n = 100, p1 = [], p2 = [P(g2.X(0), g2.Y(0))]; for (let q = 0; q <= n; q++){ const t = tt * q / n; p1.push(P(g1.X(t), g1.Y(R.pos(t)))); p2.push(P(g2.X(t), g2.Y(R.vel(Math.min(t, R.T - 1e-9))))); }
+    const pa = p2.concat([P(g2.X(tt), g2.Y(0))]); K.polygon(svg, pa, {class: 'fill-blue', opacity: .8}); polyline(svg, p1, {stroke: 'var(--green)', 'stroke-width': 3}); polyline(svg, p2.slice(1), {stroke: 'var(--blue)', 'stroke-width': 3}); }
+  sline(svg, P(g1.X(t1), g1.Y(0)), P(g1.X(t1), g1.Y(100)), {stroke: 'var(--muted)', 'stroke-dasharray': '4 4'}); text(svg, P(g1.X(t1) + 4, g1.Y(92)), 'top speed reached', {class: 'lbl sm muted', 'text-anchor': 'start'});
+  text(svg, P(g1.X(t1 * .5) + 6, g1.Y(R.s1) - 30), 'curve', {class: 'lbl sm green'}); text(svg, P(g1.X((t1 + R.T) / 2) - 14, g1.Y((R.s1 + 100) / 2) - 18), 'straight line', {class: 'lbl sm green', 'text-anchor': 'end'});
+  text(svg, P(g2.X(Math.min(tt, R.T) / 2) || g2.X(0), g2.Y(v * .35)), tt > 0 ? `area = ${fx(s, 1)} m` : '', {class: 'lbl sm blue', 'font-weight': 700});
+  $('#o4').textContent = `acceleration a = v/t = ${fx(v, 1)} ÷ ${fx(t1, 1)} = ${fx(R.a, 2)} m/s²\n`
+    + `distance while accelerating = ½ × ${fx(t1, 1)} × ${fx(v, 1)} = ${fx(R.s1, 1)} m (area of the triangle)\n`
+    + `remaining ${fx(100 - R.s1, 1)} m at ${fx(v, 1)} m/s takes ${fx((100 - R.s1) / v, 2)} s  → race time ${fx(R.T, 2)} s`; }
+['#v4', '#t4'].forEach(id => K.slider(id, () => { if (stop4){ stop4(); stop4 = null; } st4 = 1; draw4(); }, 1));
+$('#go4').addEventListener('click', () => { if (stop4) stop4(); st4 = 0; stop4 = anim(Math.min(9000, 520 * sprint(+$('#v4').value, +$('#t4').value).T), f => { st4 = f; draw4(); }, () => { stop4 = null; }); });
+
+/* ---------- 5. ghat road ---------- */
+const PATH5 = (() => { const pts = [], line = (a, b) => { const n = Math.ceil(K.dist(a, b) / 2); for (let q = 0; q < n; q++) pts.push(K.lerpPt(a, b, q / n)); };
+  const arc = (c, r, a0, a1) => { const n = Math.ceil(Math.abs(a1 - a0) * r / 2); for (let q = 0; q < n; q++){ const an = a0 + (a1 - a0) * q / n; pts.push(P(c.x + r * Math.cos(an), c.y + r * Math.sin(an))); } };
+  const H = Math.PI / 2; line(P(40, 312), P(380, 312)); arc(P(380, 277), 35, H, -H); line(P(380, 242), P(100, 242)); arc(P(100, 207), 35, H, 3 * H);
+  line(P(100, 172), P(380, 172)); arc(P(380, 137), 35, H, -H); line(P(380, 102), P(150, 102)); arc(P(150, 67), 35, H, 2 * H); line(P(115, 67), P(115, 18)); pts.push(P(115, 18));
+  const cum = [0]; for (let q = 1; q < pts.length; q++) cum.push(cum[q - 1] + K.dist(pts[q - 1], pts[q])); return {pts, cum, len: cum[cum.length - 1]}; })();
+const M5 = 2; /* metres per px on the map */
+const DIRS = ['east', 'north-east', 'north', 'north-west', 'west', 'south-west', 'south', 'south-east'];
+const dirName = (dx, dy) => DIRS[((Math.round(Math.atan2(-dy, dx) / (Math.PI / 4)) % 8) + 8) % 8];
+let stop5 = null;
+function at5(f){ const s = f * PATH5.len; let q = 1; while (q < PATH5.cum.length - 1 && PATH5.cum[q] < s) q++; const a = PATH5.pts[q - 1], b = PATH5.pts[q], seglen = PATH5.cum[q] - PATH5.cum[q - 1] || 1, w = Math.min(1, Math.max(0, (s - PATH5.cum[q - 1]) / seglen));
+  return {p: K.lerpPt(a, b, w), u: K.unit(a, b), s}; }
+function draw5(){ const svg = $('#s5'); K.clear(svg); const vk = +$('#v5').value, v = kmh(vk), f = +$('#p5').value / 100, {p, u, s} = at5(f), start = PATH5.pts[0];
+  K.el('rect', {x: 10, y: 6, width: 460, height: 326, rx: 10, class: 'fill-green', opacity: .55}, svg);
+  polyline(svg, PATH5.pts, {stroke: '#64748b', 'stroke-width': 14, 'stroke-linejoin': 'round'}); polyline(svg, PATH5.pts, {stroke: '#f8fafc', 'stroke-width': 1.2, 'stroke-dasharray': '6 6'});
+  const done = PATH5.pts.slice(0, Math.max(1, PATH5.cum.findIndex(c => c >= s))); if (done.length > 1) polyline(svg, done, {stroke: 'var(--accent)', 'stroke-width': 4});
+  text(svg, P(start.x - 4, start.y - 16), 'start', {class: 'lbl sm', 'text-anchor': 'start'}); text(svg, P(150, 20), 'top of the ghat', {class: 'lbl sm', 'text-anchor': 'start'});
+  sline(svg, start, p, {stroke: 'var(--red)', 'stroke-width': 2.5, 'stroke-dasharray': '7 5'}); K.el('circle', {cx: p.x, cy: p.y, r: 7, fill: 'var(--red)', stroke: 'var(--svgbg)', 'stroke-width': 2}, svg);
+  arrow(svg, p, P(p.x + u.x * 46, p.y + u.y * 46), {c: 'blue', w: 3.5});
+  /* north arrow on the map */
+  arrow(svg, P(440, 60), P(440, 26), {c: 'text', w: 2, head: 9}); text(svg, P(440, 72), 'N', {class: 'lbl sm', 'font-weight': 700});
+  /* speedometer */
+  const c1 = P(580, 108), r1 = 68, ang = vv => Math.PI * (1.25 - 1.5 * vv / 80);
+  K.el('circle', {cx: c1.x, cy: c1.y, r: r1 + 6, class: 'fill-surface', stroke: 'var(--muted)', 'stroke-width': 2}, svg);
+  for (let q = 0; q <= 80; q += 10){ const an = ang(q), a = P(c1.x + Math.cos(an) * r1, c1.y - Math.sin(an) * r1), b = P(c1.x + Math.cos(an) * (r1 - 10), c1.y - Math.sin(an) * (r1 - 10)); sline(svg, a, b, {stroke: 'var(--text)', 'stroke-width': 2}); if (q % 20 === 0) text(svg, P(c1.x + Math.cos(an) * (r1 - 22), c1.y - Math.sin(an) * (r1 - 22)), String(q), {class: 'lbl sm'}); }
+  const an = ang(vk); sline(svg, c1, P(c1.x + Math.cos(an) * (r1 - 14), c1.y - Math.sin(an) * (r1 - 14)), {stroke: 'var(--red)', 'stroke-width': 3.5}); K.el('circle', {cx: c1.x, cy: c1.y, r: 5, fill: 'var(--text)'}, svg);
+  text(svg, P(c1.x, c1.y + 54), `${vk} km/h`, {class: 'lbl', 'font-weight': 700}); text(svg, P(c1.x, c1.y + r1 + 22), 'speedometer: speed only', {class: 'lbl sm muted'});
+  /* compass with the velocity direction */
+  const c2 = P(722, 108), r2 = 50; K.el('circle', {cx: c2.x, cy: c2.y, r: r2, class: 'fill-surface', stroke: 'var(--muted)', 'stroke-width': 2}, svg);
+  [['N', 0, -1], ['E', 1, 0], ['S', 0, 1], ['W', -1, 0]].forEach(([n, dx, dy]) => text(svg, P(c2.x + dx * (r2 - 10), c2.y + dy * (r2 - 10)), n, {class: 'lbl sm muted'}));
+  arrow(svg, c2, P(c2.x + u.x * (r2 - 18), c2.y + u.y * (r2 - 18)), {c: 'blue', w: 3.5}); text(svg, P(c2.x, c2.y + r2 + 22), 'direction of velocity', {class: 'lbl sm muted'});
+  const disp = K.dist(start, p) * M5, dist = s * M5, tt = dist / v;
+  lines(svg, [[0, `time: ${fx(tt, 0)} s`, ''], [0, `speed = ${vk} km/h = ${fx(v, 1)} m/s – constant`, 'green'], [0, `velocity: ${fx(v, 1)} m/s towards the ${dirName(u.x, u.y)} – changing!`, 'blue'],
+    [0, `distance (odometer): ${gr(dist)} m`, ''], [0, `displacement: ${gr(disp)} m towards the ${disp > 1 ? dirName(p.x - start.x, p.y - start.y) : '–'}`, 'red']], 0, 1, {x: 490, y: 220, lh: 24, anchor: 'start'});
+  $('#o5').textContent = `Average speed = distance/time = ${gr(dist)} ÷ ${fx(tt, 0)} = ${fx(v, 1)} m/s.\n`
+    + `Average velocity = displacement/time = ${gr(disp)} ÷ ${fx(tt, 0)} = ${fx(tt > 0 ? disp / tt : 0, 2)} m/s – much smaller, because the road winds back and forth.`; }
+K.slider('#v5', () => draw5(), 0); K.slider('#p5', () => draw5(), 0);
+$('#go5').addEventListener('click', () => { if (stop5) stop5(); stop5 = anim(12000, f => { $('#p5').value = Math.round(f * 100); $('#p5').parentElement.querySelector('output').textContent = Math.round(f * 100); draw5(); }, () => { stop5 = null; }); });
+
+/* ---------- 6. ball thrown up ---------- */
+let stop6 = null;
+function draw6(){ const svg = $('#s6'); K.clear(svg); const u = +$('#u6').value, tB = 2 * u / 10, t = Math.min(+$('#t6').value, tB), v = u - 10 * t, h = u * t - 5 * t * t, H = u * u / 20;
+  const yG = 296, yH = yG - 50, ky = (yH - 22) / 50; sline(svg, P(30, yG), P(230, yG), {stroke: 'var(--muted)', 'stroke-width': 2});
+  for (let q = 0; q <= 50; q += 10){ sline(svg, P(40, yH - q * ky), P(48, yH - q * ky), {stroke: 'var(--muted)'}); text(svg, P(52, yH - q * ky), q === 0 ? '0 m (hand)' : q + ' m', {class: 'lbl sm muted', 'text-anchor': 'start'}); }
+  sline(svg, P(240, yH - H * ky), P(312, yH - H * ky), {stroke: 'var(--green)', 'stroke-dasharray': '5 4'}); text(svg, P(312, yH - H * ky - 10), `top ${fx(H, 1)} m`, {class: 'lbl sm green', 'text-anchor': 'end'});
+  person(svg, P(150, yG), .8, {arms: [[10, -16], [-12, 14]]});
+  const by = yH - h * ky - 6; K.el('circle', {cx: 158, cy: by, r: 7, fill: 'var(--red)'}, svg);
+  if (Math.abs(v) > .4) arrow(svg, P(180, by), P(180, by - v * 2.2), {c: 'blue', w: 3, label: `${fx(v, 1)} m/s`, lo: {x: 8, y: v > 0 ? 8 : -4}, anchor: 'start'});
+  /* v–t graph */
+  const {X, Y, xt} = axes(svg, {L: 330, T: 22, W: 420, H: 270, x1: 6, y0: -30, y1: 30, xs: 1, ys: 10, xl: 't (s)', yl: 'v (m/s)', xlUp: true});
+  sline(svg, P(X(0), Y(u)), P(X(tB), Y(-u)), {stroke: 'var(--blue)', 'stroke-width': 1.5, 'stroke-dasharray': '5 4', opacity: .6});
+  const tUp = Math.min(t, u / 10); if (tUp > 0) K.polygon(svg, [P(X(0), Y(0)), P(X(0), Y(u)), P(X(tUp), Y(u - 10 * tUp)), P(X(tUp), Y(0))], {class: 'fill-green', opacity: .9});
+  if (t > u / 10) K.polygon(svg, [P(X(u / 10), Y(0)), P(X(t), Y(v)), P(X(t), Y(0))], {class: 'fill-red', opacity: .9});
+  if (t > 0) sline(svg, P(X(0), Y(u)), P(X(t), Y(v)), {stroke: 'var(--blue)', 'stroke-width': 3.5});
+  K.el('circle', {cx: X(t), cy: Y(v), r: 5, fill: 'var(--blue)'}, svg); xt();
+  if (tUp > .3) text(svg, P(X(tUp / 3), Y(u / 4)), `+${fx(u * tUp - 5 * tUp * tUp, 1)} m`, {class: 'lbl sm green', 'font-weight': 700});
+  if (t > u / 10 + .3){ const d = t - u / 10; text(svg, P(X(u / 10 + d * .66), Y(v / 3)), `−${fx(5 * d * d, 1)} m`, {class: 'lbl sm red', 'font-weight': 700}); }
+  text(svg, P(X(u / 10), Y(0) + 30), `top at ${fx(u / 10, 1)} s`, {class: 'lbl sm muted'});
+  const dist = t <= u / 10 ? h : H + (H - h);
+  $('#o6').textContent = `t = ${fx(t, 1)} s:  v = u − 10t = ${u} − 10 × ${fx(t, 1)} = ${fx(v, 1)} m/s ` + (v > 0.001 ? '(going up)' : v < -0.001 ? '(coming down)' : '(at the top – momentarily at rest)')
+    + `\nheight = ut − 5t² = ${fx(h, 2)} m   (= green area − red area);  distance travelled = ${fx(dist, 2)} m`
+    + `\nmaximum height u²/20 = ${fx(H, 1)} m at ${fx(u / 10, 1)} s; back in the hand at ${fx(tB, 1)} s with ${fx(-u, 0)} m/s` + (+$('#t6').value > tB ? ' – the ball is already back in the hand.' : '.'); }
+K.slider('#u6', () => { if (stop6){ stop6(); stop6 = null; } draw6(); }, 0); K.slider('#t6', () => draw6(), 1);
+$('#go6').addEventListener('click', () => { if (stop6) stop6(); const tB = 2 * +$('#u6').value / 10; stop6 = anim(1000 * tB, f => { $('#t6').value = (f * tB).toFixed(1); $('#t6').parentElement.querySelector('output').textContent = K.fmt(f * tB, 1); draw6(); }, () => { stop6 = null; }); });
+
+/* ---------- check yourself ---------- */
+K.numq('#q1', {q: 'A car moves at 72 km/h. The driver’s reaction time is 1 s and the brakes give a retardation of 5 m/s². What is the total stopping distance?', unit: 'm', answer: 60, tol: 0.5, explain: 'u = 20 m/s; reaction distance 20 m; braking distance 20²/(2 × 5) = 40 m; total 60 m.', hint: 'Convert to m/s; then u × t + u²/2a.'});
+K.numq('#q2', {q: 'A train 150 m long moving at 54 km/h crosses a platform 300 m long. How many seconds does it take?', unit: 's', answer: 30, tol: 0.1, explain: '54 km/h = 15 m/s; s = 300 + 150 = 450 m; t = 450/15 = 30 s.', hint: 'Add the train’s length to the platform’s length.'});
+K.mcq('#q3', {q: 'If a car’s speed is doubled (same brakes, same road), its braking distance becomes', options: ['the same', 'two times', 'four times', 'half'], answer: 2, explain: 's = u²/2a: doubling u makes u² four times.', hint: 'Look at the power of u in v² = u² + 2as.'});
+K.numq('#q4', {q: 'A metro train accelerates from rest to 20 m/s in 20 s, runs at 20 m/s for 40 s and stops uniformly in 20 s. What is the distance between the stations?', unit: 'm', answer: 1200, tol: 1, explain: 'Area under the v–t graph: 200 + 800 + 200 = 1200 m.', hint: 'Add the areas of two triangles and a rectangle.'});
+K.mcq('#q5', {q: 'On a winding ghat road the speedometer shows a steady 40 km/h. The car’s velocity is', options: ['uniform, because the speed is constant', 'non-uniform, because the direction keeps changing', 'zero', 'equal to 40 km/h towards the north'], answer: 1, explain: 'Velocity has a direction; a change of direction is a change of velocity.', hint: 'Does a speedometer show direction?'});
+K.numq('#q6', {q: 'A ball is thrown straight up at 25 m/s (take g = 10 m/s²). After how many seconds does it reach the top?', unit: 's', answer: 2.5, tol: 0.01, explain: '0 = 25 − 10t, so t = 2.5 s (maximum height 25²/20 = 31.25 m).', hint: 'At the top v = 0. Use v = u + at with a = −10 m/s².'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

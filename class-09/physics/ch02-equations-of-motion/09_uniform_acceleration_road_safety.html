@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uniform Acceleration and Road Safety – Equations of Motion</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.qa{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.6rem 1rem;margin:.7rem 0;box-shadow:var(--shadow)}
+.qa p{margin:.25em 0}
+.qbox{background:var(--surface);border:1px solid var(--border);border-left:6px solid var(--accent);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.why{font-size:.93rem;color:var(--muted);margin-top:.3rem}
+.diary{background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:1rem 0}
+.diary h3{margin:.1rem 0 .4rem;color:var(--accent-ink)}
+.obs td,.obs th{text-align:center}
+.obs tr.hl td{background:var(--accent-soft)}
+.obs td.q{color:var(--muted)}
+.bubble{background:var(--surface);border:2px solid var(--purple);border-radius:18px;padding:.6rem .9rem;font-size:.95rem;margin:.8rem 0}
+.tblwrap{overflow-x:auto}
+svg .ah-red{fill:var(--red)}svg .ah-blue{fill:var(--blue)}svg .ah-green{fill:var(--green)}svg .ah-purple{fill:var(--purple)}svg .ah-amber{fill:var(--accent)}svg .ah-text{fill:var(--text)}
+svg .body-fill{fill:var(--surface2);stroke:var(--text);stroke-width:1.8}
+svg .gp-mi{stroke:var(--red);stroke-opacity:.14;stroke-width:.7}
+svg .gp-ma{stroke:var(--red);stroke-opacity:.38;stroke-width:1.1}
+svg .gp-bg{fill:var(--red-soft);opacity:.25}
+/* page-specific */
+.signs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.6rem;margin:.6rem 0}
+.sign{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:.5rem;text-align:center;font-size:.88rem}
+.sign svg{width:84px;height:84px;display:block;margin:0 auto .3rem;background:transparent!important;border:none!important}
+.sign .btns{display:flex;flex-wrap:wrap;gap:.25rem;justify-content:center;margin-top:.35rem}
+.sign .btn{padding:.2rem .45rem;font-size:.78rem}
+.sign.ok{border-color:var(--green);background:var(--green-soft)}
+.sign.no{border-color:var(--red);background:var(--red-soft)}
+.sign .fbk{font-size:.8rem;margin-top:.25rem}
+.shape3{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;text-align:center;font-size:.9rem}
+.shape3 svg{width:90px;height:90px;display:block;margin:0 auto .3rem}
+</style>
+</head>
+<body data-page="09_uniform_acceleration_road_safety">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 2 · Section 5</span><span class="chip amber">Textbook pages 37–40</span>
+<h1>Uniform Acceleration and Road Safety <span class="ml">സമത്വരണം, അസമത്വരണം · റോഡ് സുരക്ഷ</span></h1>
+<p class="lead">The bus of Table 2.6 gained exactly 4 m/s in every 2 s; the motorbike of Table 2.7 lost its velocity unevenly. That is the difference between <b>uniform</b> and <b>non-uniform acceleration</b>. Then we use what we know about speed and braking to understand <b>road safety</b>: road signs, road markings, safe clothing at night – and a graph of road accidents in Kerala.</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 3 and 8 of this guide)</div>
+<ul style="margin:0">
+<li>Acceleration a = (v − u)/t in m/s²; a negative acceleration is a retardation (<a href="08_acceleration_retardation.html">page 8</a>). Table 2.6 (bus): 2, 2, 2 m/s². Table 2.7 (motorbike): −0.5, −1, −1, −0.25 m/s².</li>
+<li>Reading values from a graph and using its scale (<a href="03_drawing_reading_graphs.html">page 3</a>).</li>
+</ul></div>
+
+<h2>1. Uniform and non-uniform acceleration</h2>
+<div class="qa"><p><b>Q1.</b> <span class="ml">പട്ടിക 2.6 ൽ ലഭിച്ച ത്വരണം ഓരോ അവസരത്തിലും തുല്യമായിരുന്നോ?</span> – Was the acceleration found in Table 2.6 the same each time?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>Yes</b> – 2 m/s² from A to B, B to C and C to D.<div class="why">Why: in every 2 s interval the bus's velocity rose by the same 4 m/s.</div></div></div></div>
+<div class="qa"><p><b>Q2.</b> <span class="ml">പട്ടിക 2.7 പ്രകാരം ലഭിച്ച ത്വരണമോ?</span> – And the acceleration found in Table 2.7?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>No</b> – it was −0.5, −1, −1 and −0.25 m/s²: different in different stages.<div class="why">Why: the motorbike lost 5 m/s each time, but in different times (10 s, 5 s, 5 s, 20 s). In equal intervals of time, the change in velocity is not equal.</div></div></div></div>
+
+<div class="lab" id="cmpLab">
+  <div class="lab-title">📈 Equal steps or unequal steps?</div>
+  <svg viewBox="0 0 800 360" role="img" aria-label="Velocity–time graphs of the bus of Table 2.6 and the motorbike of Table 2.7 side by side"></svg>
+</div>
+<div class="callout key"><div class="title">⭐ Uniform and non-uniform acceleration (textbook page 37)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">ഒരു വസ്തുവിന്റെ പ്രവേഗമാറ്റത്തിന്റെ അളവ് തുല്യ ഇടവേളകളിൽ തുല്യമായിരുന്നാൽ അത് സമത്വരണത്തിലാണ് (uniform acceleration). എന്നാൽ, ഒരു വസ്തുവിന്റെ പ്രവേഗമാറ്റത്തിന്റെ അളവ് തുല്യ ഇടവേളകളിൽ വ്യത്യസ്തമായിരുന്നാൽ അത് അസമത്വരണത്തിലാണ് (non uniform acceleration).</p>
+<p style="margin:0"><b>If the change in velocity of an object is equal in equal intervals of time, it is in uniform acceleration (<span class="ml">സമത്വരണം</span>). If the change in velocity is different in equal intervals of time, it is in non-uniform acceleration (<span class="ml">അസമത്വരണം</span>).</b> On a velocity–time graph, uniform acceleration is a single straight line; non-uniform acceleration bends.</p></div>
+<p class="small">The equations of motion on <a href="11_equations_of_motion.html">page 11</a> work <b>only</b> for uniform acceleration – so this idea matters.</p>
+
+<h2>2. Road safety – who must follow the rules?</h2>
+<p><span class="ml">വാഹനങ്ങളുടെ അമിതവേഗം അപകടങ്ങൾക്ക് കാരണമാകുന്നു. അപകടങ്ങൾ കുറയ്ക്കാൻ നാം റോഡ് നിയമങ്ങൾ നിർബന്ധമായും പാലിക്കേണ്ടതാണ്.</span> – Over-speeding of vehicles causes accidents; to reduce them we must follow road rules. A faster vehicle needs a much longer distance to stop (page 15 shows the stopping distance grows with the <em>square</em> of the speed).</p>
+<div class="qa"><p><b>Q3.</b> <span class="ml">വാഹനങ്ങളുടെ അമിത വേഗം മാത്രമാണോ അപകടങ്ങൾക്കു കാരണം? കാൽനടക്കാരും റോഡ് നിയമങ്ങൾ പാലിക്കേണ്ടതല്ലേ?</span> – Is over-speeding the only cause of accidents? Shouldn't pedestrians also follow road rules?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>No, speed is not the only cause</b> – careless crossing, walking on the wrong side, using a phone while walking, poor visibility at night, drunk driving and bad roads also cause accidents. <b>Yes</b>, pedestrians must follow the rules too.<div class="why">Why: a road is shared. Even a careful driver cannot stop in time if a pedestrian suddenly runs across closer than the vehicle's stopping distance.</div></div></div></div>
+<div class="bubble"><span class="ml">കാൽനടക്കാർ പാലിക്കേണ്ട റോഡ് നിയമങ്ങൾ ഏതൊക്കെയായിരിക്കും?</span> – The thinking boy asks: <em>which road rules should pedestrians follow?</em> The textbook gives two:
+<ul style="margin:.3rem 0 0"><li><span class="ml">കാൽനടയാത്രക്കാർ റോഡിന്റെ വലതുവശം ചേർന്ന് നടക്കുക.</span> – Walk on the <b>right side</b> of the road (facing the oncoming traffic).</li>
+<li><span class="ml">സീബ്രാക്രോസിങ്ങിലൂടെ സിഗ്നൽ അനുസരിച്ച് മാത്രം റോഡ് ക്രോസ് ചെയ്യുക.</span> – Cross the road only at a <b>zebra crossing</b>, following the signal.</li></ul></div>
+<div class="reveal" data-btn="Show more rules"><div class="answer"><ul style="margin:0">
+<li>Use the footpath or a foot-over-bridge wherever there is one.</li>
+<li>Before crossing: stop at the kerb, look <b>right – left – right</b> again (in India vehicles keep to the left, so the nearest lane's traffic comes from your right), cross only when it is clear.</li>
+<li>Walk across – do not run, and do not cross from between parked vehicles.</li>
+<li>No phone calls or earphones while crossing.</li>
+<li>At night or in heavy rain, wear light or bright clothes, or a reflective strip; carry a torch.</li>
+<li>Hold small children's hands and walk in single file on narrow roads.</li></ul>
+<div class="why">Why walk facing the traffic? You can see the vehicles coming towards you and step aside in time.</div></div></div>
+
+<h2>3. Road signs – Fig 2.10</h2>
+<p><span class="ml">റോഡ് സൈനുകളെ പ്രധാനമായും മൂന്നായി തരം തിരിക്കാം.</span> Road signs are mainly of three kinds. Notice the boards along a road: some are <b>circles</b>, some <b>triangles</b>, some <b>rectangles</b> – the shape itself tells you the kind of message.</p>
+<div class="card"><div class="shape3" id="shapes"></div></div>
+<div class="tblwrap"><table class="obs">
+<thead><tr><th>Kind</th><th>Shape</th><th>Message</th><th>Textbook examples</th></tr></thead>
+<tbody><tr><td><b>Mandatory signs</b><br><span class="ml">മാൻഡേറ്ററി സൈനുകൾ</span></td><td>red circle</td><td>rules you <b>must</b> obey (<span class="ml">നിർബന്ധമായും പാലിക്കേണ്ടവ</span>)</td><td>no parking · cycles prohibited · horn prohibited</td></tr>
+<tr><td><b>Cautionary signs</b><br><span class="ml">കോഷനറി സൈനുകൾ</span></td><td>red triangle</td><td><b>warnings</b> about the road ahead (<span class="ml">ജാഗ്രതാ സൂചക ചിഹ്നങ്ങൾ</span>)</td><td>hump · narrow bridge · school ahead</td></tr>
+<tr><td><b>Informatory signs</b><br><span class="ml">ഇൻഫോമേറ്ററി സൈനുകൾ</span></td><td>blue rectangle</td><td>useful <b>information</b>: directions, distances, facilities (<span class="ml">അടിസ്ഥാനവിവര സൂചകങ്ങൾ</span>)</td><td>petrol pump · police station · hospital</td></tr></tbody></table></div>
+
+<div class="lab">
+  <div class="lab-title">🚦 Sign-sorting game</div>
+  <p class="hint" style="margin-top:0">For each sign, choose its kind: <b>M</b> = mandatory, <b>C</b> = cautionary, <b>I</b> = informatory. The nine textbook signs are here, plus three more you will see on Kerala roads.</p>
+  <div class="signs" id="signs"></div>
+  <div class="readout" id="signOut">Score: 0 of 0</div>
+  <div class="controls"><button class="btn" id="signReset">⟲ Play again</button></div>
+</div>
+<div class="callout think"><div class="title">🖍️ Activity (page 39)</div><p><span class="ml">മുകളിൽ സൂചിപ്പിച്ച സൈനുകൾക്ക് പുറമേ ഓരോ വിഭാഗത്തിലുമുള്ള കൂടുതൽ ചിഹ്നങ്ങൾ ശേഖരിച്ച് പ്രത്യേകം പോസ്റ്ററുകൾ തയ്യാറാക്കി സ്കൂൾ ബുള്ളറ്റിൻ ബോർഡിൽ പ്രദർശിപ്പിക്കുക.</span> – Collect more signs of each kind, make a separate poster for each kind and put them up on the school bulletin board. Ideas: <em>mandatory</em> – no entry, speed limit, stop, compulsory left turn; <em>cautionary</em> – sharp bend, slippery road, men at work, cattle; <em>informatory</em> – parking, bus stop, first aid, eating place.</p></div>
+
+<h2>4. Road markings – Fig 2.11</h2>
+<p>Lines painted on the road also give rules. Press <b>Play</b>.</p>
+<div class="lab">
+  <div class="lab-title">🛣️ Road-marking lab (top view; vehicles keep left and move up the screen)</div>
+  <svg id="rmSvg" viewBox="0 0 800 330" role="img" aria-label="Three roads seen from above: a broken white centre line, a double yellow line and a zebra crossing"></svg>
+  <div class="controls"><button class="btn primary" id="rmGo">▶ Play</button></div>
+</div>
+<div class="tblwrap"><table class="obs">
+<thead><tr><th>Fig</th><th>Marking</th><th>Meaning</th></tr></thead>
+<tbody><tr><td>2.11 (a)</td><td>broken (dashed) white centre line</td><td><span class="ml">വാഹനങ്ങൾക്ക് നിയന്ത്രിതമായി മുറിച്ചുകടക്കാൻ കഴിയുന്നവ</span> – vehicles may cross it <b>carefully</b>, e.g. to overtake when the road ahead is clear</td></tr>
+<tr><td>2.11 (b)</td><td>solid / double yellow line</td><td><span class="ml">വാഹനങ്ങൾക്ക് മുറിച്ച് കടക്കാൻ പാടില്ലാത്തവ</span> – vehicles must <b>not</b> cross it (no overtaking: bends, bridges, hills)</td></tr>
+<tr><td>2.11 (c)</td><td>zebra crossing</td><td><span class="ml">സീബ്രാ ക്രോസിങ്</span> – the place for pedestrians to cross; vehicles must stop and let them cross</td></tr></tbody></table></div>
+
+<h2>5. Dark clothes at night</h2>
+<div class="bubble"><span class="ml">റോഡ് നിയമങ്ങൾ അനുസരിക്കാത്തതുകൊണ്ടു മാത്രമാണോ അപകടങ്ങൾ സംഭവിക്കുന്നത്?</span> – The thinking girl asks: <em>do accidents happen only because road rules are broken?</em></div>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>No.</b> <span class="ml">മങ്ങിയ വെളിച്ചത്തിൽ കടും നിറത്തിലുള്ള വസ്ത്രങ്ങൾ ധരിച്ച് റോഡരികിലൂടെ നടന്നു പോകുന്നവരെയും റോഡ് മുറിച്ചു കടക്കുന്നവരെയും മറ്റും ഡ്രൈവർമാർക്കു കാണാൻ കഴിയാതെ വരാം. ഈ സമയങ്ങളിൽ ഇളം നിറത്തിലുള്ള വസ്ത്രം ധരിക്കുന്നതല്ലേ ഉചിതം.</span> In dim light, drivers may not see people in <b>dark clothes</b> walking along or crossing the road – this invites accidents even when nobody breaks a rule. At such times it is better to wear <b>light-coloured</b> clothes.<div class="why">Why: a driver needs to see you <em>before</em> the stopping distance. Try it below.</div></div></div>
+<div class="lab">
+  <div class="lab-title">🌙 Can the driver stop in time?</div>
+  <svg id="nvSvg" viewBox="0 0 800 250" role="img" aria-label="A car at night with headlights, a pedestrian ahead, and the car's stopping distance"></svg>
+  <div class="controls"><label>clothes <input id="nvC" type="range" min="0" max="3" step="1" value="0"><output></output></label>
+    <label>car speed <input id="nvV" type="range" min="30" max="80" step="10" value="50"><output></output> km/h</label>
+    <label>road <select id="nvR"><option value="7">dry</option><option value="5">wet (monsoon)</option></select></label></div>
+  <div class="controls"><button class="btn primary" id="nvGo">▶ Drive</button></div>
+  <div class="readout" id="nvOut"></div>
+  <p class="hint">Model (approximate values used in road-safety campaigns): with dipped headlights a driver first notices a pedestrian in dark clothes at about 25 m, medium colours 40 m, white/light clothes 80 m, a reflective strip 150 m. Reaction time 1.5 s; braking retardation 7 m/s² on a dry road, 5 m/s² on a wet one. Stopping distance = (speed × reaction time) + speed² ÷ (2 × retardation).</p>
+</div>
+
+<h2>6. Seminar – students and road safety</h2>
+<p><span class="ml">വിദ്യാർഥികളും റോഡ് സുരക്ഷയും എന്ന വിഷയത്തെ അടിസ്ഥാനപ്പെടുത്തി ഒരു സെമിനാർ പേപ്പർ തയ്യാറാക്കി അവതരിപ്പിക്കൂ.</span> – Prepare and present a seminar paper on "Students and road safety". Hints (<span class="ml">സൂചന</span>):</p>
+<ul><li>crossing the road (<span class="ml">റോഡ് മുറിച്ചു കടക്കൽ</span>)</li><li>walking in groups (<span class="ml">കൂട്ടം കൂടിയുള്ള സഞ്ചാരം</span>)</li><li>games near the road (<span class="ml">റോഡിനു സമീപമുള്ള കളികൾ</span>)</li><li>driving a motor vehicle before the age for a licence (<span class="ml">ലൈസൻസ് നേടാനുള്ള പ്രായത്തിന് മുമ്പ് മോട്ടോർ വാഹനം ഓടിക്കുന്നത്</span>)</li><li>safe cycling (<span class="ml">സുരക്ഷിത സൈക്കിൾ യാത്ര</span>)</li><li>road signals (<span class="ml">റോഡ് സിഗ്നൽ</span>)</li></ul>
+<div class="reveal" data-btn="Show a model outline"><div class="answer"><ol style="margin:0">
+<li><b>Introduction</b> – why road safety matters to students (we walk, cycle and travel by bus every day).</li>
+<li><b>Crossing</b> – zebra crossings, signals, look right–left–right, never from between parked buses.</li>
+<li><b>Groups</b> – walk in single file on narrow roads; do not spread across the road; no pushing near the edge.</li>
+<li><b>Games</b> – never play cricket or football near the road; a ball rolling onto the road is followed by a child.</li>
+<li><b>No licence, no driving</b> – the law forbids it; a beginner cannot judge speed and stopping distance.</li>
+<li><b>Safe cycling</b> – keep left, ride in single file, use a bell, lights and reflectors, wear a helmet, no double riding.</li>
+<li><b>Signals and signs</b> – meanings of red/amber/green, the three kinds of signs, road markings.</li>
+<li><b>The physics</b> – a vehicle cannot stop instantly: stopping distance = reaction distance + braking distance; doubling speed roughly quadruples the braking distance.</li>
+<li><b>Night and monsoon</b> – light clothes, reflective strips, longer stopping distances on wet roads.</li>
+<li><b>Conclusion</b> – a pledge and posters for the school.</li></ol></div></div>
+
+<h2>7. Road accidents in Kerala – Graph 2.1</h2>
+<p><span class="ml">2016 മുതൽ 2022 വരെ കേരളത്തിൽ ഉണ്ടായ റോഡപകടങ്ങളുടെ എണ്ണത്തെ സംബന്ധിച്ച ഗ്രാഫ് ചുവടെ നൽകിയിരിക്കുന്നു.</span> – The graph shows the number of road accidents in Kerala from 2016 to 2022 (source: official website of Kerala Police). Scale: <b>X-axis 1 cm = 1 year</b>, <b>Y-axis 1 cm = 10000 accidents</b>. Step through to redraw it.</p>
+<div class="lab" id="g21Lab">
+  <div class="lab-title">📊 Graph 2.1 redrawn</div>
+  <svg viewBox="0 0 800 400" role="img" aria-label="Line graph of road accidents in Kerala from 2016 to 2022"></svg>
+</div>
+<p class="small muted">Values are approximate – read from the textbook graph (to the nearest 500), not official figures.</p>
+
+<div class="qa"><p><b>Q4.</b> <span class="ml">ഗ്രാഫിൽ നിന്ന് എന്തെല്ലാം വിവരങ്ങളാണ് മനസ്സിലാക്കാൻ സാധിക്കുന്നത്? കണ്ടെത്തിയ വിവരങ്ങൾ ലിസ്റ്റ് ചെയ്യൂ.</span> – What information can you get from the graph? List it.</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><ul style="margin:0">
+<li>The number of road accidents in each year from 2016 to 2022, and how it changed year by year.</li>
+<li>From 2016 to 2019 it stayed high, close to 40,000 a year (a small dip in 2017).</li>
+<li>It fell sharply in <b>2020</b> (about 27,000 – the lowest).</li>
+<li>After 2020 it rose again: about 33,000 in 2021 and about 43,000 in <b>2022 – the highest</b> of these years.</li>
+<li>In most of these years there were more than 100 accidents a day (40,000 ÷ 365 ≈ 110).</li></ul>
+<div class="why">Why the 2020 dip? During the COVID-19 lockdown far fewer vehicles were on the road. As traffic returned, accidents rose again – so the number of accidents depends on how we use the roads.</div></div></div></div>
+<div class="qa"><p><b>Q5 (page 41).</b> <span class="ml">ഏത് വർഷമാണ് ഏറ്റവും കുറവ് അപകടങ്ങൾ ഉണ്ടായത്?</span> – In which year were there the fewest accidents?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>2020</b> (about 27,000).<div class="why">Why: it is the lowest point of the graph.</div></div></div></div>
+<div class="qa"><p><b>Q6 (page 41).</b> <span class="ml">2019 ൽ എത്ര അപകടങ്ങൾ ഉണ്ടായിട്ടുണ്ട്?</span> – How many accidents were there in 2019?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">About <b>40,000</b>.<div class="why">Why: the 2019 point is at 4 cm on the Y-axis, and 1 cm = 10000, so 4 × 10000 = 40,000.</div></div></div></div>
+
+<div class="callout real"><div class="title">🌴 Kerala connection</div>
+<p style="margin:0">Kerala has one of the highest numbers of vehicles per person in India, and many of our roads are narrow and busy. The Kerala Police and the Motor Vehicles Department run road-safety drives in schools, and <b>NATPAC</b> (National Transportation Planning and Research Centre, Thiruvananthapuram) studies "black spots" where accidents happen again and again. In the monsoon, wet roads lengthen stopping distances and dark evenings hide pedestrians – exactly the physics of this page.</p></div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.who.int/news-room/fact-sheets/detail/road-traffic-injuries" target="_blank" rel="noopener noreferrer">📄 Road traffic injuries (WHO fact sheet)</a> <span class="src">World Health Organization</span><br><span class="note">Key facts: speeding, helmets, seat belts and why road crashes are a major cause of death for young people.</span></li><li><a href="https://mvd.kerala.gov.in/en/trafficsigns" target="_blank" rel="noopener noreferrer">📄 Traffic Signs | Motor Vehicle Department</a> <span class="src">Motor Vehicles Department, Government of Kerala (official)</span><br><span class="note">Circles give orders, triangles warn, rectangles inform - learn the road signs from Kerala MVD.</span></li><li><a href="https://www.brake.org.uk/get-involved/take-action/mybrake/knowledge-centre/speed/stopping-distances" target="_blank" rel="noopener noreferrer">📄 Stopping distances | Brake</a> <span class="src">Brake (UK road safety charity)</span><br><span class="note">Stopping distance = thinking distance + braking distance; double the speed and braking distance becomes about four times (v^2 = u^2 + 2as in action).</span></li><li><a href="https://www.youtube.com/watch?v=HTANxqGQcfI" target="_blank" rel="noopener noreferrer">▶️ Stopping Distance | Forces &amp; Motion | Physics | FuseSchool</a> <span class="src">FuseSchool - Global Education (YouTube) · 3:43</span><br><span class="note">Short animation on thinking, braking and stopping distance.</span></li><li><a href="https://www.youtube.com/watch?v=GQ2Y0BGT-RM" target="_blank" rel="noopener noreferrer">▶️ Distractions are many | keep your vision alive | road safety awareness short film | MVD Kerala</a> <span class="src">MVD KERALA (official YouTube channel) · 2:05</span><br><span class="note">Kerala MVD short film on how distractions (like phones) cause crashes.</span></li><li><a href="https://natpac.kerala.gov.in/road-safety-materials-2/" target="_blank" rel="noopener noreferrer">📄 Road Safety Materials - NATPAC</a> <span class="src">NATPAC (KSCSTE - National Transportation Planning and Research Centre, Govt. of Kerala)</span><br><span class="note">NATPAC&#x27;s road safety films, booklets, posters and leaflets for students.</span></li><li><a href="https://keralapolice.gov.in/page/road-safety-tips-during-monsoon" target="_blank" rel="noopener noreferrer">📄 Kerala Police - Road safety tips during monsoon (മഴക്കാലത്ത് റോഡില്‍ ശ്രദ്ധിക്കേണ്ട കാര്യങ്ങള്‍)</a> <span class="src">Kerala Police (official)</span><br><span class="note">Malayalam tips for staying safe on wet roads - why vehicles need more distance to stop in rain.</span></li></ul></div>
+
+<h2>8. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li><b>Uniform acceleration:</b> equal change of velocity in equal intervals of time (Table 2.6). <b>Non-uniform:</b> unequal changes (Table 2.7).</li>
+<li>Pedestrians: walk on the right facing traffic; cross at zebra crossings following the signal.</li>
+<li>Signs: <b>red circle</b> = mandatory, <b>red triangle</b> = cautionary, <b>blue rectangle</b> = informatory.</li>
+<li>Markings: broken white line – may cross carefully; solid/double yellow – must not cross; zebra crossing – pedestrians cross.</li>
+<li>Wear light or reflective clothes at night; Graph 2.1 – fewest accidents in 2020, most in 2022.</li>
+</ul></div>
+<p>Next: <a href="10_motion_graphs.html">Position–time and velocity–time graphs ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Equations of Motion · Class 9 Physics", "icon": "🚆", "key": "physics_ch2_progress", "pages": [["index.html", "Home"], ["01_directions_number_line.html", "1 · Directions, Number Line & Signs"], ["02_units_and_conversions.html", "2 · Units, Time & Conversions"], ["03_drawing_reading_graphs.html", "3 · Drawing & Reading Graphs"], ["04_formulas_and_areas.html", "4 · Rearranging Formulas, Squares & Areas"], ["05_distance_displacement.html", "5 · Distance and Displacement"], ["06_velocity.html", "6 · Speed and Velocity"], ["07_uniform_nonuniform_velocity.html", "7 · Uniform & Non-uniform Velocity"], ["08_acceleration_retardation.html", "8 · Acceleration & Retardation"], ["09_uniform_acceleration_road_safety.html", "9 · Uniform Acceleration & Road Safety"], ["10_motion_graphs.html", "10 · Position–Time & Velocity–Time Graphs"], ["11_equations_of_motion.html", "11 · The Equations of Motion"], ["12_intext_numericals_solutions.html", "12 · In-text Questions – Solutions"], ["13_assess_q1_q9_solutions.html", "13 · Let Us Assess Q1–9 – Solutions"], ["14_assess_q10_q17_solutions.html", "14 · Let Us Assess Q10–17 & Extended Activities"], ["15_applications_explore.html", "15 · Applications & Explore Online"], ["16_summary_revision.html", "16 · Summary & Quick Quiz"], ["17_model_test_paper.html", "17 · Model Test Paper"], ["18_model_test_solutions.html", "18 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+const {P, seg, text, el, circle, polyline, polygon, multiText} = K;
+const COL = {red:'var(--red)', blue:'var(--blue)', green:'var(--green)', amber:'var(--accent)', purple:'var(--purple)', text:'var(--text)', muted:'var(--muted)'};
+/* line with its own stroke (seg() carries class 'ln', which overrides stroke attributes) */
+const sline = (svg, a, b, attrs={}) => el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+/* number → string with ≤ d decimals and a true minus sign */
+const fx = (v, d=2) => K.num(K.fmt(v, d));
+/* left-anchored SVG text */
+const L = (svg, x, y, s, cls='lbl', extra={}) => text(svg, P(x, y), s, {class: cls, 'text-anchor': 'start', ...extra});
+/* arrow a→b with a filled head; o.c colour name, o.w width, o.label, o.lo {x,y} label offset from the tip, o.op opacity, o.head size */
+function arrow(svg, a, b, o={}){ const c = COL[o.c || 'red'], w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const Ln = K.dist(a, b); if (Ln < 1) return g; const u = K.unit(a, b), hs = Math.min(o.head ?? 11, Ln * .6), base = P(b.x - u.x * hs, b.y - u.y * hs);
+  el('line', {x1: a.x, y1: a.y, x2: base.x, y2: base.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round'}, g);
+  el('polygon', {points: `${b.x},${b.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g);
+  if (o.label) text(g, P(b.x + (o.lo ? o.lo.x : 0), b.y + (o.lo ? o.lo.y : -12)), o.label, {class: 'lbl sm ' + (o.lc || o.c || 'red'), 'text-anchor': o.anchor || 'middle'});
+  return g; }
+/* exam-layout stepper: rows [{h: heading, s: svg line, html: step text}], fig(svg,i,t) draws the figure; working is written at x0 */
+function examStepper(sel, rows, fig, x0=380, dy=62){
+  new K.Stepper(sel, {steps: rows.map(r => r.html), draw(svg, i, t){
+    fig(svg, i, t);
+    rows.forEach((r, k) => { if (k > i) return; const o = k === i ? t : 1, y = 30 + k * dy;
+      L(svg, x0, y, r.h, 'lbl sm muted', {opacity: o});
+      L(svg, x0, y + 22, r.s, k === rows.length - 1 ? 'lbl big green' : 'lbl', {opacity: o}); });
+  }});
+}
+/* textbook-style graph paper. O = origin (px); o = {xMax, yMax, sx, sy (px per unit), xStep, yStep (labelled major lines), minor (subdivisions per major, default 5),
+   xl, yl (axis titles), xf, yf (label formatters), noLabels} */
+function graphPaper(svg, O, o){ const g = K.group(svg), n = o.minor ?? 5, W = o.xMax * o.sx, H = o.yMax * o.sy;
+  el('rect', {x: O.x, y: O.y - H, width: W, height: H, class: 'gp-bg'}, g);
+  const nx = Math.round(o.xMax / o.xStep) * n, ny = Math.round(o.yMax / o.yStep) * n;
+  for (let k = 0; k <= nx; k++){ const x = O.x + k * W / nx; el('line', {x1: x, y1: O.y, x2: x, y2: O.y - H, class: k % n ? 'gp-mi' : 'gp-ma'}, g); }
+  for (let k = 0; k <= ny; k++){ const y = O.y - k * H / ny; el('line', {x1: O.x, y1: y, x2: O.x + W, y2: y, class: k % n ? 'gp-mi' : 'gp-ma'}, g); }
+  arrow(g, P(O.x, O.y), P(O.x + W + 22, O.y), {c: 'text', w: 1.8, head: 9}); arrow(g, P(O.x, O.y), P(O.x, O.y - H - 22), {c: 'text', w: 1.8, head: 9});
+  if (!o.noLabels){
+    const xf = o.xf || (v => fx(v)), yf = o.yf || (v => fx(v));
+    for (let v = 0; v <= o.xMax + 1e-9; v += o.xStep) text(g, P(O.x + v * o.sx, O.y + 15), v === 0 ? 'O' : xf(v), {class: 'lbl sm'});
+    for (let v = o.yStep; v <= o.yMax + 1e-9; v += o.yStep) text(g, P(O.x - 7, O.y - v * o.sy), yf(v), {class: 'lbl sm', 'text-anchor': 'end'});
+  }
+  if (o.xl) text(g, P(O.x + W / 2, O.y + 36), o.xl, {class: 'lbl sm blue'});
+  if (o.yl) text(g, P(O.x - 44, O.y - H / 2), o.yl, {class: 'lbl sm blue', transform: `rotate(-90 ${O.x - 44} ${O.y - H / 2})`});
+  return g; }
+/* stick figure with feet at p (height ≈ 62·s) */
+function person(svg, p, s=1, o={}){ const c = o.c ? COL[o.c] : 'var(--text)', g = K.group(svg, o.lean ? {transform: `rotate(${o.lean} ${p.x} ${p.y})`} : {});
+  const hip = P(p.x, p.y - 28 * s), neck = P(p.x, p.y - 50 * s), st = {stroke: c, 'stroke-width': 2.6, 'stroke-linecap': 'round'};
+  el('circle', {cx: p.x, cy: p.y - 57 * s, r: 7 * s, fill: 'var(--svgbg)', stroke: c, 'stroke-width': 2.4}, g);
+  el('line', {x1: neck.x, y1: neck.y, x2: hip.x, y2: hip.y, ...st}, g);
+  const sw = o.walk ? Math.sin(o.walk) * 8 : 8;
+  el('line', {x1: hip.x, y1: hip.y, x2: p.x - sw * s, y2: p.y, ...st}, g); el('line', {x1: hip.x, y1: hip.y, x2: p.x + sw * s, y2: p.y, ...st}, g);
+  const ar = o.arms || [[-12, 14], [12, 14]]; ar.forEach(([dx, dy]) => el('line', {x1: neck.x, y1: neck.y + 4 * s, x2: neck.x + dx * s, y2: neck.y + 4 * s + dy * s, ...st}, g));
+  return g; }
+/* side-view car, front to the right (dir=-1 flips), wheels touching y; w = length px; fill colour (CSS colour string) */
+function car(svg, x, y, w=80, fill='var(--blue)', dir=1, label=''){ const g = K.group(svg, dir < 0 ? {transform: `translate(${2 * x + w} 0) scale(-1 1)`} : {}), h = w * .28;
+  el('path', {d: `M${x},${y - 8} L${x},${y - 8 - h * .7} Q${x + w * .05},${y - 8 - h} ${x + w * .25},${y - 8 - h} L${x + w * .32},${y - 8 - h * 1.75} L${x + w * .68},${y - 8 - h * 1.75} L${x + w * .8},${y - 8 - h} L${x + w * .95},${y - 8 - h * .9} Q${x + w},${y - 8 - h * .7} ${x + w},${y - 8} Z`, fill, stroke: 'var(--text)', 'stroke-width': 1.3}, g);
+  el('path', {d: `M${x + w * .35},${y - 8 - h * 1.6} L${x + w * .5},${y - 8 - h * 1.6} L${x + w * .5},${y - 8 - h * 1.05} L${x + w * .29},${y - 8 - h * 1.05} Z M${x + w * .54},${y - 8 - h * 1.6} L${x + w * .66},${y - 8 - h * 1.6} L${x + w * .76},${y - 8 - h * 1.05} L${x + w * .54},${y - 8 - h * 1.05} Z`, fill: 'var(--blue-soft)', stroke: 'var(--text)', 'stroke-width': .8}, g);
+  [x + w * .22, x + w * .78].forEach(cx => { el('circle', {cx, cy: y - 8, r: w * .1, fill: '#334155', stroke: 'var(--text)', 'stroke-width': 1}, g); el('circle', {cx, cy: y - 8, r: w * .04, fill: '#cbd5e1'}, g); });
+  if (label) text(g, P(x + w * .5, y - 8 - h * .45), label, {class: 'lbl sm', 'font-weight': 700, transform: dir < 0 ? `translate(${2 * (x + w * .5)} 0) scale(-1 1)` : null});
+  return g; }
+/* side-view bus, front at the right, wheels touching y */
+function bus(svg, x, y, w=150, o={}){ const g = K.group(svg, o.attrs || {}), h = w * .36;
+  el('rect', {x, y: y - 14 - h, width: w, height: h, rx: 8, fill: o.fill || 'var(--red)', stroke: 'var(--text)', 'stroke-width': 1.5}, g);
+  el('rect', {x, y: y - 14 - h * .32, width: w, height: h * .12, fill: '#fbbf24'}, g);
+  const nw = Math.max(3, Math.round(w / 34)); for (let k = 0; k < nw; k++) el('rect', {x: x + 8 + k * (w - 30) / nw, y: y - 10 - h + 4, width: (w - 30) / nw - 6, height: h * .34, rx: 2, fill: 'var(--blue-soft)', stroke: 'var(--text)', 'stroke-width': .8}, g);
+  el('rect', {x: x + w - 18, y: y - 10 - h + 4, width: 14, height: h * .5, rx: 2, fill: 'var(--blue-soft)', stroke: 'var(--text)', 'stroke-width': .8}, g);
+  [x + w * .2, x + w * .8].forEach(cx => { el('circle', {cx, cy: y - 9, r: 9, fill: '#334155', stroke: 'var(--text)', 'stroke-width': 1.2}, g); el('circle', {cx, cy: y - 9, r: 3, fill: '#cbd5e1'}, g); });
+  if (o.label) text(g, P(x + w / 2, y - 14 - h * .44), o.label, {class: 'lbl sm', 'font-weight': 700});
+  return g; }
+/* side-view motorbike with rider, front at the right, wheels touching y */
+function bike(svg, x, y, s=1){ const g = K.group(svg), st = {stroke: 'var(--text)', 'stroke-width': 2.2, fill: 'none', 'stroke-linecap': 'round'};
+  [x + 8 * s, x + 58 * s].forEach(cx => { el('circle', {cx, cy: y - 11 * s, r: 11 * s, fill: '#334155', stroke: 'var(--text)', 'stroke-width': 1.2}, g); el('circle', {cx, cy: y - 11 * s, r: 4 * s, fill: '#cbd5e1'}, g); });
+  el('path', {d: `M${x + 8 * s},${y - 11 * s} L${x + 26 * s},${y - 24 * s} L${x + 46 * s},${y - 24 * s} L${x + 58 * s},${y - 11 * s}`, ...st}, g);
+  el('path', {d: `M${x + 18 * s},${y - 26 * s} Q${x + 34 * s},${y - 38 * s} ${x + 50 * s},${y - 28 * s} L${x + 46 * s},${y - 20 * s} L${x + 22 * s},${y - 20 * s} Z`, fill: 'var(--accent)', stroke: 'var(--text)', 'stroke-width': 1.2}, g);
+  el('line', {x1: x + 50 * s, y1: y - 28 * s, x2: x + 54 * s, y2: y - 40 * s, ...st}, g);
+  el('circle', {cx: x + 30 * s, cy: y - 62 * s, r: 7 * s, fill: 'var(--red)', stroke: 'var(--text)', 'stroke-width': 1.2}, g);
+  el('path', {d: `M${x + 28 * s},${y - 55 * s} L${x + 26 * s},${y - 34 * s} L${x + 40 * s},${y - 30 * s} L${x + 42 * s},${y - 16 * s} M${x + 28 * s},${y - 50 * s} L${x + 52 * s},${y - 40 * s}`, ...st}, g);
+  return g; }
+
+/* ---------- page helpers ---------- */
+/* thousands separator: gr(40000) → "40,000" */
+const gr = v => Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+const RED = '#dc2626', BLUE = '#1d4ed8', WH = '#ffffff', BK = '#111827';
+
+/* ---------- 1. uniform vs non-uniform ---------- */
+(function(){
+  const bikeV = tt => { const T = [0, 10, 15, 20, 40], V = [20, 15, 10, 5, 0]; for (let k = 0; k < 4; k++) if (tt <= T[k + 1]) return V[k] + (V[k + 1] - V[k]) * (tt - T[k]) / (T[k + 1] - T[k]); return 0; };
+  const A = P(70, 300), B = P(460, 300);
+  new K.Stepper('#cmpLab', {ms: 1000, steps: [
+    'Left: the <b>bus</b> of Table 2.6 (0 → 12 m/s in 6 s). Right: the <b>motorbike</b> of Table 2.7 (20 m/s → rest in 40 s).',
+    'Bus: in every 2 s the velocity rises by <b>+4 m/s, +4 m/s, +4 m/s</b> – equal changes in equal times → <b>uniform acceleration</b> (2 m/s²). The graph is one straight line.',
+    'Motorbike: in every 5 s the velocity changes by −2.5, −2.5, −5, −5, −1.25, −1.25, −1.25, −1.25 m/s – <b>unequal</b> changes in equal times → <b>non-uniform acceleration</b>. The graph bends at Q, R… (slopes −0.5, −1, −1, −0.25 m/s²).',
+    'Rule of thumb: on a v–t graph, <b>one straight line = uniform acceleration</b> (or uniform retardation); a line that bends or curves = non-uniform acceleration.'
+  ], draw(svg, i, t){
+    text(svg, P(220, 22), 'Bus (Table 2.6)', {class: 'lbl', 'font-weight': 700}); text(svg, P(610, 22), 'Motorbike (Table 2.7)', {class: 'lbl', 'font-weight': 700});
+    graphPaper(svg, A, {xMax: 6, yMax: 12, sx: 50, sy: 18, xStep: 1, yStep: 2, xl: 'time t (s)', yl: 'v (m/s)'});
+    graphPaper(svg, B, {xMax: 40, yMax: 20, sx: 7.5, sy: 10.8, xStep: 5, yStep: 5, xl: 'time t (s)', yl: 'v (m/s)'});
+    const e = i === 0 ? t : 1;
+    sline(svg, A, P(A.x + 6 * e * 50, A.y - 12 * e * 18), {stroke: 'var(--green)', 'stroke-width': 3});
+    const pts = []; for (let k = 0; k <= 80; k++){ const tt = 40 * e * k / 80; pts.push(P(B.x + tt * 7.5, B.y - bikeV(tt) * 10.8)); }
+    polyline(svg, pts, {stroke: 'var(--red)', 'stroke-width': 3});
+    if (i >= 1){ const o = i === 1 ? t : 1; for (let k = 0; k < 3; k++){ const x0 = A.x + 2 * k * 50, y0 = A.y - 4 * k * 18;
+        sline(svg, P(x0, y0), P(x0 + 100, y0), {stroke: 'var(--purple)', 'stroke-width': 2, 'stroke-dasharray': '5 4', opacity: o});
+        sline(svg, P(x0 + 100, y0), P(x0 + 100, y0 - 72), {stroke: 'var(--purple)', 'stroke-width': 2, 'stroke-dasharray': '5 4', opacity: o});
+        text(svg, P(x0 + 106, y0 - 36), '+4', {class: 'lbl sm purple', 'text-anchor': 'start', opacity: o}); }
+      text(svg, P(220, 46), 'equal steps → uniform', {class: 'lbl sm green', 'font-weight': 700, opacity: o}); }
+    if (i >= 2){ const o = i === 2 ? t : 1; for (let k = 0; k < 8; k++){ const t0 = 5 * k, v0 = bikeV(t0), v1 = bikeV(t0 + 5), x0 = B.x + t0 * 7.5;
+        sline(svg, P(x0, B.y - v0 * 10.8), P(x0 + 37.5, B.y - v0 * 10.8), {stroke: 'var(--purple)', 'stroke-width': 1.6, 'stroke-dasharray': '4 3', opacity: o});
+        sline(svg, P(x0 + 37.5, B.y - v0 * 10.8), P(x0 + 37.5, B.y - v1 * 10.8), {stroke: 'var(--purple)', 'stroke-width': 1.6, 'stroke-dasharray': '4 3', opacity: o});
+        text(svg, P(x0 + 30, B.y - v0 * 10.8 - 10 - (k % 2) * 12), fx(v1 - v0, 2), {class: 'lbl sm purple', opacity: o}); }
+      text(svg, P(610, 46), 'unequal steps → non-uniform', {class: 'lbl sm red', 'font-weight': 700, opacity: o}); }
+  }});
+})();
+
+/* ---------- 2. road signs ---------- */
+function drawSign(svg, kind){
+  const ring = () => el('circle', {cx: 50, cy: 50, r: 42, fill: WH, stroke: RED, 'stroke-width': 9}, svg);
+  const slash = () => el('line', {x1: 21, y1: 21, x2: 79, y2: 79, stroke: RED, 'stroke-width': 8}, svg);
+  const tri = () => el('polygon', {points: '50,9 93,86 7,86', fill: WH, stroke: RED, 'stroke-width': 8, 'stroke-linejoin': 'round'}, svg);
+  const box = () => el('rect', {x: 6, y: 6, width: 88, height: 88, rx: 7, fill: BLUE}, svg);
+  const panel = () => el('rect', {x: 17, y: 17, width: 66, height: 66, rx: 3, fill: WH}, svg);
+  const kid = (x, y, s=1) => { const st = {stroke: BK, 'stroke-width': 3.2, 'stroke-linecap': 'round', fill: 'none'};
+    el('circle', {cx: x, cy: y - 26 * s, r: 4 * s, fill: BK}, svg); el('path', {d: `M${x},${y - 21 * s} L${x - 2 * s},${y - 9 * s} M${x - 2 * s},${y - 9 * s} L${x - 8 * s},${y} M${x - 2 * s},${y - 9 * s} L${x + 5 * s},${y} M${x},${y - 18 * s} L${x + 7 * s},${y - 12 * s} M${x},${y - 18 * s} L${x - 7 * s},${y - 13 * s}`, ...st}, svg); };
+  switch (kind){
+    case 'noPark': ring(); el('text', {x: 50, y: 52, 'text-anchor': 'middle', 'dominant-baseline': 'middle', 'font-size': 46, 'font-weight': 800, fill: BK, 'font-family': 'Arial,sans-serif', text: 'P'}, svg); slash(); break;
+    case 'noCycle': ring(); { const st = {stroke: BK, 'stroke-width': 3, fill: 'none'}; el('circle', {cx: 34, cy: 60, r: 10, ...st}, svg); el('circle', {cx: 66, cy: 60, r: 10, ...st}, svg);
+      el('path', {d: 'M34,60 L45,42 L60,42 L66,60 M45,42 L52,60 L60,42 M43,37 L50,37 M60,42 L58,36 L64,36', ...st}, svg); } slash(); break;
+    case 'noHorn': ring(); el('path', {d: 'M26,44 L40,44 L64,32 L64,68 L40,56 L26,56 Z', fill: BK}, svg); el('path', {d: 'M70,40 Q76,50 70,60', stroke: BK, 'stroke-width': 3, fill: 'none'}, svg); slash(); break;
+    case 'speed': ring(); el('text', {x: 50, y: 52, 'text-anchor': 'middle', 'dominant-baseline': 'middle', 'font-size': 32, 'font-weight': 800, fill: BK, 'font-family': 'Arial,sans-serif', text: '50'}, svg); break;
+    case 'hump': tri(); el('path', {d: 'M27,76 Q50,50 73,76 Z', fill: BK}, svg); break;
+    case 'bridge': tri(); el('path', {d: 'M38,42 Q47,59 38,77 M62,42 Q53,59 62,77', stroke: BK, 'stroke-width': 5, fill: 'none'}, svg); break;
+    case 'school': tri(); kid(42, 78, 1); kid(60, 78, .8); el('rect', {x: 33, y: 55, width: 6, height: 8, fill: BK}, svg); break;
+    case 'zebra': tri(); for (let k = 0; k < 4; k++) el('rect', {x: 28 + k * 12, y: 72, width: 7, height: 7, fill: BK}, svg); kid(50, 70, .9); break;
+    case 'petrol': box(); panel(); el('rect', {x: 34, y: 34, width: 22, height: 42, rx: 2, fill: BK}, svg); el('rect', {x: 38, y: 39, width: 14, height: 10, fill: WH}, svg);
+      el('path', {d: 'M56,46 L64,46 L64,66 Q64,70 68,70 L68,40', stroke: BK, 'stroke-width': 3, fill: 'none'}, svg); el('rect', {x: 30, y: 74, width: 30, height: 4, fill: BK}, svg); break;
+    case 'police': box(); panel(); el('rect', {x: 22, y: 26, width: 56, height: 18, fill: BLUE}, svg);
+      el('text', {x: 50, y: 36, 'text-anchor': 'middle', 'dominant-baseline': 'middle', 'font-size': 12, 'font-weight': 800, fill: WH, 'font-family': 'Arial,sans-serif', text: 'POLICE'}, svg);
+      el('path', {d: 'M30,76 L30,58 L50,48 L70,58 L70,76 Z', fill: BK}, svg); el('rect', {x: 46, y: 64, width: 8, height: 12, fill: WH}, svg); break;
+    case 'hospital': box(); panel(); el('rect', {x: 44, y: 22, width: 12, height: 32, fill: RED}, svg); el('rect', {x: 34, y: 32, width: 32, height: 12, fill: RED}, svg);
+      el('path', {d: 'M24,58 L24,80 M24,70 L76,70 L76,80 M30,66 L72,66', stroke: BK, 'stroke-width': 4, fill: 'none'}, svg); el('circle', {cx: 32, cy: 61, r: 4, fill: BK}, svg); break;
+    case 'parking': box(); el('text', {x: 50, y: 53, 'text-anchor': 'middle', 'dominant-baseline': 'middle', 'font-size': 58, 'font-weight': 800, fill: WH, 'font-family': 'Arial,sans-serif', text: 'P'}, svg); break;
+    case 'circle': el('circle', {cx: 50, cy: 50, r: 40, fill: WH, stroke: RED, 'stroke-width': 9}, svg); break;
+    case 'triangle': tri(); break;
+    case 'rect': box(); panel(); break;
+  }
+}
+function signSvg(kind, holder){ const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('viewBox', '0 0 100 100'); s.setAttribute('role', 'img'); drawSign(s, kind); holder.appendChild(s); return s; }
+(function(){
+  const sh = document.getElementById('shapes');
+  [['circle', 'Mandatory', 'മാൻഡേറ്ററി സൈനുകൾ', 'red circle – must obey'], ['triangle', 'Cautionary', 'കോഷനറി സൈനുകൾ', 'red triangle – be careful'], ['rect', 'Informatory', 'ഇൻഫോമേറ്ററി സൈനുകൾ', 'blue rectangle – information']].forEach(([k, n, m, d]) => {
+    const div = document.createElement('div'); signSvg(k, div); div.insertAdjacentHTML('beforeend', `<b>${n}</b><br><span class="ml">${m}</span><br><span class="muted small">${d}</span>`); sh.appendChild(div); });
+  const SIGNS = [['noPark', 'No parking', 'ഇവിടെ പാർക്ക് ചെയ്യരുത്', 'M'], ['hump', 'Hump (speed breaker)', 'ഹമ്പ്', 'C'], ['petrol', 'Petrol pump', 'പെട്രോൾ പമ്പ്', 'I'],
+    ['noCycle', 'Cycles prohibited', 'സൈക്കിൾ യാത്ര നിരോധിച്ചിരിക്കുന്നു', 'M'], ['bridge', 'Narrow bridge', 'ഇടുങ്ങിയ പാലം', 'C'], ['police', 'Police station', 'പോലീസ് സ്റ്റേഷൻ', 'I'],
+    ['noHorn', 'Horn prohibited', 'ഹോൺ നിരോധിച്ചിരിക്കുന്നു', 'M'], ['school', 'School ahead', 'സ്കൂൾ സമീപം', 'C'], ['hospital', 'Hospital', 'ആശുപത്രി', 'I'],
+    ['speed', 'Speed limit 50 km/h (extra)', '', 'M'], ['zebra', 'Pedestrian crossing ahead (extra)', '', 'C'], ['parking', 'Parking place (extra)', '', 'I']];
+  const NAME = {M: 'mandatory (red circle)', C: 'cautionary (red triangle)', I: 'informatory (blue rectangle)'};
+  const box = document.getElementById('signs'), out = document.getElementById('signOut'); let done = 0, right = 0;
+  function build(){ box.innerHTML = ''; done = 0; right = 0; out.textContent = 'Score: 0 of 0';
+    SIGNS.forEach(([k, n, m, ans]) => { const d = document.createElement('div'); d.className = 'sign'; signSvg(k, d);
+      d.insertAdjacentHTML('beforeend', `<div><b>${n}</b>${m ? `<br><span class="ml">${m}</span>` : ''}</div><div class="btns"><button class="btn" data-v="M">M</button><button class="btn" data-v="C">C</button><button class="btn" data-v="I">I</button></div><div class="fbk"></div>`);
+      d.querySelector('.btns').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || d.dataset.done) return; d.dataset.done = 1; done++;
+        const ok = b.dataset.v === ans; if (ok) right++; d.classList.add(ok ? 'ok' : 'no');
+        d.querySelector('.fbk').textContent = (ok ? '✅ ' : '❌ It is ') + NAME[ans];
+        out.textContent = `Score: ${right} of ${done}` + (done === SIGNS.length ? (right === SIGNS.length ? ' – perfect! The shape gives it away.' : ' – look again at the shapes: circle, triangle, rectangle.') : ''); });
+      box.appendChild(d); }); }
+  document.getElementById('signReset').addEventListener('click', build); build();
+})();
+
+/* ---------- 3. road markings ---------- */
+(function(){
+  const svg = document.getElementById('rmSvg'), ROAD = '#475569', LINE = '#f8fafc', YEL = '#facc15', TOP = 40, BOT = 290;
+  /* top-view car centred at (x, y), heading up */
+  function tcar(x, y, fill){ el('rect', {x: x - 13, y: y - 22, width: 26, height: 44, rx: 7, fill, stroke: '#0f172a', 'stroke-width': 1.2}, svg);
+    el('rect', {x: x - 10, y: y - 14, width: 20, height: 9, rx: 2, fill: '#bfdbfe'}, svg); el('rect', {x: x - 10, y: y + 10, width: 20, height: 6, rx: 2, fill: '#bfdbfe'}, svg); }
+  function walker(x, y, ph){ el('circle', {cx: x, cy: y, r: 6, fill: 'var(--accent)', stroke: '#0f172a', 'stroke-width': 1.2}, svg);
+    el('line', {x1: x - 3, y1: y + 6, x2: x - 3 + 4 * Math.sin(ph), y2: y + 13, stroke: 'var(--text)', 'stroke-width': 2.4}, svg); el('line', {x1: x + 3, y1: y + 6, x2: x + 3 - 4 * Math.sin(ph), y2: y + 13, stroke: 'var(--text)', 'stroke-width': 2.4}, svg); }
+  const ids = ['rmA', 'rmB', 'rmC'];
+  function draw(t){ K.clear(svg);
+    const defs = el('defs', {}, svg);
+    [0, 1, 2].forEach(k => { const cp = el('clipPath', {id: ids[k]}, defs); el('rect', {x: 20 + k * 265, y: TOP, width: 230, height: BOT - TOP}, cp); });
+    const titles = [['(a) broken white line', 'may cross carefully'], ['(b) double yellow line', 'must NOT cross'], ['(c) zebra crossing', 'stop for pedestrians']];
+    [0, 1, 2].forEach(k => { const cx = 135 + k * 265; text(svg, P(cx, 14), titles[k][0], {class: 'lbl sm', 'font-weight': 700}); text(svg, P(cx, 31), titles[k][1], {class: 'lbl sm ' + (k === 1 ? 'red' : 'green')});
+      el('rect', {x: cx - 115, y: TOP, width: 230, height: BOT - TOP, fill: 'var(--green-soft)'}, svg);
+      el('rect', {x: cx - 60, y: TOP, width: 120, height: BOT - TOP, fill: ROAD}, svg);
+      sline(svg, P(cx - 56, TOP), P(cx - 56, BOT), {stroke: LINE, 'stroke-width': 2}); sline(svg, P(cx + 56, TOP), P(cx + 56, BOT), {stroke: LINE, 'stroke-width': 2}); });
+    /* (a) */
+    { const cx = 135, g = K.group(svg, {'clip-path': 'url(#rmA)'}); for (let y = TOP; y < BOT; y += 30) el('rect', {x: cx - 2, y, width: 4, height: 16, fill: LINE}, g);
+      const y1 = 230 - 120 * t; let x2 = cx - 30; const sh = K.sub01(t, .2, .4) - K.sub01(t, .65, .85); x2 = cx - 30 + 60 * sh; const y2 = 330 - 330 * t;
+      tcarIn(g, cx - 30, y1, '#16a34a'); tcarIn(g, x2, y2, '#2563eb');
+      if (t > .25 && t < .85) text(svg, P(cx, 310), '✓ overtaking allowed', {class: 'lbl sm green', 'font-weight': 700}); }
+    /* (b) */
+    { const cx = 400, g = K.group(svg, {'clip-path': 'url(#rmB)'}); el('rect', {x: cx - 5, y: TOP, width: 3, height: BOT - TOP, fill: YEL}, g); el('rect', {x: cx + 2, y: TOP, width: 3, height: BOT - TOP, fill: YEL}, g);
+      const y1 = 230 - 120 * t, y2 = Math.max(y1 + 62, 330 - 330 * t); tcarIn(g, cx - 30, y1, '#16a34a'); tcarIn(g, cx - 30, y2, '#2563eb');
+      if (y2 <= y1 + 62.5 && t > 0) text(svg, P(cx, 310), '✗ blue car must wait behind', {class: 'lbl sm red', 'font-weight': 700}); }
+    /* (c) */
+    { const cx = 665, g = K.group(svg, {'clip-path': 'url(#rmC)'}), zy = 120; for (let k = 0; k < 6; k++) el('rect', {x: cx - 55 + k * 19, y: zy, width: 11, height: 44, fill: LINE}, g);
+      const pw = K.sub01(t, .1, .7), px = cx - 100 + 200 * pw; walker(px, zy + 16, t * 40); walker(px - 18, zy + 30, t * 40 + 1);
+      const stopY = zy + 44 + 30; let cy; if (t < .7) cy = Math.max(stopY, 320 - 400 * t); else cy = stopY - 400 * (t - .7);
+      tcarIn(g, cx - 30, cy, '#dc2626');
+      if (t > .3 && t < .72) text(svg, P(cx, 310), 'car waits at the crossing', {class: 'lbl sm amber', 'font-weight': 700}); }
+  }
+  function tcarIn(g, x, y, fill){ el('rect', {x: x - 13, y: y - 22, width: 26, height: 44, rx: 7, fill, stroke: '#0f172a', 'stroke-width': 1.2}, g);
+    el('rect', {x: x - 10, y: y - 14, width: 20, height: 9, rx: 2, fill: '#bfdbfe'}, g); el('rect', {x: x - 10, y: y + 10, width: 20, height: 6, rx: 2, fill: '#bfdbfe'}, g); }
+  let stop = null;
+  document.getElementById('rmGo').addEventListener('click', () => { if (stop) stop(); stop = K.animate(7000, (e, t) => draw(t)); });
+  draw(0.45);
+})();
+
+/* ---------- 4. night visibility ---------- */
+(function(){
+  const svg = document.getElementById('nvSvg'), out = document.getElementById('nvOut');
+  const CL = [['dark clothes', 25, '#1f2937'], ['medium colours', 40, '#6b7280'], ['light / white clothes', 80, '#f1f5f9'], ['reflective strip', 150, '#f1f5f9']];
+  const TR = 1.5, X0 = 70, SC = 4.2, RY = 170;
+  let c = 0, vk = 50, a = 7, stop = null;
+  const calc = () => { const v = vk / 3.6, dr = v * TR, db = v * v / (2 * a), see = CL[c][1], ds = dr + db;
+    let vimp = 0; if (ds > see){ vimp = see <= dr ? v : Math.sqrt(Math.max(0, v * v - 2 * a * (see - dr))); } return {v, dr, db, ds, see, vimp}; };
+  function draw(pos){ K.clear(svg); const r = calc();
+    el('rect', {x: 0, y: 0, width: 800, height: 250, fill: '#0b1220'}, svg);
+    el('rect', {x: 0, y: RY - 30, width: 800, height: 60, fill: '#334155'}, svg);
+    for (let x = 0; x < 800; x += 40) el('rect', {x, y: RY - 2, width: 22, height: 4, fill: '#e2e8f0'}, svg);
+    const cx = X0 + pos * SC;
+    /* headlight beam ~ 60 m */
+    el('polygon', {points: `${cx + 6},${RY - 12} ${cx + 6 + 60 * SC},${RY - 34} ${cx + 6 + 60 * SC},${RY + 10}`, fill: '#fde68a', opacity: .18}, svg);
+    el('rect', {x: cx - 46, y: RY - 22, width: 52, height: 22, rx: 6, fill: '#2563eb', stroke: '#e2e8f0', 'stroke-width': 1}, svg); el('circle', {cx: cx + 3, cy: RY - 13, r: 3.5, fill: '#fde68a'}, svg);
+    /* pedestrian at the "first seen" distance */
+    const px = X0 + r.see * SC, inRange = px < 790;
+    if (inRange){ const col = CL[c][2], g = K.group(svg); const ref = c === 3;
+      el('circle', {cx: px, cy: RY - 64, r: 7, fill: col, stroke: '#94a3b8', 'stroke-width': 1}, g);
+      el('rect', {x: px - 7, y: RY - 56, width: 14, height: 26, rx: 4, fill: col, stroke: '#94a3b8', 'stroke-width': 1}, g);
+      if (ref) el('rect', {x: px - 7, y: RY - 46, width: 14, height: 5, fill: '#facc15'}, g);
+      el('rect', {x: px - 6, y: RY - 31, width: 5, height: 18, fill: col, stroke: '#94a3b8', 'stroke-width': .8}, g); el('rect', {x: px + 1, y: RY - 31, width: 5, height: 18, fill: col, stroke: '#94a3b8', 'stroke-width': .8}, g);
+      text(svg, P(px, RY - 84), `seen at ${r.see} m`, {class: 'lbl sm', style: 'fill:#fde68a;stroke:#0b1220'}); }
+    else text(svg, P(770, RY - 84), `seen at ${r.see} m →`, {class: 'lbl sm', 'text-anchor': 'end', style: 'fill:#fde68a;stroke:#0b1220'});
+    /* distance bars */
+    const by = 225;
+    el('rect', {x: X0, y: by - 8, width: Math.min(720, r.dr * SC), height: 12, fill: '#f59e0b'}, svg);
+    el('rect', {x: X0 + r.dr * SC, y: by - 8, width: Math.max(0, Math.min(720 - r.dr * SC, r.db * SC)), height: 12, fill: '#ef4444'}, svg);
+    text(svg, P(X0, by - 20), `reaction ${fx(r.dr, 1)} m + braking ${fx(r.db, 1)} m = stopping distance ${fx(r.ds, 1)} m`, {class: 'lbl sm', 'text-anchor': 'start', style: 'fill:#e2e8f0;stroke:#0b1220'});
+    for (let m = 0; m <= 160; m += 20){ const x = X0 + m * SC; if (x > 790) break; el('line', {x1: x, y1: 20, x2: x, y2: 30, stroke: '#94a3b8'}, svg); text(svg, P(x, 42), m + ' m', {class: 'lbl sm', style: 'fill:#94a3b8;stroke:#0b1220'}); }
+    text(svg, P(X0, 12), 'distance ahead of the car when the driver first sees the pedestrian →', {class: 'lbl sm', 'text-anchor': 'start', style: 'fill:#94a3b8;stroke:#0b1220'});
+    out.textContent = `${CL[c][0]} – driver first sees the pedestrian ${r.see} m ahead.\nAt ${vk} km/h (${fx(r.v, 1)} m/s) on a ${a === 7 ? 'dry' : 'wet'} road: reaction distance ${fx(r.v, 1)} × 1.5 = ${fx(r.dr, 1)} m, braking distance ${fx(r.v, 1)}² ÷ (2 × ${a}) = ${fx(r.db, 1)} m.\n` +
+      (r.ds <= r.see ? `Stopping distance ${fx(r.ds, 1)} m < ${r.see} m → ✅ the car stops ${fx(r.see - r.ds, 1)} m before the pedestrian.` : `Stopping distance ${fx(r.ds, 1)} m > ${r.see} m → ⚠ the car reaches the pedestrian at about ${fx(r.vimp * 3.6, 0)} km/h!`);
+  }
+  K.slider('#nvC', v => { c = v; if (stop) stop(); draw(0); }, 0);
+  document.querySelector('#nvC').parentElement.querySelector('output').textContent = CL[0][0];
+  document.getElementById('nvC').addEventListener('input', () => { document.querySelector('#nvC').parentElement.querySelector('output').textContent = CL[c][0]; });
+  K.slider('#nvV', v => { vk = v; if (stop) stop(); draw(0); }, 0);
+  document.getElementById('nvR').addEventListener('change', e => { a = +e.target.value; if (stop) stop(); draw(0); });
+  document.getElementById('nvGo').addEventListener('click', () => { if (stop) stop(); const r = calc(), T = TR + r.v / a, end = Math.min(r.ds, r.see);
+    stop = K.animate(3500, (e, u) => { const tt = u * T; const s = tt <= TR ? r.v * tt : r.dr + r.v * (tt - TR) - .5 * a * (tt - TR) ** 2; draw(Math.min(s, end)); }); });
+})();
+
+/* ---------- 5. Graph 2.1 ---------- */
+(function(){
+  const Y = [[2016, 38500], [2017, 37000], [2018, 39500], [2019, 40000], [2020, 27000], [2021, 33000], [2022, 43000]];
+  const O = P(110, 330), sx = 58, sy = 270 / 50000;
+  const pt = k => P(O.x + (Y[k][0] - 2015) * sx, O.y - Y[k][1] * sy);
+  const steps = ['Axes: X-axis = year (1 cm = 1 year), Y-axis = number of accidents (1 cm = 10000). Choose the scale so that 2016–2022 and up to 50,000 fit on the paper.'];
+  Y.forEach(([y, n]) => steps.push(`Plot <b>${y}</b>: about <b>${gr(n)}</b> accidents (≈ ${fx(n / 10000, 2)} cm up), and join it to the previous point.`));
+  steps.push('Lowest point: <b>2020</b> (about 27,000 – COVID-19 lockdown, fewer vehicles). Highest: <b>2022</b> (about 43,000). In 2019: about <b>40,000</b>.');
+  new K.Stepper('#g21Lab', {ms: 800, steps, draw(svg, i, t){
+    graphPaper(svg, O, {xMax: 7, yMax: 50000, sx, sy, xStep: 1, yStep: 10000, minor: 10, xf: v => String(2015 + v), yf: v => gr(v), xl: 'year'});
+    text(svg, P(28, O.y - 135), 'number of accidents', {class: 'lbl sm blue', transform: `rotate(-90 28 ${O.y - 135})`});
+    const n = Math.min(i, 7);
+    for (let k = 0; k < n; k++){ const fresh = k === n - 1 && i <= 7, o = fresh ? t : 1;
+      if (k > 0) sline(svg, pt(k - 1), fresh ? K.lerpPt(pt(k - 1), pt(k), t) : pt(k), {stroke: 'var(--blue)', 'stroke-width': 2.5});
+      K.dot(svg, pt(k), {r: 5, class: 'pt blue', opacity: o});
+      if (fresh){ sline(svg, P(pt(k).x, O.y), pt(k), {stroke: 'var(--purple)', 'stroke-width': 1.5, 'stroke-dasharray': '4 3', opacity: o}); sline(svg, P(O.x, pt(k).y), pt(k), {stroke: 'var(--purple)', 'stroke-width': 1.5, 'stroke-dasharray': '4 3', opacity: o}); } }
+    L(svg, 600, 70, 'Scale', 'lbl', {'font-weight': 700}); L(svg, 600, 94, 'X-axis: 1 cm = 1 year', 'lbl sm'); L(svg, 600, 114, 'Y-axis: 1 cm = 10000', 'lbl sm');
+    L(svg, 600, 380, 'Source: Kerala Police', 'lbl sm muted');
+    if (i >= 1 && i <= 7) { L(svg, 600, 170, String(Y[i - 1][0]), 'lbl big blue', {opacity: t}); L(svg, 600, 196, `≈ ${gr(Y[i - 1][1])}`, 'lbl blue', {opacity: t}); }
+    if (i === 8){ const lo = pt(4), hi = pt(6);
+      el('circle', {cx: lo.x, cy: lo.y, r: 12, fill: 'none', stroke: 'var(--green)', 'stroke-width': 2.5}, svg); text(svg, P(lo.x, lo.y + 26), 'lowest', {class: 'lbl sm green', 'font-weight': 700});
+      el('circle', {cx: hi.x, cy: hi.y, r: 12, fill: 'none', stroke: 'var(--red)', 'stroke-width': 2.5}, svg); text(svg, P(hi.x - 8, hi.y - 22), 'highest', {class: 'lbl sm red', 'font-weight': 700});
+      L(svg, 600, 170, '2020 ≈ 27,000 (least)', 'lbl sm green'); L(svg, 600, 194, '2022 ≈ 43,000 (most)', 'lbl sm red'); L(svg, 600, 218, '2019 ≈ 40,000', 'lbl sm blue'); }
+  }});
+})();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'A car\'s velocity is 0, 3, 6, 9, 12 m/s at 0, 1, 2, 3, 4 s. Its acceleration is', options: ['uniform, 3 m/s²', 'non-uniform', 'zero', 'uniform, 12 m/s²'], answer: 0, explain: 'It gains the same 3 m/s every second – uniform acceleration of 3 m/s².', hint: 'Look at the change in each 1 s interval.'});
+K.mcq('#q2', {q: 'A velocity–time graph that bends (made of straight pieces with different slopes) shows', options: ['uniform velocity', 'uniform acceleration', 'non-uniform acceleration', 'no motion'], answer: 2, explain: 'Different slopes = different accelerations in different intervals.', hint: 'Slope of a v–t graph = acceleration.'});
+K.mcq('#q3', {q: 'A road sign is a red triangle. It is a', options: ['mandatory sign', 'cautionary sign', 'informatory sign', 'road marking'], answer: 1, explain: 'Red triangles warn you about the road ahead (hump, narrow bridge, school).', hint: 'Circle – must obey; triangle – …; rectangle – information.'});
+K.mcq('#q4', {q: 'The centre of a road has a double yellow line. A driver behind a slow lorry should', options: ['overtake carefully', 'cross the line only at night', 'not cross the line – wait', 'sound the horn and overtake'], answer: 2, explain: 'A solid/double yellow line must not be crossed.', hint: 'Fig 2.11 (b).'});
+K.mcq('#q5', {q: 'Why should pedestrians wear light-coloured clothes at night?', options: ['They are cooler', 'Drivers can see them from farther away, early enough to stop', 'Rules say so only in Kerala', 'They reflect sound'], answer: 1, explain: 'A driver must see you before the stopping distance; light or reflective clothing is seen much earlier.', hint: 'Try the night lab.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>
