@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Earth Pulls Everything – Gravitation</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.qa{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.6rem 1rem;margin:.7rem 0;box-shadow:var(--shadow)}
+.qa p{margin:.25em 0}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.bubbles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.7rem;margin:.8rem 0}
+.bubble{background:var(--surface);border:2px solid var(--purple);border-radius:18px;padding:.6rem .9rem;font-size:.95rem}
+.bubble .ml{display:block;font-weight:600;margin-bottom:.2rem}
+#obsTable td,#obsTable th{text-align:center}
+.diary{background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:1rem 0}
+.diary h3{margin:.1rem 0 .4rem;color:var(--accent-ink)}
+</style>
+</head>
+<body data-page="05_earth_pulls_everything">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 4 · Section 1</span><span class="chip amber">Textbook pages 73–75</span>
+<h1>The Earth Pulls Everything <span class="ml">ഭൂഗുരുത്വാകർഷണബലം</span></h1>
+<p class="lead">Mangoes drop, a stone thrown up comes back, a feather drifts down. Something pulls all of them towards the ground. On this page you find out <b>what</b> pulls them, <b>in which direction</b>, whether we can <b>measure</b> that pull, and what it <b>depends on</b>.</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 1 and 2 of this guide)</div>
+<ul style="margin:0">
+<li>A force (<span class="ml">ബലം</span>) is a push or a pull; its unit is the <b>newton (N)</b>.</li>
+<li>A spring balance (<span class="ml">സ്പ്രിങ് ബാലൻസ്</span>) measures force: the bigger the force, the more the spring stretches.</li>
+<li>100 g = 0.1 kg, 200 g = 0.2 kg.</li>
+</ul></div>
+
+<h2>1. Chandrayaan-3 and a classroom full of questions</h2>
+<p>The chapter opens with a class watching India's <b>Chandrayaan-3</b> lander on the Moon (textbook page 73). The children say:</p>
+<div class="bubbles">
+<div class="bubble"><span class="ml">എത്ര കൃത്യതയോടെയാണ് നമ്മുടെ ശാസ്ത്രജ്ഞർ ഈ പേടകം ചന്ദ്രനിലിറക്കിയത്!</span>How precisely our scientists landed this craft on the Moon!</div>
+<div class="bubble"><span class="ml">ചന്ദ്രനിലുമുണ്ടോ ഗുരുത്വാകർഷണം?</span>Is there gravity on the Moon too?</div>
+<div class="bubble"><span class="ml">ഭൂമിയുടെ ഗുരുത്വാകർഷണബലത്തെയും ചന്ദ്രന്റെ ഗുരുത്വാകർഷണബലത്തെയും അതിജീവിച്ച് ചന്ദ്രനിൽ ഭാരതം!</span>Overcoming the gravity of the Earth and of the Moon – Bharat on the Moon!</div>
+</div>
+<p>By the end of this chapter you will be able to answer all three. We start with something you see every day.</p>
+
+<div class="lab">
+  <div class="lab-title">🎬 Everything comes back down</div>
+  <svg id="fallSvg" viewBox="0 0 800 300" role="img" aria-label="A mango and a leaf fall from a tree; a stone thrown up and a feather come back down"></svg>
+  <div class="controls"><button class="btn primary" id="fallGo">▶ Let them go</button><button class="btn" id="fallReset">⟲ Reset</button></div>
+  <p class="hint">The mango and the stone speed up as they fall; the leaf and the feather drift slowly because the air holds them back (more about that on page 7). But <em>all</em> of them come down.</p>
+</div>
+<div class="qa"><p><b>Q.</b> <span class="ml">കല്ലിനും തൂവലിനും താഴേക്ക് പതിക്കാൻ ആവശ്യമായ ബലം എവിടെ നിന്നാണ് ലഭിച്ചത്?</span> – Where does the force that makes the stone and the feather fall come from?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>From the Earth.</b> The Earth pulls (attracts) every object towards itself. <i>Why:</i> nothing is touching the falling stone, yet it speeds up downwards – so an unseen pull must act on it. That pull is the Earth's attraction, called gravity.</div></div></div>
+
+<h2>2. Wells all round the globe – which way is “down”?</h2>
+<p>Imagine wells dug at many places all over the Earth (Fig 4.1), and people standing on every side of it (Fig 4.2). Step through.</p>
+<div class="lab" id="wellLab">
+  <div class="lab-title">🎬 Stones dropped into wells everywhere (Fig 4.1, 4.2)</div>
+  <svg viewBox="0 0 800 400" role="img" aria-label="Globe with wells on four sides; stones fall towards the centre"></svg>
+</div>
+<div class="qa"><p><b>Q.</b> <span class="ml">കല്ലുകൾ ആകർഷിക്കപ്പെടുന്നത് കിണറുകളുടെ അടിത്തട്ടിലേക്കല്ലേ?</span> – In wells all over the Earth, are the stones not pulled to the bottom of each well?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>Yes.</b> Every stone lands at the bottom of its own well. Since every well points towards the middle of the Earth, every stone is pulled <b>towards the centre of the Earth</b>, whichever side the well is on.</div></div></div>
+<div class="qa"><p><b>Q.</b> <span class="ml">ഭൂമിയുടെ മറുവശത്തുള്ളവർ ഭൂമിയിൽ നിന്നു വീണുപോകുന്നില്ലല്ലോ! ഭൂമിയുടെ ആകർഷണമല്ലേ ഇതിനു കാരണം?</span> – People on the other side of the Earth don't fall off. Isn't the Earth's attraction the reason?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>Yes.</b> For a person in Brazil, “down” is towards the Earth's centre just as it is for us in Kerala. The Earth pulls each of them towards its centre, so their feet stay pressed to the ground. There is no “bottom” of the Earth to fall off.</div></div></div>
+
+<p>The thinking boy in the textbook asks: <span class="ml">ഈ ആകർഷണബലം അളക്കുവാൻ കഴിയുമോ?</span> – <em>Can this attractive force be measured?</em> First, the textbook's key idea:</p>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 73)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">എല്ലാ വസ്തുക്കളെയും ഭൂമി ആകർഷിക്കുന്നു. ഇതിന്റെ ദിശ ഭൂമിയുടെ കേന്ദ്രത്തിലേക്കാണ്. ഈ ആകർഷണബലമാണ് ഭൂഗുരുത്വാകർഷണ ബലം.</p>
+<p>The Earth attracts every object. The direction of this pull is <b>towards the centre of the Earth</b> (<span class="ml">ഭൂകേന്ദ്രം</span>). This attractive force (<span class="ml">ആകർഷണബലം</span>) is the <b>Earth's gravitational force</b> – gravity.</p></div>
+
+<h2>3. Activity 4.1 – Measuring the Earth's pull with a spring balance</h2>
+<p>The textbook's activity (<span class="ml">പ്രവർത്തനം</span>, page 74, Fig 4.3): fix a spring balance to a window bar, pull its hook with your hand, then hang 100 g and 200 g masses on it.</p>
+<div class="safety">⚠ Real experiment: tie the balance firmly to the window bar, pull gently and let the hook go back slowly – a spring that snaps back can hurt your fingers. Use the slotted masses from the school lab with your teacher or an adult.</div>
+<div class="lab" id="sbLab">
+  <div class="lab-title">🎬 Virtual lab: the activity step by step</div>
+  <svg viewBox="0 0 800 340" role="img" aria-label="A spring balance hanging from a window bar, pulled by a hand and then loaded with 100 g and 200 g"></svg>
+</div>
+
+<div class="qa"><p><b>Textbook questions (page 74)</b> – try them, then check.</p>
+<ol style="margin:.3rem 0">
+<li><span class="ml">എന്തുകൊണ്ടാണ് സ്പ്രിങ് വലിഞ്ഞത്?</span> Why did the spring stretch?</li>
+<li><span class="ml">സ്പ്രിങ് ബാലൻസ് റീഡിങ് എത്രയാണ്? ഇതല്ലേ നാം പ്രയോഗിച്ച ബലം?</span> What is the reading? Isn't this the force we applied?</li>
+<li><span class="ml">ബലത്തിന്റെ യൂണിറ്റ് ഏതാണ്?</span> What is the unit of force?</li>
+<li>With 100 g hanging: why did the spring stretch? Which force pulled the 100 g down? What is the reading?</li>
+<li>With 200 g: why more stretch? <span class="ml">മാസ് കൂടുമ്പോൾ ആകർഷണബലത്തിന് എന്ത് സംഭവിക്കുന്നു? (കൂടുന്നു / കുറയുന്നു)</span> What happens to the attractive force when the mass increases? Write one factor that affects it.</li>
+</ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">
+1. Because of the <b>force of my hand</b> pulling the hook. <i>Why:</i> a spring stretches only when a force pulls it.<br>
+2. Whatever the pointer shows (in our lab, 3 N). <b>Yes</b> – the reading is the force we applied, because the balance is made to show the pull on its hook.<br>
+3. The <b>newton (N)</b>.<br>
+4. Nobody is pulling, yet it stretches: the <b>Earth pulls the 100 g mass downwards</b> (gravity). Reading ≈ <b>0.98 N ≈ 1 N</b> (0.1 kg × 9.8 N per kg).<br>
+5. The Earth pulls the 200 g mass harder: reading ≈ <b>1.96 N ≈ 2 N</b>. The attractive force <b>increases</b> (<span class="ml">കൂടുന്നു</span>) when the mass increases. One factor: <b>the mass of the object</b>.</div></div></div>
+
+<div class="lab">
+  <div class="lab-title">🧪 Your own trials – any mass, live observation table</div>
+  <div class="split">
+    <svg id="sbSvg" viewBox="0 0 400 340" role="img" aria-label="Spring balance with an adjustable mass"></svg>
+    <div>
+      <div class="controls"><label>mass hung <input id="sbM" type="range" min="50" max="500" step="50" value="100"><output></output> g</label></div>
+      <div class="controls"><button class="btn primary" id="sbRec">📝 Record this reading</button><button class="btn" id="sbClr">Clear table</button></div>
+      <table id="obsTable"><thead><tr><th>Mass (g)</th><th>Mass (kg)</th><th>Reading (N)</th><th>Reading ÷ mass (N per kg)</th></tr></thead><tbody></tbody></table>
+      <div class="readout" id="sbInf">Record at least three different masses.</div>
+    </div>
+  </div>
+</div>
+
+<p>The thinking girl in the textbook asks: <span class="ml">മാസ് മാത്രമായിരിക്കുമോ ആകർഷണബലത്തെ സ്വാധീനിക്കുന്നത്?</span> – <em>Is mass the only thing that affects the attractive force?</em></p>
+
+<h2>4. Table 4.1 – the pull gets weaker as you go up</h2>
+<p>The textbook gives the Earth's pull on the same 100 kg object at three heights above the Earth's surface (<span class="ml">ഭൗമോപരിതലം</span>):</p>
+<table>
+<thead><tr><th>Mass of the object (kg)</th><th>Height above the Earth's surface (m)</th><th>Attractive force (N)</th></tr></thead>
+<tbody><tr><td>100</td><td>at the surface (0)</td><td>980</td></tr>
+<tr><td>100</td><td>1,00,000 (= 100 km)</td><td>950</td></tr>
+<tr><td>100</td><td>10,00,000 (= 1000 km)</td><td>730</td></tr></tbody></table>
+<div class="lab">
+  <div class="lab-title">🎚️ Lift the 100 kg object – watch the force and the graph</div>
+  <svg id="hSvg" viewBox="0 0 800 340" role="img" aria-label="An object raised above the curved Earth and a graph of force against height"></svg>
+  <div class="controls"><label>height above the surface <input id="hH" type="range" min="0" max="1000" step="10" value="0"><output></output> km</label></div>
+  <div class="readout" id="hOut"></div>
+  <p class="hint">The curve is the Earth's pull worked out from the law you meet on the next page (force falls as 1 ÷ distance² from the Earth's <em>centre</em>). The three amber dots are the textbook's Table 4.1 values; the book rounds them, so they sit almost exactly on the curve.</p>
+</div>
+<div class="qa"><p><b>Q.</b> <span class="ml">100 kg മാസുള്ള വസ്തുവിൽ ആകർഷണബലം കൂടുതൽ അനുഭവപ്പെട്ടത് എവിടെ വച്ചാണ്?</span> – Where did the 100 kg object feel the greatest force? (at the surface / at 1,00,000 m / at 10,00,000 m)</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>At the surface</b> – 980 N, the largest number in the table. <i>Why:</i> there it is closest to the Earth's centre (6400 km away instead of 6500 km or 7400 km).</div></div></div>
+<div class="qa"><p><b>Q.</b> <span class="ml">ഭൂമിയിൽ നിന്ന് വസ്തുവിലേക്കുള്ള അകലം കൂടുമ്പോൾ ഭൂമി പ്രയോഗിക്കുന്ന ആകർഷണബലം (കൂടുന്നു / കുറയുന്നു)</span> – As the distance from the Earth increases, the attractive force …?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>Decreases</b> (<span class="ml">കുറയുന്നു</span>): 980 N → 950 N → 730 N. <i>Why:</i> the same object, farther away, is pulled less. So <b>distance</b> is a second factor.</div></div></div>
+
+<div class="diary"><h3>📒 Science diary (<span class="ml">സയൻസ് ഡയറി</span>) – what we found</h3>
+<ul style="margin:0">
+<li><span class="ml">ഭൂമി എല്ലാ വസ്തുക്കളെയും അതിന്റെ കേന്ദ്രത്തിലേക്ക് ആകർഷിക്കുന്നു.</span> – The Earth attracts all objects towards its centre.</li>
+<li><span class="ml">വസ്തുവിന്റെ മാസ് കൂടുന്നതിനനുസരിച്ച് ആകർഷണബലം കൂടുന്നു.</span> – The attractive force increases as the mass of the object increases.</li>
+<li><span class="ml">വസ്തുവിലേക്കുള്ള അകലം കൂടുന്നതിനനുസരിച്ച് ആകർഷണബലം കുറയുന്നു.</span> – The attractive force decreases as the distance to the object increases.</li>
+</ul></div>
+
+<h2>5. Is the Earth the only one that pulls? – Tides</h2>
+<p>The thinking boy asks: <span class="ml">ഭൂമി മാത്രമാണോ ഇത്തരത്തിൽ ആകർഷണബലം പ്രയോഗിക്കുന്നത്?</span> – <em>Is the Earth the only body that pulls like this?</em> No! The sea at Kochi rises and falls twice a day: high tide (<span class="ml">വേലിയേറ്റം</span>) and low tide (<span class="ml">വേലിയിറക്കം</span>). These happen because the <b>Moon and the Sun pull on the Earth</b> – mostly on its oceans, which can move.</p>
+<div class="lab">
+  <div class="lab-title">🌊 Tide lab – turn the Earth through one day</div>
+  <svg id="tSvg" viewBox="0 0 800 300" role="img" aria-label="The Earth with ocean bulges towards and away from the Moon; Kochi turns through high and low tide"></svg>
+  <div class="controls"><label>time since Kochi faced the Moon <input id="tHr" type="range" min="0" max="24.8" step="0.2" value="0"><output></output> h</label></div>
+  <div class="readout" id="tOut"></div>
+  <p class="hint">The bulges (exaggerated hugely) point towards and away from the Moon. As the Earth spins, Kochi passes through both bulges, so there are <b>two high tides</b> and two low tides in about 24 h 50 min.</p>
+</div>
+<div class="qa"><p><b>Q.</b> <span class="ml">സൂര്യനും ചന്ദ്രനും ഭൂമിയിൽ ബലം പ്രയോഗിക്കുമെങ്കിൽ പ്രപഞ്ചത്തിലെ മറ്റു ഗോളങ്ങൾ തമ്മിലും പരസ്പരാകർഷണബലം ഉണ്ടാകില്ലേ?</span> – If the Sun and the Moon exert a force on the Earth, won't all other bodies in the universe also attract each other?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>Yes.</b> If the Earth pulls stones, the Moon pulls the Earth's oceans and the Sun pulls the Earth, there is nothing special about any of them: <b>every object in the universe attracts every other object</b>. This mutual attractive force (<span class="ml">പരസ്പരാകർഷണബലം</span>) is described by Newton's <b>universal law of gravitation</b> – the next page.</div></div></div>
+
+<div class="callout real"><div class="title">🌴 Kerala connection</div>
+<p>Fishermen at Kochi, Munambam and Vizhinjam plan their trips with the <b>tide tables</b>; big ships enter Kochi port and the Vizhinjam harbour more easily at high tide. In Kerala the tide range is small (well under a metre) compared with places like the Gulf of Khambhat in Gujarat, where it can be several metres – but the cause is the same: the Moon's and Sun's gravity.</p></div>
+
+<div class="callout book"><div class="title">📚 Scientist from Kerala – Thanu Padmanabhan (<span class="ml">താണു പത്മനാഭൻ</span>), 1957–2021</div>
+<ul style="margin:0">
+<li>Born in <b>Thiruvananthapuram</b>. BSc and MSc from <b>University College, Thiruvananthapuram</b>, with gold medals.</li>
+<li>Made fundamental contributions to <b>cosmology</b> (the study of the universe as a whole) and <b>gravitation</b>. He worked for many years at IUCAA (Inter-University Centre for Astronomy and Astrophysics), Pune.</li>
+<li>He presented a <b>new way of looking at gravity</b>, different from those of Newton and Einstein – gravity as an “emergent” effect, the way temperature emerges from the motion of countless molecules.</li>
+<li>Honours: <b>Padma Shri</b>, the <b>Kerala Sasthra Puraskaram</b> and many more.</li>
+</ul>
+<p style="margin-top:.4rem">A boy from Thiruvananthapuram became one of the world's leading thinkers on gravity – the very topic of this chapter.</p></div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://en.wikipedia.org/wiki/Thanu_Padmanabhan" target="_blank" rel="noopener noreferrer">📄 Thanu Padmanabhan (Wikipedia)</a> <span class="src">Wikipedia</span><br><span class="note">Life and work of the Thiruvananthapuram-born cosmologist who studied the nature of gravity.</span></li><li><a href="https://web.iucaa.in/tributes/paddy/" target="_blank" rel="noopener noreferrer">📄 T. Padmanabhan Tribute Page (IUCAA)</a> <span class="src">IUCAA</span><br><span class="note">IUCAA&#x27;s tribute to &#x27;Paddy&#x27; (1957–2021), where he worked from 1992.</span></li><li><a href="https://www.youtube.com/watch?v=FcgWdgmYoCI" target="_blank" rel="noopener noreferrer">▶️ Thanu Padmanabhan: Atoms of Spacetime and the Nature of Gravity (EmQM15)</a> <span class="src">YouTube – Fetzer Franklin Fund · 46:05</span><br><span class="note">A real research talk by Padmanabhan himself – advanced, but nice to see him speak about gravity.</span></li><li><a href="https://science.nasa.gov/moon/tides/" target="_blank" rel="noopener noreferrer">📄 Tides – NASA Science</a> <span class="src">NASA</span><br><span class="note">How the Moon&#x27;s gravity pulls on Earth&#x27;s oceans to make high and low tides.</span></li><li><a href="https://www.youtube.com/watch?v=tcGEjzt_4is" target="_blank" rel="noopener noreferrer">▶️ What Causes Tides?</a> <span class="src">YouTube – NOAA SciJinks · 3:34</span><br><span class="note">Animated explanation of why there are two tidal bulges.</span></li><li><a href="https://www.youtube.com/watch?v=nh26C519wuo" target="_blank" rel="noopener noreferrer">▶️ An Apple Falls, But Not the Moon. Why?</a> <span class="src">YouTube – BYJU&#x27;S · 2:28</span><br><span class="note">Newton&#x27;s big idea: the same gravity that drops the apple keeps the Moon in orbit.</span></li></ul></div>
+
+<h2>6. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li>The Earth attracts every object <b>towards its centre</b>: this is the Earth's gravitational force (gravity).</li>
+<li>A spring balance measures it in <b>newtons</b>: 100 g → 0.98 N ≈ 1 N; 200 g → 1.96 N ≈ 2 N.</li>
+<li>The pull <b>increases with mass</b> and <b>decreases with distance</b> (Table 4.1: 980 N → 950 N → 730 N).</li>
+<li>The Moon and the Sun pull on the Earth too (tides) – every body attracts every other body.</li>
+</ul></div>
+<p>Next: <a href="06_universal_law.html">The universal law of gravitation ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Gravitation · Class 9 Physics", "icon": "🌍", "key": "physics_ch4_progress", "pages": [["index.html", "Home"], ["01_force_and_newtons_laws.html", "1 · Force & Newton's Laws Recap"], ["02_mass_weight_units.html", "2 · Mass, Units & the Spring Balance"], ["03_big_numbers_and_ratios.html", "3 · Powers of Ten, Squares & Ratios"], ["04_motion_equations_recap.html", "4 · Equations of Motion Recap"], ["05_earth_pulls_everything.html", "5 · The Earth Pulls Everything"], ["06_universal_law.html", "6 · Universal Law of Gravitation"], ["07_acceleration_due_to_gravity.html", "7 · Acceleration due to Gravity g"], ["08_g_everywhere_moon.html", "8 · Is g the Same Everywhere? The Moon"], ["09_intext_numericals_solutions.html", "9 · In-text Numericals – Solutions"], ["10_mass_and_weight.html", "10 · Mass and Weight"], ["11_free_fall_circular_motion.html", "11 · Weightlessness, Circular Motion & Satellites"], ["12_assess_q1_q7_solutions.html", "12 · Let Us Assess Q1–7 – Solutions"], ["13_assess_q8_q14_solutions.html", "13 · Let Us Assess Q8–14 & Extended Activities"], ["14_applications_explore.html", "14 · Applications & Explore Online"], ["15_summary_revision.html", "15 · Summary & Quick Quiz"], ["16_model_test_paper.html", "16 · Model Test Paper"], ["17_model_test_solutions.html", "17 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+const {P, seg, text, el, circle, multiText} = K;
+const C = c => (c === 'amber' ? 'accent' : c);
+/* arrow from a to b with a filled head */
+function arrow(svg, a, b, color='red', w=3, head=11){
+  const L = K.dist(a, b); if (L < 1) return; const hh = Math.min(head, L * .6);
+  const u = K.unit(a, b), n = P(-u.y, u.x), base = P(b.x - u.x * hh, b.y - u.y * hh);
+  seg(svg, a, base, {class: 'ln-' + color, 'stroke-width': w});
+  K.polygon(svg, [b, P(base.x + n.x * hh * .55, base.y + n.y * hh * .55), P(base.x - n.x * hh * .55, base.y - n.y * hh * .55)], {style: `fill:var(--${C(color)})`});
+}
+const N = v => K.num(v);
+const f2 = v => K.fmt(v, 2);
+
+/* ---------- 1. things fall ---------- */
+(function(){
+  const svg = document.getElementById('fallSvg'); let stop = null;
+  const GY = 270;
+  function draw(t){ /* t in seconds of "story time", 0..2.4 */
+    K.clear(svg);
+    seg(svg, P(0, GY), P(800, GY), {class: 'ground'});
+    /* mango tree */
+    el('rect', {x: 105, y: 120, width: 22, height: GY - 120, style: 'fill:#92400e'}, svg);
+    el('ellipse', {cx: 116, cy: 95, rx: 90, ry: 60, style: 'fill:var(--green);opacity:.75'}, svg);
+    /* mango: falls 150 px with a ~ g */
+    const tm = Math.min(t, 1.1); const my = 130 + Math.min(130, 107 * tm * tm);
+    el('ellipse', {cx: 170, cy: my, rx: 9, ry: 12, style: 'fill:#f59e0b;stroke:#92400e;stroke-width:1.5'}, svg);
+    text(svg, P(170, 115), 'mango', {class: 'lbl sm'});
+    /* leaf: slow drift */
+    const ly = Math.min(262, 120 + 60 * t), lx = 60 + 18 * Math.sin(t * 5);
+    el('ellipse', {cx: lx, cy: ly, rx: 11, ry: 5, transform: `rotate(${25 * Math.sin(t * 5)} ${lx} ${ly})`, style: 'fill:var(--green);stroke:var(--text);stroke-width:1'}, svg);
+    text(svg, P(42, 140), 'leaf', {class: 'lbl sm'});
+    /* stone thrown up from hand at x=360: y = y0 - (u t - g t^2/2) */
+    const u = 300, g = 280, ts = Math.min(t, 2 * u / g + .2);
+    const sy = Math.min(GY - 6, 230 - (u * ts - g * ts * ts / 2));
+    circle(svg, P(360, sy), 7, {class: '', style: 'fill:var(--muted);stroke:var(--text)'});
+    text(svg, P(400, 240), 'stone', {class: 'lbl sm', 'text-anchor': 'start'});
+    if (t > 0 && ts < u / g) arrow(svg, P(330, 230), P(330, 190), 'blue', 2, 8);
+    /* feather */
+    const fy = Math.min(260, 70 + 55 * t), fx = 560 + 25 * Math.sin(t * 3.2);
+    el('path', {d: `M${fx - 16},${fy} Q${fx},${fy - 9} ${fx + 16},${fy}`, transform: `rotate(${20 * Math.sin(t * 3.2)} ${fx} ${fy})`, class: 'ln-purple', 'stroke-width': 3}, svg);
+    text(svg, P(560, 50), 'feather', {class: 'lbl sm'});
+    /* gravity arrows */
+    multiText(svg, P(700, 70), ['All four', 'come down:', 'the Earth', 'pulls them'], {class: 'lbl sm muted'}, 18);
+    arrow(svg, P(700, 150), P(700, 240), 'red', 3);
+    text(svg, P(735, 200), 'gravity', {class: 'lbl sm red', 'text-anchor': 'start'});
+  }
+  draw(0);
+  document.getElementById('fallGo').addEventListener('click', () => { if (stop) stop(); stop = K.animate(3000, (e, t) => draw(t * 2.6)); });
+  document.getElementById('fallReset').addEventListener('click', () => { if (stop) stop(); draw(0); });
+})();
+
+/* ---------- 2. wells round the globe ---------- */
+(function(){
+  const O = P(220, 200), R = 120;
+  const ANG = [0, 90, 180, 270]; /* degrees clockwise from "up" */
+  function globe(svg){
+    circle(svg, O, R, {class: '', style: 'fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.5'});
+    el('path', {d: `M${O.x - 70},${O.y - 50} q30,-30 60,-10 q20,25 -10,40 q-30,10 -50,-30z`, style: 'fill:var(--green);opacity:.55'}, svg);
+    el('path', {d: `M${O.x + 20},${O.y + 10} q40,-10 55,20 q-5,35 -40,30 q-25,-20 -15,-50z`, style: 'fill:var(--green);opacity:.55'}, svg);
+    K.dot(svg, O, {r: 4}); text(svg, P(O.x + 14, O.y + 14), 'centre', {class: 'lbl sm muted', 'text-anchor': 'start'});
+  }
+  /* one well drawn at the top, rotated by ang; stone progress s in 0..1 (null = no stone) */
+  function well(svg, ang, s, person){
+    const g = K.group(svg, {transform: `rotate(${ang} ${O.x} ${O.y})`});
+    el('rect', {x: O.x - 9, y: O.y - R - 2, width: 18, height: 30, style: 'fill:var(--svgbg);stroke:var(--accent);stroke-width:2'}, g);
+    el('rect', {x: O.x - 13, y: O.y - R - 12, width: 26, height: 10, style: 'fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.5'}, g);
+    el('rect', {x: O.x - 8, y: O.y - R + 18, width: 16, height: 9, style: 'fill:var(--blue);opacity:.6'}, g);
+    if (s !== null){ const y = (O.y - R - 40) + s * 60; circle(g, P(O.x, y), 5, {class: '', style: 'fill:var(--muted);stroke:var(--text);stroke-width:1.2'}); }
+    if (person){
+      const px = O.x + 26, fy = O.y - R - 1;
+      seg(g, P(px, fy), P(px + 5, fy - 14), {class: 'ln thin'}); seg(g, P(px + 10, fy), P(px + 5, fy - 14), {class: 'ln thin'});
+      seg(g, P(px + 5, fy - 14), P(px + 5, fy - 28), {class: 'ln thin'}); seg(g, P(px - 2, fy - 24), P(px + 12, fy - 24), {class: 'ln thin'});
+      circle(g, P(px + 5, fy - 33), 5, {class: 'ln thin', style: 'fill:var(--accent-soft)'});
+    }
+    return g;
+  }
+  const rows = [
+    ['Wells dug at four places', 'lbl'],
+    ['all round the Earth.', 'lbl'],
+    ['Drop a stone in the top well:', 'lbl blue'],
+    ['it falls to the bottom.', 'lbl blue'],
+    ['In every well the stone', 'lbl red'],
+    ['goes to the bottom –', 'lbl red'],
+    ['towards the Earth’s centre.', 'lbl red'],
+    ['People everywhere stand on', 'lbl purple'],
+    ['the ground: “down” = centre.', 'lbl purple'],
+    ['The Earth pulls everything', 'lbl big green'],
+    ['towards its CENTRE.', 'lbl big green']
+  ];
+  const upto = [2, 4, 7, 9, 11];
+  new K.Stepper('#wellLab', {steps: [
+    'Wells are dug at four places around the Earth: on top (say, Kerala), on the right, on the left and at the very bottom – the “other side”.',
+    'A stone dropped into the top well falls straight down to its bottom.',
+    'Now stones are dropped into all four wells at once. Each one lands at the bottom of <b>its own</b> well. The red arrows show that every one of them moves <b>towards the centre of the Earth</b>.',
+    'People stand on all four sides (Fig 4.2). Nobody falls off: for each of them “down” means towards the Earth\'s centre.',
+    '<b>Conclusion:</b> the Earth attracts every object, and the pull is always directed <b>towards the centre of the Earth</b>. This is the Earth\'s gravitational force (<span class="ml">ഭൂഗുരുത്വാകർഷണ ബലം</span>).'
+  ], ms: 1400, draw(svg, i, t){
+    globe(svg);
+    ANG.forEach((a, k) => {
+      let s = null;
+      if (i === 1 && k === 0) s = t;
+      if (i >= 2) s = (i === 2) ? t : 1;
+      if (i === 1 && k !== 0) s = null;
+      well(svg, a, s, i >= 3);
+      if (i >= 2){ const outer = K.polar(O, R - 32, a - 90), inner = K.polar(O, 28, a - 90); if (i === 2 ? t > .5 : true) arrow(svg, outer, inner, 'red', 2.5, 10); }
+    });
+    if (i >= 3){ text(svg, P(O.x, O.y - R - 58), 'Kerala', {class: 'lbl sm'}); text(svg, P(O.x + 60, O.y + R + 50), 'other side', {class: 'lbl sm'}); }
+    rows.forEach((r, k) => { if (k >= upto[i]) return; const fresh = (i > 0 && k >= upto[i - 1]) || (i === 0); text(svg, P(420, 40 + k * 28), r[0], {class: r[1], 'text-anchor': 'start', opacity: fresh ? t : 1}); });
+  }});
+})();
+
+/* ---------- 3. spring balance drawing (shared) ---------- */
+const PXN = 24; /* px per newton */
+function balance(svg, x, F, opts={}){
+  /* window bar */
+  el('rect', {x: x - 120, y: 18, width: 240, height: 10, rx: 3, style: 'fill:var(--muted)'}, svg);
+  [-100, -50, 50, 100].forEach(dx => el('rect', {x: x + dx - 3, y: 0, width: 6, height: 18, style: 'fill:var(--muted)'}, svg));
+  circle(svg, P(x, 36), 8, {class: 'ln'});
+  /* body */
+  el('rect', {x: x - 30, y: 44, width: 60, height: 168, rx: 8, style: 'fill:var(--accent-soft);stroke:var(--accent);stroke-width:2'}, svg);
+  const y0 = 68;
+  for (let n = 0; n <= 5; n++){ const y = y0 + n * PXN; seg(svg, P(x + 8, y), P(x + 26, y), {class: 'ln thin'}); text(svg, P(x + 40, y), String(n), {class: 'lbl sm', 'text-anchor': 'start'}); }
+  for (let n = 0; n < 50; n++){ if (n % 10 === 0) continue; const y = y0 + n * PXN / 10; seg(svg, P(x + (n % 5 === 0 ? 14 : 18), y), P(x + 26, y), {class: 'ln-muted thin'}); }
+  text(svg, P(x + 40, y0 + 5 * PXN + 20), 'N', {class: 'lbl sm', 'text-anchor': 'start'});
+  /* spring zig-zag from y=50 to pointer */
+  const py = y0 + Math.min(5.2, F) * PXN; const pts = [P(x - 8, 50)]; const n = 10;
+  for (let k = 1; k < n; k++) pts.push(P(x - 8 + (k % 2 ? -8 : 8), 50 + (py - 52) * k / n));
+  pts.push(P(x - 8, py - 2)); K.polyline(svg, pts, {class: 'ln-blue', 'stroke-width': 2});
+  /* pointer */
+  K.polygon(svg, [P(x - 16, py - 4), P(x + 8, py), P(x - 16, py + 4)], {style: 'fill:var(--red)'});
+  /* hook rod */
+  seg(svg, P(x - 8, py), P(x - 8, 222 + F * PXN), {class: 'ln', 'stroke-width': 2.5});
+  const hy = 222 + F * PXN;
+  el('path', {d: `M${x - 8},${hy} q0,10 8,10 q8,0 8,-8`, class: 'ln', 'stroke-width': 2.5}, svg);
+  if (opts.mass){
+    const mg = opts.mass, h = 10 + Math.min(40, mg / 12);
+    el('rect', {x: x - 30, y: hy + 10, width: 44, height: h, rx: 4, style: 'fill:var(--muted);stroke:var(--text);stroke-width:1.5'}, svg);
+    text(svg, P(x - 8, hy + 10 + h / 2), mg + ' g', {class: 'lbl sm', style: 'fill:var(--svgbg);stroke:none;font-weight:700'});
+    if (opts.arrow !== false) { arrow(svg, P(x - 60, hy + 14), P(x - 60, hy + 14 + Math.max(16, F * 26)), 'red', 3, 10); text(svg, P(x - 66, hy + 26), 'Earth’s pull', {class: 'lbl sm red', 'text-anchor': 'end'}); }
+  }
+  if (opts.hand){
+    el('rect', {x: x - 26, y: hy + 6, width: 36, height: 22, rx: 10, style: 'fill:#f5c49b;stroke:#92400e;stroke-width:1.5'}, svg);
+    arrow(svg, P(x + 26, hy + 4), P(x + 26, hy + 44), 'blue', 3, 10); text(svg, P(x + 34, hy + 26), 'pull', {class: 'lbl sm blue', 'text-anchor': 'start'});
+  }
+  return py;
+}
+
+(function(){
+  /* reading in N for each step */
+  const F = [0, 3, 0.98, 1.96, 1.96];
+  const rows = [
+    ['Balance fixed to the window bar.', 'lbl'],
+    ['Pull the hook: reading 3 N =', 'lbl blue'],
+    ['the force of your hand (newton, N).', 'lbl blue'],
+    ['Hang 100 g: the Earth pulls it;', 'lbl red'],
+    ['reading 0.98 N ≈ 1 N.', 'lbl red'],
+    ['Hang 200 g: more stretch;', 'lbl purple'],
+    ['reading 1.96 N ≈ 2 N.', 'lbl purple'],
+    ['Mass ↑  ⇒  Earth’s pull ↑', 'lbl big green'],
+    ['(കൂടുന്നു – increases)', 'lbl green']
+  ];
+  const upto = [1, 3, 5, 7, 9];
+  new K.Stepper('#sbLab', {steps: [
+    'Fix the spring balance to a window bar (<span class="ml">ജനൽ കമ്പി</span>). Nothing hangs on it: the pointer is at <b>0</b>.',
+    'Hold the hook and pull. The spring stretches because of the <b>force of your hand</b>. The reading (here 3 N) is the force you applied. The unit of force is the <b>newton (N)</b>.',
+    'Let go and hang a <b>100 g</b> mass on the hook. Nobody pulls it, yet the spring stretches: the <b>Earth pulls the mass downwards</b>. Reading = 0.1 kg × 9.8 N/kg = <b>0.98 N ≈ 1 N</b>. This is the force with which the Earth attracts the object.',
+    'Replace it by a <b>200 g</b> mass. The spring stretches <b>twice as much</b>: reading = 0.2 × 9.8 = <b>1.96 N ≈ 2 N</b>.',
+    '<b>Inference:</b> when the mass increases, the Earth\'s attractive force <b>increases</b> (<span class="ml">കൂടുന്നു</span>). One factor that affects it: <b>the mass of the object</b>.'
+  ], ms: 1000, draw(svg, i, t){
+    const prev = i > 0 ? F[i - 1] : 0; const f = (i === 2) ? F[2] * t : prev + (F[i] - prev) * t;
+    balance(svg, 160, f, {hand: i === 1, mass: i === 2 ? 100 : (i >= 3 ? 200 : 0), arrow: i >= 2});
+    text(svg, P(370, 325), `reading: ${f2(f)} N`, {class: 'lbl big', 'text-anchor': 'start'});
+    rows.forEach((r, k) => { if (k >= upto[i]) return; const fresh = i === 0 || k >= upto[i - 1]; text(svg, P(370, 50 + k * 32), r[0], {class: r[1], 'text-anchor': 'start', opacity: fresh ? t : 1}); });
+  }});
+})();
+
+/* ---------- 3b. free trials with observation table ---------- */
+(function(){
+  const svg = document.getElementById('sbSvg'), body = document.querySelector('#obsTable tbody'), inf = document.getElementById('sbInf');
+  const rec = new Map(); let cur = 100;
+  function show(){
+    body.innerHTML = [...rec.keys()].sort((a, b) => a - b).map(m => { const F = m / 1000 * 9.8; return `<tr><td>${m}</td><td>${K.fmt(m / 1000, 2)}</td><td>${f2(F)}</td><td>9.8</td></tr>`; }).join('');
+    if (rec.size >= 3){ const ms = [...rec.keys()].sort((a, b) => a - b); inf.textContent = `Inference: as the mass grows from ${ms[0]} g to ${ms[ms.length - 1]} g, the reading grows from ${f2(ms[0] * .0098)} N to ${f2(ms[ms.length - 1] * .0098)} N.\nReading ÷ mass is always 9.8 N per kg, so the Earth's pull is directly proportional to the mass:\ndouble the mass → double the pull.`; }
+    else inf.textContent = `Record at least three different masses (${rec.size} recorded so far).`;
+  }
+  K.slider('#sbM', m => { cur = m; K.clear(svg); const F = m / 1000 * 9.8; balance(svg, 160, F, {mass: m}); text(svg, P(300, 120), `${f2(F)} N`, {class: 'lbl big red'}); text(svg, P(300, 145), 'reading', {class: 'lbl sm muted'}); text(svg, P(200, 330), `${m} g = ${K.fmt(m / 1000, 2)} kg → ${K.fmt(m / 1000, 2)} × 9.8 = ${f2(F)} N`, {class: 'lbl sm'}); }, 0);
+  document.getElementById('sbRec').addEventListener('click', () => { rec.set(cur, 1); show(); });
+  document.getElementById('sbClr').addEventListener('click', () => { rec.clear(); show(); });
+  show();
+})();
+
+/* ---------- 4. Table 4.1 lab ---------- */
+(function(){
+  const svg = document.getElementById('hSvg'), out = document.getElementById('hOut');
+  const Fh = h => 980 * Math.pow(6400 / (6400 + h), 2);
+  const KPX = 0.24, GY = 300, EX = 150; /* 0.24 px per km */
+  const gx = h => 380 + h * 0.39, gy = F => 290 - (F - 700) * 0.8;
+  K.slider('#hH', h => {
+    K.clear(svg);
+    /* curved Earth to scale */
+    const Rpx = 6400 * KPX; const arcPts = []; for (let x = 0; x <= 340; x += 10) arcPts.push(P(x, GY + Rpx - Math.sqrt(Rpx * Rpx - (x - EX) * (x - EX))));
+    K.polygon(svg, [...arcPts, P(340, 340), P(0, 340)], {style: 'fill:var(--green-soft);stroke:none'}); K.polyline(svg, arcPts, {class: 'ln-green'});
+    text(svg, P(232, 330), 'Earth (curve to scale)', {class: 'lbl sm', 'text-anchor': 'start'});
+    /* height scale */
+    for (let k = 0; k <= 1000; k += 200){ const y = GY - k * KPX; seg(svg, P(20, y), P(30, y), {class: 'ln-muted thin'}); text(svg, P(34, k === 0 ? y - 10 : y), k + ' km', {class: 'lbl sm muted', 'text-anchor': 'start'}); }
+    const y = GY - h * KPX; const F = Fh(h);
+    seg(svg, P(EX, GY), P(EX, y), {class: 'ln-muted thin dash'});
+    el('rect', {x: EX - 22, y: y - 34, width: 44, height: 28, rx: 4, style: 'fill:var(--accent-soft);stroke:var(--accent);stroke-width:2'}, svg);
+    text(svg, P(EX, y - 20), '100 kg', {class: 'lbl sm'});
+    const L = F / 980 * 60; arrow(svg, P(EX + 50, y - 34), P(EX + 50, y - 34 + L), 'red', 3, 10);
+    text(svg, P(EX + 58, y - 20), `${Math.round(F)} N`, {class: 'lbl sm red', 'text-anchor': 'start'});
+    /* graph */
+    seg(svg, P(380, 290), P(780, 290), {class: 'ln thin'}); seg(svg, P(380, 290), P(380, 40), {class: 'ln thin'});
+    for (let k = 0; k <= 1000; k += 200){ seg(svg, P(gx(k), 290), P(gx(k), 295), {class: 'ln thin'}); text(svg, P(gx(k), 308), String(k), {class: 'lbl sm'}); }
+    for (let f = 700; f <= 1000; f += 50){ seg(svg, P(375, gy(f)), P(380, gy(f)), {class: 'ln thin'}); text(svg, P(370, gy(f)), String(f), {class: 'lbl sm', 'text-anchor': 'end'}); }
+    text(svg, P(780, 326), 'height above the surface (km)', {class: 'lbl sm', 'text-anchor': 'end'});
+    text(svg, P(392, 30), 'force on 100 kg (N)', {class: 'lbl sm', 'text-anchor': 'start'});
+    const pts = []; for (let k = 0; k <= 1000; k += 20) pts.push(P(gx(k), gy(Fh(k)))); K.polyline(svg, pts, {class: 'ln-blue'});
+    [[0, 980], [100, 950], [1000, 730]].forEach(([hh, ff]) => { circle(svg, P(gx(hh), gy(ff)), 6, {class: '', style: 'fill:var(--accent);stroke:var(--text);stroke-width:1'}); });
+    text(svg, P(gx(100) + 12, gy(950) - 12), '(100, 950)', {class: 'lbl sm amber', 'text-anchor': 'start'});
+    text(svg, P(gx(0) + 12, gy(980) - 10), '(0, 980)', {class: 'lbl sm amber', 'text-anchor': 'start'});
+    text(svg, P(gx(1000) - 14, gy(730) + 14), '(1000, 730)', {class: 'lbl sm amber', 'text-anchor': 'end'});
+    circle(svg, P(gx(h), gy(F)), 6, {class: '', style: 'fill:var(--red)'});
+    out.textContent = `Height ${h} km  →  distance from the Earth's centre = 6400 + ${h} = ${6400 + h} km\nPull on the 100 kg object ≈ 980 × (6400 ÷ ${6400 + h})² = ${Math.round(F)} N` + (h === 0 ? '  (largest – at the surface)' : `  (${Math.round(980 - F)} N less than at the surface)`);
+  }, 0);
+})();
+
+/* ---------- 5. tides ---------- */
+(function(){
+  const svg = document.getElementById('tSvg'), out = document.getElementById('tOut');
+  const E = P(260, 150), RE = 70, MOON = P(600, 150);
+  K.slider('#tHr', hr => {
+    K.clear(svg);
+    /* ocean bulge along Earth–Moon line */
+    el('ellipse', {cx: E.x, cy: E.y, rx: RE + 26, ry: RE + 4, style: 'fill:var(--blue-soft);stroke:var(--blue);stroke-width:2'}, svg);
+    circle(svg, E, RE, {class: '', style: 'fill:var(--green-soft);stroke:var(--green);stroke-width:2'});
+    text(svg, E, 'Earth', {class: 'lbl sm'});
+    circle(svg, MOON, 22, {class: '', style: 'fill:var(--surface2);stroke:var(--muted);stroke-width:2'}); text(svg, P(MOON.x, MOON.y + 40), 'Moon', {class: 'lbl sm'});
+    arrow(svg, P(MOON.x - 30, 150), P(E.x + RE + 95, 150), 'red', 2.5, 10); text(svg, P(495, 135), 'Moon’s pull', {class: 'lbl sm red'});
+    /* Kochi: angle 0 = facing the Moon; Earth spins once in 24.84 h relative to the Moon */
+    const a = (hr / 24.84) * 360; const rad = K.rad(a);
+    const rx = RE + 26, ry = RE + 4;
+    const rw = 1 / Math.sqrt(Math.pow(Math.cos(rad) / rx, 2) + Math.pow(Math.sin(rad) / ry, 2));
+    const kp = P(E.x + RE * Math.cos(rad), E.y - RE * Math.sin(rad)), wp = P(E.x + rw * Math.cos(rad), E.y - rw * Math.sin(rad));
+    seg(svg, kp, wp, {class: 'ln-blue', 'stroke-width': 4});
+    K.dot(svg, kp, {r: 6, style: 'fill:var(--red)'});
+    const lp = P(E.x + (RE + 48) * Math.cos(rad), E.y - (RE + 48) * Math.sin(rad));
+    text(svg, lp, 'Kochi', {class: 'lbl sm red'});
+    const level = (rw - ry) / (rx - ry); /* 0 low .. 1 high */
+    const state = level > .8 ? 'HIGH TIDE (വേലിയേറ്റം)' : (level < .2 ? 'LOW TIDE (വേലിയിറക്കം)' : (Math.sin(2 * rad) > 0 ? 'water falling' : 'water rising'));
+    /* gauge */
+    el('rect', {x: 700, y: 60, width: 30, height: 160, style: 'fill:var(--svgbg);stroke:var(--text);stroke-width:1.5'}, svg);
+    el('rect', {x: 700, y: 60 + 160 * (1 - (.15 + .7 * level)), width: 30, height: 160 * (.15 + .7 * level), style: 'fill:var(--blue);opacity:.6'}, svg);
+    text(svg, P(715, 45), 'sea at Kochi', {class: 'lbl sm'});
+    text(svg, P(715, 245), level > .8 ? 'high' : (level < .2 ? 'low' : '…'), {class: 'lbl sm blue'});
+    out.textContent = `Time: ${K.fmt(hr, 1)} h after Kochi faced the Moon\nSea level at Kochi: ${state}\nHigh tides at about 0 h and 12.4 h; low tides at about 6.2 h and 18.6 h.`;
+  }, 1);
+})();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'A stone is dropped into a well in Brazil, on the other side of the Earth from Kerala. In which direction does it move?', options: ['Away from the Earth, into space', 'Towards the centre of the Earth', 'Towards Kerala\'s sky', 'It floats'], answer: 1, explain: 'Gravity always points towards the Earth\'s centre, on every side.', hint: 'Look again at the wells lab.'});
+K.numq('#q2', {q: 'A 300 g mass hangs on a spring balance. What does the balance read (in newtons)? (Use 9.8 N per kg.)', answer: 2.94, tol: 0.03, unit: 'N', explain: '0.3 kg × 9.8 N/kg = 2.94 N.', hint: 'Change 300 g to kg first: 0.3 kg.'});
+K.mcq('#q3', {q: 'In Table 4.1, the force on the 100 kg object at 1000 km height is 730 N. Compared with the surface, the force has', options: ['increased, because it is higher', 'decreased, because it is farther from the Earth', 'stayed 980 N, because the mass is the same', 'become zero'], answer: 1, explain: '980 N → 730 N: more distance, less pull.', hint: 'Compare 730 with 980.'});
+K.mcq('#q4', {q: 'Which two factors does the Earth\'s pull on an object depend on (from this page)?', options: ['Colour and shape of the object', 'Mass of the object and its distance from the Earth', 'Speed and temperature', 'Only the size of the object'], answer: 1, explain: 'More mass → more pull; more distance → less pull.', hint: 'Look at the science diary.'});
+K.mcq('#q5', {q: 'Why does the sea at Kochi rise and fall twice a day?', options: ['Because of wind only', 'Because the Moon (and the Sun) pull on the Earth\'s oceans', 'Because rivers bring water', 'Because the Earth is flat'], answer: 1, explain: 'Tides are caused by the gravitational pull of the Moon and the Sun.', hint: 'Section 5.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

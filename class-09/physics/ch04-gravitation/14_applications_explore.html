@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Applications &amp; Explore Online – Gravitation</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.exam{font-size:.92rem;background:var(--purple-soft);border-left:4px solid var(--purple);border-radius:8px;padding:.45rem .8rem;margin:.5rem 0 0}
+.exam b{color:var(--purple)}
+.lab select{padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem}
+.legend4{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.4rem;margin:.5rem 0;font-size:.9rem}
+.legend4 div{background:var(--surface2);border-radius:8px;padding:.35rem .6rem}
+.legend4 b{display:block}
+</style>
+</head>
+<body data-page="14_applications_explore">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 4 · Applications</span><span class="chip green">Gravity in real life</span><span class="chip blue">Explore online</span>
+<h1>Applications &amp; Explore Online <span class="ml">ഗുരുത്വാകർഷണം</span></h1>
+<p class="lead">Gravity is not only a chapter in the textbook: it decides how much you weigh on Jupiter, how fast a coconut hits the ground, why astronauts float, why the sea at Kochi rises twice a day and how ISRO sent Chandrayaan-3 to the Moon. Every lab below uses only the formulas of this chapter.</p>
+
+<div class="callout book"><div class="title">📖 The ideas behind every lab</div>
+<ul style="margin:0">
+<li><b>Universal law of gravitation</b> (<span class="ml">സാർവിക ഗുരുത്വാകർഷണനിയമം</span>): F = G m<sub>1</sub>m<sub>2</sub>/d<sup>2</sup> – <a href="06_universal_law.html">page 6</a>.</li>
+<li><b>Acceleration due to gravity</b> (<span class="ml">ഗുരുത്വാകർഷണത്വരണം</span>): g = GM/R<sup>2</sup>, 9.8 m/s<sup>2</sup> on the Earth, 1.62 m/s<sup>2</sup> on the Moon – <a href="07_acceleration_due_to_gravity.html">page 7</a>, <a href="08_g_everywhere_moon.html">page 8</a>.</li>
+<li><b>Weight</b> (<span class="ml">ഭാരം</span>) W = mg, in newton – <a href="10_mass_and_weight.html">page 10</a>.</li>
+<li><b>Free fall</b> (<span class="ml">നിർബാധ പതനം</span>) with u = 0: h = ½gt<sup>2</sup>, v = gt; <b>weightlessness</b> (<span class="ml">ഭാരമില്ലായ്മ</span>); <b>centripetal force</b> (<span class="ml">അഭികേന്ദ്രബലം</span>) – <a href="11_free_fall_circular_motion.html">page 11</a>.</li>
+</ul></div>
+
+<h2 id="planets">1. Your weight on other worlds</h2>
+<p>Your <b>mass</b> (<span class="ml">മാസ്</span>) – the amount of matter in you – is the same everywhere. Your <b>weight</b> (<span class="ml">ഭാരം</span>) is the pull of the planet or moon you stand on, W = mg, so it changes with g. The g values are the ones in Table 4.4 of your textbook (plus the Moon and Jupiter from “Let us assess”, Q14).</p>
+<div class="lab"><div class="lab-title">⚖️ Planet-weight calculator: W = m × g</div>
+  <svg id="s1" viewBox="0 0 800 320" role="img" aria-label="Bar chart of the weight of the chosen mass on different worlds, and a spring balance"></svg>
+  <div class="controls"><label>mass m (kg) <input id="m1" type="range" min="1" max="150" step="1" value="50"><output></output></label>
+    <label>world <select id="w1"></select></label></div>
+  <div class="readout" id="o1"></div>
+  <p class="hint">Bar length is proportional to g, so it is also proportional to the weight. A spring balance stretches more where the pull is bigger; a common balance (<span class="ml">കോമൺ ബാലൻസ്</span>) would balance the same standard masses on every world.</p>
+  <p class="exam"><b>📝 In the exam this looks like:</b> “Find the weight of a 100 kg object at the centre of the Earth, at the poles, at the equator, on the Moon and on Jupiter (g = 23.1 m/s<sup>2</sup>).” → 0 N, 983 N, 978 N, 162 N, 2310 N (W = mg each time; mass stays 100 kg).</p></div>
+
+<h2 id="coconut">2. The falling coconut</h2>
+<p>Kerala’s tall coconut palms are often 15–25 m high. A coconut that breaks off is in free fall (<span class="ml">നിർബാധ പതനം</span>): it starts from rest (u = 0) and gains 9.8 m/s of speed every second. From s = ut + ½at<sup>2</sup> with u = 0 and a = g, the time to fall a height h is <b>t = √(2h/g)</b>, and it hits the ground with <b>v = gt</b>. Its mass does not appear anywhere – a big coconut and a small one fall together.</p>
+<div class="lab"><div class="lab-title">🥥 Coconut-fall timer: t = √(2h/g), v = gt</div>
+  <svg id="s2" viewBox="0 0 800 320" role="img" aria-label="Coconut tree with a falling coconut and its position every quarter second"></svg>
+  <div class="controls"><label>tree height h (m) <input id="h2" type="range" min="5" max="25" step="1" value="15"><output></output></label>
+    <button class="btn primary" id="drop2">🥥 Drop it!</button><button class="btn" id="moon2">🌙 Try it on the Moon</button></div>
+  <div class="readout" id="o2"></div>
+  <p class="hint">The faint coconuts show where it was every 0.25 s. The gaps grow because the speed keeps increasing – that is what an acceleration looks like.</p>
+  <div class="safety">⚠ Never stand, play or park a scooter under a coconut palm, especially in monsoon wind. A coconut of 1–2 kg falling from 15 m arrives at about 60 km/h. Climbers use a safety belt; harvest only with an adult’s help.</div>
+  <p class="exam"><b>📝 In the exam this looks like:</b> “A stone dropped from the top of a building reaches the ground in 2 s (g = 9.8 m/s<sup>2</sup>). Find the height and the speed just before it touches the ground.” → h = ½gt<sup>2</sup> = ½ × 9.8 × 2<sup>2</sup> = 19.6 m; v = gt = 9.8 × 2 = 19.6 m/s (Let us assess, Q9).</p></div>
+
+<h2 id="cannon">3. Newton’s cannon – how a satellite stays up</h2>
+<p>Newton imagined a cannon on a mountain so high that there is no air. Fire a ball sideways and it falls to the ground in a curve. Fire it faster and it lands farther away. Fire it at about <b>7.9 km/s</b> and the ground curves away beneath it as fast as it falls: it keeps falling <em>around</em> the Earth for ever – it is in <b>orbit</b>. The Earth’s gravity is the <b>centripetal force</b> (<span class="ml">അഭികേന്ദ്രബലം</span>) that bends its path; this is exactly how an artificial satellite (<span class="ml">കൃത്രിമ ഉപഗ്രഹം</span>) works.</p>
+<div class="lab"><div class="lab-title">🚀 Newton’s cannon / orbit simulator</div>
+  <svg id="s3" viewBox="0 0 800 360" role="img" aria-label="Earth with the path of a cannonball fired sideways from a very high mountain"></svg>
+  <div class="controls"><label>launch speed v (km/s) <input id="v3" type="range" min="2" max="12" step="0.1" value="7.9"><output></output></label>
+    <button class="btn primary" id="fire3">💥 Fire!</button></div>
+  <div class="readout" id="o3"></div>
+  <div class="legend4"><div><b>below ≈ 7.9 km/s</b>falls back to the ground</div><div><b>≈ 7.9 km/s</b>circles the Earth (orbit) in about 85–90 min</div><div><b>7.9 – 11.2 km/s</b>an oval (elliptical) orbit</div><div><b>11.2 km/s or more</b>escapes from the Earth</div></div>
+  <p class="hint">The path is worked out step by step from F = GMm/r<sup>2</sup> with the textbook values G = 6.67 × 10<sup>−11</sup> N m<sup>2</sup>/kg<sup>2</sup>, M = 6 × 10<sup>24</sup> kg, R = 6.4 × 10<sup>6</sup> m, firing from 64 km up (1 % of R). Heights above the ground are stretched in the picture so that you can see the paths; the directions and distances along the ground are true. Air is ignored – a real ball fired this fast in air would burn up.</p>
+  <p class="exam"><b>📝 In the exam this looks like:</b> “Where do artificial satellites get the centripetal force needed to go round the Earth?” → From the Earth’s gravitational force; gravity itself acts as the centripetal force, directed towards the centre of the Earth.</p></div>
+
+<h2 id="iss">4. The International Space Station – gravity is still there!</h2>
+<p>Astronauts float inside the ISS, so many people think there is no gravity in space. Use g = GM/r<sup>2</sup>: at a distance r from the centre, g = 9.8 × (R/r)<sup>2</sup>. At 400 km up, r = 6400 + 400 = 6800 km and g ≈ 8.7 m/s<sup>2</sup> – about <b>89 %</b> of the value on the ground. The astronauts float because the station and everything in it are in <b>free fall</b> together, all accelerating at the same g: nothing presses on the floor, so a weighing scale reads zero (<span class="ml">ഭാരമില്ലായ്മ</span>, weightlessness).</p>
+<div class="lab"><div class="lab-title">🛰️ Gravity at a height: g = 9.8 × (R / (R + h))²</div>
+  <svg id="s4" viewBox="0 0 800 330" role="img" aria-label="Space station above the curved Earth with arrows comparing gravity at the station and on the ground"></svg>
+  <div class="controls"><label>height above the ground h (km) <input id="h4" type="range" min="0" max="1000" step="10" value="400"><output></output></label>
+    <button class="btn" data-h="400">🛰️ ISS / Gaganyaan ≈ 400 km</button><button class="btn" data-h="540">🔭 Hubble ≈ 540 km</button><button class="btn" data-h="0">🏠 Ground</button></div>
+  <div class="readout" id="o4"></div>
+  <p class="hint">The orbit speed shown is the speed for which gravity is exactly the centripetal force needed for a circle of radius R + h. India’s Gaganyaan astronauts are planned to orbit at about 400 km too.</p>
+  <p class="exam"><b>📝 In the exam this looks like:</b> “Why do astronauts in a space station orbiting the Earth feel weightless?” → The station and the astronauts fall freely together with the same acceleration; the whole of the gravitational force is used to produce that acceleration, so nothing supports them and a balance reads zero. Gravity there is not zero (≈ 89 % of its value on the ground).</p></div>
+
+<h2 id="tides">5. Tides at Kochi</h2>
+<p>Twice a day the sea at Fort Kochi and Vizhinjam rises (high tide, <span class="ml">വേലിയേറ്റം</span>) and falls (low tide, <span class="ml">വേലിയിറക്കം</span>). The Moon pulls every part of the Earth, but by the inverse-square law it pulls the near side about 3 % more strongly than the Earth’s centre and the far side about 3 % less. So the ocean bulges <b>towards</b> the Moon on the near side and is “left behind” on the far side – <b>two bulges</b>. As the Earth turns, Kochi passes through both bulges: two high tides about 12 h 25 min apart. The Sun does the same, more weakly; at new moon and full moon the two pulls line up and the tides are biggest (spring tides).</p>
+<div class="lab"><div class="lab-title">🌊 Two bulges, two high tides</div>
+  <svg id="s5" viewBox="0 0 800 330" role="img" aria-label="Earth seen from above the North Pole with the ocean bulges, the Moon, Kochi, and a graph of the tide at Kochi"></svg>
+  <div class="controls"><label>time t (hours) <input id="t5" type="range" min="0" max="24.8" step="0.1" value="3"><output></output></label>
+    <button class="btn primary" id="play5">▶ Play one day</button></div>
+  <div class="readout" id="o5"></div>
+  <p class="hint">View from above the North Pole; the Earth spins once a day while the Moon moves only about 13° along its orbit, so the same tide comes back after about 24 h 50 min. The bulges and the arrows are hugely exaggerated – Kochi’s tides are gentle, usually less than about 1 m from low to high.</p>
+  <p class="exam"><b>📝 In the exam this looks like:</b> “The Sun and the Moon exert a force on the Earth. Give one evidence.” → Tides: the regular rise and fall of the sea level (<span class="ml">വേലിയേറ്റം, വേലിയിറക്കം</span>) is caused by the gravitational pull of the Moon (and the Sun) on the Earth’s water – so all bodies in the universe attract one another.</p></div>
+
+<h2 id="rockets">6. Rockets, Sriharikota and Chandrayaan-3</h2>
+<p>To leave the Earth a spacecraft must work against the Earth’s gravity, and that needs a huge amount of energy – a huge rocket full of fuel. ISRO’s LVM3 weighs about 640 tonnes at lift-off, almost all of it fuel. Instead of firing straight at the Moon (which would need an even bigger rocket), Chandrayaan-3 was put into a long orbit around the Earth and its own engine raised that orbit step by step, each time at the point closest to the Earth. Finally the Moon’s gravity captured it. This clever technique let India use a smaller, much cheaper rocket.</p>
+<div class="lab" id="lab6"><div class="lab-title">🌙 Chandrayaan-3, step by step (not to scale)</div>
+  <svg viewBox="0 0 800 320" role="img" aria-label="Chandrayaan-3 mission: launch, Earth orbits raised step by step, transfer to the Moon, lunar orbits and landing"></svg></div>
+<div class="callout think"><div class="title">🔭 Go further (not in the exam): escape speed</div>
+<p>Throw a stone up faster and faster: at about <b>11.2 km/s</b> it would never come back from the Earth (ignoring air). From the Moon, where g is only 1.62 m/s<sup>2</sup>, about 2.4 km/s is enough. That is why leaving the Earth needs giant rockets, while the Chandrayaan lander could fire small engines on the Moon. Landing is the reverse problem: if Vikram’s engines had stopped 100 m above the surface, it would have hit the Moon at v = √(2gh) = √(2 × 1.62 × 100) = 18 m/s, about 65 km/h – a crash. Its engines kept slowing it down so it could touch down gently.</p></div>
+<p class="exam"><b>📝 In the exam this looks like:</b> “Chandrayaan-3 landed softly on the Moon. While coming down, the speed of the lander increases. Why? How was a soft landing made possible?” → The Moon’s gravitational force accelerates the lander towards the Moon; its engines were fired against the motion to reduce the speed gradually until it touched down gently (soft landing, <span class="ml">സോഫ്റ്റ് ലാൻഡിങ്</span>).</p>
+
+<h2 id="check">✅ Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div>
+
+<h2 id="explore">🌐 Explore online – resources hub</h2>
+<p>Everything in this guide works offline. The links below are extras: simulations, short videos and articles from trusted sources (PhET, NASA, ISRO and others), grouped by topic. They <b>need internet</b> and open in a <b>new tab</b>, so you will not lose your place here. <b>Ask a parent or teacher before you go online.</b> The PhET simulations run directly in your browser – nothing to install.</p>
+<h3>Universal law of gravitation</h3><div class="explore"><div class="title">🌐 Universal law of gravitation <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://phet.colorado.edu/en/simulations/gravity-force-lab" target="_blank" rel="noopener noreferrer">🧪 Gravity Force Lab</a> <span class="src">PhET</span><br><span class="note">Change the two masses and the distance and watch the force arrows grow or shrink – see the inverse-square law yourself (the sim named in your textbook).</span></li><li><a href="https://phet.colorado.edu/en/simulations/gravity-force-lab-basics" target="_blank" rel="noopener noreferrer">🧪 Gravity Force Lab: Basics</a> <span class="src">PhET</span><br><span class="note">A simpler version: drag two spheres apart or together and read the force – both feel equal and opposite forces.</span></li><li><a href="https://phet.colorado.edu/en/simulations/gravity-and-orbits" target="_blank" rel="noopener noreferrer">🧪 Gravity and Orbits</a> <span class="src">PhET</span><br><span class="note">Switch gravity off and watch the Moon fly away in a straight line – gravity is what keeps it orbiting.</span></li><li><a href="https://phet.colorado.edu/en/simulations/my-solar-system" target="_blank" rel="noopener noreferrer">🧪 My Solar System</a> <span class="src">PhET</span><br><span class="note">Build your own sun-and-planet system and see how mass and distance shape the orbits.</span></li><li><a href="https://www.khanacademy.org/v/introduction-to-newton-s-law-of-gravitation" target="_blank" rel="noopener noreferrer">▶️ Introduction to Newton&#x27;s law of gravitation (Khan Academy)</a> <span class="src">Khan Academy</span><br><span class="note">Sal Khan explains F = G m1 m2 / r² step by step with simple examples.</span></li><li><a href="https://www.youtube.com/watch?v=SN1Q5ru2fI0" target="_blank" rel="noopener noreferrer">▶️ Calculating Gravitational Attraction</a> <span class="src">YouTube – Veritasium · 3:31</span><br><span class="note">Just how tiny is the gravitational pull between two everyday objects? Derek works it out.</span></li></ul></div><h3>Measuring G (Cavendish)</h3><div class="explore"><div class="title">🌐 Measuring G (Cavendish) <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.youtube.com/watch?v=70-_GBymrck" target="_blank" rel="noopener noreferrer">▶️ Watch gravity pull two metal balls together</a> <span class="src">YouTube – Steve Mould · 12:47</span><br><span class="note">A home-built Cavendish torsion balance: you actually see lead balls being pulled together by gravity, the way G was first measured.</span></li><li><a href="https://en.wikipedia.org/wiki/Cavendish_experiment" target="_blank" rel="noopener noreferrer">📄 Cavendish experiment (Wikipedia)</a> <span class="src">Wikipedia</span><br><span class="note">Diagram and history of Henry Cavendish&#x27;s 1798 torsion-balance experiment that measured G (and &#x27;weighed the Earth&#x27;).</span></li></ul></div><h3>Free fall and g</h3><div class="explore"><div class="title">🌐 Free fall and g <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://science.nasa.gov/resource/the-apollo-15-hammer-feather-drop/" target="_blank" rel="noopener noreferrer">▶️ The Apollo 15 Hammer-Feather Drop</a> <span class="src">NASA</span><br><span class="note">Astronaut David Scott drops a hammer and a falcon feather on the airless Moon – they land together.</span></li><li><a href="https://www.youtube.com/watch?v=oYEgdZ3iEKA" target="_blank" rel="noopener noreferrer">▶️ Apollo 15 Hammer-Feather Drop</a> <span class="src">YouTube – NASA Solar System · 1:23</span><br><span class="note">Original 1971 footage of the hammer and feather falling side by side on the Moon.</span></li><li><a href="https://www.youtube.com/watch?v=ZVfhztmK9zI" target="_blank" rel="noopener noreferrer">▶️ Apollo 15 Proves Galileo Correct</a> <span class="src">YouTube – NASA Video · 0:48</span><br><span class="note">A quick NASA clip of the same Moon experiment, proving Galileo right.</span></li><li><a href="https://www.youtube.com/watch?v=E43-CfukEgs" target="_blank" rel="noopener noreferrer">▶️ Brian Cox visits the world&#x27;s biggest vacuum | Human Universe - BBC</a> <span class="src">YouTube – BBC · 4:42</span><br><span class="note">In NASA&#x27;s giant vacuum chamber a bowling ball and feathers are dropped together – with no air, they fall at exactly the same rate.</span></li></ul></div><h3>Feather and coin</h3><div class="explore"><div class="title">🌐 Feather and coin <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.youtube.com/watch?v=AV-qyDnZx0A" target="_blank" rel="noopener noreferrer">▶️ Feather and Coin in a Vacuum (A8) [1C20.10]</a> <span class="src">YouTube – MIT Physics Instructional Resources Lab · 2:09</span><br><span class="note">A coin and feather in a glass tube: with air the feather lags, after pumping out the air they fall together.</span></li></ul></div><h3>Why g changes from place to place</h3><div class="explore"><div class="title">🌐 Why g changes from place to place <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.esa.int/Applications/Observing_the_Earth/FutureEO/GOCE" target="_blank" rel="noopener noreferrer">📄 GOCE (Gravity field and steady-state Ocean Circulation Explorer)</a> <span class="src">ESA</span><br><span class="note">ESA&#x27;s satellite that mapped how Earth&#x27;s gravity differs from place to place.</span></li><li><a href="https://www.youtube.com/watch?v=qu-o75pe5GY" target="_blank" rel="noopener noreferrer">▶️ GOCE: Geoid</a> <span class="src">YouTube – European Space Agency, ESA · 4:34</span><br><span class="note">Animated globe showing the geoid – the shape Earth&#x27;s oceans would take under gravity alone.</span></li><li><a href="https://gracefo.jpl.nasa.gov/" target="_blank" rel="noopener noreferrer">📄 GRACE-FO mission</a> <span class="src">NASA</span><br><span class="note">Twin NASA/German satellites chase each other around Earth and measure tiny changes in gravity.</span></li><li><a href="https://www.youtube.com/watch?v=s93i7m82h54" target="_blank" rel="noopener noreferrer">▶️ Tracking Water from Space: The GRACE-FO Mission</a> <span class="src">YouTube – NASA Jet Propulsion Laboratory · 2:15</span><br><span class="note">Short animation of how two satellites measure Earth&#x27;s gravity by tracking the distance between them.</span></li></ul></div><h3>Mass and weight</h3><div class="explore"><div class="title">🌐 Mass and weight <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.exploratorium.edu/ronh/weight/" target="_blank" rel="noopener noreferrer">📄 Your Weight on Other Worlds</a> <span class="src">Exploratorium</span><br><span class="note">Type in your weight and see what you would weigh on the Moon, Mars, Jupiter and more – your mass stays the same.</span></li></ul></div><h3>Weightlessness and microgravity</h3><div class="explore"><div class="title">🌐 Weightlessness and microgravity <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.nasa.gov/learning-resources/for-kids-and-students/what-is-microgravity-grades-5-8/" target="_blank" rel="noopener noreferrer">📄 What Is Microgravity? (Grades 5-8)</a> <span class="src">NASA</span><br><span class="note">NASA explains why astronauts float: the ISS and everything in it is in continuous free fall.</span></li><li><a href="https://www.youtube.com/watch?v=iQOHRKKNNLQ" target="_blank" rel="noopener noreferrer">▶️ Why Are Astronauts Weightless?</a> <span class="src">YouTube – Veritasium · 3:41</span><br><span class="note">Gravity at the ISS is still about 90% of Earth&#x27;s – find out why astronauts float anyway.</span></li><li><a href="https://www.youtube.com/watch?v=-luKN6mad5w" target="_blank" rel="noopener noreferrer">▶️ STEMonstrations: Newton&#x27;s First Law of Motion</a> <span class="src">YouTube – NASA Johnson · 4:20</span><br><span class="note">Astronauts on the ISS show how objects move in microgravity.</span></li><li><a href="https://www.isro.gov.in/Gaganyaan.html" target="_blank" rel="noopener noreferrer">📄 Gaganyaan – ISRO</a> <span class="src">ISRO</span><br><span class="note">India&#x27;s human spaceflight programme that will send Indian astronauts (gaganyatris) to orbit.</span></li><li><a href="https://www.youtube.com/watch?v=43hjjGeWs7U" target="_blank" rel="noopener noreferrer">▶️ Gaganyaan: Just the beginning</a> <span class="src">YouTube – ISRO Official · 1:03</span><br><span class="note">ISRO&#x27;s short film on the Gaganyaan human spaceflight mission.</span></li></ul></div><h3>Circular motion</h3><div class="explore"><div class="title">🌐 Circular motion <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://phet.colorado.edu/en/simulations/rotation" target="_blank" rel="noopener noreferrer">🧪 Ladybug Revolution</a> <span class="src">PhET</span><br><span class="note">Put ladybugs on a spinning turntable and watch velocity and acceleration arrows – acceleration points to the centre.</span></li><li><a href="https://www.youtube.com/watch?v=KvCezk9DJfk" target="_blank" rel="noopener noreferrer">▶️ Centripetal Force</a> <span class="src">YouTube – Planet Nutshell · 1:46</span><br><span class="note">A quick animated explanation of the centre-seeking force needed for circular motion.</span></li><li><a href="https://www.youtube.com/watch?v=4bMawIIWi7w" target="_blank" rel="noopener noreferrer">▶️ Centripetal force | Physics | Khan Academy</a> <span class="src">YouTube – Khan Academy · 13:40</span><br><span class="note">Longer Khan Academy lesson on what provides the centripetal force in different situations.</span></li></ul></div><h3>Satellites, Chandrayaan and ISRO</h3><div class="explore"><div class="title">🌐 Satellites, Chandrayaan and ISRO <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.isro.gov.in/Chandrayaan3.html" target="_blank" rel="noopener noreferrer">📄 Chandrayaan-3 – ISRO</a> <span class="src">ISRO</span><br><span class="note">Official ISRO page on India&#x27;s Moon landing mission (soft landing near the lunar south pole, 23 Aug 2023).</span></li><li><a href="https://www.youtube.com/watch?v=DLA_64yz8Ss" target="_blank" rel="noopener noreferrer">▶️ Chandrayaan-3 Mission Soft-landing LIVE Telecast</a> <span class="src">YouTube – ISRO Official · 1:11:16</span><br><span class="note">ISRO&#x27;s official live broadcast of Vikram lander touching down on the Moon (landing near the end).</span></li><li><a href="https://www.isro.gov.in/Aditya_L1.html" target="_blank" rel="noopener noreferrer">📄 Aditya-L1 – ISRO</a> <span class="src">ISRO</span><br><span class="note">India&#x27;s Sun-watching spacecraft parked at the L1 point, where Earth&#x27;s and Sun&#x27;s gravity balance.</span></li><li><a href="https://www.youtube.com/watch?v=_IcgGYZTXQw" target="_blank" rel="noopener noreferrer">▶️ Launch of PSLV-C57/Aditya-L1 Mission from Satish Dhawan Space Centre (SDSC) SHAR, Sriharikota</a> <span class="src">YouTube – ISRO Official · 1:50:56</span><br><span class="note">Official ISRO broadcast of the PSLV launch carrying Aditya-L1.</span></li><li><a href="https://www.isro.gov.in/PSLV_CON.html" target="_blank" rel="noopener noreferrer">📄 PSLV – ISRO</a> <span class="src">ISRO</span><br><span class="note">ISRO&#x27;s workhorse rocket that places satellites into orbit.</span></li></ul></div><h3>Thanu Padmanabhan</h3><div class="explore"><div class="title">🌐 Thanu Padmanabhan <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://en.wikipedia.org/wiki/Thanu_Padmanabhan" target="_blank" rel="noopener noreferrer">📄 Thanu Padmanabhan (Wikipedia)</a> <span class="src">Wikipedia</span><br><span class="note">Life and work of the Thiruvananthapuram-born cosmologist who studied the nature of gravity.</span></li><li><a href="https://web.iucaa.in/tributes/paddy/" target="_blank" rel="noopener noreferrer">📄 T. Padmanabhan Tribute Page (IUCAA)</a> <span class="src">IUCAA</span><br><span class="note">IUCAA&#x27;s tribute to &#x27;Paddy&#x27; (1957–2021), where he worked from 1992.</span></li><li><a href="https://www.youtube.com/watch?v=FcgWdgmYoCI" target="_blank" rel="noopener noreferrer">▶️ Thanu Padmanabhan: Atoms of Spacetime and the Nature of Gravity (EmQM15)</a> <span class="src">YouTube – Fetzer Franklin Fund · 46:05</span><br><span class="note">A real research talk by Padmanabhan himself – advanced, but nice to see him speak about gravity.</span></li></ul></div><h3>Black holes</h3><div class="explore"><div class="title">🌐 Black holes <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://eventhorizontelescope.org/press-release-april-10-2019-astronomers-capture-first-image-black-hole" target="_blank" rel="noopener noreferrer">🖼️ Press Release (April 10, 2019): Astronomers Capture First Image of a Black Hole</a> <span class="src">Event Horizon Telescope</span><br><span class="note">The first ever picture of a black hole&#x27;s shadow, at the centre of galaxy M87.</span></li><li><a href="https://science.nasa.gov/resource/first-image-of-a-black-hole/" target="_blank" rel="noopener noreferrer">🖼️ First Image of a Black Hole – NASA Science</a> <span class="src">NASA</span><br><span class="note">NASA&#x27;s page with the M87 black hole image.</span></li><li><a href="https://science.nasa.gov/universe/black-holes/" target="_blank" rel="noopener noreferrer">📄 Black Holes – NASA Science</a> <span class="src">NASA</span><br><span class="note">NASA&#x27;s guide to black holes – gravity so strong that not even light escapes.</span></li><li><a href="https://www.youtube.com/watch?v=EJXTZ5jpSmk" target="_blank" rel="noopener noreferrer">▶️ What is a Black Hole? We Asked a NASA Expert</a> <span class="src">YouTube – NASA · 1:34</span><br><span class="note">A NASA scientist explains black holes in 90 seconds.</span></li><li><a href="https://www.youtube.com/watch?v=S_GVbuddri8" target="_blank" rel="noopener noreferrer">▶️ First Image of a Black Hole!</a> <span class="src">YouTube – Veritasium · 5:29</span><br><span class="note">What the 2019 black hole picture actually shows and why it looks like a ring.</span></li></ul></div><h3>Tides</h3><div class="explore"><div class="title">🌐 Tides <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://science.nasa.gov/moon/tides/" target="_blank" rel="noopener noreferrer">📄 Tides – NASA Science</a> <span class="src">NASA</span><br><span class="note">How the Moon&#x27;s gravity pulls on Earth&#x27;s oceans to make high and low tides.</span></li><li><a href="https://www.youtube.com/watch?v=tcGEjzt_4is" target="_blank" rel="noopener noreferrer">▶️ What Causes Tides?</a> <span class="src">YouTube – NOAA SciJinks · 3:34</span><br><span class="note">Animated explanation of why there are two tidal bulges.</span></li><li><a href="https://www.youtube.com/watch?v=nh26C519wuo" target="_blank" rel="noopener noreferrer">▶️ An Apple Falls, But Not the Moon. Why?</a> <span class="src">YouTube – BYJU&#x27;S · 2:28</span><br><span class="note">Newton&#x27;s big idea: the same gravity that drops the apple keeps the Moon in orbit.</span></li></ul></div><h3>Malayalam explainers</h3><div class="explore"><div class="title">🌐 Malayalam explainers <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.youtube.com/watch?v=fBy7ZhJmhFA" target="_blank" rel="noopener noreferrer">▶️ KITE VICTERS ശാസ്ത്ര വിചാരം - ഗ്രാവിറ്റി | Gravity by Vaisakhan Thampi Epi - 19</a> <span class="src">YouTube – itsvicters (KITE VICTERS) · 27:02</span><br><span class="note">Kerala&#x27;s official educational channel: physicist Vaisakhan Thampi talks about gravity in Malayalam (general science talk, not a textbook class).</span></li><li><a href="https://www.youtube.com/watch?v=3VaispCCC2o" target="_blank" rel="noopener noreferrer">▶️ Class 9 Physics | Gravitation / ഗുരുത്വാകർഷണം | Full Chapter | Exam Winner</a> <span class="src">YouTube – Exam Winner Class 9 · 13:03</span><br><span class="note">Quick Malayalam run-through of the new SCERT Class 9 Gravitation chapter (private tuition channel).</span></li><li><a href="https://www.youtube.com/watch?v=_-2CWqQhGIY" target="_blank" rel="noopener noreferrer">▶️ Class 9 Physics | GRAVITATION | ഗുരുത്വാകർഷണം | 15 മിനിറ്റിൽ പഠിക്കാം! 🔥</a> <span class="src">YouTube – PW Keralam Class 9 · 15:03</span><br><span class="note">15-minute Malayalam summary of the chapter (private tuition channel).</span></li></ul></div><h3>More to explore</h3><div class="explore"><div class="title">🌐 More to explore <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://spaceplace.nasa.gov/what-is-gravity/en/" target="_blank" rel="noopener noreferrer">📄 What Is Gravity? (NASA Space Place)</a> <span class="src">NASA</span><br><span class="note">A short, friendly NASA page explaining what gravity is and why everything pulls on everything else.</span></li></ul></div>
+
+<div class="callout"><div class="title">🧭 Next</div>
+<p style="margin:0">Now pull the whole chapter together: <a href="15_summary_revision.html">Summary &amp; Quick Quiz ▶</a></p></div>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Gravitation · Class 9 Physics", "icon": "🌍", "key": "physics_ch4_progress", "pages": [["index.html", "Home"], ["01_force_and_newtons_laws.html", "1 · Force & Newton's Laws Recap"], ["02_mass_weight_units.html", "2 · Mass, Units & the Spring Balance"], ["03_big_numbers_and_ratios.html", "3 · Powers of Ten, Squares & Ratios"], ["04_motion_equations_recap.html", "4 · Equations of Motion Recap"], ["05_earth_pulls_everything.html", "5 · The Earth Pulls Everything"], ["06_universal_law.html", "6 · Universal Law of Gravitation"], ["07_acceleration_due_to_gravity.html", "7 · Acceleration due to Gravity g"], ["08_g_everywhere_moon.html", "8 · Is g the Same Everywhere? The Moon"], ["09_intext_numericals_solutions.html", "9 · In-text Numericals – Solutions"], ["10_mass_and_weight.html", "10 · Mass and Weight"], ["11_free_fall_circular_motion.html", "11 · Weightlessness, Circular Motion & Satellites"], ["12_assess_q1_q7_solutions.html", "12 · Let Us Assess Q1–7 – Solutions"], ["13_assess_q8_q14_solutions.html", "13 · Let Us Assess Q8–14 & Extended Activities"], ["14_applications_explore.html", "14 · Applications & Explore Online"], ["15_summary_revision.html", "15 · Summary & Quick Quiz"], ["16_model_test_paper.html", "16 · Model Test Paper"], ["17_model_test_solutions.html", "17 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ---- gravitation-page helpers shared by pages 14–17 (inlined by _gen/gen.py) ---- */
+const {P, seg, text, dot, polyline, multiText} = K;
+const COL = {red:'var(--red)', blue:'var(--blue)', green:'var(--green)', amber:'var(--accent)', purple:'var(--purple)', text:'var(--text)', muted:'var(--muted)'};
+/* number with a fixed count of decimals, true minus sign: f2(9.7705) → "9.77" */
+const fx = (v, d=2) => K.num(K.fmt(v, d));
+/* scientific notation for SVG text: sci(1.6675e-3, 3) → "1.668 × 10⁻³" */
+function sci(v, d=2){ if (v === 0) return '0'; const e = Math.floor(Math.log10(Math.abs(v))); const m = v / Math.pow(10, e);
+  return K.num(K.fmt(m, d)) + ' × 10' + (e < 0 ? '⁻' : '') + K.supStr(Math.abs(e)); }
+/* working lines: rows = [[step, text, cls], …]; rows whose step ≤ i are shown, the newest fades in. o.x, o.y, o.lh, o.anchor */
+function lines(svg, rows, i, t, o={}){ const x = o.x ?? 400, y0 = o.y ?? 36, lh = o.lh ?? 34, an = o.anchor ?? 'middle'; let k = 0;
+  rows.forEach(r => { if (r[0] > i) return; text(svg, P(x, y0 + k * lh), K.num(r[1]), {class: 'lbl ' + (r[2] || ''), 'text-anchor': an, opacity: r[0] === i ? t : 1}); k++; }); }
+/* force / velocity arrow from a to b with a filled head; o.c colour name, o.w width, o.label, o.lo label offset {x,y}, o.op opacity */
+function arrow(svg, a, b, o={}){ const c = COL[o.c || 'red'], w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const L = K.dist(a, b); if (L < 1){ return g; } const u = K.unit(a, b), hs = Math.min(o.head ?? 11, L * .6); const base = P(b.x - u.x * hs, b.y - u.y * hs);
+  K.el('line', {x1: a.x, y1: a.y, x2: base.x, y2: base.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round'}, g);
+  K.el('polygon', {points: `${b.x},${b.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g);
+  if (o.label) text(g, P(b.x + (o.lo ? o.lo.x : 0), b.y + (o.lo ? o.lo.y : -12)), K.num(o.label), {class: 'lbl sm ' + (o.lc || o.c || 'red'), 'text-anchor': o.anchor || 'middle'});
+  return g; }
+/* the Earth (blue disc with two green "continents") and the Moon (grey disc with craters) */
+function earth(svg, c, r, attrs={}){ const g = K.group(svg, attrs); K.el('circle', {cx: c.x, cy: c.y, r, class: 'fill-blue', stroke: 'var(--blue)', 'stroke-width': 2}, g);
+  if (r > 14){ K.el('ellipse', {cx: c.x - r * .3, cy: c.y - r * .25, rx: r * .32, ry: r * .22, class: 'fill-green', stroke: 'var(--green)', 'stroke-width': 1}, g);
+    K.el('ellipse', {cx: c.x + r * .35, cy: c.y + r * .3, rx: r * .22, ry: r * .3, class: 'fill-green', stroke: 'var(--green)', 'stroke-width': 1}, g); } return g; }
+function moon(svg, c, r, attrs={}){ const g = K.group(svg, attrs); K.el('circle', {cx: c.x, cy: c.y, r, class: 'fill-surface', stroke: 'var(--muted)', 'stroke-width': 2}, g);
+  if (r > 8){ [[-.3, -.25, .18], [.3, .1, .14], [-.05, .4, .12]].forEach(([dx, dy, k]) => K.el('circle', {cx: c.x + dx * r, cy: c.y + dy * r, r: k * r, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 1}, g)); } return g; }
+/* a coconut: brown-green ball */
+function coconut(svg, c, r=9, attrs={}){ return K.el('circle', {cx: c.x, cy: c.y, r, fill: '#8b5a2b', stroke: '#4a2f12', 'stroke-width': 1.5, ...attrs}, svg); }
+/* a vertical spring balance hanging from (x, y0): reading 0..1 sets the stretch; label under the hook */
+function springBalance(svg, x, y0, frac, label, o={}){ const g = K.group(svg); const L = 46 + 70 * Math.max(0, Math.min(1, frac));
+  K.el('rect', {x: x - 16, y: y0, width: 32, height: 22, rx: 4, class: 'fill-surface', stroke: 'var(--text)', 'stroke-width': 1.5}, g);
+  const n = 10, pts = [P(x, y0 + 22)]; for (let k = 1; k < n; k++) pts.push(P(x + (k % 2 ? 9 : -9), y0 + 22 + L * k / n)); pts.push(P(x, y0 + 22 + L));
+  polyline(g, pts, {stroke: 'var(--muted)', 'stroke-width': 2});
+  const yb = y0 + 22 + L; K.el('rect', {x: x - 22, y: yb, width: 44, height: 26, rx: 3, class: o.cls || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g);
+  if (o.mass) text(g, P(x, yb + 13), o.mass, {class: 'lbl sm'});
+  if (label) text(g, P(x, yb + 44), K.num(label), {class: 'lbl sm ' + (o.lc || 'blue')});
+  return g; }
+
+const $ = s => document.querySelector(s);
+const GM = 6.67e-11 * 6e24, RE = 6.4e6;
+
+/* ---------- 1. planet weights ---------- */
+const WORLDS = [['Moon', 'ചന്ദ്രൻ', 1.62], ['Mercury', 'ബുധൻ', 3.7], ['Mars', 'ചൊവ്വ', 3.7], ['Uranus', 'യൂറാനസ്', 8.7], ['Venus', 'ശുക്രൻ', 8.9], ['Saturn', 'ശനി', 9.0],
+  ['Earth – equator', 'ഭൂമധ്യരേഖാപ്രദേശം', 9.78], ['Earth (average)', 'ഭൂമി', 9.8], ['Earth – poles', 'ധ്രുവപ്രദേശം', 9.83], ['Neptune', 'നെപ്റ്റ്യൂൺ', 11.0], ['Jupiter', 'വ്യാഴം', 23.1]];
+const w1 = $('#w1'); WORLDS.forEach((w, k) => { const o = document.createElement('option'); o.value = k; o.textContent = `${w[0]} (${w[1]}) – g = ${K.fmt(w[2], 2)} m/s²`; w1.appendChild(o); });
+w1.value = '10';
+function draw1(){ const svg = $('#s1'); K.clear(svg); const m = +$('#m1').value, sel = +w1.value; const x0 = 150, Wmax = 370, y0 = 30, rh = 25;
+  text(svg, P(x0, 13), 'bar length ∝ g ∝ weight W = m g', {class: 'lbl sm muted', 'text-anchor': 'start'});
+  WORLDS.forEach((w, k) => { const y = y0 + k * rh, len = Wmax * w[2] / 23.1, on = k === sel, W = m * w[2];
+    K.el('rect', {x: x0, y, width: len, height: rh - 7, rx: 3, class: on ? 'fill-amber' : 'fill-blue', stroke: on ? 'var(--accent)' : 'var(--blue)', 'stroke-width': on ? 2.5 : 1}, svg);
+    text(svg, P(x0 - 8, y + (rh - 7) / 2), w[0], {class: 'lbl sm' + (on ? ' amber' : ''), 'text-anchor': 'end', 'font-weight': on ? 700 : 400});
+    text(svg, P(x0 + len + 6, y + (rh - 7) / 2), `${K.fmt(w[2], 2)} m/s² → ${fx(W, 1)} N`, {class: 'lbl sm' + (on ? ' amber' : ''), 'text-anchor': 'start', 'font-weight': on ? 700 : 400}); });
+  const W = m * WORLDS[sel][2];
+  seg(svg, P(660, 22), P(740, 22), {class: 'ln thick'});
+  springBalance(svg, 700, 22, W / (150 * 23.1), `W = ${fx(W, 1)} N`, {mass: m + ' kg', lc: 'amber'});
+  multiText(svg, P(700, 262), ['on ' + WORLDS[sel][0], 'mass still ' + m + ' kg'], {class: 'lbl sm muted'}, 17);
+  $('#o1').textContent = `${WORLDS[sel][0]} (${WORLDS[sel][1]}):  W = m × g = ${m} kg × ${K.fmt(WORLDS[sel][2], 2)} m/s² = ${fx(W, 1)} N.\n`
+    + `Mass is still ${m} kg.  An Earth spring balance marked in “kg” would show ${fx(W / 9.8, 1)} kgwt (1 kgwt = 9.8 N).`; }
+K.slider('#m1', draw1, 0); w1.addEventListener('change', draw1);
+
+/* ---------- 2. coconut ---------- */
+let g2 = 9.8, st2 = null, raf2 = null;
+function draw2(){ const svg = $('#s2'); K.clear(svg); const h = +$('#h2').value, k = 10, yG = 292, xT = 150, yTop = yG - h * k, xc = xT + 20;
+  const T = Math.sqrt(2 * h / g2), t = st2 === null ? T : st2;
+  K.el('rect', {x: 0, y: yG, width: 800, height: 28, class: 'fill-green'}, svg); seg(svg, P(0, yG), P(800, yG), {class: 'ground'});
+  /* height ruler */
+  seg(svg, P(60, yG), P(60, yTop), {class: 'ln-muted thin'});
+  for (let m = 0; m <= h; m += 5){ seg(svg, P(55, yG - m * k), P(65, yG - m * k), {class: 'ln-muted thin'}); text(svg, P(48, yG - m * k), m + ' m', {class: 'lbl sm muted', 'text-anchor': 'end'}); }
+  /* palm */
+  K.el('path', {d: `M${xT - 8},${yG} Q${xT - 22},${(yG + yTop) / 2} ${xT},${yTop}`, fill: 'none', stroke: '#8b6b43', 'stroke-width': 9, 'stroke-linecap': 'round'}, svg);
+  [[-70, 18], [-45, -10], [-15, -22], [20, -20], [50, -8], [72, 20]].forEach(([dx, dy]) => K.el('path', {d: `M${xT},${yTop} Q${xT + dx * .5},${yTop + dy - 18} ${xT + dx},${yTop + dy + 14}`, fill: 'none', stroke: 'var(--green)', 'stroke-width': 4, 'stroke-linecap': 'round'}, svg));
+  coconut(svg, P(xT - 8, yTop + 9), 7); coconut(svg, P(xT + 5, yTop + 11), 7);
+  /* strobe images every 0.25 s up to time t */
+  const yAt = tt => yTop + 9 + Math.min(h, .5 * g2 * tt * tt) * k * (h * k - 9) / (h * k);
+  for (let q = .25; q < t - 1e-9; q += .25) coconut(svg, P(xc, yAt(q)), 7, {opacity: .3});
+  const yNow = yAt(t), v = g2 * t; coconut(svg, P(xc, yNow), 9);
+  if (v > .05){ const L = Math.min(70, 3.4 * v), y1 = Math.min(yNow, yG - 6 - L); arrow(svg, P(xc + 18, y1), P(xc + 18, y1 + L), {c: 'red', w: 2.5, label: `v = ${fx(v, 1)} m/s`, lo: {x: 8, y: -L / 2}, anchor: 'start'}); }
+  const rows = [[0, `h = ${h} m,  g = ${K.fmt(g2, 2)} m/s² (${g2 === 9.8 ? 'Earth' : 'Moon'}),  u = 0`, ''], [0, `t = √(2h/g) = √(2 × ${h} / ${K.fmt(g2, 2)}) = ${fx(T, 2)} s`, 'blue'],
+    [0, `v = g t = ${K.fmt(g2, 2)} × ${fx(T, 2)} = ${fx(g2 * T, 1)} m/s`, 'red'], [0, `= ${fx(g2 * T * 3.6, 1)} km/h`, 'red'],
+    [0, `now: t = ${fx(t, 2)} s, fallen ${fx(.5 * g2 * t * t, 2)} m`, 'muted']];
+  lines(svg, rows, 0, 1, {x: 330, y: 50, lh: 34, anchor: 'start'});
+  if (g2 !== 9.8) text(svg, P(330, 230), 'On the Moon the same fall takes about 2.5 times longer.', {class: 'lbl sm purple', 'text-anchor': 'start'});
+  $('#o2').textContent = `Tree ${h} m on the ${g2 === 9.8 ? 'Earth' : 'Moon'}: falls in ${fx(T, 2)} s and hits the ground at ${fx(g2 * T, 1)} m/s (${fx(g2 * T * 3.6, 1)} km/h).`
+    + (g2 === 9.8 ? `  On the Moon it would take ${fx(Math.sqrt(2 * h / 1.62), 2)} s and arrive at only ${fx(Math.sqrt(2 * 1.62 * h), 1)} m/s.` : '  The mass of the coconut never enters the formula.'); }
+function drop2(){ if (raf2) cancelAnimationFrame(raf2); const h = +$('#h2').value, T = Math.sqrt(2 * h / g2), t0 = performance.now();
+  const step = now => { st2 = Math.min(T, (now - t0) / 1000); draw2(); raf2 = st2 < T ? requestAnimationFrame(step) : null; }; st2 = 0; draw2(); raf2 = requestAnimationFrame(step); }
+K.slider('#h2', () => { if (raf2){ cancelAnimationFrame(raf2); raf2 = null; } st2 = null; draw2(); }, 0);
+$('#drop2').addEventListener('click', drop2);
+$('#moon2').addEventListener('click', e => { if (raf2){ cancelAnimationFrame(raf2); raf2 = null; } g2 = g2 === 9.8 ? 1.62 : 9.8; st2 = null; e.target.textContent = g2 === 9.8 ? '🌙 Try it on the Moon' : '🌍 Back to the Earth'; draw2(); });
+
+/* ---------- 3. Newton's cannon ---------- */
+const C3 = P(300, 180), RP = 90, r0 = 1.01 * RE;
+/* heights above the ground are stretched (log scale) so that paths only 64 km up can be seen; directions are exact */
+const toPx = (x, y) => { const r = Math.hypot(x, y), rp = r <= RE ? RP * r / RE : RP + 13 * Math.log(1 + (r - RE) / (.01 * RE)); return P(C3.x + x / r * rp, C3.y - y / r * rp); };
+function orbit(vk){ const v = vk * 1e3; let x = -r0, y = 0, vx = 0, vy = v, t = 0, ang = 0; const dt = 5; const pts = [toPx(x, y)];
+  const E = v * v / 2 - GM / r0, bound = E < 0, a = bound ? -GM / (2 * E) : 0, T = bound ? 2 * Math.PI * Math.sqrt(a * a * a / GM) : 0;
+  let res = 'escape', prevA = Math.atan2(y, x);
+  for (let n = 0; n < 60000; n++){ let r = Math.hypot(x, y); vx += -GM * x / r ** 3 * dt / 2; vy += -GM * y / r ** 3 * dt / 2; x += vx * dt; y += vy * dt; r = Math.hypot(x, y); vx += -GM * x / r ** 3 * dt / 2; vy += -GM * y / r ** 3 * dt / 2; t += dt;
+    const an = Math.atan2(y, x); let d = an - prevA; if (d > Math.PI) d -= 2 * Math.PI; if (d < -Math.PI) d += 2 * Math.PI; ang += d; prevA = an;
+    if (n % 3 === 0) pts.push(toPx(x, y));
+    if (r < RE){ const s = RE / r; pts.push(toPx(x * s, y * s)); res = 'hit'; break; }
+    if (bound && t >= T){ pts.push(toPx(-r0, 0)); res = 'orbit'; break; }
+    if (r > 14 * RE){ res = 'escape'; break; } }
+  return {pts, res, t, ang: Math.abs(ang), a, T, ra: bound ? 2 * a - r0 : 0}; }
+let cur3 = null, raf3 = null, prog3 = 1; const REF3 = [6, 7.5, 7.8].map(v => ({v, o: orbit(v)}));
+function draw3(){ const svg = $('#s3'); K.clear(svg); const vk = +$('#v3').value, o = cur3;
+  earth(svg, C3, RP); text(svg, P(C3.x, C3.y + RP - 22), 'Earth', {class: 'lbl sm blue'});
+  /* cannon on the mountain at the left, pointing "up" = along the tangent */
+  K.polygon(svg, [P(C3.x - RP - 1, C3.y + 16), P(C3.x - RP - 1, C3.y - 16), P(C3.x - RP - 11, C3.y)], {class: 'fill-amber', stroke: 'var(--accent)', 'stroke-width': 1.5});
+  K.el('rect', {x: C3.x - RP - 9, y: C3.y - 22, width: 8, height: 22, rx: 2, fill: 'var(--text)'}, svg);
+  text(svg, P(C3.x - RP - 18, C3.y + 4), 'cannon', {class: 'lbl sm', 'text-anchor': 'end'});
+  REF3.forEach(r => { polyline(svg, r.o.pts, {class: 'ln-muted thin dash'}); const e = r.o.pts[r.o.pts.length - 1]; const u = K.unit(C3, e); text(svg, P(e.x + u.x * 40, e.y + u.y * 30), r.v + ' km/s', {class: 'lbl sm muted'}); });
+  const n = Math.max(2, Math.round(o.pts.length * prog3)), pts = o.pts.slice(0, n);
+  polyline(svg, pts, {class: o.res === 'hit' ? 'ln-red thick' : o.res === 'orbit' ? 'ln-green thick' : 'ln-purple thick'});
+  const low = o.res === 'orbit' && o.ra - r0 < 300e3;
+  const b = (prog3 >= 1 && o.res === 'orbit') ? o.pts[Math.round(o.pts.length / 4)] : pts[pts.length - 1];
+  if (low && prog3 >= 1) text(svg, P(C3.x + 70, C3.y - RP - 34), 'orbit – just above the ground, round and round', {class: 'lbl sm green', 'text-anchor': 'start'});
+  K.el('circle', {cx: b.x, cy: b.y, r: 6, fill: 'var(--text)'}, svg);
+  /* gravity arrow on the ball, towards the centre */
+  if (o.res !== 'escape' || prog3 < 1){ const u = K.unit(b, C3); arrow(svg, b, P(b.x + u.x * 34, b.y + u.y * 34), {c: 'blue', w: 2.5}); }
+  if (prog3 >= 1 && o.res === 'hit') text(svg, P(b.x + (b.x < C3.x ? -12 : 12), b.y + (b.y < C3.y ? -12 : 14)), '💥', {class: 'lbl'});
+  const msg = o.res === 'hit' ? `falls back to the ground, ${fx(RE * o.ang / 1e3, 0)} km away (around the curve), after ${fx(o.t / 60, 1)} min`
+    : o.res === 'orbit' ? (o.ra - r0 < 300e3 ? `ORBIT! goes once round the Earth in ${fx(o.T / 60, 0)} min, then again and again` : `oval (elliptical) orbit: farthest point ${fx((o.ra - RE) / 1e3, 0)} km above the ground; one trip takes ${fx(o.T / 60, 0)} min`)
+    : 'ESCAPES – it never comes back';
+  text(svg, P(790, 20), `v = ${K.fmt(vk, 1)} km/s`, {class: 'lbl big', 'text-anchor': 'end'});
+  text(svg, P(790, 342), 'blue arrow: gravity, always towards the centre', {class: 'lbl sm blue', 'text-anchor': 'end'});
+  $('#o3').textContent = `Launch speed ${K.fmt(vk, 1)} km/s → ${msg}.`; }
+function set3(){ if (raf3){ cancelAnimationFrame(raf3); raf3 = null; } cur3 = orbit(+$('#v3').value); prog3 = 1; draw3(); }
+K.slider('#v3', set3, 1);
+$('#fire3').addEventListener('click', () => { if (raf3) cancelAnimationFrame(raf3); const t0 = performance.now(), ms = 4000;
+  const step = now => { prog3 = Math.min(1, (now - t0) / ms); draw3(); raf3 = prog3 < 1 ? requestAnimationFrame(step) : null; }; prog3 = 0; raf3 = requestAnimationFrame(step); });
+
+/* ---------- 4. ISS ---------- */
+const gAt = h => 9.8 * (6400 / (6400 + h)) ** 2;
+function draw4(h){ const svg = $('#s4'); K.clear(svg); const s = .2, Rp = 6400 * s, C = P(270, 300 + Rp), g = gAt(h), xI = 270, yI = 300 - h * s;
+  K.el('circle', {cx: C.x, cy: C.y, r: Rp + 100 * s, fill: 'var(--blue-soft)', opacity: .45}, svg);
+  K.el('circle', {cx: C.x, cy: C.y, r: Rp, class: 'fill-green', stroke: 'var(--green)', 'stroke-width': 2}, svg);
+  text(svg, P(560, 314), 'Earth’s surface (air ≈ 100 km thick, shaded)', {class: 'lbl sm muted', 'text-anchor': 'start'});
+  /* person on the ground with 9.8 arrow */
+  const xp = 120, yp = C.y - Math.sqrt(Rp * Rp - (xp - C.x) ** 2);
+  K.el('circle', {cx: xp, cy: yp - 26, r: 5, fill: 'var(--text)'}, svg); seg(svg, P(xp, yp - 21), P(xp, yp - 8), {class: 'ln'}); seg(svg, P(xp, yp - 8), P(xp - 5, yp), {class: 'ln'}); seg(svg, P(xp, yp - 8), P(xp + 5, yp), {class: 'ln'});
+  arrow(svg, P(xp - 22, yp - 98), P(xp - 22, yp - 98 + 9 * 9.8), {c: 'blue', w: 3, label: '9.8 m/s²', lo: {x: -6, y: -96}, anchor: 'end'});
+  /* station */
+  const gS = K.group(svg); K.el('rect', {x: xI - 12, y: yI - 7, width: 24, height: 14, rx: 3, class: 'fill-surface', stroke: 'var(--text)', 'stroke-width': 1.5}, gS);
+  K.el('rect', {x: xI - 44, y: yI - 5, width: 28, height: 10, class: 'fill-blue', stroke: 'var(--blue)'}, gS); K.el('rect', {x: xI + 16, y: yI - 5, width: 28, height: 10, class: 'fill-blue', stroke: 'var(--blue)'}, gS);
+  if (h > 20){ arrow(svg, P(xI, yI + 8), P(xI, yI + 8 + 9 * g), {c: 'red', w: 3}); text(svg, P(xI + 10, yI + 8 + 4.5 * g), `${fx(g, 2)} m/s²`, {class: 'lbl sm red', 'text-anchor': 'start'}); }
+  if (h > 20) arrow(svg, P(xI + 48, yI), P(xI + 110, yI), {c: 'green', w: 2.5, label: 'orbit speed', lo: {x: 0, y: -12}});
+  /* inset: inside the cabin */
+  K.el('rect', {x: 18, y: 14, width: 175, height: 112, rx: 10, class: 'fill-surface', stroke: 'var(--border)'}, svg);
+  text(svg, P(105, 30), 'inside the station', {class: 'lbl sm muted'});
+  K.el('rect', {x: 75, y: 104, width: 60, height: 9, rx: 2, class: 'fill-amber', stroke: 'var(--accent)'}, svg); text(svg, P(160, 109), h > 20 ? '0 N' : '…', {class: 'lbl sm amber'});
+  const ya = h > 20 ? 62 : 80; K.el('circle', {cx: 105, cy: ya - 16, r: 6, fill: 'var(--purple)'}, svg); seg(svg, P(105, ya - 10), P(105, ya + 6), {class: 'ln-purple'});
+  seg(svg, P(105, ya - 4), P(93, ya - 12), {class: 'ln-purple'}); seg(svg, P(105, ya - 4), P(117, ya - 12), {class: 'ln-purple'}); seg(svg, P(105, ya + 6), P(97, ya + 18), {class: 'ln-purple'}); seg(svg, P(105, ya + 6), P(113, ya + 18), {class: 'ln-purple'});
+  const r = (6400 + h) * 1e3, v = Math.sqrt(g * r), T = 2 * Math.PI * r / v;
+  lines(svg, [[0, `h = ${h} km,  r = R + h = ${6400 + h} km`, ''], [0, `g = 9.8 × (6400 / ${6400 + h})² = ${fx(g, 2)} m/s²`, 'red'], [0, `= ${fx(100 * g / 9.8, 1)} % of the value on the ground`, 'red'],
+    [0, h > 20 ? `orbit speed ≈ ${fx(v / 1e3, 2)} km/s,  one orbit ≈ ${fx(T / 60, 0)} min` : 'on the ground the floor holds you up', 'green'],
+    [0, h > 20 ? 'station + astronaut fall together → scale reads 0' : 'scale reads your full weight mg', 'purple']], 0, 1, {x: 430, y: 34, lh: 30, anchor: 'start'});
+  const m = 70; $('#o4').textContent = `At ${h} km a 70 kg astronaut is still pulled with mg = 70 × ${fx(g, 2)} = ${fx(m * g, 0)} N (on the ground 686 N).`
+    + (h > 20 ? `\nBut the station and the astronaut fall together around the Earth, so the scale under the feet reads 0 N – weightlessness, not “no gravity”.` : `\nThe ground pushes back on the feet, so a bathroom scale shows the full weight.`); }
+const run4 = K.slider('#h4', draw4, 0);
+document.querySelectorAll('[data-h]').forEach(b => b.addEventListener('click', () => { $('#h4').value = b.dataset.h; run4(); }));
+
+/* ---------- 5. tides ---------- */
+const WE = 360 / 23.934, WM = 360 / (27.32 * 24); let raf5 = null;
+function draw5(t){ const svg = $('#s5'); K.clear(svg); const C = P(165, 160), r = 58; const thM = 15 + WM * t, thK = 15 + WE * t;
+  const dir = th => P(Math.cos(K.rad(th)), -Math.sin(K.rad(th)));
+  const dm = dir(thM), Mc = P(C.x + dm.x * 128, C.y + dm.y * 128);
+  K.el('ellipse', {cx: C.x, cy: C.y, rx: r + 22, ry: r + 4, transform: `rotate(${-thM} ${C.x} ${C.y})`, class: 'fill-blue', stroke: 'var(--blue)', 'stroke-width': 2}, svg);
+  K.el('circle', {cx: C.x, cy: C.y, r: r - 6, class: 'fill-green', stroke: 'var(--green)', 'stroke-width': 1.5}, svg);
+  moon(svg, Mc, 13); text(svg, P(Mc.x, Mc.y - 22), 'Moon', {class: 'lbl sm'});
+  /* pull of the Moon at the near side, centre and far side (differences exaggerated) */
+  [[r + 20, 30, 'near'], [0, 22, ''], [-(r + 20), 15, 'far']].forEach(([off, L]) => { const a = P(C.x + dm.x * off, C.y + dm.y * off); arrow(svg, a, P(a.x + dm.x * L, a.y + dm.y * L), {c: 'purple', w: 2.5, head: 8}); });
+  const dk = dir(thK), Kp = P(C.x + dk.x * (r - 6), C.y + dk.y * (r - 6)); K.el('circle', {cx: Kp.x, cy: Kp.y, r: 6, fill: 'var(--red)', stroke: 'var(--svgbg)', 'stroke-width': 2}, svg);
+  const dl = dir(thK + 22); text(svg, P(C.x + dl.x * (r + 34), C.y + dl.y * (r + 34)), 'Kochi', {class: 'lbl sm red'});
+  /* graph */
+  const bx = 360, bw = 420, by = 60, bh = 200, X = tt => bx + tt / 24.8 * bw, Y = v => by + bh / 2 - v * bh / 2 * .8;
+  const hK = tt => Math.cos(2 * K.rad((WE - WM) * tt));
+  seg(svg, P(bx, Y(0)), P(bx + bw, Y(0)), {class: 'ln-muted thin'}); seg(svg, P(bx, by), P(bx, by + bh), {class: 'ln-muted thin'});
+  text(svg, P(bx + bw, by - 30), 'sea level at Kochi', {class: 'lbl sm muted', 'text-anchor': 'end'});
+  text(svg, P(bx - 6, Y(1)), 'high', {class: 'lbl sm blue', 'text-anchor': 'end'}); text(svg, P(bx - 6, Y(-1)), 'low', {class: 'lbl sm blue', 'text-anchor': 'end'});
+  for (let hh = 0; hh <= 24; hh += 6){ seg(svg, P(X(hh), by + bh), P(X(hh), by + bh + 5), {class: 'ln-muted thin'}); text(svg, P(X(hh), by + bh + 18), hh + ' h', {class: 'lbl sm muted'}); }
+  const pts = []; for (let k = 0; k <= 200; k++){ const tt = 24.8 * k / 200; pts.push(P(X(tt), Y(hK(tt)))); } polyline(svg, pts, {class: 'ln-blue thick'});
+  seg(svg, P(X(t), by), P(X(t), by + bh), {class: 'ln-red thin dash'}); K.el('circle', {cx: X(t), cy: Y(hK(t)), r: 6, fill: 'var(--red)'}, svg);
+  text(svg, P(X(t), by - 6), `t = ${K.fmt(t, 1)} h`, {class: 'lbl sm red', 'text-anchor': X(t) > bx + bw - 40 ? 'end' : (X(t) < bx + 40 ? 'start' : 'middle')});
+  const rising = Math.sin(2 * K.rad((WE - WM) * t)) < 0, lvl = hK(t);
+  $('#o5').textContent = `t = ${K.fmt(t, 1)} h: the sea at Kochi is ${lvl > .8 ? 'at HIGH TIDE (Kochi is under a bulge)' : lvl < -.8 ? 'at LOW TIDE (Kochi is between the bulges)' : rising ? 'rising' : 'falling'}.\nHigh tides at about 0 h and 12.4 h, low tides at about 6.2 h and 18.6 h; the cycle repeats after 24.8 h.`; }
+const run5 = K.slider('#t5', t => { draw5(t); }, 1);
+$('#play5').addEventListener('click', () => { if (raf5) cancelAnimationFrame(raf5); const t0 = performance.now(), ms = 9000, inp = $('#t5');
+  const step = now => { const f = Math.min(1, (now - t0) / ms); inp.value = (24.8 * f).toFixed(1); run5(); raf5 = f < 1 ? requestAnimationFrame(step) : null; }; raf5 = requestAnimationFrame(step); });
+
+/* ---------- 6. Chandrayaan-3 stepper ---------- */
+const E6 = P(150, 165), M6 = P(690, 150), RP6 = 36, RA = [95, 150, 215, 290, 370, 450];
+function ell(svg, F, rp, ra, side, attrs){ const a = (rp + ra) / 2, b = Math.sqrt(rp * ra), cx = F.x + side * (ra - rp) / 2; return K.el('ellipse', {cx, cy: F.y, rx: a, ry: b, fill: 'none', ...attrs}, svg); }
+function craft(svg, p){ K.el('rect', {x: p.x - 5, y: p.y - 5, width: 10, height: 10, rx: 2, fill: 'var(--accent)', stroke: 'var(--text)', 'stroke-width': 1}, svg); }
+new K.Stepper('#lab6', {steps: [
+  '🚀 <b>14 July 2023, Sriharikota.</b> LVM3-M4 lifts off from the Satish Dhawan Space Centre. It must push against the Earth’s gravity (blue arrow), so it is huge: about 640 tonnes, mostly fuel.',
+  '🛰️ <b>Parking orbit.</b> About 16 minutes later Chandrayaan-3 is in a long oval orbit round the Earth, roughly 170 km × 36,500 km above the ground. The Earth’s gravity is the centripetal force that keeps it going round.',
+  '🔥 <b>Orbit-raising, 15–25 July.</b> Each time it passes closest to the Earth it fires its engine for a short time. The far point rises – five burns, five bigger ovals, using little fuel each time.',
+  '➡️ <b>1 August: trans-lunar injection.</b> One more burn at the closest point sends it on a long path out towards the Moon.',
+  '🌙 <b>5 August: captured by the Moon.</b> Near the Moon the engine fires to slow down, so the Moon’s gravity can hold it in orbit round the Moon.',
+  '⬇️ <b>6–16 August: orbit lowered</b> step by step to about 150 km × 160 km. On 17 August the lander Vikram separates.',
+  '✅ <b>23 August 2023, about 6:04 pm IST: soft landing</b> near the Moon’s south pole. The Moon’s gravity (blue) keeps speeding the lander up, so its engines push against the motion (orange) and slow it down until it touches down gently. The rover Pragyan rolls out. 🇮🇳'],
+  draw(svg, i, t){
+    earth(svg, E6, RP6 - 8); text(svg, E6, 'Earth', {class: 'lbl sm blue'}); moon(svg, M6, 13); text(svg, P(M6.x + 42, M6.y), 'Moon', {class: 'lbl sm', 'text-anchor': 'start'});
+    if (i === 0){ const y = E6.y - 30 - 50 * t; K.polygon(svg, [P(E6.x, y - 16), P(E6.x - 6, y + 8), P(E6.x + 6, y + 8)], {class: 'fill-amber', stroke: 'var(--accent)', 'stroke-width': 1.5});
+      K.polygon(svg, [P(E6.x - 4, y + 9), P(E6.x + 4, y + 9), P(E6.x, y + 9 + 14 * (.6 + .4 * Math.sin(t * 30)))], {fill: 'var(--red)'});
+      arrow(svg, P(E6.x + 22, y - 10), P(E6.x + 22, y + 22), {c: 'blue', w: 2.5, label: 'gravity', lo: {x: 8, y: -16}, anchor: 'start'});
+      text(svg, P(E6.x + 60, E6.y - 120), 'LVM3-M4 from Sriharikota', {class: 'lbl sm', 'text-anchor': 'start'}); return; }
+    const nE = i === 1 ? 1 : (i === 2 ? 1 + Math.ceil(5 * Math.max(.01, t)) : 6);
+    for (let k = 0; k < nE; k++){ const last = (i <= 2 && k === nE - 1); ell(svg, E6, RP6, RA[k], 1, {stroke: last ? 'var(--accent)' : 'var(--muted)', 'stroke-width': last ? 2.5 : 1.2, 'stroke-dasharray': last ? null : '4 4'}); }
+    if (i <= 2){ const ra = RA[nE - 1]; const a = (RP6 + ra) / 2, b = Math.sqrt(RP6 * ra), cx = E6.x + (ra - RP6) / 2, th = 2 * Math.PI * (i === 1 ? t : (5 * t) % 1);
+      craft(svg, P(cx - a * Math.cos(th), E6.y - b * Math.sin(th)));
+      if (i === 2){ K.el('circle', {cx: E6.x - RP6, cy: E6.y, r: 6, fill: 'var(--red)', opacity: .8}, svg); text(svg, P(E6.x - RP6 - 10, E6.y - 14), 'burn here', {class: 'lbl sm red', 'text-anchor': 'end'}); }
+      text(svg, P(E6.x + RA[nE - 1] + 6, E6.y), i === 1 ? '36,500 km' : `${nE - 1} burn${nE - 1 === 1 ? '' : 's'}`, {class: 'lbl sm amber', 'text-anchor': 'start'}); return; }
+    /* transfer path from Earth perigee to the Moon */
+    const tr = []; for (let k = 0; k <= 60; k++){ const f = k / 60; tr.push(P(E6.x - RP6 + (M6.x - 40 - (E6.x - RP6)) * f, E6.y - Math.sin(Math.PI * f) * 120 + (M6.y - E6.y) * f * f)); }
+    const nT = i === 3 ? Math.max(2, Math.round(60 * t)) : 61; polyline(svg, tr.slice(0, nT), {class: i === 3 ? 'ln-amber thick' : 'ln-muted dash'});
+    if (i === 3){ craft(svg, tr[nT - 1]); text(svg, P(420, 30), 'towards the Moon', {class: 'lbl sm amber'}); return; }
+    const LO = [[18, 120], [18, 70], [18, 38], [17, 22]];
+    const nL = i === 4 ? 1 : (i === 5 ? 1 + Math.ceil(3 * Math.max(.01, t)) : 4);
+    for (let k = 0; k < nL; k++){ const last = i <= 5 && k === nL - 1; ell(svg, M6, LO[k][0], LO[k][1], -1, {stroke: last ? 'var(--accent)' : 'var(--muted)', 'stroke-width': last ? 2.5 : 1.2, 'stroke-dasharray': last ? null : '4 4'}); }
+    if (i <= 5){ const [rp, ra] = LO[nL - 1]; const a = (rp + ra) / 2, b = Math.sqrt(rp * ra), cx = M6.x - (ra - rp) / 2, th = 2 * Math.PI * t; craft(svg, P(cx + a * Math.cos(th), M6.y - b * Math.sin(th)));
+      text(svg, P(560, 290), i === 4 ? 'captured by the Moon’s gravity' : 'orbit lowered; Vikram separates', {class: 'lbl sm amber'}); return; }
+    /* landing inset */
+    const bx = 330, by = 190; K.el('rect', {x: bx, y: by, width: 250, height: 120, rx: 10, class: 'fill-surface', stroke: 'var(--border)'}, svg);
+    K.el('path', {d: `M${bx + 8},${by + 104} Q${bx + 125},${by + 96} ${bx + 242},${by + 104}`, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 3}, svg);
+    const ly = by + 28 + 62 * t; K.el('rect', {x: bx + 112, y: ly - 10, width: 26, height: 14, rx: 2, fill: 'var(--accent)', stroke: 'var(--text)'}, svg);
+    seg(svg, P(bx + 114, ly + 4), P(bx + 108, ly + 12), {class: 'ln'}); seg(svg, P(bx + 136, ly + 4), P(bx + 142, ly + 12), {class: 'ln'});
+    if (t < .97) K.polygon(svg, [P(bx + 120, ly + 5), P(bx + 130, ly + 5), P(bx + 125, ly + 20)], {fill: 'var(--red)'});
+    arrow(svg, P(bx + 75, ly - 12), P(bx + 75, ly + 16), {c: 'blue', w: 2.5, label: 'gravity', lo: {x: -4, y: -18}, anchor: 'end'});
+    arrow(svg, P(bx + 175, ly + 16), P(bx + 175, ly - 12), {c: 'amber', w: 2.5, label: 'engine push', lo: {x: 4, y: -2}, anchor: 'start'});
+    text(svg, P(bx + 125, by + 14), t > .97 ? 'Vikram has landed – soft landing!' : 'powered descent', {class: 'lbl sm green'});
+    K.el('circle', {cx: M6.x + 3, cy: M6.y + 12, r: 3, fill: 'var(--red)'}, svg);
+  }});
+
+/* ---------- check yourself ---------- */
+K.mcq('#q1', {q: 'A 100 kg object is taken to Jupiter (g = 23.1 m/s²). Its weight there is', options: ['100 kg', '2310 N', '231 N', '980 N'], answer: 1, explain: 'W = mg = 100 × 23.1 = 2310 N. Its mass is still 100 kg.', hint: 'Weight is a force: W = m × g, in newton.'});
+K.numq('#q2', {q: 'A coconut falls from a 20 m tall palm (g = 9.8 m/s²). How long does it take to reach the ground? (2 decimal places)', unit: 's', answer: 2.02, tol: 0.02, explain: 't = √(2h/g) = √(40/9.8) = √4.08 = 2.02 s.', hint: 'Use h = ½gt² with u = 0, so t = √(2h/g).'});
+K.mcq('#q3', {q: 'Astronauts float inside the space station 400 km above the Earth because', options: ['there is no gravity in space', 'the station and the astronauts are falling freely together', 'there is no air in space', 'the Moon pulls them up'], answer: 1, explain: 'g there is about 8.7 m/s² (≈ 89 %). Everything falls together, so nothing presses on the floor – weightlessness.', hint: 'Work out g at 400 km: 9.8 × (6400/6800)². Is it zero?'});
+K.mcq('#q4', {q: 'Tides at Kochi are caused mainly by', options: ['the wind from the Arabian Sea', 'the gravitational pull of the Moon (and the Sun) on the Earth’s water', 'the heat of the Sun', 'the rotation of the Earth alone'], answer: 1, explain: 'The Moon pulls the near side of the Earth more than the far side, making two bulges of water.', hint: 'Which celestial bodies pull on the Earth?'});
+K.mcq('#q5', {q: 'Fired sideways just above the Earth (no air), a ball goes into orbit if its speed is about', options: ['340 m/s', '1 km/s', '7.9 km/s', '30 km/s'], answer: 2, explain: 'At about 7.9 km/s the ground curves away as fast as the ball falls – it keeps falling round the Earth.', hint: 'Try the Newton’s cannon lab above.'});
+K.numq('#q6', {q: 'Your friend’s mass is 50 kg. What is her weight on the Moon (g = 1.62 m/s²)?', unit: 'N', answer: 81, tol: 0.5, explain: 'W = mg = 50 × 1.62 = 81 N (on the Earth 490 N).', hint: 'W = m × g with the Moon’s g.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>
