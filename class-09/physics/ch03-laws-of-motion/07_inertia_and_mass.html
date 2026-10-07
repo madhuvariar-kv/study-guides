@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inertia and Mass – Laws of Motion</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.qa{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.6rem 1rem;margin:.7rem 0;box-shadow:var(--shadow)}
+.qa p{margin:.25em 0}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.diary{background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:1rem 0}
+.diary h3{margin:.1rem 0 .4rem;color:var(--accent-ink)}
+.obs td,.obs th{text-align:center}
+.sort{list-style:none;padding:0;margin:.4rem 0}
+.sort li{display:flex;flex-wrap:wrap;gap:.4rem .6rem;align-items:center;padding:.5rem .6rem;margin:.35rem 0;border-radius:10px;background:var(--surface2);border-left:5px solid var(--border)}
+.sort li .st{flex:1 1 260px}
+.sort li.ok{border-left-color:var(--green)}
+.sort li.no{border-left-color:var(--red)}
+.sort li .fb{flex-basis:100%;font-size:.9rem}
+.sort li.ok .fb{color:var(--green)}.sort li.no .fb{color:var(--red)}
+#t32 td{width:50%}
+svg .ah-red{fill:var(--red)}svg .ah-blue{fill:var(--blue)}svg .ah-green{fill:var(--green)}svg .ah-purple{fill:var(--purple)}svg .ah-amber{fill:var(--accent)}svg .ah-text{fill:var(--text)}
+svg .body-fill{fill:var(--surface2);stroke:var(--text);stroke-width:1.8}
+svg .wood{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2}
+svg .water{fill:var(--blue);opacity:.45}
+svg .glass{fill:none;stroke:var(--text);stroke-width:2}
+svg .coin{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2}
+svg .sand{fill:var(--accent);opacity:.75}
+</style>
+</head>
+<body data-page="07_inertia_and_mass">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 3 · Section 3</span><span class="chip amber">Textbook pages 59–62</span>
+<h1>Inertia and Mass <span class="ml">ജഡത്വം</span></h1>
+<p class="lead">Why do you fall backwards when a bus starts with a jerk, and forwards when it brakes? Why can a magician pull a tablecloth from under the plates? It is all one idea – <b>inertia</b>, the “laziness” of every object to change its state. Here you test it in five virtual labs and find out how inertia depends on <b>mass</b>.</p>
+
+<div class="callout book"><div class="title">📖 What you need (page 6 of this guide)</div>
+<ul style="margin:0">
+<li><b>Newton's first law:</b> an object stays at rest or in uniform straight-line motion unless an unbalanced external force acts on it.</li>
+<li>State of rest (<span class="ml">നിശ്ചലാവസ്ഥ</span>) and state of motion (<span class="ml">ചലനാവസ്ഥ</span>).</li>
+<li>Mass (<span class="ml">മാസ്</span>) = the amount of matter in an object, in kg.</li>
+</ul></div>
+
+<h2>1. Inside a bus</h2>
+<p><span class="ml">നിശ്ചലമായിരുന്ന ഒരു ബസ്സ് പെട്ടെന്ന് മുന്നോട്ടെടുത്താൽ ബസ്സിൽ നിൽക്കുന്ന യാത്രക്കാർ പിന്നിലേക്ക് ആയുന്നത് കണ്ടിട്ടില്ലേ?</span> – Haven't you seen standing passengers fall backwards when a bus at rest suddenly moves forward? Try it.</p>
+<div class="lab">
+  <div class="lab-title">🚌 KSRTC bus lab</div>
+  <svg id="busSvg" viewBox="0 0 800 260" role="img" aria-label="A bus with standing passengers who lean back when it starts and forward when it brakes"></svg>
+  <div class="controls"><button class="btn primary" id="busStart">▶ Start suddenly</button><button class="btn" id="busBrake">■ Brake suddenly</button><button class="btn" id="busReset">⟲ Reset</button></div>
+  <div class="readout" id="busOut"></div>
+  <p class="hint">The passengers' feet move with the floor (friction), but nothing pushes the upper body at that instant – it carries on doing what it was doing. Model: the bus speeds up at 3 m/s² to 12 m/s (about 43 km/h) and brakes at 5 m/s².</p>
+</div>
+<p>Before the bus started, the passengers were at rest along with the bus. When the bus suddenly moves, their bodies <b>tend to continue in the state of rest</b> – so they fall backwards. This tendency is called <b>inertia of rest</b>.</p>
+<div class="qa"><p><b>Q.</b> <span class="ml">ചലിച്ചുകൊണ്ടിരിക്കുന്ന ബസ്സ് പെട്ടെന്ന് നിർത്തുമ്പോൾ ബസ്സിൽ നിൽക്കുന്ന യാത്രക്കാർ മുന്നോട്ട് ആയുന്നതിന് കാരണമെന്താണ്?</span> – Why do standing passengers fall forward when a moving bus stops suddenly?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">Their bodies were moving forward with the bus. When the bus (and their feet) suddenly stop, the upper body <b>tends to continue moving forward</b> – it has <b>inertia of motion</b> – so they fall forward. <i>Why:</i> no force acted on the upper body to stop it at that instant.</div></div></div>
+<div class="callout think"><div class="title">🔑 Two kinds of inertia (textbook page 59)</div>
+<ul style="margin:0">
+<li><span class="ml">നിശ്ചലാവസ്ഥയിലുള്ള ഒരു വസ്തുവിന് സ്വയം അതിന്റെ അവസ്ഥയ്ക്ക് മാറ്റം വരുത്താൻ കഴിയില്ല. ഇതാണ് നിശ്ചല ജഡത്വം.</span> An object at rest cannot change its state by itself: <b>inertia of rest</b> (<span class="ml">നിശ്ചലജഡത്വം</span>).</li>
+<li><span class="ml">സമചലനത്തിലുള്ള ഒരു വസ്തുവിന് സ്വയം അതിന്റെ ചലനാവസ്ഥയ്ക്ക് മാറ്റം വരുത്താൻ കഴിയില്ല. ഇതാണ് ചലനജഡത്വം.</span> An object in uniform motion cannot change its state of motion by itself: <b>inertia of motion</b> (<span class="ml">ചലനജഡത്വം</span>).</li>
+</ul></div>
+<p>The textbook asks you to analyse both and write your own definition of inertia, then compare it with this one:</p>
+<div class="callout key"><div class="title">⭐ Inertia (textbook page 59)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">ഒരു വസ്തുവിന് അതിന്റെ നിശ്ചലാവസ്ഥയിലോ ചലനാവസ്ഥയിലോ തുടരാനുള്ള പ്രവണതയാണ് ജഡത്വം (inertia).</p>
+<p><b>Inertia</b> is the tendency of an object to continue in its state of rest or of motion.</p></div>
+
+<h2>2. Activity – a bottle on a sheet of paper (Fig 3.6)</h2>
+<p><span class="ml">മേശപ്പുറത്ത് പേപ്പർ വയ്ക്കുക. അടിവശം പരന്ന ഒരു കുപ്പിയിൽ ജലം നിറച്ച് അടച്ചശേഷം പേപ്പറിനു മുകളിൽ വയ്ക്കുക. പേപ്പർ പെട്ടെന്ന് തിരശ്ചീനമായി വലിക്കുക.</span> – Put a sheet of paper on a table and a flat-bottomed bottle filled with water (closed) on it. Pull the paper out sideways, quickly.</p>
+<div class="safety">⚠ Real experiment: use a plastic bottle with its cap closed, not glass. Practise near the middle of the table so the bottle cannot fall off, and pull the paper horizontally (flat), not upwards.</div>
+<div class="lab">
+  <div class="lab-title">🧪 Slow pull or quick jerk?</div>
+  <svg id="ppSvg" viewBox="0 0 800 260" role="img" aria-label="A bottle of water standing on a sheet of paper on a table; the paper is pulled out"></svg>
+  <div class="controls"><label>how sharply you pull (acceleration of the paper) <input id="ppA" type="range" min="2" max="60" step="1" value="40"><output></output> m/s²</label>
+    <button class="btn primary" id="ppGo">▶ Pull the paper</button><button class="btn" id="ppRec">📝 Record</button></div>
+  <div class="readout" id="ppOut"></div>
+  <table class="obs"><thead><tr><th>Pull (m/s²)</th><th>Kind of pull</th><th>Time the paper takes to slide out (s)</th><th>Bottle moved (cm)</th></tr></thead><tbody id="ppTab"></tbody></table>
+  <p class="hint">Model: friction between paper and bottle can give the bottle at most about 4 m/s² (static) and 2.9 m/s² once slipping. A gentle pull stays below that, so the bottle rides along with the paper. A sharp jerk pulls the paper out in a fraction of a second – too short a time for friction to get the heavy bottle moving much.</p>
+</div>
+<div class="qa"><p><b>Textbook questions (page 60)</b> <span class="ml">കുപ്പിയ്ക്കെന്ത് സംഭവിച്ചു? കുപ്പിയുടെ ജഡത്വം ഏത് തരം?</span> – What happened to the bottle? What kind of inertia does it show?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">With a quick pull, the paper comes out and the <b>bottle stays where it was</b> (it moves only a centimetre or two). It shows <b>inertia of rest</b>: it was at rest and tends to stay at rest. (A slow pull lets friction drag the bottle along with the paper.)</div></div></div>
+
+<h2>3. Activity – a glass of water stopped suddenly (Fig 3.7 a)</h2>
+<p><span class="ml">ഡെസ്കിനു മുകളിൽ ജലം നിറച്ച ഒരു ഗ്ലാസ് വച്ച ശേഷം അതിനെ സാവധാനം നിരക്കി മുന്നോട്ട് നീക്കി ക്രമമായി വേഗം വർധിപ്പിച്ച ശേഷം പെട്ടെന്ന് നിശ്ചലമാക്കുക.</span> – Slide a glass full of water along a desk, slowly increasing its speed, then stop it suddenly.</p>
+<div class="safety">⚠ Real experiment: use a plastic tumbler, do it on a desk with no books or electrical things nearby, and keep a cloth ready – the water will spill.</div>
+<div class="lab" id="wgLab">
+  <div class="lab-title">🎬 Virtual lab: the glass of water</div>
+  <svg viewBox="0 0 800 260" role="img" aria-label="A glass of water pushed along a desk, then stopped suddenly so that water spills forward"></svg>
+</div>
+<div class="qa"><p><b>Textbook question (page 60)</b> <span class="ml">എന്താണ് നിരീക്ഷിച്ചത്? ജലത്തിന് ഏതു തരം ജഡത്വമാണുള്ളത്?</span> – What did you observe? What kind of inertia does the water have?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">When the glass stops suddenly, the water <b>spills forward</b>, in the direction the glass was moving. The water has <b>inertia of motion</b>: the hand stopped the glass, but nothing stopped the water at that instant, so it tended to keep moving forward.</div></div></div>
+
+<h2>4. Activity – carrom coins and a cup (Fig 3.7 b)</h2>
+<p><span class="ml">ക്യാരം കോയിനുകൾ ഒന്നിനു മുകളിൽ ഒന്നായി അടുക്കി വയ്ക്കുക. അവയ്ക്ക് മുകളിൽ ജലം നിറച്ച ഒരു പ്ലാസ്റ്റിക് കപ്പ് വയ്ക്കുക. നീളമുള്ള ഒരു സ്കെയിൽ ഉപയോഗിച്ച് ഏറ്റവും അടിയിൽ നിന്ന് ക്യാരം കോയിൻ ഒന്നൊന്നായി വളരെ വേഗത്തിൽ തട്ടിത്തെറിപ്പിക്കുക.</span> – Stack carrom coins, put a plastic cup of water on top, and with a long ruler strike out the bottom coin one at a time, very fast.</p>
+<div class="safety">⚠ Real experiment: use a plastic cup only half full, and aim the flicked coin at a wall or a cushion, never towards anyone's face.</div>
+<div class="lab">
+  <div class="lab-title">🪙 Coin stack lab</div>
+  <svg id="ccSvg" viewBox="0 0 800 260" role="img" aria-label="A stack of carrom coins with a cup of water on top and a ruler at the bottom coin"></svg>
+  <div class="controls"><button class="btn primary" id="ccFast">⚡ Flick the bottom coin fast</button><button class="btn" id="ccSlow">🐢 Push it slowly</button><button class="btn" id="ccReset">⟲ Reset</button></div>
+  <div class="readout" id="ccOut"></div>
+</div>
+<div class="qa"><p><b>Textbook question (page 60)</b> <span class="ml">കപ്പിന് ജഡത്വമുണ്ടോ? ഏത് തരം?</span> – Does the cup have inertia? Which kind?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>Yes – inertia of rest.</b> The fast flick acts on the bottom coin for a tiny moment; the coins above and the cup tend to stay at rest, so they simply drop down by one coin's thickness. A slow push gives friction time to drag the whole stack along, and it topples.</div></div></div>
+
+<h2>5. Table 3.2 – rest or motion?</h2>
+<p>From your activities, sort each statement into the right column of Table 3.2 (<span class="ml">പട്ടിക 3.2</span>). The textbook gives the first two; the rest are for you – and the textbook asks you to add more examples of your own.</p>
+<div class="lab">
+  <div class="lab-title">🗂️ Table 3.2 sorter</div>
+  <ul class="sort" id="sorter"></ul>
+  <div class="readout" id="sortOut"></div>
+  <table id="t32"><thead><tr><th>Inertia of rest (<span class="ml">നിശ്ചലജഡത്വം</span>)</th><th>Inertia of motion (<span class="ml">ചലനജഡത്വം</span>)</th></tr></thead><tbody><tr><td id="t32r"></td><td id="t32m"></td></tr></tbody></table>
+</div>
+
+<h2>6. Mass and inertia (Fig 3.8)</h2>
+<p>The thinking boy asks: <span class="ml">ജഡത്വത്തിന് വസ്തുവിന്റെ മാസുമായി ബന്ധമുണ്ടോ?</span> – <em>Is inertia related to the mass of an object?</em> Take two identical flat-bottomed plastic bottles; fill one with sand and leave the other empty. Stand both upright on a paper and pull the paper out very fast.</p>
+<div class="lab">
+  <div class="lab-title">🧪 Sand bottle vs empty bottle</div>
+  <svg id="mbSvg" viewBox="0 0 800 260" role="img" aria-label="An empty bottle and a sand-filled bottle standing on a paper that is pulled out"></svg>
+  <div class="controls"><label>sand in bottle B <input id="mbSand" type="range" min="0" max="600" step="25" value="600"><output></output> g</label>
+    <button class="btn primary" id="mbGo">▶ Pull the paper fast</button><button class="btn" id="mbReset">⟲ Reset</button></div>
+  <div class="readout" id="mbOut"></div>
+  <p class="hint">Model: the quick jerk of the paper (its edge catching, the sheet fluttering) gives each bottle roughly the same small sideways kick. The same kick changes the motion of a light object a lot and of a heavy object only a little (change in speed = kick ÷ mass). Each bottle is 25 g; it tips over if the kick changes its speed by more than about 0.25 m/s. Find the smallest amount of sand that keeps bottle B standing.</p>
+</div>
+<div class="qa"><p><b>Textbook questions (page 61)</b></p>
+<ol style="margin:.3rem 0">
+<li><span class="ml">ഏത് കുപ്പിയാണ് മറിഞ്ഞു വീഴാത്തത്?</span> Which bottle did not fall over?</li>
+<li><span class="ml">ഏത് കുപ്പിക്കാണ് മാസ് കൂടുതൽ?</span> Which bottle has more mass?</li>
+<li><span class="ml">ഏത് കുപ്പിയിലാണ് ജഡത്വം കൂടുതൽ അനുഭവപ്പെട്ടത്?</span> Which bottle showed more inertia?</li>
+<li><span class="ml">എങ്കിൽ ഒരു വസ്തുവിന്റെ മാസും ജഡത്വവും തമ്മിലുള്ള ബന്ധമെന്ത്?</span> So what is the relation between the mass of an object and its inertia?</li>
+</ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">1. The <b>sand-filled</b> bottle.<br>2. The <b>sand-filled</b> bottle.<br>3. The <b>sand-filled</b> bottle – it resisted the change in its state of rest.<br>4. <b>Inertia increases with mass</b>: the greater the mass, the greater the inertia (mass is a measure of inertia).</div></div></div>
+
+<h2>7. Questions from the textbook (pages 61–62)</h2>
+<div class="qa"><p><b>Q1.</b> <span class="ml">ഒഴിഞ്ഞ ടാർ വീപ്പയാണോ അതോ ടാർ നിറച്ച വീപ്പയാണോ ജഡത്വം കൂടുതൽ? കാരണം വ്യക്തമാക്കുക.</span> – Which has more inertia, an empty tar barrel or a barrel full of tar? Explain.</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">The <b>barrel full of tar</b>. <i>Why:</i> it has much more mass, and inertia increases with mass – it is much harder to start it rolling or to stop it once it rolls.</div></div></div>
+<div class="qa"><p><b>Q2.</b> <span class="ml">ആനയുടെ ആക്രമണത്തിൽ നിന്നും രക്ഷപ്പെടാൻ ആളുകൾ വളഞ്ഞു തിരിഞ്ഞ് ഓടുന്നതെന്തിനായിരിക്കും?</span> – Why do people run in a zig-zag path to escape a charging elephant?</p>
+<div class="lab">
+  <div class="lab-title">🐘 Zig-zag escape</div>
+  <svg id="elSvg" viewBox="0 0 800 240" role="img" aria-label="A person runs zig-zag; a charging elephant overshoots every turn"></svg>
+  <div class="controls"><button class="btn primary" id="elGo">▶ Run</button></div>
+</div>
+<div class="reveal" data-btn="Show answer"><div class="answer">An elephant has a <b>huge mass</b>, so its <b>inertia of motion</b> is huge: once charging in one direction, it cannot quickly change its direction. A person has a small mass and can turn sharply. At every sudden turn the elephant has to swing round in a wide curve, so it cannot follow the person's sharp changes of direction.</div></div></div>
+<div class="qa"><p><b>Q3.</b> <span class="ml">ചുവടെ കൊടുത്തിരിക്കുന്നവയിൽ ഏതിലൊക്കെയാണ് അസന്തുലിത ബലം അനുഭവപ്പെടുന്നത്?</span> – In which of these does an unbalanced force act?<br>
+a) <span class="ml">20 m/s പ്രവേഗത്തിൽ സഞ്ചരിക്കുന്ന കാർ ഓടിക്കുന്നയാൾ ബ്രേക്ക് പ്രയോഗിക്കുന്നു.</span> The driver of a car moving at 20 m/s applies the brakes.<br>
+b) <span class="ml">ഒരു പുസ്തകം കൈയിൽ താങ്ങി നിർത്തിയിരിക്കുന്നു.</span> A book is held still in the hand.<br>
+c) <span class="ml">കൃത്രിമ ഉപഗ്രഹം സമവേഗത്തിൽ സഞ്ചരിക്കുന്നു.</span> An artificial satellite moves with uniform speed.</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">
+a) <b>Unbalanced</b> – the car's velocity decreases; a change of motion needs an unbalanced force (the braking force).<br>
+b) <b>Balanced</b> – the Earth pulls the book down and the hand pushes it up equally; it stays at rest.<br>
+c) <b>Unbalanced</b> – its speed is uniform but its <b>direction keeps changing</b> as it goes round the Earth. Changing direction is a change of motion, so an unbalanced force acts: the Earth's gravity, pulling it towards the centre (Chapter 4). <i>Common mistake:</i> “uniform speed, so balanced” – wrong, because velocity includes direction.</div></div></div>
+<div class="qa"><p><b>Q4.</b> <span class="ml">ഒരു വസ്തുവിൽ 200 N ബലം ഒരു ദിശയിലും 250 N ബലം എതിർ ദിശയിലും നൽകിയാൽ</span> – A force of 200 N acts on an object in one direction and 250 N in the opposite direction. (a) Find the resultant. (b) If the object moves, in which direction?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">(a) Taking the 250 N direction as +: resultant = 250 + (−200) = <b>50 N</b>. (b) In the direction of the <b>250 N force</b> (the direction of the resultant). Full exam-layout solution with a figure: <a href="10_intext_numericals_solutions.html">page 10</a>.</div></div></div>
+
+<div class="callout real"><div class="title">🌴 Kerala connection</div>
+<p style="margin:0">At temple festivals like Thrissur Pooram, mahouts keep a safe distance from a moving elephant – a 4-tonne animal cannot stop or turn quickly. On the road, a seat belt stops your body from flying forward when a car or KSRTC bus brakes hard: your inertia of motion would otherwise carry you into the windscreen at the speed the vehicle had. That is why travelling without a seat belt is dangerous – it is in Table 3.2!</p></div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.youtube.com/watch?v=-luKN6mad5w" target="_blank" rel="noopener noreferrer">▶️ STEMonstrations: Newton&#x27;s First Law of Motion</a> <span class="src">YouTube – NASA Johnson (NASA) · 4:19</span><br><span class="note">Astronauts on the Space Station show objects staying at rest or in motion until a force acts.</span></li><li><a href="https://www.youtube.com/watch?v=nNbwr2IDLnk" target="_blank" rel="noopener noreferrer">▶️ Inertia &amp; mass | Laws of motion | Physics class 9</a> <span class="src">YouTube – Khan Academy India - English · 6:58</span><br><span class="note">Why heavier objects have more inertia.</span></li><li><a href="https://www.youtube.com/watch?v=JqZOUgACPF0" target="_blank" rel="noopener noreferrer">▶️ Tablecloth Demonstration</a> <span class="src">YouTube – The Physics Classroom · 0:15</span><br><span class="note">The tablecloth is pulled out and the dishes stay put: inertia in action.</span></li><li><a href="https://www.youtube.com/watch?v=qq1Whusk8No" target="_blank" rel="noopener noreferrer">▶️ The Coin Drop - Sick Science! #005</a> <span class="src">YouTube – Sick Science! · 1:04</span><br><span class="note">Flick the card and the coin drops into the glass: the coin-card-cup activity.</span></li><li><a href="https://www.youtube.com/watch?v=04gD8dCVbys" target="_blank" rel="noopener noreferrer">▶️ The Physics of Seat Belts</a> <span class="src">YouTube – Smithsonian Channel · 2:18</span><br><span class="note">Crash-test dummies show why your body keeps moving forward when a car stops suddenly.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/newtons-laws/newtons-first-law/newtons-first-law" target="_blank" rel="noopener noreferrer">📄 Newton&#x27;s First Law</a> <span class="src">The Physics Classroom</span><br><span class="note">Clear explanation of the law of inertia with everyday examples.</span></li></ul></div>
+
+<h2>8. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li><b>Inertia</b> = the tendency of an object to continue in its state of rest or of motion.</li>
+<li><b>Inertia of rest:</b> bus starts → passengers fall back; paper pulled from under a bottle; coin stack; mangoes, dust from a carpet.</li>
+<li><b>Inertia of motion:</b> bus stops → passengers fall forward; water spills forward; long jump run-up; seat belts.</li>
+<li><b>Inertia increases with mass</b> – the sand-filled bottle, the full tar barrel, the elephant.</li>
+</ul></div>
+<p>Next: <a href="08_momentum.html">Momentum and its rate of change ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Laws of Motion · Class 9 Physics", "icon": "🚀", "key": "physics_ch3_progress", "pages": [["index.html", "Home"], ["01_forces_as_arrows.html", "1 · Forces, Units & Arrows"], ["02_motion_recap.html", "2 · Speed, Velocity & Acceleration Recap"], ["03_equations_and_graphs.html", "3 · Equations of Motion & Graphs"], ["04_mass_vectors_friction.html", "4 · Mass, Vectors & Friction"], ["05_resultant_balanced_forces.html", "5 · Resultant, Balanced & Unbalanced Forces"], ["06_galileo_first_law.html", "6 · Galileo & Newton's First Law"], ["07_inertia_and_mass.html", "7 · Inertia and Mass"], ["08_momentum.html", "8 · Momentum & Its Rate of Change"], ["09_second_law.html", "9 · Newton's Second Law, F = ma"], ["10_intext_numericals_solutions.html", "10 · In-text Numericals – Solutions"], ["11_impulse.html", "11 · Impulsive Force & Impulse"], ["12_third_law.html", "12 · Newton's Third Law"], ["13_assess_q1_q9_solutions.html", "13 · Let Us Assess Q1–9 – Solutions"], ["14_assess_q10_q17_solutions.html", "14 · Let Us Assess Q10–17 & Extended Activities"], ["15_applications_explore.html", "15 · Applications & Explore Online"], ["16_summary_revision.html", "16 · Summary & Quick Quiz"], ["17_model_test_paper.html", "17 · Model Test Paper"], ["18_model_test_solutions.html", "18 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+const {P, seg, text, el, circle, multiText} = K;
+function arrow(svg, a, b, color='red', w=3){
+  const g = K.group(svg); const Ln = K.dist(a, b); if (Ln < 2) return g;
+  const u = K.unit(a, b), n = P(-u.y, u.x), hs = Math.min(9, Ln * .45), base = P(b.x - u.x * hs * 1.5, b.y - u.y * hs * 1.5);
+  seg(g, a, base, {class: color === 'text' ? 'ln' : 'ln-' + color, 'stroke-width': w});
+  K.polygon(g, [b, P(base.x + n.x * hs * .75, base.y + n.y * hs * .75), P(base.x - n.x * hs * .75, base.y - n.y * hs * .75)], {class: 'ah-' + color});
+  return g;
+}
+const L = (svg, x, y, s, cls='lbl', extra={}) => text(svg, P(x, y), s, {class: cls, 'text-anchor': 'start', ...extra});
+const f = (v, d=2) => K.num(+(+v).toFixed(d));
+function person(svg, x, fy, o={}){
+  const s = o.s || 1, a = K.rad(o.lean || 0), cls = o.cls || 'ln', g = K.group(svg);
+  const hip = P(x, fy - 36 * s), d = P(Math.sin(a), -Math.cos(a));
+  const at = k => P(hip.x + d.x * k * s, hip.y + d.y * k * s);
+  const st = (o.stride ?? 11) * s;
+  seg(g, P(x - st, fy), hip, {class: cls, 'stroke-width': 3}); seg(g, P(x + st, fy), hip, {class: cls, 'stroke-width': 3});
+  seg(g, hip, at(30), {class: cls, 'stroke-width': 3.5});
+  const sh = at(25);
+  if (o.hand){ seg(g, sh, o.hand, {class: cls, 'stroke-width': 2.5}); }
+  else { seg(g, sh, P(sh.x - 7 * s, sh.y + 20 * s), {class: cls, 'stroke-width': 2.5}); seg(g, sh, P(sh.x + 7 * s, sh.y + 20 * s), {class: cls, 'stroke-width': 2.5}); }
+  circle(g, at(40), 8 * s, {class: cls, style: 'fill:var(--surface2)', 'stroke-width': 2});
+  return g;
+}
+
+/* ---------- 1. bus lab ---------- */
+(function(){
+  const svg = document.getElementById('busSvg'), out = document.getElementById('busOut');
+  const GY = 228, VMAX = 12; let st, running = false, last = 0;
+  function reset(){ st = {v: 0, x: 0, a: 0, mode: 'rest', th: 0, w: 0, quiet: 0}; draw(); say(); }
+  function say(){
+    const msg = {rest: 'The bus is at rest. The passengers stand upright, at rest with the bus.',
+      start: 'The bus starts with a jerk. Feet go forward with the floor, but the upper body tends to STAY AT REST → passengers fall BACKWARD.\nThis is INERTIA OF REST (നിശ്ചലജഡത്വം).',
+      cruise: 'Moving steadily at 12 m/s: no acceleration, so the passengers stand upright again – they move along with the bus.',
+      brake: 'The bus brakes suddenly. Feet stop with the floor, but the upper body tends to KEEP MOVING → passengers fall FORWARD.\nThis is INERTIA OF MOTION (ചലനജഡത്വം).',
+      stopped: 'The bus has stopped. The passengers straighten up again.'}[st.mode];
+    out.textContent = `${msg}\nBus speed: ${f(st.v, 1)} m/s   acceleration: ${f(st.a, 1)} m/s²   passengers' lean: ${f(K.deg(st.th), 0)}° (${st.th < -0.02 ? 'backward' : (st.th > 0.02 ? 'forward' : 'upright')})`;
+  }
+  function draw(){
+    K.clear(svg);
+    seg(svg, P(0, GY + 14), P(800, GY + 14), {class: 'ground'});
+    /* scenery: posts and trees scroll past */
+    for (let k = 0; k < 6; k++){ const x = ((k * 170 - st.x * 22) % 1020 + 1020) % 1020 - 110;
+      seg(svg, P(x, 60), P(x, GY + 14), {class: 'ln-muted', 'stroke-width': 4}); seg(svg, P(x - 14, 66), P(x + 14, 66), {class: 'ln-muted', 'stroke-width': 3});
+      el('ellipse', {cx: x + 85, cy: 120, rx: 26, ry: 34, class: 'fill-green', opacity: .7}, svg); seg(svg, P(x + 85, 150), P(x + 85, GY + 14), {class: 'ln-amber', 'stroke-width': 5}); }
+    /* bus (cut-away) */
+    el('rect', {x: 170, y: 70, width: 470, height: 150, rx: 14, class: 'fill-surface', stroke: 'var(--red)', 'stroke-width': 3}, svg);
+    el('rect', {x: 170, y: 70, width: 470, height: 16, rx: 8, class: 'fill-red'}, svg);
+    el('rect', {x: 170, y: 190, width: 470, height: 30, class: 'fill-red'}, svg);
+    el('rect', {x: 590, y: 95, width: 44, height: 60, rx: 6, class: 'fill-blue', stroke: 'var(--blue)', 'stroke-width': 1.5}, svg);
+    text(svg, P(400, 205), 'KSRTC', {class: 'lbl sm', style: 'font-weight:700'});
+    seg(svg, P(185, 104), P(580, 104), {class: 'ln-muted', 'stroke-width': 3});
+    circle(svg, P(240, 222), 18, {class: 'body-fill'}); circle(svg, P(570, 222), 18, {class: 'body-fill'});
+    /* passengers */
+    const lean = K.deg(st.th);
+    [290, 380, 470].forEach((x, k) => person(svg, x, 190, {lean, cls: ['ln-purple', 'ln-blue', 'ln-green'][k], s: 1.15, stride: 9}));
+    arrow(svg, P(660, 40), P(740, 40), 'text', 2); text(svg, P(700, 26), 'bus moves this way', {class: 'lbl sm muted'});
+    if (Math.abs(st.th) > 0.06){ const dir = st.th > 0 ? 1 : -1; arrow(svg, P(380, 52), P(380 + dir * 60, 52), 'red', 3.5); text(svg, P(380 + dir * 30, 34), dir > 0 ? 'fall forward' : 'fall backward', {class: 'lbl sm red'}); }
+  }
+  function loop(now){
+    if (!running) return; const dt = Math.min(0.04, (now - last) / 1000 || 0.016); last = now;
+    if (st.mode === 'start'){ st.a = 3; if (st.v >= VMAX){ st.v = VMAX; st.a = 0; st.mode = 'cruise'; } }
+    else if (st.mode === 'brake'){ st.a = -5; if (st.v <= 0){ st.v = 0; st.a = 0; st.mode = 'stopped'; } }
+    else st.a = 0;
+    st.v = Math.max(0, Math.min(VMAX, st.v + st.a * dt)); st.x += st.v * dt;
+    /* upper body as a damped pendulum, pushed back by the bus's acceleration */
+    const w0 = 4, z = 0.35; st.w += (-w0 * w0 * st.th - 2 * z * w0 * st.w - st.a) * dt; st.th += st.w * dt; st.th = Math.max(-0.6, Math.min(0.6, st.th));
+    draw(); say();
+    st.quiet = (st.a === 0 && Math.abs(st.th) < 0.003 && Math.abs(st.w) < 0.003) ? st.quiet + dt : 0;
+    if (st.quiet > (st.v > 0 ? 4 : 0.3)){ running = false; return; }
+    requestAnimationFrame(loop);
+  }
+  const go = () => { if (!running){ running = true; last = performance.now(); requestAnimationFrame(loop); } };
+  document.getElementById('busStart').addEventListener('click', () => { if (st.v < VMAX){ st.mode = 'start'; go(); } });
+  document.getElementById('busBrake').addEventListener('click', () => { if (st.v > 0){ st.mode = 'brake'; go(); } });
+  document.getElementById('busReset').addEventListener('click', () => { running = false; reset(); });
+  reset();
+})();
+
+/* ---------- 2. paper and bottle ---------- */
+const MUS = 0.4, MUK = 0.3, G = 9.8, PULL = 0.25, GAP = 0.15;
+function paperRun(ap){ /* returns {slip, tOut, d} for a paper accelerating at ap */
+  if (ap <= MUS * G){ const t = Math.sqrt(2 * PULL / ap); return {slip: false, tOut: t, d: PULL, t1: t, t2: 0}; }
+  const t = Math.sqrt(2 * GAP / (ap - MUK * G)); const d1 = 0.5 * MUK * G * t * t; const v = MUK * G * t; const t2 = v / (MUK * G);
+  return {slip: true, tOut: t, d: 2 * d1, d1, v, t1: t, t2};
+}
+(function(){
+  const svg = document.getElementById('ppSvg'), out = document.getElementById('ppOut'), tab = document.getElementById('ppTab');
+  let ap = 40, stop = null; const SCX = 800, TY = 190, BX = 470; /* px per m, table top, bottle start */
+  const kind = a => a <= MUS * G ? 'slow pull' : (a < 15 ? 'medium' : 'quick jerk');
+  function draw(paperDx, bottleDx, info){
+    K.clear(svg);
+    el('rect', {x: 140, y: TY, width: 620, height: 12, class: 'wood'}, svg); seg(svg, P(170, TY + 12), P(170, 258), {class: 'ln-amber', 'stroke-width': 6}); seg(svg, P(730, TY + 12), P(730, 258), {class: 'ln-amber', 'stroke-width': 6});
+    const right = BX + GAP * SCX - paperDx * SCX, left = right - 0.5 * SCX;
+    el('rect', {x: left, y: TY - 4, width: right - left, height: 4, class: 'fill-surface', stroke: 'var(--text)', 'stroke-width': 1}, svg);
+    /* hand pulls at the left end of the paper */
+    el('rect', {x: left - 30, y: TY - 14, width: 34, height: 20, rx: 9, style: 'fill:#f5c49b;stroke:#92400e;stroke-width:1.5'}, svg);
+    if (paperDx > 0 && paperDx < PULL) arrow(svg, P(left - 34, TY - 30), P(left - 94, TY - 30), 'red', 3);
+    /* bottle */
+    const bx = BX - bottleDx * SCX, by = (right > bx - 25 ? TY - 4 : TY);
+    el('rect', {x: bx - 26, y: by - 110, width: 52, height: 110, rx: 8, class: 'fill-surface', stroke: 'var(--text)', 'stroke-width': 2}, svg);
+    el('rect', {x: bx - 23, y: by - 90, width: 46, height: 87, rx: 6, class: 'water'}, svg);
+    el('rect', {x: bx - 10, y: by - 128, width: 20, height: 18, class: 'fill-blue', stroke: 'var(--blue)', 'stroke-width': 1.5}, svg);
+    seg(svg, P(BX, TY + 24), P(BX, TY + 34), {class: 'ln-purple', 'stroke-width': 2}); text(svg, P(BX, TY + 46), 'start', {class: 'lbl sm purple'});
+    if (info) L(svg, 20, 28, info, 'lbl');
+  }
+  K.slider('#ppA', v => { ap = v; if (stop) stop(); draw(0, 0, `pull: ${v} m/s² (${kind(v)})`); out.textContent = 'Press “Pull the paper”.'; }, 0);
+  document.getElementById('ppGo').addEventListener('click', () => {
+    if (stop) stop(); const r = paperRun(ap); const T = r.slip ? r.t1 + r.t2 : r.t1; const ms = Math.max(1600, T * 1000 * 4);
+    stop = K.animate(ms, (e, t) => { const tt = T * t; let pd, bd;
+      if (!r.slip){ pd = 0.5 * ap * tt * tt; bd = pd; }
+      else { pd = Math.min(PULL + 0.3, 0.5 * ap * tt * tt); if (tt <= r.t1) bd = 0.5 * MUK * G * tt * tt; else { const u = tt - r.t1; bd = r.d1 + r.v * u - 0.5 * MUK * G * u * u; } }
+      draw(Math.min(pd, r.slip ? PULL + 0.3 : PULL), bd, `pull: ${ap} m/s² (${kind(ap)})   t = ${f(tt, 3)} s (slow motion)`);
+      if (t >= 1) out.textContent = r.slip ? `Quick pull: the paper slid out from under the bottle in ${f(r.tOut, 3)} s.\nThe bottle moved only ${f(r.d * 100, 1)} cm and stayed standing – INERTIA OF REST.` : `Slow pull: friction was enough to carry the bottle along – it moved ${f(r.d * 100, 0)} cm WITH the paper.\nPull faster to see inertia of rest.`;
+    });
+  });
+  document.getElementById('ppRec').addEventListener('click', () => { const r = paperRun(ap); const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${ap}</td><td>${kind(ap)}</td><td>${r.slip ? f(r.tOut, 3) : '— (did not slide out)'}</td><td>${f(r.d * 100, 1)}</td>`; tab.appendChild(tr); });
+})();
+
+/* ---------- 3. glass of water ---------- */
+(function(){
+  const DY = 200;
+  function glass(svg, x, tilt, spill){ /* tilt = tan of surface angle (+ = higher at the front/right) */
+    const H = 84, wT = 74, wB = 58, h0 = 58;
+    const hR = Math.min(H + 2, h0 + tilt * wT / 2), hL = Math.max(10, h0 - tilt * wT / 2);
+    const xl = y => x - wB / 2 - (wT - wB) / 2 * (y / H), xr = y => x + wB / 2 + (wT - wB) / 2 * (y / H);
+    K.polygon(svg, [P(xl(0), DY), P(xr(0), DY), P(xr(hR), DY - hR), P(xl(hL), DY - hL)], {class: 'water'});
+    K.polyline(svg, [P(xl(H), DY - H), P(xl(0), DY), P(xr(0), DY), P(xr(H), DY - H)], {class: 'glass'});
+    if (spill > 0){ for (let k = 0; k < 7; k++){ const s = Math.min(1, spill * 1.3 - k * .08); if (s <= 0) continue; circle(svg, P(xr(H) + 6 + s * (30 + k * 9), DY - H + s * s * (H + 4) - k * 2), 5 - k * .4, {class: 'water', style: 'stroke:none'}); }
+      el('ellipse', {cx: xr(0) + 60, cy: DY + 2, rx: 46 * Math.min(1, spill), ry: 4, class: 'water'}, svg); }
+  }
+  new K.Stepper('#wgLab', {steps: [
+    'A glass full of water stands on the desk. Water and glass are at rest together.',
+    'Push the glass forward, <b>slowly increasing</b> its speed. The water speeds up with the glass; its surface tilts back only a little.',
+    'Now the glass and the water move <b>together</b> at a steady speed. The surface is level again.',
+    '<b>Stop the glass suddenly.</b> Your hand stops the glass – but nothing stops the water at that instant. It <b>keeps moving forward</b>, piles up at the front and spills over the rim, ahead of the glass.',
+    '<b>Inference:</b> the water shows <b>inertia of motion</b> (<span class="ml">ചലനജഡത്വം</span>): a moving object tends to keep moving.'
+  ], ms: 1800, draw(svg, i, t){
+    el('rect', {x: 30, y: DY, width: 740, height: 12, class: 'wood'}, svg);
+    let x = 150, tilt = 0, spill = 0, hand = true;
+    if (i === 1){ x = 150 + 200 * t * t; tilt = -0.18 * Math.min(1, t * 3); }
+    if (i === 2){ x = 350 + 150 * t; }
+    if (i === 3){ x = 500 + 20 * Math.min(1, t * 5); tilt = 1.1 * Math.min(1, t * 3) * (1 - 0.6 * Math.max(0, t - .7)); spill = Math.max(0, t - .15) / .85; }
+    if (i === 4){ x = 520; spill = 1; tilt = 0.25; }
+    glass(svg, x, tilt, spill);
+    if (hand && i < 4){ el('rect', {x: x - 76, y: DY - 46, width: 40, height: 22, rx: 10, style: 'fill:#f5c49b;stroke:#92400e;stroke-width:1.5'}, svg); }
+    const cap = ['at rest', 'speeding up slowly', 'steady speed', 'STOPPED suddenly → water keeps going', 'inertia of motion'];
+    L(svg, 30, 30, cap[i], 'lbl big ' + (i >= 3 ? 'red' : ''));
+    if (i === 1 || i === 2) { arrow(svg, P(x - 20, 60), P(x + 50, 60), 'blue', 3); text(svg, P(x + 15, 46), 'glass moves', {class: 'lbl sm blue'}); }
+    if (i >= 3) { arrow(svg, P(560, 70), P(650, 70), 'red', 3); text(svg, P(605, 54), 'water keeps moving', {class: 'lbl sm red'}); }
+  }});
+})();
+
+/* ---------- 4. carrom coins ---------- */
+(function(){
+  const svg = document.getElementById('ccSvg'), out = document.getElementById('ccOut');
+  const TY = 220, CX = 400, CH = 13; let n = 5, stop = null;
+  function draw(o={}){ /* o: {flyX, drop, rulerX, slide, tip} */
+    K.clear(svg);
+    el('rect', {x: 30, y: TY, width: 740, height: 12, class: 'wood'}, svg);
+    el('ellipse', {cx: 150, cy: TY - 6, rx: 34, ry: 6, class: 'fill-red', stroke: 'var(--red)'}, svg); text(svg, P(150, TY - 24), 'striker', {class: 'lbl sm muted'});
+    const sx = o.slide || 0, tip = o.tip || 0;
+    const g = K.group(svg, {transform: `rotate(${tip} ${CX + sx + 32} ${TY})`});
+    const k0 = o.flyX !== undefined ? 1 : 0; /* bottom coin flying away is drawn separately */
+    for (let k = k0; k < n; k++){
+      el('rect', {x: CX - 32 + sx, y: TY - (k + 1) * CH + (k0 ? (o.drop || 0) : 0), width: 64, height: CH - 1, rx: 4, class: 'coin'}, g); }
+    const top = TY - n * CH + (k0 ? (o.drop || 0) : 0);
+    /* cup */
+    K.polygon(g, [P(CX - 26 + sx, top), P(CX + 26 + sx, top), P(CX + 34 + sx, top - 56), P(CX - 34 + sx, top - 56)], {class: 'fill-blue', stroke: 'var(--blue)', 'stroke-width': 2});
+    el('rect', {x: CX - 30 + sx, y: top - 46, width: 60, height: 4, class: 'water'}, g);
+    if (k0) el('rect', {x: CX - 32 + o.flyX, y: TY - CH, width: 64, height: CH - 1, rx: 4, class: 'coin'}, svg);
+    /* ruler and hand */
+    const rx = o.rulerX ?? 0;
+    el('rect', {x: 120 + rx, y: TY - CH + 2, width: 240, height: 8, class: 'fill-surface', stroke: 'var(--text)', 'stroke-width': 1.2}, svg);
+    for (let m = 0; m < 12; m++) seg(svg, P(130 + rx + m * 20, TY - CH + 2), P(130 + rx + m * 20, TY - CH + 6), {class: 'ln thin'});
+    el('rect', {x: 92 + rx, y: TY - CH - 8, width: 36, height: 22, rx: 10, style: 'fill:#f5c49b;stroke:#92400e;stroke-width:1.5'}, svg);
+    L(svg, 20, 28, `${n} coins under the cup`, 'lbl');
+  }
+  function say(s){ out.textContent = s; }
+  draw(); say('Five coins, a plastic cup of water on top. Flick the bottom coin out fast with the ruler – or push it slowly.');
+  document.getElementById('ccFast').addEventListener('click', () => {
+    if (stop) stop(); if (n < 2){ say('Only one coin left – press Reset.'); return; }
+    stop = K.animate(1400, (e, t) => { const rx = t < .25 ? 40 * (t / .25) : 40; const fly = t < .2 ? 0 : 380 * Math.min(1, (t - .2) / .35);
+      const drop = t < .3 ? 0 : Math.min(CH, CH * ((t - .3) / .15) ** 2);
+      draw({flyX: fly, drop, rulerX: rx});
+      if (t >= 1){ n -= 1; draw({rulerX: 40}); say(`The bottom coin shot out; the stack above (and the cup) just dropped down by one coin – the cup did not spill.\nINERTIA OF REST: the flick lasted too short a time to move the coins above it. ${n} coins left.`); } });
+  });
+  document.getElementById('ccSlow').addEventListener('click', () => {
+    if (stop) stop();
+    stop = K.animate(2600, (e, t) => { const rx = 40 + 70 * t; const slide = Math.max(0, rx - 40); const tip = t > .6 ? 22 * ((t - .6) / .4) ** 2 : 0;
+      draw({rulerX: rx, slide, tip});
+      if (t >= 1) say('A slow push gives friction time to drag the coins above along with the bottom one: the whole stack slides and starts to topple – the cup spills.\nOnly a FAST flick shows the inertia of rest of the cup and the upper coins. (Press Reset.)'); });
+  });
+  document.getElementById('ccReset').addEventListener('click', () => { if (stop) stop(); n = 5; draw(); say('Five coins again.'); });
+})();
+
+/* ---------- 5. Table 3.2 sorter ---------- */
+(function(){
+  const ITEMS = [
+    ['A bus starts suddenly: standing passengers fall backwards. (given in the table)', 'r', 'The passengers were at rest and tend to stay at rest.'],
+    ['A ball rolled on level ground keeps moving forward. (given in the table)', 'm', 'A moving ball tends to keep moving.'],
+    ['<span class="ml">മാവിൻ കൊമ്പ് കുലുക്കിയാൽ മാങ്ങ ഞെട്ടറ്റ് വീഴുന്നു.</span> When a mango branch is shaken, mangoes break off and fall.', 'r', 'The branch moves suddenly; the mangoes tend to stay at rest, so the stalks snap.'],
+    ['<span class="ml">ലോങ് ജമ്പിൽ പങ്കെടുക്കുന്ന ആൾ കുറേ ദൂരം ഓടി വന്ന് ചാടുന്നു.</span> A long jumper runs a long way before jumping.', 'm', 'The speed gained in the run-up carries the jumper farther through the air.'],
+    ['<span class="ml">സീറ്റ് ബെൽറ്റ് ധരിക്കാതെ കാറിൽ യാത്ര ചെയ്യുന്നത് അപകടകരമാണ്.</span> Travelling in a car without a seat belt is dangerous.', 'm', 'In a sudden stop your body keeps moving forward at the car\'s speed.'],
+    ['Beating a hanging carpet with a stick makes the dust fly out.', 'r', 'The carpet moves suddenly; the dust tends to stay at rest and separates.'],
+    ['An athlete cannot stop exactly at the finishing line.', 'm', 'The running body tends to keep moving.'],
+    ['A card on a glass is flicked away; the coin on it drops into the glass.', 'r', 'The coin tends to stay at rest; it has no time to move with the card.'],
+    ['A fan keeps turning for a while after it is switched off.', 'm', 'The moving blades tend to keep moving.']
+  ];
+  const ul = document.getElementById('sorter'), outEl = document.getElementById('sortOut'); const ans = {};
+  ITEMS.forEach((it, k) => { const li = document.createElement('li');
+    li.innerHTML = `<span class="st">${k + 1}. ${it[0]}</span><button class="btn" data-k="${k}" data-c="r">Inertia of rest</button><button class="btn" data-k="${k}" data-c="m">Inertia of motion</button><span class="fb"></span>`; ul.appendChild(li); });
+  function update(){
+    const right = Object.keys(ans).filter(k => ans[k] === ITEMS[k][1]).length;
+    outEl.textContent = `${Object.keys(ans).length} of ${ITEMS.length} sorted, ${right} correct.` + (right === ITEMS.length ? '  🎉 All correct – copy the table into your science diary and add your own examples!' : '');
+    const col = c => ITEMS.map((it, k) => ans[k] === c && it[1] === c ? `• ${it[0].replace(/<[^>]+>/g, '').replace(/ \(given in the table\)/, '')}` : null).filter(Boolean).join('<br>');
+    document.getElementById('t32r').innerHTML = col('r'); document.getElementById('t32m').innerHTML = col('m');
+  }
+  ul.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const k = +b.dataset.k, c = b.dataset.c; ans[k] = c;
+    const li = b.closest('li'), ok = c === ITEMS[k][1]; li.className = ok ? 'ok' : 'no';
+    li.querySelector('.fb').textContent = (ok ? '✅ ' : '❌ Not quite. ') + (ok ? ITEMS[k][2] : 'Ask: was the object at rest or moving before the sudden change?');
+    update(); });
+  update();
+})();
+
+/* ---------- 6. sand bottle vs empty bottle ---------- */
+(function(){
+  const svg = document.getElementById('mbSvg'), out = document.getElementById('mbOut');
+  const TY = 200, J = 0.02, VT = 0.25, MB = 0.025; let sand = 600, stop = null;
+  const dv = m => J / m;
+  function bottle(x, ang, fill, label){ const g = K.group(svg, {transform: `rotate(${ang} ${x + 28} ${TY})`});
+        el('rect', {x: x - 28, y: TY - 120, width: 56, height: 120, rx: 8, class: 'fill-surface', stroke: 'var(--text)', 'stroke-width': 2}, g);
+    if (fill > 0){ const h = 112 * fill; el('rect', {x: x - 25, y: TY - 4 - h, width: 50, height: h, rx: 5, class: 'sand'}, g); }
+    el('rect', {x: x - 11, y: TY - 140, width: 22, height: 20, class: 'fill-surface', stroke: 'var(--text)', 'stroke-width': 1.5}, g);
+    text(svg, P(x, TY + 34), label, {class: 'lbl sm'}); }
+  function draw(t, pulled){
+    K.clear(svg);
+    el('rect', {x: 120, y: TY, width: 640, height: 12, class: 'wood'}, svg);
+    const pd = pulled ? Math.min(1, t * 1.6) : 0;
+    const pl = 150 - pd * 600; el('rect', {x: pl, y: TY - 4, width: 520, height: 4, class: 'fill-surface', stroke: 'var(--text)', 'stroke-width': 1}, svg);
+    if (pulled && pd < 1) arrow(svg, P(pl - 6, TY - 30), P(pl - 70, TY - 30), 'red', 3);
+    const mB = MB + sand / 1000, tipA = dv(MB) > VT, tipB = dv(mB) > VT;
+    const ang = m => pulled ? Math.min(90, 95 * Math.max(0, (t - .25) / .5) ** 1.5) : 0;
+    bottle(300, pulled && tipA ? ang(MB) : 0, 0, 'A: empty (25 g)');
+    bottle(540, pulled && tipB ? ang(mB) : 0, Math.min(1, sand / 600), `B: ${sand} g sand + 25 g`);
+    L(svg, 20, 28, pulled ? 'paper pulled out fast' : 'two identical bottles on one sheet of paper', 'lbl');
+  }
+  function report(){ const mB = MB + sand / 1000;
+    out.textContent = `Same kick (0.02 N s) on each bottle:\nA (0.025 kg): change in speed = 0.02 ÷ 0.025 = ${f(dv(MB))} m/s → ${dv(MB) > VT ? 'TIPS OVER' : 'stays standing'}\nB (${f(mB, 3)} kg): change in speed = 0.02 ÷ ${f(mB, 3)} = ${f(dv(mB))} m/s → ${dv(mB) > VT ? 'TIPS OVER' : 'stays standing'}\nMore mass → smaller change in its state → MORE INERTIA.`; }
+  K.slider('#mbSand', v => { sand = v; if (stop) stop(); draw(0, false); out.textContent = 'Press “Pull the paper fast”.'; }, 0);
+  document.getElementById('mbGo').addEventListener('click', () => { if (stop) stop(); stop = K.animate(1800, (e, t) => { draw(t, true); if (t >= 1) report(); }); });
+  document.getElementById('mbReset').addEventListener('click', () => { if (stop) stop(); draw(0, false); out.textContent = 'Press “Pull the paper fast”.'; });
+})();
+
+/* ---------- 7. elephant ---------- */
+(function(){
+  const svg = document.getElementById('elSvg'); let stop = null;
+  /* person: zig-zag; elephant: a heavy body pulled towards the point the person passed 0.9 s earlier – its large inertia smooths every turn into a wide curve */
+  const pathP = [P(150, 120), P(250, 50), P(350, 190), P(450, 50), P(550, 190), P(650, 50), P(750, 140)];
+  const dt = 1 / 60, VP = 150, KS = 5, CD = 2, LAG = 0.9;
+  const segs = []; let tot = 0; for (let k = 1; k < pathP.length; k++){ const l = K.dist(pathP[k - 1], pathP[k]); segs.push([pathP[k - 1], pathP[k], tot, l]); tot += l; }
+  const onPath = s => { s = Math.min(s, tot - 0.01); const q = segs.find(r => s >= r[2] && s < r[2] + r[3]) || segs[segs.length - 1]; return K.lerpPt(q[0], q[1], (s - q[2]) / q[3]); };
+  const N = Math.round(tot / VP / dt) + 30;
+  const trP = [], trE = []; let ex = 30, ey = 120, vx = 150, vy = 0;
+  for (let k = 0; k <= N; k++){ const tt = k * dt, p = onPath(VP * tt); trP.push(p); trE.push(P(ex, ey));
+    const q = tt > LAG ? onPath(VP * (tt - LAG)) : P(30 + 150 * tt, 120);
+    vx += (KS * (q.x - ex) - CD * vx) * dt; vy += (KS * (q.y - ey) - CD * vy) * dt; ex += vx * dt; ey += vy * dt; }
+  function draw(t){ K.clear(svg); const k = Math.round(N * t);
+    el('rect', {x: 0, y: 0, width: 800, height: 240, class: 'fill-green', opacity: .25}, svg);
+    K.polyline(svg, trP.slice(0, k + 1), {class: 'ln-blue dash'}); K.polyline(svg, trE.slice(0, k + 1), {class: 'ln-muted', 'stroke-width': 3});
+    const p = trP[k], q = trE[k];
+    circle(svg, q, 20, {class: 'body-fill', style: 'fill:var(--muted);opacity:.85'}); text(svg, P(q.x, q.y + 34), 'elephant', {class: 'lbl sm'});
+    circle(svg, p, 8, {class: 'pt blue'}); text(svg, P(p.x, p.y - 18), 'person', {class: 'lbl sm blue'});
+    L(svg, 14, 226, 'Elephant: big mass → big inertia of motion → cannot turn sharply; it swings round in wide curves.', 'lbl sm');
+  }
+  draw(0);
+  document.getElementById('elGo').addEventListener('click', () => { if (stop) stop(); stop = K.animate(6000, (e2, t) => draw(t)); });
+})();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'A bus moving fast brakes suddenly. A standing passenger falls forward. This is due to', options: ['inertia of rest', 'inertia of motion', 'the force of the brakes on the passenger', 'friction of the floor pushing the passenger forward'], answer: 1, explain: 'The body was moving and tends to keep moving.', hint: 'Was the passenger moving or at rest before?'});
+K.mcq('#q2', {q: 'You pull a sheet of paper very quickly from under a bottle. The bottle stays. Which kind of inertia?', options: ['Inertia of rest', 'Inertia of motion', 'Inertia of direction only', 'No inertia is involved'], answer: 0, explain: 'The bottle was at rest and stays at rest.', hint: 'Section 2.'});
+K.mcq('#q3', {q: 'Which has the greatest inertia?', options: ['A cricket ball', 'A bicycle', 'A loaded lorry', 'An empty plastic bottle'], answer: 2, explain: 'Inertia increases with mass; the loaded lorry has the most mass.', hint: 'Inertia depends on mass.'});
+K.mcq('#q4', {q: 'An artificial satellite goes round the Earth with uniform speed. The force on it is', options: ['zero, because the speed is uniform', 'balanced', 'unbalanced, because its direction keeps changing', 'only friction'], answer: 2, explain: 'A change of direction is a change of motion – the Earth\'s gravity is the unbalanced force.', hint: 'Velocity includes direction.'});
+K.mcq('#q5', {q: 'Dust comes out when a hanging carpet is beaten with a stick. Why?', options: ['The stick pushes the dust out', 'The carpet moves suddenly; the dust tends to stay at rest', 'Dust has inertia of motion', 'Air blows the dust out'], answer: 1, explain: 'Inertia of rest of the dust particles.', hint: 'Which one moves suddenly – the carpet or the dust?'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>
