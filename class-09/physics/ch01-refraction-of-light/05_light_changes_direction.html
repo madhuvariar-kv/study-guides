@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Light Changes Direction – Refraction of Light</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.qa{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.6rem 1rem;margin:.7rem 0;box-shadow:var(--shadow)}
+.qa p{margin:.25em 0}
+.qbox{background:var(--surface);border:1px solid var(--border);border-left:6px solid var(--accent);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.why{font-size:.93rem;color:var(--muted);margin-top:.3rem}
+.diary{background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:1rem 0}
+.diary h3{margin:.1rem 0 .4rem;color:var(--accent-ink)}
+.obs td,.obs th{text-align:center}
+.obs tr.hl td{background:var(--accent-soft)}
+.obs td.q{color:var(--muted)}
+.bubble{background:var(--surface);border:2px solid var(--purple);border-radius:18px;padding:.6rem .9rem;font-size:.95rem;margin:.8rem 0}
+.bubbles{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.7rem;margin:.8rem 0}
+.bubbles .bubble{margin:0}
+.bubble .ml{display:block;font-weight:600;margin-bottom:.2rem}
+.tblwrap{overflow-x:auto}
+.sorter{display:grid;gap:.45rem;margin:.6rem 0}
+.sorter .row{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .6rem;padding:.45rem .7rem;border-radius:10px;background:var(--surface2);border-left:5px solid transparent}
+.sorter .row .txt{flex:1 1 220px}
+.sorter .row.ok{border-left-color:var(--green);background:var(--green-soft)}
+.sorter .row.bad{border-left-color:var(--red);background:var(--red-soft)}
+.sorter .row .fbk{flex-basis:100%;font-size:.9rem}
+.score{font-weight:700;color:var(--primary-ink)}
+.controls select{padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem}
+/* media (as in the textbook: air grey, water blue, glass green) */
+svg .m-air{fill:var(--surface2)}
+svg .m-water{fill:var(--blue-soft)}
+svg .m-glass{fill:var(--green-soft)}
+svg .m-diamond{fill:var(--purple-soft)}
+svg .m-smoke{fill:var(--muted);opacity:.16}
+svg .m-edge{fill:none;stroke:var(--muted);stroke-width:1.5}
+svg .body-fill{fill:var(--surface2);stroke:var(--text);stroke-width:1.8}
+/* page-specific */
+.order{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin:.5rem 0}
+.order .slot{min-width:5.5rem;padding:.35rem .6rem;border-radius:8px;border:2px dashed var(--border);text-align:center;font-weight:700}
+.order .slot.ok{border-style:solid;border-color:var(--green);background:var(--green-soft)}
+.order .slot.bad{border-style:solid;border-color:var(--red);background:var(--red-soft)}
+svg .rough{fill:var(--muted);opacity:.28}
+svg .smooth{fill:var(--surface2)}
+svg .car{fill:#facc15;stroke:#78350f;stroke-width:1.6}
+svg .track{fill:none;stroke:#eab308;stroke-width:7;stroke-linecap:round;opacity:.45}
+</style>
+</head>
+<body data-page="05_light_changes_direction">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 1 · Section 1</span><span class="chip amber">Textbook pages 7–10</span>
+<h1>Light Changes Direction <span class="ml">പ്രകാശപാതയുടെ ദിശാവ്യതിയാനം</span></h1>
+<p class="lead">On a hot afternoon the road ahead looks wet. A straw in a glass of lime juice looks broken. Both tricks are played by light as it travels from one <b>medium</b> <span class="ml">മാധ്യമം</span> into another. On this page you shine a (virtual) laser into a tank of smoky air and milky water, watch a toy car swerve, and find out <b>why</b> light changes direction: its <b>speed</b> changes.</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 1–4 of this guide)</div>
+<ul style="margin:0">
+<li>Light travels in straight lines; rays and beams; we see an object when light from it enters our eyes – <a href="01_light_rays_reflection.html">page 1</a>.</li>
+<li>What a <b>normal</b> <span class="ml">ലംബം</span> is and how to measure angles from it – <a href="02_angles_normals_protractor.html">page 2</a>.</li>
+<li>Speed and numbers like 3 × 10⁸ – <a href="03_speed_ratios_powers.html">page 3</a>; transparent media, density – <a href="04_media_slabs_prisms.html">page 4</a>.</li>
+</ul></div>
+
+<h2>1. Water on the road? A broken straw? (page 7)</h2>
+<p>The chapter opens inside a car on a summer afternoon.</p>
+<div class="bubbles">
+<div class="bubble"><span class="ml">അതാ റോഡിൽ വെള്ളം കെട്ടിക്കിടക്കുന്നു, അമ്മേ സൂക്ഷിച്ച് വണ്ടി ഓടിക്കണേ!</span>The girl: <em>Look, there is water on the road! Drive carefully, Amma!</em></div>
+<div class="bubble"><span class="ml">വേനൽക്കാലമല്ലേ, അത് വെള്ളം കെട്ടിക്കിടക്കുന്നതല്ല. അവിടെയെത്തുമ്പോൾ കണ്ടോളൂ.</span>Her mother: <em>It's summer – that isn't water. You'll see when we get there.</em></div>
+</div>
+<p><span class="ml">ഇത്തരം അനുഭവം നിങ്ങൾക്കുമുണ്ടായിട്ടില്ലേ?</span> Haven't you seen this too – on the NH on a hot day, the road far ahead shines like a pool, but the "water" keeps moving away as you drive closer? That is a <b>mirage</b> <span class="ml">മരീചിക</span>; you will understand it fully on <a href="11_tir_applications.html">page 11</a>. Many such experiences are linked to the behaviour of light.</p>
+<div class="qa"><p><b>Q (Fig 1.1).</b> <span class="ml">ഗ്ലാസിലെ നാരങ്ങാവെള്ളത്തിലേക്കിട്ട സ്ട്രോ ഒടിഞ്ഞിരിക്കുന്നതുപോലെ തോന്നിയിട്ടുണ്ടോ? എന്തായിരിക്കും ഇതിന്റെ കാരണം?</span> – Have you noticed that a straw in a glass of lime juice looks broken? What could be the reason?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">Yes – the straw seems to <b>break at the surface of the juice</b>. The reason is <b>refraction</b> <span class="ml">അപവർത്തനം</span>: light from the dipped part of the straw changes direction when it leaves the juice and enters the air, so that part appears raised.<div class="why">Why: <span class="ml">ഒരു വസ്തുവിൽ പതിച്ച പ്രകാശം പ്രതിപതിച്ച് നമ്മുടെ കണ്ണിൽ പതിക്കുമ്പോഴാണല്ലോ നാം ആ വസ്തുവിനെ കാണുന്നത്.</span> We see an object when light reflected from it enters our eyes. Light from the dipped part of the straw travels through <b>different media</b> – juice, glass and air – before reaching the eye; the part above the juice sends light through air only. You will trace these rays yourself on <a href="06_refraction_refractive_index.html">page 6</a>.</div></div></div></div>
+
+<h2>2. Activity: a laser through smoke and milky water – Fig 1.2, 1.3</h2>
+<p><span class="ml">ഒരു ഗ്ലാസ് ടാങ്കിൽ മുക്കാൽ ഭാഗത്തോളം ജലം എടുക്കുക. ജലത്തിൽ ഒന്നോ രണ്ടോ തുള്ളി പാൽ ചേർക്കുക. ടാങ്ക് സുതാര്യമായ പേപ്പർ ഷീറ്റ് കൊണ്ട് അടയ്ക്കുക. ടാങ്കിൽ ബാക്കി ഭാഗത്ത് പുക നിറച്ചശേഷം ഒരു ലേസർ ടോർച്ചിൽ നിന്നുള്ള പ്രകാശം ചിത്രം 1.2 (a) ൽ കാണുന്നരീതിയിൽ പതിപ്പിച്ച് പ്രകാശപാത നിരീക്ഷിക്കൂ.</span></p>
+<p>Fill a glass tank about <b>three-quarters</b> with water and add one or two drops of <b>milk</b>. Cover the tank with a transparent sheet of paper and fill the rest with <b>incense smoke</b>. Shine a laser torch slantwise into it as in Fig 1.2 (a) and observe the <b>path of light</b> <span class="ml">പ്രകാശപാത</span>. The smoke and the milk scatter a little of the light sideways – that is the only reason you can <em>see</em> the beam.</p>
+<div class="safety">⚠ Never shine a laser torch into anyone's eyes (or at a mirror towards a face); an adult should handle the laser.</div>
+<div class="callout warn"><div class="title">🔥 Incense smoke</div><p>Light the agarbatti only with an adult present, keep it away from paper and curtains, and put it out in water afterwards.</p></div>
+
+<div class="lab" id="tankLab">
+  <div class="lab-title">🧪 Laser tank – smoky air above, milky water below</div>
+  <svg id="tkSvg" viewBox="0 0 800 420" role="img" aria-label="Side view of a glass tank: smoky air in the upper part, milky water in the lower part, and a laser beam entering the water"></svg>
+  <div class="controls">
+    <label>angle of the laser from the normal <input id="tkI" type="range" min="0" max="55" step="1" value="40"><output></output>°</label>
+  </div>
+  <div class="controls">
+    <button class="btn" id="tkA">Fig 1.2 – slantwise</button>
+    <button class="btn" id="tkB">Fig 1.3 – perpendicular</button>
+    <button class="btn primary" id="tkOn">▶ Switch on the laser</button>
+    <button class="btn ghost" id="tkSmoke">Remove smoke &amp; milk</button>
+  </div>
+  <div class="readout" id="tkOut"></div>
+  <p class="hint">The dashed grey line is the <b>normal</b> <span class="ml">ലംബം</span> – the line perpendicular to the water surface at the point where the ray strikes it. The faint dashed red line shows where the ray <em>would</em> have gone if it had not changed direction. (The drawing uses the real refractive index of water, 1.33.)</p>
+</div>
+
+<h3>Observe and answer (page 8)</h3>
+<div class="qa"><p><b>Q1.</b> <span class="ml">ടാങ്കിനുള്ളിൽ ഏതെല്ലാം മാധ്യമങ്ങളിലൂടെയാണ് പ്രകാശരശ്മി സഞ്ചരിക്കുന്നത്?</span> – Through which media does the ray of light travel inside the tank?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">Through <b>air</b> (with smoke) <span class="ml">വായു</span> and then <b>water</b> <span class="ml">ജലം</span>.<div class="why">Why: the upper part of the tank holds smoky air and the lower part milky water. (The smoke and the drop of milk only make the beam visible; they do not change the media.)</div></div></div></div>
+<div class="qa"><p><b>Q2.</b> <span class="ml">ഒരു മാധ്യമത്തിലൂടെ മാത്രം സഞ്ചരിക്കുമ്പോൾ പ്രകാശപാതയുടെ ദിശ എപ്രകാരമായിരിക്കും?</span> – What is the direction of the path of light while it travels within one medium only?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">It goes in a <b>straight line</b> – no change of direction.<div class="why">Why: in the lab, the beam is perfectly straight all through the smoky air, and again perfectly straight all through the water. It bends only where the two meet.</div></div></div></div>
+<div class="qa"><p><b>Q3.</b> <span class="ml">ഒന്നാമത്തെ മാധ്യമത്തിൽ നിന്ന് രണ്ടാമത്തെ മാധ്യമത്തിലേക്ക് പ്രകാശം ചരിഞ്ഞ് പ്രവേശിക്കുമ്പോൾ പ്രകാശരശ്മിക്ക് ദിശാവ്യതിയാനം ഉണ്ടാകുന്നുണ്ടോ?</span> – When light enters the second medium obliquely (slantwise) from the first, does the ray change direction?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>Yes.</b> The ray has a <b>change of direction</b> <span class="ml">ദിശാവ്യതിയാനം</span>.<div class="why">Why: compare the red ray in the water with the faint dashed "straight-on" line – they part company at the surface. Going from air into water, the ray turns closer to the normal.</div></div></div></div>
+<div class="qa"><p><b>Q4.</b> <span class="ml">പ്രകാശരശ്മിക്ക് ദിശാവ്യതിയാനം ഉണ്ടാകുന്നത് എവിടെ വച്ചാണ്?</span> – Where does the ray change direction?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">At the <b>interface</b> <span class="ml">വിഭജനതലം</span> – the boundary between the two media, here the <b>surface of the water</b>.<div class="why">Why: the kink in the beam is exactly at the water surface; nowhere else does the beam bend.</div></div></div></div>
+<div class="qa"><p><b>Q5 (Fig 1.3).</b> <span class="ml">ലംബമായി പതിക്കുന്ന പ്രകാശരശ്മിക്ക് ദിശാവ്യതിയാനം ഉണ്ടാകുമോ? … ലേസർ ടോർച്ചിൽ നിന്നുള്ള പ്രകാശം ടാങ്കിലെ ജലോപരിതലത്തിലേക്ക് ലംബമായി പതിപ്പിച്ചു നോക്കൂ. ഇവിടെ പ്രകാശ രശ്മിക്ക് ദിശാവ്യതിയാനം ഉണ്ടായോ?</span> – Will a ray falling perpendicularly change direction? Shine the laser perpendicularly onto the water surface. Did the ray change direction here?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>No.</b> A ray falling perpendicularly <span class="ml">ലംബമായി പതിക്കുന്ന</span> on the surface goes straight on without any change of direction.<div class="why">Why: press "Fig 1.3 – perpendicular" in the lab: the angle from the normal is 0° in air and 0° in water. The light still slows down in water, but because it meets the surface "head-on", both sides of the beam slow down at the same moment – nothing makes it turn (see the toy car below).</div></div></div></div>
+
+<div class="diary"><h3>📒 Science diary – Fig 1.2 (b) and Fig 1.3 (b)</h3>
+<p style="margin:.2rem 0">Draw two line diagrams of the path of light: a horizontal line for the water surface, label <b>air</b> <span class="ml">വായു</span> above and <b>water</b> <span class="ml">ജലം</span> below, a dashed normal at the point where the ray strikes. (b) of Fig 1.2: a slanting ray in air that bends at the surface and continues, straight again, in the water, closer to the normal. (b) of Fig 1.3: a vertical ray that goes straight through. Put arrows on the rays to show the direction of travel.</p></div>
+
+<div class="callout key"><div class="title">⭐ Path of light at an interface (textbook page 9)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">ഒരു മാധ്യമത്തിലൂടെ പ്രകാശം സഞ്ചരിക്കുമ്പോൾ പ്രകാശപാത നേർരേഖയിലായിരിക്കും. ഒരു മാധ്യമത്തിൽനിന്ന് മറ്റൊരു മാധ്യമത്തിലേക്ക് പ്രകാശരശ്മി ചരിഞ്ഞ് പ്രവേശിക്കുമ്പോൾ മാധ്യമങ്ങളുടെ വിഭജനതലത്തിൽ വച്ച് അതിന് ദിശാവ്യതിയാനം സംഭവിക്കാറുണ്ട്. ലംബമായി പതിക്കുന്ന പ്രകാശരശ്മിക്ക് ദിശാവ്യതിയാനം സംഭവിക്കുന്നില്ല.</p>
+<p style="margin:0">Light travels in a <b>straight line within one medium</b>. When a ray passes <b>obliquely</b> from one medium into another, its direction changes <b>at the interface</b> between the media. A ray falling <b>perpendicularly</b> on the interface does <b>not</b> change direction.</p></div>
+
+<h2>3. Why does the path bend? The toy car – Fig 1.4</h2>
+<p><span class="ml">ഒരു മാധ്യമത്തിൽ നിന്ന് മറ്റൊരു മാധ്യമത്തിലേക്ക് പ്രകാശം ചരിഞ്ഞ് കടക്കുമ്പോൾ പ്രകാശപാതയ്ക്ക് വ്യതിയാനം സംഭവിക്കാറുണ്ട്. കാരണമെന്തായിരിക്കും?</span> – Why does the path of light change direction when light passes obliquely into another medium? The textbook answers with an everyday model.</p>
+<p><span class="ml">മിനുസമുള്ള ഒരു പ്രതലത്തിൽനിന്ന് പരുപരുത്ത പ്രതലത്തിലേക്ക് സഞ്ചരിക്കുന്ന ടോയ് കാറിന്റെ ചലനവേഗവും ദിശയും നിരീക്ഷിക്കൂ.</span> – Watch the speed and direction of a toy car that rolls from a <b>smooth</b> surface <span class="ml">മിനുസമുള്ള പ്രതലം</span> onto a <b>rough</b> surface <span class="ml">പരുപരുത്ത പ്രതലം</span>.</p>
+<div class="lab" id="carLab">
+  <div class="lab-title">🚗 Toy car lab – smooth floor to rough mat (top view)</div>
+  <svg id="carSvg" viewBox="0 0 800 400" role="img" aria-label="Top view of a toy car rolling slantwise from a smooth floor onto a rough mat; its yellow tyre tracks bend at the boundary"></svg>
+  <div class="controls">
+    <label>approach angle from the normal <input id="carI" type="range" min="0" max="60" step="1" value="35"><output></output>°</label>
+    <label>speed on the rough mat <input id="carV" type="range" min="40" max="100" step="5" value="60"><output></output> % of the smooth-floor speed</label>
+  </div>
+  <div class="controls"><button class="btn primary" id="carGo">▶ Roll the car</button></div>
+  <div class="readout" id="carOut"></div>
+  <p class="hint">Watch the two front wheels. The wheel that reaches the rough mat first slows down first, while the other wheel is still running fast on the smooth floor – so the car swings round until both wheels are on the mat. Set the speed on the mat to 100 % (no slowing) or the angle to 0° and the car does <b>not</b> turn.</p>
+</div>
+<div class="qa"><p><b>Q6.</b> <span class="ml">കാറിന്റെ ചലനദിശയ്ക്ക് മാറ്റം ഉണ്ടാകുന്നുണ്ടോ?</span> – Does the car's direction of motion change?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>Yes</b> – it turns, closer to the normal (more "straight across" the boundary).<div class="why">Why: the tracks in Fig 1.4 (b) and in the lab have a kink: slanting more on the smooth floor, less on the rough mat.</div></div></div></div>
+<div class="qa"><p><b>Q7.</b> <span class="ml">എവിടെ വച്ചാണ് ഈ മാറ്റം ഉണ്ടാകുന്നത്?</span> – Where does this change happen?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">At the <b>boundary</b> between the smooth and the rough surface.<div class="why">Why: before the boundary both wheels run at the same speed, and after it both run at the same (lower) speed – only while the car straddles the boundary are the wheel speeds unequal, and that is when it turns.</div></div></div></div>
+<div class="qa"><p><b>Q8.</b> <span class="ml">മിനുസമുള്ള പ്രതലത്തിലൂടെയും പരുപരുത്ത പ്രതലത്തിലൂടെയും ഒരേ വേഗത്തിലാണോ കാർ നീങ്ങിയത്?</span> – Did the car move at the same speed on the smooth and the rough surface?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>No</b> – it is <b>slower on the rough surface</b>.<div class="why">Why: the rough surface offers more friction. <span class="ml">ഒരു പ്രതലത്തിൽ നിന്ന് മറ്റൊരു പ്രതലത്തിലേക്ക് മാറുന്നതുമൂലം കാറിന്റെ വേഗത്തിൽ വ്യത്യാസമുണ്ടാകുന്നതാണല്ലോ അതിന്റെ ദിശാവ്യതിയാനത്തിന് കാരണം.</span> The change of speed when the car passes from one surface to the other is what changes its direction.</div></div></div></div>
+<p><span class="ml">വിവിധ മാധ്യമങ്ങളിലൂടെയുള്ള പ്രകാശവേഗം വ്യത്യസ്തമാണ്. പ്രകാശവേഗത്തിലുള്ള ഈ മാറ്റമാണ് ഒരു മാധ്യമത്തിൽ നിന്ന് മറ്റൊരു മാധ്യമത്തിലേക്ക് പ്രകാശം കടക്കുമ്പോൾ പ്രകാശപാതയുടെ ദിശാവ്യതിയാനത്തിന് കാരണം.</span> Light is the same: the <b>speed of light</b> <span class="ml">പ്രകാശവേഗം</span> is different in different media, and <b>this change in speed is what changes the direction</b> of the path of light when it passes from one medium into another. A beam of light has a width, like the car's axle: the side of the beam that enters the water first slows down first, and the beam swings round.</p>
+
+<h2>4. How fast is light in different media? – Table 1.1</h2>
+<div class="tblwrap"><table class="obs"><thead><tr><th>Medium <span class="ml">മാധ്യമം</span></th><th>Speed of light (approx.) <span class="ml">പ്രകാശവേഗം (ഏകദേശം)</span></th></tr></thead><tbody>
+<tr><td>Air <span class="ml">വായു</span></td><td>3 × 10⁸ m/s</td></tr>
+<tr><td>Water <span class="ml">ജലം</span></td><td>2.25 × 10⁸ m/s</td></tr>
+<tr><td>Glass <span class="ml">ഗ്ലാസ്</span></td><td>2 × 10⁸ m/s</td></tr>
+<tr><td>Diamond <span class="ml">വജ്രം</span></td><td>1.25 × 10⁸ m/s</td></tr>
+</tbody></table></div>
+<div class="lab" id="raceLab">
+  <div class="lab-title">🏁 Light race – four lanes, same start</div>
+  <svg id="rcSvg" viewBox="0 0 800 300" role="img" aria-label="Four lanes, air, water, glass and diamond, with a light pulse racing along each and a bar for the speed of light in each medium"></svg>
+  <div class="controls"><label>time since the start <input id="rcT" type="range" min="0" max="2" step="0.05" value="2"><output></output> ns</label>
+    <button class="btn primary" id="rcGo">▶ Start the race</button></div>
+  <div class="readout" id="rcOut"></div>
+  <p class="hint">1 ns (nanosecond) = 10⁻⁹ s, one billionth of a second. In 1 ns light covers 30 cm in air – and less in the other media. The full lane length is the distance covered in air in 2 ns (60 cm), so each bar is also the speed bar of Table 1.1.</p>
+</div>
+<p><span class="ml">വിവിധ മാധ്യമങ്ങളിൽ പ്രകാശവേഗം വ്യത്യാസപ്പെടാൻ കാരണം മാധ്യമങ്ങളുടെ പ്രകാശികസാന്ദ്രതയിലുള്ള വ്യത്യാസമാണ്.</span> The speed of light differs from medium to medium because the media differ in <b>optical density</b> <span class="ml">പ്രകാശികസാന്ദ്രത</span>.</p>
+<div class="callout key"><div class="title">⭐ Optical density (textbook page 10)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">ഒരു മാധ്യമത്തിലൂടെയുള്ള പ്രകാശവേഗത്തെ സ്വാധീനിക്കാനുള്ള മാധ്യമത്തിന്റെ കഴിവിനെ മാധ്യമത്തിന്റെ പ്രകാശികസാന്ദ്രത (optical density) എന്ന് പറയുന്നു.</p>
+<p style="margin:0">The ability of a medium to affect the speed of light through it is called the <b>optical density</b> of the medium.</p></div>
+<p><span class="ml">പ്രകാശികസാന്ദ്രത കൂടിയ മാധ്യമത്തിൽ (optically denser medium) പ്രകാശത്തിന്റെ വേഗം കുറവായിരിക്കും. പ്രകാശികസാന്ദ്രത കുറഞ്ഞ മാധ്യമത്തിൽ (optically rarer medium) പ്രകാശത്തിന്റെ വേഗം കൂടുതലായിരിക്കും. പ്രകാശികസാന്ദ്രതയ്ക്ക് പദാർഥ സാന്ദ്രതയുമായി ബന്ധമില്ല എന്ന് ഓർക്കുമല്ലോ.</span></p>
+<div class="grid">
+<div class="card"><b>Optically denser medium</b> <span class="ml">പ്രകാശികസാന്ദ്രത കൂടിയ മാധ്യമം</span><br>light travels <b>slower</b> in it. Example: glass compared with water.</div>
+<div class="card"><b>Optically rarer medium</b> <span class="ml">പ്രകാശികസാന്ദ്രത കുറഞ്ഞ മാധ്യമം</span><br>light travels <b>faster</b> in it. Example: air compared with water.</div>
+</div>
+<div class="callout think"><div class="title">🤔 Optical density is <em>not</em> mass density <span class="ml">പദാർഥ സാന്ദ്രത</span></div><p>Kerosene <b>floats</b> on water, so it has a <b>smaller mass density</b> (about 0.8 g/cm³ against 1 g/cm³). Yet light is <b>slower</b> in kerosene (refractive index 1.44) than in water (1.33) – kerosene is <b>optically denser</b>. "Heavier" and "optically denser" are two different ideas.</p></div>
+
+<h3>Arrange in increasing optical density (page 10)</h3>
+<p><span class="ml">പട്ടിക 1.1 ലെ മാധ്യമങ്ങളെ പ്രകാശികസാന്ദ്രത കൂടിവരുന്ന വിധത്തിൽ ക്രമീകരിക്കൂ. വായു &lt; -------- &lt; -------- &lt; വജ്രം</span> – Arrange the media of Table 1.1 in order of increasing optical density.</p>
+<div class="lab" id="ordLab">
+  <div class="lab-title">🧩 Density ladder – tap the media from the <em>least</em> to the <em>most</em> optically dense</div>
+  <div class="controls" id="ordBtns"></div>
+  <div class="order" id="ordSlots"></div>
+  <div class="controls"><button class="btn ghost" id="ordReset">⟲ Start again</button></div>
+  <div class="readout" id="ordOut">Tap a medium.</div>
+</div>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>air &lt; water &lt; glass &lt; diamond</b> <span class="ml">വായു &lt; ജലം &lt; ഗ്ലാസ് &lt; വജ്രം</span><div class="why">Why: the slower light travels in a medium, the greater its optical density. Speeds: air 3, water 2.25, glass 2, diamond 1.25 (× 10⁸ m/s) – decreasing speed means increasing optical density.</div></div></div>
+
+<div class="callout real"><div class="title">🌴 Kerala connection</div>
+<p style="margin:0">Next time you are served <i>naranga vellam</i> (lime juice) at a wayside shop, look at the straw from the side: broken! Look at a coconut-shell spoon in a pot of water, or your legs while standing in a temple pond – they look shorter and bent. All of these are light changing direction at a water–air interface. And the shimmering "water" on the hot NH road in April is the same light playing a bigger trick (page 11).</p></div>
+
+<h2>5. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li>Within <b>one medium</b> light travels in a <b>straight line</b>.</li>
+<li>Entering another medium <b>obliquely</b>, a ray changes direction <b>at the interface</b> <span class="ml">വിഭജനതലം</span>; a ray falling <b>perpendicularly</b> does not.</li>
+<li>Cause: the <b>speed of light</b> is different in different media (toy car: speed changes → direction changes).</li>
+<li>Table 1.1: air 3 × 10⁸, water 2.25 × 10⁸, glass 2 × 10⁸, diamond 1.25 × 10⁸ m/s.</li>
+<li><b>Optical density</b>: the ability of a medium to affect the speed of light. Denser → slower. Order: <b>air &lt; water &lt; glass &lt; diamond</b>. Not the same as mass density.</li>
+</ul></div>
+<p>Next: <a href="06_refraction_refractive_index.html">Refraction and refractive index – why the straw looks broken ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Refraction of Light · Class 9 Physics", "icon": "🔦", "key": "physics_ch1_progress", "pages": [["index.html", "Home"], ["01_light_rays_reflection.html", "1 · Light, Rays & Reflection"], ["02_angles_normals_protractor.html", "2 · Angles, Normals & the Protractor"], ["03_speed_ratios_powers.html", "3 · Speed, Ratios & Powers of Ten"], ["04_media_slabs_prisms.html", "4 · Media, Slabs & Prisms"], ["05_light_changes_direction.html", "5 · Light Changes Direction"], ["06_refraction_refractive_index.html", "6 · Refraction & Refractive Index"], ["07_rules_of_refraction.html", "7 · Incident & Refracted Rays: the Rules"], ["08_glass_slab_everyday.html", "8 · Glass Slab & Everyday Refraction"], ["09_atmospheric_refraction.html", "9 · Atmospheric Refraction"], ["10_total_internal_reflection.html", "10 · Total Internal Reflection & Critical Angle"], ["11_tir_applications.html", "11 · Fibres, Mirages, Reflectors & Periscopes"], ["12_intext_questions_solutions.html", "12 · In-text Questions – Solutions"], ["13_assess_q1_q6_solutions.html", "13 · Let Us Assess Q1–6 – Solutions"], ["14_assess_q7_q11_solutions.html", "14 · Let Us Assess Q7–11 & Extended Activities"], ["15_applications_explore.html", "15 · Applications & Explore Online"], ["16_summary_revision.html", "16 · Summary & Quick Quiz"], ["17_model_test_paper.html", "17 · Model Test Paper"], ["18_model_test_solutions.html", "18 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+const {P, el, text} = K;
+const COL = {red:'var(--red)', blue:'var(--blue)', green:'var(--green)', amber:'var(--accent)', purple:'var(--purple)', text:'var(--text)', muted:'var(--muted)'};
+/* line with its own stroke (seg() carries class 'ln', which overrides stroke attributes) */
+const sline = (svg, a, b, attrs={}) => el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+/* number → string with ≤ d decimals and a true minus sign */
+const fx = (v, d=2) => K.num(K.fmt(v, d));
+/* left-anchored SVG text */
+const L = (svg, x, y, s, cls='lbl', extra={}) => text(svg, P(x, y), s, {class: cls, 'text-anchor': 'start', ...extra});
+/* arrow a→b with a filled head; o.c colour name, o.w width, o.label, o.lo {x,y} label offset from the tip, o.op opacity, o.head size */
+function arrow(svg, a, b, o={}){ const c = COL[o.c || 'red'], w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const Ln = K.dist(a, b); if (Ln < 1) return g; const u = K.unit(a, b), hs = Math.min(o.head ?? 11, Ln * .6), base = P(b.x - u.x * hs, b.y - u.y * hs);
+  el('line', {x1: a.x, y1: a.y, x2: base.x, y2: base.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round'}, g);
+  el('polygon', {points: `${b.x},${b.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g);
+  if (o.label) text(g, P(b.x + (o.lo ? o.lo.x : 0), b.y + (o.lo ? o.lo.y : -12)), o.label, {class: 'lbl sm ' + (o.lc || o.c || 'red'), 'text-anchor': o.anchor || 'middle'});
+  return g; }
+/* ---- optics ---- */
+/* refractive indices used for drawing and read-outs (Snell's law under the hood) */
+const MED = {
+  air:     {n: 1.00, name: 'air',     ml: 'വായു',  cls: 'm-air'},
+  water:   {n: 1.33, name: 'water',   ml: 'ജലം',   cls: 'm-water'},
+  glass:   {n: 1.5,  name: 'glass',   ml: 'ഗ്ലാസ്', cls: 'm-glass'},
+  diamond: {n: 2.42, name: 'diamond', ml: 'വജ്രം', cls: 'm-diamond'}
+};
+/* angle of refraction (deg) for n1 sin i = n2 sin r; null = no refracted ray (total internal reflection) */
+const snell = (n1, n2, i) => { const s = n1 * Math.sin(K.rad(i)) / n2; return s > 1 + 1e-12 ? null : K.deg(Math.asin(Math.min(1, s))); };
+/* critical angle (deg) going from n1 (denser) into n2 (default air) */
+const critical = (n1, n2=1) => K.deg(Math.asin(n2 / n1));
+/* unit direction at angle a (deg) to a VERTICAL normal; down = travelling downwards; right = moving to the right */
+const dirN = (a, down=true, right=true) => P((right ? 1 : -1) * Math.sin(K.rad(a)), (down ? 1 : -1) * Math.cos(K.rad(a)));
+const along = (p, u, len) => P(p.x + u.x * len, p.y + u.y * len);
+/* point where the ray p + t·u reaches the horizontal line y (or the vertical line x) */
+const hitY = (p, u, y) => along(p, u, (y - p.y) / u.y);
+const hitX = (p, u, x) => along(p, u, (x - p.x) / u.x);
+/* light ray a→b with chevron arrowhead(s) at fraction(s) o.at (default .5); o.c colour, o.w width, o.op opacity, o.dash, o.glow */
+function lray(svg, a, b, o={}){ const c = COL[o.c || 'red'], w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const Ln = K.dist(a, b); if (Ln < 1) return g;
+  if (o.glow) el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: c, 'stroke-width': w * 3.5, 'stroke-linecap': 'round', opacity: .16}, g);
+  el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round', 'stroke-dasharray': o.dash || null}, g);
+  const u = K.unit(a, b), hs = o.head ?? 10;
+  (o.at === undefined ? [.5] : [].concat(o.at)).forEach(f => { if (Ln < 2.2 * hs) return; const m = K.lerpPt(a, b, f), tip = along(m, u, hs / 2), base = along(m, u, -hs / 2);
+    el('polygon', {points: `${tip.x},${tip.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g); });
+  return g; }
+/* ray through several points (one arrowhead per piece) */
+function lpath(svg, pts, o={}){ const g = K.group(svg); for (let k = 0; k < pts.length - 1; k++) lray(g, pts[k], pts[k + 1], o); return g; }
+/* dashed normal through p (direction o.u, default vertical), half-length len; o.labels = ['N', 'N′'] at the two ends */
+function normal(svg, p, len=80, o={}){ const u = o.u || P(0, 1), a = along(p, u, -len), b = along(p, u, len);
+  const g = K.group(svg); sline(g, a, b, {stroke: 'var(--muted)', 'stroke-width': 1.5, 'stroke-dasharray': '6 5'});
+  if (o.labels){ text(g, along(a, u, -11), o.labels[0], {class: 'lbl sm muted'}); text(g, along(b, u, 11), o.labels[1], {class: 'lbl sm muted'}); }
+  return g; }
+/* filled angle arc at V between VA and VB with a label */
+const ang = (svg, V, A, B, r, label, cls='') => K.angleArc(svg, V, A, B, r, {cls, label, fill: true});
+/* rectangle of a medium (key of MED or a css class) with an optional label at the top-left */
+function band(svg, x, y, w, h, key, o={}){ const r = el('rect', {x, y, width: w, height: h, class: MED[key] ? MED[key].cls : key, rx: o.rx || 0}, svg);
+  if (o.label) L(svg, x + 8, y + (o.ly ?? 16), o.label, 'lbl sm muted'); return r; }
+/* an eye at p looking in direction angDeg (0 = to the right, 90 = down) */
+function eye(svg, p, angDeg=0, s=1){ const g = K.group(svg, {transform: `translate(${p.x} ${p.y}) rotate(${angDeg}) scale(${s})`});
+  el('path', {d: 'M-16,0 Q0,-12 16,0 Q0,12 -16,0 Z', fill: 'var(--surface)', stroke: 'var(--text)', 'stroke-width': 1.8}, g);
+  el('circle', {cx: 5, cy: 0, r: 5, fill: 'var(--blue)'}, g); el('circle', {cx: 6.5, cy: 0, r: 2.2, fill: 'var(--text)'}, g); return g; }
+/* laser torch whose beam leaves at tip, pointing along unit u */
+function laser(svg, tip, u, s=1){ const a = K.deg(Math.atan2(u.y, u.x)); const g = K.group(svg, {transform: `translate(${tip.x} ${tip.y}) rotate(${a}) scale(${s})`});
+  el('rect', {x: -64, y: -7, width: 58, height: 14, rx: 4, fill: 'var(--surface2)', stroke: 'var(--text)', 'stroke-width': 1.4}, g);
+  el('rect', {x: -8, y: -5, width: 8, height: 10, rx: 1.5, fill: 'var(--red)'}, g); el('rect', {x: -44, y: -10, width: 10, height: 4, rx: 1, fill: 'var(--red)'}, g); return g; }
+/* ---- page widgets ---- */
+function sorter(boxId, scoreId, items, cats){
+  const box = document.getElementById(boxId), sc = document.getElementById(scoreId); let right = 0;
+  items.forEach(it => { const row = document.createElement('div'); row.className = 'row';
+    row.innerHTML = `<span class="txt">${it.t}</span>` + cats.map((c, i) => `<button class="btn" data-i="${i}">${c}</button>`).join('') + '<span class="fbk"></span>';
+    row.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const ok = +b.dataset.i === it.a;
+      if (ok && !row.classList.contains('ok')) right++; if (!ok && row.classList.contains('ok')) right--;
+      row.classList.toggle('ok', ok); row.classList.toggle('bad', !ok);
+      row.querySelector('.fbk').innerHTML = (ok ? '✅ ' : '❌ Not quite – ') + it.why; sc.textContent = `${right} / ${items.length}`; });
+    box.appendChild(row); });
+}
+/* exam-layout stepper: rows [{h: heading, s: svg line, html: step text}], fig(svg,i,t) draws the figure; working is written at x0 */
+function examStepper(sel, rows, fig, x0=380, dy=62){
+  new K.Stepper(sel, {steps: rows.map(r => r.html), draw(svg, i, t){
+    fig(svg, i, t);
+    rows.forEach((r, k) => { if (k > i) return; const o = k === i ? t : 1, y = 30 + k * dy;
+      L(svg, x0, y, r.h, 'lbl sm muted', {opacity: o});
+      L(svg, x0, y + 22, r.s, k === rows.length - 1 ? 'lbl big green' : 'lbl', {opacity: o}); });
+  }});
+}
+
+/* ---------- 1. laser tank (Fig 1.2, 1.3) ---------- */
+(function(){
+  const svg = document.getElementById('tkSvg'), out = document.getElementById('tkOut'), inp = document.getElementById('tkI');
+  const SURF = 250, BOT = 405, TOP = 92, O = P(400, SURF);
+  let smoke = true, stop = null;
+  /* fixed pseudo-random speckles (smoke wisps, milk) */
+  const rnd = (k => () => { k = (k * 16807) % 2147483647; return k / 2147483647; })(7);
+  const wisps = Array.from({length: 26}, () => ({x: 90 + rnd() * 620, y: TOP + 18 + rnd() * 120, rx: 18 + rnd() * 30, ry: 5 + rnd() * 7}));
+  const milk = Array.from({length: 70}, () => ({x: 50 + rnd() * 700, y: SURF + 8 + rnd() * 140}));
+  function draw(i, t=1){
+    K.clear(svg);
+    /* tank */
+    if (smoke){ band(svg, 40, TOP, 720, SURF - TOP, 'm-smoke'); wisps.forEach(w => el('ellipse', {cx: w.x, cy: w.y, rx: w.rx, ry: w.ry, fill: 'var(--muted)', opacity: .1}, svg)); }
+    band(svg, 40, SURF, 720, BOT - SURF, 'water');
+    if (smoke) milk.forEach(m => el('circle', {cx: m.x, cy: m.y, r: 1.6, fill: 'var(--surface)', opacity: .8}, svg));
+    el('rect', {x: 40, y: TOP, width: 720, height: BOT - TOP, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 3}, svg);
+    sline(svg, P(36, TOP), P(764, TOP), {stroke: 'var(--muted)', 'stroke-width': 1.5, 'stroke-dasharray': '3 3'});
+    L(svg, 600, TOP - 8, 'transparent paper cover', 'lbl sm muted');
+    sline(svg, P(40, SURF), P(760, SURF), {stroke: 'var(--blue)', 'stroke-width': 1.5});
+    L(svg, 52, TOP + 20, smoke ? 'air + incense smoke  (വായു)' : 'air  (വായു)', 'lbl sm');
+    L(svg, 52, SURF + 20, smoke ? 'water + a drop of milk  (ജലം)' : 'water  (ജലം)', 'lbl sm');
+    /* rays */
+    const r = snell(MED.air.n, MED.water.n, i);
+    const u1 = dirN(i), u2 = dirN(r), S = hitY(O, u1, 64), E = hitY(O, u2, BOT);
+    normal(svg, O, 130, {labels: ['N', 'N′']});
+    const L1 = K.dist(S, O), L2 = K.dist(O, E), tot = L1 + L2, d = tot * t;
+    const op = smoke ? 1 : .13;
+    laser(svg, S, u1, .85);
+    if (d > 0) lray(svg, S, along(S, u1, Math.min(d, L1)), {glow: smoke, op});
+    if (d > L1){ lray(svg, O, along(O, u2, d - L1), {glow: smoke, op});
+      if (i > 0.5) sline(svg, O, along(O, u1, 150), {stroke: 'var(--red)', 'stroke-width': 1.5, 'stroke-dasharray': '4 6', opacity: .5}); }
+    if (t >= 1){ el('ellipse', {cx: E.x, cy: E.y - 2, rx: 9, ry: 3, fill: 'var(--red)', opacity: .7}, svg);
+      if (i > 0.5){ K.angleArc(svg, O, along(O, u1, -10), P(O.x, O.y - 10), 46, {cls: 'amber', fill: true, label: 'i = ' + fx(i, 0) + '°', labelOff: 82}); K.angleArc(svg, O, along(O, u2, 10), P(O.x, O.y + 10), 46, {cls: 'blue', fill: true, label: 'r = ' + fx(r, 1) + '°', labelOff: 86}); }
+      else text(svg, P(O.x + 70, O.y - 40), 'along the normal: i = 0°, r = 0°', {class: 'lbl sm green'}); }
+    if (!smoke) text(svg, P(400, 150), 'Without smoke and milk the beam is (almost) invisible – only the spots show', {class: 'lbl sm red'});
+    out.textContent = `Angle in air (from the normal)   i = ${fx(i, 0)}°\nAngle in water (from the normal) r = ${fx(r, 1)}°\n` +
+      (i < 0.5 ? 'The ray falls perpendicularly – it goes straight on, no change of direction.' : `Change of direction at the water surface = ${fx(i - r, 1)}° – the ray turned towards the normal.`);
+  }
+  const run = K.slider(inp, v => { if (stop){ stop(); stop = null; } draw(v); }, 0);
+  const setI = v => { inp.value = v; run(); };
+  document.getElementById('tkA').addEventListener('click', () => setI(40));
+  document.getElementById('tkB').addEventListener('click', () => setI(0));
+  document.getElementById('tkOn').addEventListener('click', () => { if (stop) stop(); stop = K.animate(1600, (e, t) => draw(+inp.value, t), () => { stop = null; }); });
+  document.getElementById('tkSmoke').addEventListener('click', e => { smoke = !smoke; e.target.textContent = smoke ? 'Remove smoke & milk' : 'Add smoke & milk'; draw(+inp.value); });
+})();
+
+/* ---------- 2. toy car (Fig 1.4) ---------- */
+(function(){
+  const svg = document.getElementById('carSvg'), out = document.getElementById('carOut'), iInp = document.getElementById('carI'), vInp = document.getElementById('carV');
+  const BY = 190, W = 34, CL = 56;   /* boundary y, axle width, car length (px) */
+  let stop = null;
+  const dots = (() => { let k = 3; const r = () => { k = (k * 16807) % 2147483647; return k / 2147483647; }; return Array.from({length: 260}, () => ({x: r() * 800, y: BY + 4 + r() * 205, s: 1 + r() * 2})); })();
+  /* differential-drive model: each front wheel runs at the speed of the surface it is on */
+  function simulate(iDeg, ratio){
+    let u = dirN(iDeg); let c = P(330 - (BY - 20) * Math.tan(K.rad(iDeg)), 20); const path = [];
+    for (let k = 0; k < 4000; k++){
+      const n = P(-u.y, u.x), w1 = along(c, n, W / 2), w2 = along(c, n, -W / 2);
+      path.push({c, u, w1, w2});
+      const s1 = w1.y > BY ? ratio : 1, s2 = w2.y > BY ? ratio : 1, dt = 1.2;
+      c = along(c, u, (s1 + s2) / 2 * dt);
+      const al = (s1 - s2) / W * dt; u = P(u.x * Math.cos(al) - n.x * Math.sin(al), u.y * Math.cos(al) - n.y * Math.sin(al));
+      if (c.y > 392 || c.x > 790) break;
+    }
+    return path;
+  }
+  function car(g, st){ const a = K.deg(Math.atan2(st.u.y, st.u.x)); const cg = K.group(g, {transform: `translate(${st.c.x} ${st.c.y}) rotate(${a})`});
+    [[-8, -W / 2], [-8, W / 2], [-CL + 10, -W / 2], [-CL + 10, W / 2]].forEach(([x, y]) => el('rect', {x: x - 7, y: y - 4, width: 14, height: 8, rx: 2, fill: 'var(--text)'}, cg));
+    el('rect', {x: -CL, y: -W / 2 + 3, width: CL + 4, height: W - 6, rx: 8, class: 'car'}, cg);
+    el('rect', {x: -CL + 18, y: -W / 2 + 7, width: 18, height: W - 14, rx: 3, fill: '#78350f', opacity: .55}, cg); }
+  function draw(frac=1){
+    const iDeg = +iInp.value, ratio = +vInp.value / 100, path = simulate(iDeg, ratio);
+    K.clear(svg);
+    el('rect', {x: 0, y: 0, width: 800, height: BY, class: 'smooth'}, svg);
+    el('rect', {x: 0, y: BY, width: 800, height: 400 - BY, class: 'smooth'}, svg);
+    dots.forEach(d => el('circle', {cx: d.x, cy: d.y, r: d.s, class: 'rough'}, svg));
+    sline(svg, P(0, BY), P(800, BY), {stroke: 'var(--text)', 'stroke-width': 2});
+    L(svg, 560, BY - 12, 'smooth floor  (മിനുസമുള്ള പ്രതലം)', 'lbl sm');
+    L(svg, 560, BY + 22, 'rough mat  (പരുപരുത്ത പ്രതലം)', 'lbl sm');
+    const n = Math.max(1, Math.round(path.length * frac)), shown = path.slice(0, n);
+    if (shown.length > 1){ K.polyline(svg, shown.map(s => s.w1), {class: 'track'}); K.polyline(svg, shown.map(s => s.w2), {class: 'track'}); }
+    /* where the axle centre crosses the boundary → normal and angles */
+    const kx = path.findIndex(s => s.c.y >= BY);
+    const first = path[0], last = path[path.length - 1];
+    const aIn = iDeg, aOut = K.deg(Math.atan2(last.u.x, last.u.y));
+    if (kx > 0 && frac >= 1){ const X = P(path[kx].c.x, BY); normal(svg, X, 90);
+      if (aIn > 0.5){ ang(svg, X, along(X, first.u, -10), P(X.x, X.y - 10), 50, fx(aIn, 0) + '°', 'amber'); ang(svg, X, along(X, last.u, 10), P(X.x, X.y + 10), 50, fx(aOut, 0) + '°', 'blue'); } }
+    car(svg, shown[shown.length - 1]);
+    const cur = shown[shown.length - 1], s1 = cur.w1.y > BY ? ratio : 1, s2 = cur.w2.y > BY ? ratio : 1;
+    L(svg, 14, 26, frac < 1 ? (s1 !== s2 ? 'one wheel on the mat, one on the floor → the car turns' : cur.c.y < BY ? 'both wheels on the smooth floor: fast, straight' : 'both wheels on the mat: slower, straight again') : 'tyre tracks (yellow)', 'lbl', {'font-weight': 700});
+    out.textContent = `Direction on the smooth floor: ${fx(aIn, 0)}° from the normal, speed 100 %\nDirection on the rough mat:    ${fx(aOut, 1)}° from the normal, speed ${fx(ratio * 100, 0)} %\n` +
+      (aIn < 0.5 ? 'Head-on: both wheels reach the mat together, so the car slows down but does not turn.' : ratio > 0.99 ? 'No change of speed → no change of direction.' : `The car turned ${fx(aIn - aOut, 1)}° towards the normal because it slowed down on the mat.`);
+  }
+  K.slider(iInp, () => { if (stop){ stop(); stop = null; } draw(1); }, 0);
+  K.slider(vInp, () => { if (stop){ stop(); stop = null; } draw(1); }, 0);
+  document.getElementById('carGo').addEventListener('click', () => { if (stop) stop(); stop = K.animate(4000, (e, t) => draw(Math.max(.002, t)), () => { stop = null; }); });
+})();
+
+/* ---------- 3. light race (Table 1.1) ---------- */
+(function(){
+  const svg = document.getElementById('rcSvg'), out = document.getElementById('rcOut'), inp = document.getElementById('rcT');
+  const LANES = [['air', 3], ['water', 2.25], ['glass', 2], ['diamond', 1.25]], X0 = 190, PX = 500 / 60;  /* px per cm */
+  let stop = null;
+  function draw(tns){
+    K.clear(svg);
+    for (let cm = 0; cm <= 60; cm += 10){ const x = X0 + cm * PX; sline(svg, P(x, 30), P(x, 268), {stroke: 'var(--grid)', 'stroke-width': 1}); text(svg, P(x, 284), cm + ' cm', {class: 'lbl sm muted'}); }
+    LANES.forEach(([k, v], j) => { const y = 55 + j * 60, m = MED[k];
+      band(svg, X0, y - 20, 500, 40, k, {rx: 8});
+      el('rect', {x: X0, y: y - 20, width: 500, height: 40, rx: 8, fill: 'none', stroke: 'var(--border)'}, svg);
+      L(svg, 14, y - 6, m.name[0].toUpperCase() + m.name.slice(1), 'lbl', {'font-weight': 700}); L(svg, 14, y + 14, m.ml, 'lbl sm purple');
+      const full = v * 20 * PX;   /* distance in 2 ns, cm → px */
+      el('rect', {x: X0, y: y + 10, width: full, height: 6, rx: 3, fill: 'var(--accent)', opacity: .45}, svg);
+      L(svg, X0 + full + 6, y + 14, `${fx(v, 2)} × 10⁸ m/s`, 'lbl sm amber');
+      const d = v * 10 * tns;   /* cm travelled */
+      const x = X0 + d * PX;
+      if (d > 0.2) sline(svg, P(X0, y - 4), P(x, y - 4), {stroke: 'var(--red)', 'stroke-width': 3, opacity: .5});
+      el('circle', {cx: x, cy: y - 4, r: 9, fill: 'var(--red)', opacity: .25}, svg); el('circle', {cx: x, cy: y - 4, r: 5, fill: 'var(--red)'}, svg); });
+    text(svg, P(440, 14), `t = ${fx(tns, 2)} ns`, {class: 'lbl', 'font-weight': 700});
+    out.textContent = `After ${fx(tns, 2)} ns:  air ${fx(30 * tns, 1)} cm · water ${fx(22.5 * tns, 1)} cm · glass ${fx(20 * tns, 1)} cm · diamond ${fx(12.5 * tns, 1)} cm\n` +
+      'Fastest in air, slowest in diamond → optical density: air < water < glass < diamond.';
+  }
+  const run = K.slider(inp, v => { if (stop){ stop(); stop = null; } draw(v); }, 2);
+  document.getElementById('rcGo').addEventListener('click', () => { if (stop) stop(); stop = K.animate(4000, (e, t) => { const v = 2 * t; inp.value = v; inp.parentElement.querySelector('output').textContent = fx(v, 2); draw(v); }, () => { stop = null; }); });
+})();
+
+/* ---------- 4. density ladder ---------- */
+(function(){
+  const btns = document.getElementById('ordBtns'), slots = document.getElementById('ordSlots'), out = document.getElementById('ordOut');
+  const ANS = ['air', 'water', 'glass', 'diamond'], SHOW = ['diamond', 'air', 'glass', 'water'];
+  let picked = [];
+  function render(){
+    slots.innerHTML = ANS.map((a, k) => { const p = picked[k]; const cls = p ? (p === a ? 'ok' : 'bad') : ''; return `<span class="slot ${cls}">${p ? p : '?'}</span>` + (k < 3 ? '<b>&lt;</b>' : ''); }).join('');
+    btns.querySelectorAll('button').forEach(b => { b.disabled = picked.includes(b.dataset.m); });
+    if (picked.length === 4){ const ok = picked.every((p, k) => p === ANS[k]);
+      out.textContent = ok ? '✅ Correct: air < water < glass < diamond. Light is fastest in air and slowest in diamond.' : '❌ Not quite. Look at Table 1.1: the slower the light, the denser the medium. Start again.'; }
+    else out.textContent = picked.length ? 'Next: which is the next least dense?' : 'Tap a medium – start with the one in which light is fastest.';
+  }
+  SHOW.forEach(m => { const b = document.createElement('button'); b.className = 'btn'; b.dataset.m = m; b.textContent = `${m} (${MED[m].ml})`; b.addEventListener('click', () => { if (picked.length < 4 && !picked.includes(m)){ picked.push(m); render(); } }); btns.appendChild(b); });
+  document.getElementById('ordReset').addEventListener('click', () => { picked = []; render(); });
+  render();
+})();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'Within a single medium, light travels', options: ['along a curve', 'in a straight line', 'in a zig-zag', 'only downwards'], answer: 1, explain: 'In the tank the beam is straight in the smoky air and straight in the water.', hint: 'Look at the beam inside the water only.'});
+K.mcq('#q2', {q: 'A ray of light passes obliquely from air into water. Where does it change direction?', options: ['Inside the air', 'At the bottom of the tank', 'At the interface – the water surface', 'It does not change direction'], answer: 2, explain: 'The change of direction happens at the interface between the two media.', hint: 'Where does the kink appear?'});
+K.mcq('#q3', {q: 'A ray falls perpendicularly on the surface of water. Then', options: ['it bends towards the surface', 'it is not deviated', 'it bends away from the normal', 'it is completely reflected'], answer: 1, explain: 'Normal incidence: i = 0°, r = 0°, no change of direction.', hint: 'Try Fig 1.3 in the lab.'});
+K.mcq('#q4', {q: 'In which medium of Table 1.1 is the speed of light the lowest?', options: ['Air', 'Water', 'Glass', 'Diamond'], answer: 3, explain: 'Diamond: 1.25 × 10⁸ m/s – it is the optically densest of the four.', hint: 'Smallest number in the table.'});
+K.mcq('#q5', {q: 'Kerosene floats on water, but light travels slower in kerosene. Which is true?', options: ['Kerosene is optically rarer than water', 'Kerosene is optically denser than water', 'Optical density and mass density are the same thing', 'Light has the same speed in both'], answer: 1, explain: 'Slower light ⇒ optically denser. Optical density has nothing to do with mass density.', hint: 'Optical density is about the speed of light.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fibres, Mirages, Reflectors and Periscopes – Refraction of Light</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.qa{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.6rem 1rem;margin:.7rem 0;box-shadow:var(--shadow)}
+.qa p{margin:.25em 0}
+.qbox{background:var(--surface);border:1px solid var(--border);border-left:6px solid var(--accent);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.why{font-size:.93rem;color:var(--muted);margin-top:.3rem}
+.diary{background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:1rem 0}
+.diary h3{margin:.1rem 0 .4rem;color:var(--accent-ink)}
+.obs td,.obs th{text-align:center}
+.obs tr.hl td{background:var(--accent-soft)}
+.obs td.q{color:var(--muted)}
+.bubble{background:var(--surface);border:2px solid var(--purple);border-radius:18px;padding:.6rem .9rem;font-size:.95rem;margin:.8rem 0}
+.bubbles{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.7rem;margin:.8rem 0}
+.bubbles .bubble{margin:0}
+.bubble .ml{display:block;font-weight:600;margin-bottom:.2rem}
+.tblwrap{overflow-x:auto}
+.sorter{display:grid;gap:.45rem;margin:.6rem 0}
+.sorter .row{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .6rem;padding:.45rem .7rem;border-radius:10px;background:var(--surface2);border-left:5px solid transparent}
+.sorter .row .txt{flex:1 1 220px}
+.sorter .row.ok{border-left-color:var(--green);background:var(--green-soft)}
+.sorter .row.bad{border-left-color:var(--red);background:var(--red-soft)}
+.sorter .row .fbk{flex-basis:100%;font-size:.9rem}
+.score{font-weight:700;color:var(--primary-ink)}
+.controls select{padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem}
+/* media (as in the textbook: air grey, water blue, glass green) */
+svg .m-air{fill:var(--surface2)}
+svg .m-water{fill:var(--blue-soft)}
+svg .m-glass{fill:var(--green-soft)}
+svg .m-diamond{fill:var(--purple-soft)}
+svg .m-smoke{fill:var(--muted);opacity:.16}
+svg .m-edge{fill:none;stroke:var(--muted);stroke-width:1.5}
+svg .body-fill{fill:var(--surface2);stroke:var(--text);stroke-width:1.8}
+/* page-specific */
+svg .sky{fill:var(--blue-soft);opacity:.45}
+svg .road{fill:var(--muted);opacity:.45}
+svg .tube{fill:none;stroke:var(--text);stroke-width:3}
+svg .prism{fill:var(--green-soft);stroke:var(--green);stroke-width:2;stroke-linejoin:round}
+svg .mirror{stroke:var(--muted);stroke-width:6;stroke-linecap:round}
+svg .tree-c{fill:var(--green);opacity:.75}
+svg .tree-t{fill:#92400e}
+</style>
+</head>
+<body data-page="11_tir_applications">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 1 · Section 7</span><span class="chip amber">Textbook pages 20–22</span>
+<h1>Fibres, Mirages, Reflectors and Periscopes <span class="ml">പൂർണ്ണാന്തര പ്രതിപതനം പ്രയോജനപ്പെടുത്തുന്ന സന്ദർഭങ്ങൾ</span></h1>
+<p class="lead">Total internal reflection is not just a laboratory trick. It carries the internet to your home through glass threads, lets a doctor look inside a stomach, makes a cycle reflector glow in a car's headlights, gives a periscope a bright image – and paints a fake pool of water on a hot road. On this page you test each one in a virtual lab.</p>
+
+<div class="callout book"><div class="title">📖 What you need</div>
+<ul style="margin:0">
+<li>Total internal reflection <span class="ml">പൂർണ്ണാന്തര പ്രതിപതനം</span>: only from a <b>denser to a rarer</b> medium, only when the angle of incidence is <b>greater than the critical angle</b> <span class="ml">ക്രിട്ടിക്കൽ കോൺ</span>; glass–air critical angle 42° – <a href="10_total_internal_reflection.html">page 10</a>.</li>
+<li>A ray falling along the normal is not refracted – <a href="07_rules_of_refraction.html">page 7</a>. Air near a hot surface is optically rarer – <a href="09_atmospheric_refraction.html">page 9</a>.</li>
+<li>Right-angled prisms (45°–45°–90°) – <a href="04_media_slabs_prisms.html">page 4</a>.</li>
+</ul></div>
+
+<h2>1. Optical fibres – Fig 1.20, 1.24</h2>
+<p><span class="ml">അലങ്കാരവിളക്കിലെ ഒപ്റ്റിക്കൽ ഫൈബറുകളുടെ ഒരഗ്രം അനുയോജ്യമായ ഒരു പ്രകാശ സ്രോതസ്സുമായി ബന്ധിപ്പിച്ചിരിക്കുന്നു. ഈ സ്രോതസ്സിൽ നിന്നുള്ള പ്രകാശരശ്മികൾ ഫൈബറുകളിലൂടെ സഞ്ചരിക്കുമ്പോൾ ക്രിട്ടിക്കൽ കോണിനേക്കാൾ കൂടിയ പതനകോണുകളിലാണ് വശങ്ങളിൽ പതിക്കുന്നത്. അതുകൊണ്ട് തുടർച്ചയായി പൂർണ്ണാന്തര പ്രതിപതനം സംഭവിച്ച് രണ്ടാമത്തെ അഗ്രത്തുകൂടി മാത്രം പ്രകാശം പുറത്തേക്ക് വരുന്നു.</span></p>
+<p>One end of each optical fibre <span class="ml">ഒപ്റ്റിക്കൽ ഫൈബർ</span> in a decorative lamp is joined to a light source. Rays from the source travelling through a fibre strike its walls at angles of incidence <b>greater than the critical angle</b>, so they are totally internally reflected again and again and come out <b>only at the other end</b>. A fibre has a glass <b>core</b> <span class="ml">ആന്തരകോർ</span>, covered by a <b>cladding</b> <span class="ml">ക്ലാഡിങ്</span> of slightly lower refractive index, and an <b>outer jacket</b> <span class="ml">ബാഹ്യകവചം</span> for protection (Fig 1.24).</p>
+<div class="lab" id="fibLab">
+  <div class="lab-title">🧪 Fibre lab – bend the fibre and watch the light</div>
+  <svg id="fibSvg" viewBox="0 0 800 420" role="img" aria-label="An optical fibre with core, cladding and jacket, going straight and then bending downwards; light rays zig-zag inside by total internal reflection and may leak out at a sharp bend"></svg>
+  <div class="controls"><label>bend radius <input id="fibR" type="range" min="30" max="250" step="2" value="160"><output></output> px (small = sharp bend)</label>
+    <label>ray angle at the entry <input id="fibA" type="range" min="0" max="15" step="1" value="8"><output></output>°</label></div>
+  <div class="controls"><button class="btn primary" id="fibGo">▶ Send light pulses</button><button class="btn" id="fibSharp">Bend it sharply</button><button class="btn ghost" id="fibEasy">Gentle bend</button></div>
+  <div class="readout" id="fibOut"></div>
+  <p class="hint">Drawing values: core n = 1.50, cladding n = 1.30, so the critical angle at the core–cladding wall is about 60°. On a gentle bend every hit is above 60° and all the light reaches the far end. Bend too sharply and the ray meets the outer wall less obliquely – below the critical angle – and leaks out (that is why fibre cables must not be kinked).</p>
+</div>
+<div class="callout book"><div class="title">🏅 Charles K. Kao – Nobel Prize in Physics 2009 (textbook page 20)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">ഒപ്റ്റിക്കൽ ഫൈബറുകളിലൂടെയുള്ള പ്രകാശ പ്രേഷണവുമായി ബന്ധപ്പെട്ട നേട്ടങ്ങൾക്കാണ് 2009 ൽ ഭൗതിക ശാസ്ത്രത്തിനുള്ള നൊബേൽ സമ്മാനം ചാൾസ് കെ കാവോയ്ക്ക് ലഭിച്ചത്.</p>
+<p style="margin:0"><b>Charles K. Kao</b> received the <b>2009 Nobel Prize in Physics</b> for his achievements concerning the <b>transmission of light in optical fibres</b>. In 1966 he showed that the light loss in fibres came from impurities in the glass, and that very pure glass could carry light signals for many kilometres – the idea behind today's internet cables. He is often called the "father of fibre-optic communication".</p></div>
+
+<h3>Optical fibres in communication (page 21–22)</h3>
+<p><span class="ml">ഒപ്റ്റിക്കൽ ഫൈബറുകളുടെ കണ്ടുപിടിത്തം വാർത്താവിനിമയ രംഗത്ത് വിപ്ലവകരമായ മാറ്റങ്ങളാണ് ഉണ്ടാക്കിയത്. … അനേകായിരം പ്രകാശ സിഗ്നലുകൾ അവയുടെ തീവ്രതയ്ക്ക് നഷ്ടം സംഭവിക്കാതെ ഒരേസമയം ഒരു കേബിളിലൂടെ അയയ്ക്കാൻ കഴിയും. പ്രകാശവേഗത്തിൽ ഇത്തരം സിഗ്നലുകളെ വിദൂരസ്ഥലങ്ങളിലേക്ക് എത്തിക്കാൻ സാധിക്കുന്നു.</span></p>
+<div class="qa"><p><b>Q1.</b> Why are optical fibre cables (OFC) used for communication?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">Because, using <b>total internal reflection</b>, (1) <b>thousands of light signals</b> can be sent through one cable <b>at the same time</b>, (2) <b>without losing much intensity</b>, (3) at the <b>speed of light</b> (in glass), (4) over <b>long distances</b>.<div class="why">Why: signals (telephone calls, internet data, TV) are coded as flashes of light <span class="ml">optical signals</span>. Each flash stays trapped in the core by TIR all the way, so very little light leaks out – unlike electric signals in copper wires, which weaken quickly and are disturbed by nearby electrical noise.</div></div></div></div>
+
+<h3>Endoscopy <span class="ml">എൻഡോസ്കോപ്പി</span> – Fig 1.25</h3>
+<p><span class="ml">ഒപ്റ്റിക്കൽ ഫൈബറുകളുടെ ഉപയോഗം മെഡിക്കൽ രംഗത്ത് നാൾക്കുനാൾ വർധിച്ചുവരുന്നു. മെഡിക്കൽ രംഗത്ത് ഇവ എങ്ങനെയാണ് പ്രയോജനപ്പെടുത്തിയിരിക്കുന്നതെന്ന് വിവരശേഖരണം നടത്തി ക്ലാസിൽ അവതരിപ്പിക്കൂ.</span> – The use of optical fibres in medicine grows day by day. Collect information on how they are used and present it in class.</p>
+<div class="lab" id="endoLab">
+  <div class="lab-title">🩺 Endoscope – light goes in, the picture comes out</div>
+  <svg id="enSvg" viewBox="0 0 800 300" role="img" aria-label="An endoscope: a flexible tube from a light source and screen, through the mouth and food pipe into the stomach; yellow light pulses travel in through one bundle of fibres and the image travels back through another"></svg>
+  <div class="controls"><button class="btn primary" id="enGo">▶ Switch on the endoscope</button></div>
+</div>
+<div class="reveal" data-btn="Show answer (points for your presentation)"><div class="answer">
+<ul style="margin:.2rem 0">
+<li>An <b>endoscope</b> is a thin, flexible tube containing two bundles of optical fibres. It is passed through the mouth (or a small cut) into the body.</li>
+<li>One bundle carries <b>light into</b> the body to light up the inside of the stomach, intestine, lungs, etc. – by total internal reflection, even round the bends.</li>
+<li>The other bundle (or a tiny camera at the tip) carries the <b>image back out</b> to a screen, so the doctor sees inside without a major operation.</li>
+<li>Uses: finding ulcers, bleeding and tumours, taking tissue samples (biopsy), keyhole surgery (laparoscopy), removing swallowed objects. Fibres also carry laser light for eye and kidney-stone treatment.</li>
+</ul><div class="why">Why fibres: they are thin and flexible, and TIR keeps the light inside however the tube bends (as long as it is not kinked – the fibre lab above).</div></div></div>
+
+<div class="callout real"><div class="title">🌴 Kerala connection</div>
+<p style="margin:0">The black cables you see hanging from KSEB poles along Kerala roads are often <b>optical fibre cables</b> – BSNL's, the cable-TV operators', and <b>KFON</b> (Kerala Fibre Optic Network), the State project to bring internet to homes, schools and offices over fibre. In the gastroenterology department of any Medical College hospital, an <b>endoscopy</b> is a routine 10-minute test – the doctor watches your stomach on a screen through fibres thinner than a pencil.</p></div>
+
+<h2>2. Mirage <span class="ml">മരീചിക</span> – Fig 1.21</h2>
+<p><span class="ml">പൂർണ്ണാന്തര പ്രതിപതനം മൂലമുണ്ടാകുന്ന മായക്കാഴ്ചകൾ എവിടെയൊക്കെ കാണാൻ കഴിയുന്നു എന്നു നോക്കാം.</span> Remember the girl in the car on <a href="05_light_changes_direction.html">page 5</a> who saw water on the road?</p>
+<div class="qa"><p><b>Q2.</b> <span class="ml">വേനൽക്കാലത്ത് റോഡിൽ അകലെ വെള്ളം കിടക്കുന്നതായി തോന്നുന്നതിനുള്ള കാരണം എന്തായിരിക്കും?</span> – Why does it seem, in summer, that there is water lying on the road far ahead?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">It is a <b>mirage</b> caused by <b>refraction and total internal reflection</b> in the layers of air above the hot road. The air touching the road is hottest and <b>optically rarest</b>; higher up it becomes gradually <b>denser</b>. Light from the sky and distant objects coming down slantwise passes from denser to rarer layers, bends <b>away from the normal</b> more and more, and finally, when its angle of incidence exceeds the critical angle, is <b>totally internally reflected</b> and curves up into our eyes. We see an <b>inverted image</b> of the sky/trees on the road – just like a reflection in a pool of water.<div class="why">Why it looks like water: the shimmering patch is really an image of the bright sky, and we are used to seeing the sky reflected in water. The layers keep moving, so the "water" ripples. <span class="ml">റോഡിനോട് ചേർന്നുള്ള ഭാഗത്തെ വായുവിന് ചൂട് കൂടുതലായതിനാൽ പ്രകാശികസാന്ദ്രത കുറവായിരിക്കും. എന്നാൽ മുകൾ ഭാഗത്തേക്ക് പോകുന്തോറും വായുവിന്റെ പ്രകാശികസാന്ദ്രത ക്രമമായി വർധിച്ചുവരുന്നു.</span></div></div></div></div>
+<div class="lab" id="mirLab">
+  <div class="lab-title">🧪 Mirage lab – heat the road</div>
+  <svg id="mirSvg" viewBox="0 0 800 420" role="img" aria-label="A tree on the left and a car on the right on a hot road; layers of air above the road; light from the tree curves down, is totally internally reflected near the road and reaches the driver, who sees an inverted image of the tree on the road"></svg>
+  <div class="controls"><label>road hotter than the air above by <input id="mirT" type="range" min="0" max="25" step="1" value="20"><output></output> °C</label>
+    <button class="btn" id="mirCool">Cool morning</button><button class="btn primary" id="mirHot">Hot afternoon</button></div>
+  <div class="readout" id="mirOut"></div>
+  <p class="hint">The ten layers of air are drawn very thick and their optical densities hugely <b>exaggerated</b> (real air differs only in the 4th–5th decimal place, and the effect happens over hundreds of metres) – and the picture is stretched 3 times in height so you can see the curving – but the bending follows the same rules: rays are traced layer by layer, and the one that is totally internally reflected reaches the driver's eye from below.</p>
+</div>
+<p><span class="ml">പരിസരത്തുള്ള വസ്തുക്കളിൽ നിന്നു വരുന്ന പ്രകാശകിരണങ്ങൾ പ്രകാശിക സാന്ദ്രത വ്യത്യാസമുള്ള വായുവിന്റെ വിവിധ പാളികളിലൂടെ കടന്നുപോകുമ്പോൾ ചിത്രത്തിൽ കാണുന്നതുപോലെ അപവർത്തനത്തിനും തുടർന്ന് പൂർണ്ണാന്തര പ്രതിപതനത്തിനും വിധേയമാകുന്നു. ഇങ്ങനെ ദിശാവ്യതിയാനം സംഭവിച്ച പ്രകാശ കിരണങ്ങളാണ് നമ്മുടെ കണ്ണിൽ പതിക്കുന്നത്. അതിനാൽ അവയുടെ പ്രതിബിംബം റോഡിൽ രൂപപ്പെടുന്നതുപോലെ തോന്നുന്നു. ഈ പ്രതിഭാസം മരീചിക (mirage) എന്നറിയപ്പെടുന്നു.</span></p>
+<div class="callout key"><div class="title">⭐ Mirage (textbook page 21)</div>
+<p style="margin:0">Light from objects passes through layers of air of different optical density, is refracted and then totally internally reflected, and reaches our eyes from below. So an image appears to form on the road. This phenomenon is called a <b>mirage</b> <span class="ml">മരീചിക</span>. Such images usually form on water surfaces, which is why we think the road is wet.</p></div>
+<div class="callout real"><div class="title">🌴 Kerala connection</div><p style="margin:0">Drive on the NH 66 bypass or any long straight stretch at 2 p.m. in March–April: the "pool" ahead is always there and never reached, and an oncoming lorry appears with an upside-down copy below it. In deserts the same effect makes travellers "see" lakes – the origin of the word mirage.</p></div>
+
+<h2>3. Reflector <span class="ml">റിഫ്ലക്റ്റർ</span> – Fig 1.22</h2>
+<p><span class="ml">വാഹനങ്ങളുടെ ടെയിൽ ലാമ്പുകളിൽ (ചിത്രം 1.22 (a)) ഉപയോഗിക്കുന്ന റിഫ്ലക്റ്ററുകൾ നിരീക്ഷിച്ചിട്ടില്ലേ? ഇവയിൽ ധാരാളം ചെറുപ്രിസങ്ങൾ ഉറപ്പിച്ചിരിക്കുന്നു.</span> – Have you noticed the reflectors in the tail lamps of vehicles and on bicycles? They contain many small prisms <span class="ml">പ്രിസം</span>.</p>
+<div class="lab" id="refLab">
+  <div class="lab-title">🧪 Reflector lab – one prism of a tail-lamp reflector (Fig 1.22 b)</div>
+  <svg id="refSvg" viewBox="0 0 800 400" role="img" aria-label="A right-angled glass prism with its long face PQ facing left; a ray from the left enters PQ normally, is totally reflected at A and B and goes back to the left, parallel to the incoming ray"></svg>
+  <div class="controls"><label>height of the incoming ray <input id="refY" type="range" min="80" max="320" step="2" value="120"><output></output></label>
+    <label>tilt of the headlight beam <input id="refT" type="range" min="-10" max="10" step="1" value="0"><output></output>°</label></div>
+  <div class="controls"><button class="btn primary" id="refGo">▶ Headlight on</button><button class="btn ghost" id="refBook">Textbook ray</button></div>
+  <div class="readout" id="refOut"></div>
+  <p class="hint">Glass n = 1.5, critical angle 42°. Tilt the beam a lot and watch: the angle of incidence at A or B drops below 42° and some light leaks out of the back – real reflectors use many tiny prisms facing slightly different ways so that light from most directions is returned.</p>
+</div>
+<div class="qa"><p><b>Q3.</b> <span class="ml">ഇവയിൽ ഒരു പ്രിസത്തിലേക്ക് പതിക്കുന്ന പ്രകാശ രശ്മി പ്രതിപതിച്ചു വരാൻ കാരണം എന്തായിരിക്കും? ഗ്ലാസിന്റെ ക്രിട്ടിക്കൽ കോണിനെ അടിസ്ഥാനപ്പെടുത്തി വിശദീകരിക്കാം.</span> – Why does a ray falling on one of these prisms come back? Explain using the critical angle of glass.</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">The ray falls <b>normally</b> on face PQ, so it enters <b>without refraction</b>. Inside, it meets the face at <b>A</b> at an angle of incidence of <b>45°</b>, which is <b>greater than the critical angle of glass (42°)</b> – so it is <b>totally internally reflected</b> towards B. At B the angle of incidence is again 45° &gt; 42° – total internal reflection again. The ray then leaves through PQ normally and goes back <b>parallel to the incoming light</b>, towards the vehicle behind.<div class="why"><span class="ml">PQ എന്ന വശത്ത് ലംബമായി പ്രകാശരശ്മി പതിക്കുന്നതിനാൽ അപവർത്തനം സംഭവിക്കുന്നില്ല. … ഇവിടെ A, B എന്നീ ബിന്ദുക്കളിലെ പതനകോൺ 45° ആണ്. അതിനാൽ A ൽ പതിക്കുന്ന പ്രകാശം പൂർണ്ണാന്തര പ്രതിപതനത്തിന് വിധേയമായി B യിൽ എത്തും. അവിടെ വീണ്ടും പൂർണ്ണാന്തര പ്രതിപതനം സംഭവിച്ച് … റിഫ്ലക്റ്ററിനു പുറത്തേക്കുവരുന്നു.</span> Two reflections at right angles turn the ray through 180°.</div></div></div></div>
+<div class="qa"><p><b>Q4.</b> <span class="ml">റിഫ്ലക്റ്ററിലെ മറ്റു പ്രിസങ്ങളിലും ഇതുപോലെ തന്നെയല്ലേ സംഭവിക്കുന്നത്?</span> – Doesn't the same happen in the other prisms of the reflector?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>Yes.</b> Every small prism returns the light falling on it in the same way by two total internal reflections, so the whole reflector shines brightly back towards the driver behind.<div class="why">Why many prisms: one big prism would be thick and heavy; hundreds of tiny ones make a thin plastic sheet that still returns light from all of its area – no bulb or battery needed.</div></div></div></div>
+
+<h2>4. Periscope <span class="ml">പെരിസ്കോപ്പ്</span> – Fig 1.23</h2>
+<p><span class="ml">ദർപ്പണങ്ങൾ ഉപയോഗിച്ചുള്ള പെരിസ്കോപ്പുകളാണല്ലോ നിങ്ങൾ പരിചയപ്പെട്ടിട്ടുള്ളത്. എന്നാൽ ദൃശ്യങ്ങളുടെ വ്യക്തത കൂട്ടുന്നതിനുവേണ്ടി പ്രിസങ്ങൾ ഉപയോഗിച്ചുള്ള പെരിസ്കോപ്പുകളും നിർമ്മിക്കുന്നുണ്ട്.</span> – You know periscopes made with plane mirrors <span class="ml">സമതല ദർപ്പണം</span>. To make the view clearer, periscopes are also made with prisms.</p>
+<div class="lab" id="perLab">
+  <div class="lab-title">🧪 Prism periscope – see over the wall</div>
+  <svg id="perSvg" viewBox="0 0 800 460" role="img" aria-label="A periscope tube with a right-angled prism at the top and another at the bottom; light from a tree on the right is turned down by total internal reflection in the top prism and turned towards the eye by the bottom prism"></svg>
+  <div class="controls"><button class="btn primary" id="perGo">▶ Send the light</button><button class="btn" id="perMode">Compare: plane mirrors</button></div>
+  <div class="readout" id="perOut"></div>
+</div>
+<div class="qa"><p><b>Q5.</b> <span class="ml">ചിത്രത്തിന്റെ അടിസ്ഥാനത്തിൽ പെരിസ്കോപ്പിൽ പ്രിസങ്ങളെ എങ്ങനെ പ്രയോജനപ്പെടുത്തിയിരിക്കുന്നു എന്ന് മനസ്സിലാക്കി സയൻസ് ഡയറിയിൽ രേഖപ്പെടുത്തൂ.</span> – From the figure, understand how the prisms are used in the periscope and record it in your science diary.</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">Two right-angled (45°–45°–90°) glass prisms are fixed at the two ends of the tube. Light from the object enters the top prism <b>normally</b> (no refraction), meets the slanting face at <b>45° &gt; 42°</b> and is <b>totally internally reflected</b> – turned through 90° down the tube. It leaves the prism normally, enters the bottom prism normally, is again totally internally reflected at 45° and turned through 90° towards the eye. So the prisms do the job of the two mirrors.<div class="why">Why prisms are better: total internal reflection reflects <b>all</b> the light, while a silvered mirror absorbs some of it and its silver can tarnish; a glass mirror also gives a faint second image from its front surface. So a prism periscope gives a <b>brighter, clearer</b> image with no double images. (Two reflections keep the image upright.)</div></div></div></div>
+
+<h2>5. Total internal reflection vs reflection in a mirror – Table 1.4</h2>
+<div class="qbox"><p><span class="ml">പൂർണ്ണാന്തര പ്രതിപതനം, സമതല ദർപ്പണങ്ങളിൽ നിന്നുള്ള സാധാരണ പ്രതിപതനം ഇവയുമായി ബന്ധപ്പെട്ട പ്രസ്താവനകൾ നൽകിയിരിക്കുന്നു. അവയെ അനുയോജ്യമായി പട്ടികപ്പെടുത്തൂ.</span> – Statements about total internal reflection and ordinary reflection from plane mirrors are given. Sort them into the table.</p></div>
+<div class="lab">
+  <div class="lab-title">🧩 Table 1.4 sorter</div>
+  <div class="sorter" id="t14Sort"></div>
+  <p>Score: <span class="score" id="t14Score">0 / 6</span></p>
+</div>
+<div class="reveal" data-btn="Show the completed Table 1.4"><div class="tblwrap"><table class="obs"><thead><tr><th>Reflection from mirrors <span class="ml">ദർപ്പണങ്ങളിൽ നിന്നുള്ള പ്രതിപതനം</span></th><th>Total internal reflection <span class="ml">പൂർണ്ണാന്തര പ്രതിപതനം</span></th></tr></thead><tbody>
+<tr><td style="text-align:left">The ray of light is <b>not reflected completely</b>. <span class="ml">പ്രകാശരശ്മി പൂർണ്ണമായും പ്രതിപതിക്കുന്നില്ല.</span></td><td style="text-align:left">Happens <b>only</b> when the ray goes from an optically denser medium to a rarer one at an angle of incidence <b>greater than the critical angle</b>. <span class="ml">പ്രകാശരശ്മി പ്രകാശിക സാന്ദ്രത കൂടിയ മാധ്യമത്തിൽ നിന്ന് കുറഞ്ഞ മാധ്യമത്തിലേക്ക് ക്രിട്ടിക്കൽ കോണിനേക്കാൾ കൂടിയ പതനകോണിൽ പതിക്കുമ്പോൾ മാത്രം സംഭവിക്കുന്നു.</span></td></tr>
+<tr><td style="text-align:left">Reflection happens <b>at any angle of incidence</b>. <span class="ml">പ്രതലത്തിലേക്ക് ഏതു പതനകോണിൽ പതിച്ചാലും പ്രതിപതനം സംഭവിക്കുന്നു.</span></td><td style="text-align:left">The ray of light is <b>reflected completely</b>. <span class="ml">പ്രകാശരശ്മി പൂർണ്ണമായും പ്രതിപതിക്കുന്നു.</span></td></tr>
+</tbody></table></div></div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.nobelprize.org/prizes/physics/2009/kao/facts/" target="_blank" rel="noopener noreferrer">📄 Charles K. Kao – Facts (Nobel Prize in Physics 2009)</a> <span class="src">NobelPrize.org</span><br><span class="note">Meet the &#x27;father of fibre optics&#x27; who showed that very pure glass can carry light over long distances.</span></li><li><a href="https://www.explainthatstuff.com/fiberoptics.html" target="_blank" rel="noopener noreferrer">📄 How does fiber optics work?</a> <span class="src">Explain that Stuff</span><br><span class="note">Plain-English guide to core, cladding and how light bounces along a fibre; also covers medical endoscopes.</span></li><li><a href="https://www.youtube.com/watch?v=0MwMkBET_5I" target="_blank" rel="noopener noreferrer">▶️ Fiber optic cables: How they work</a> <span class="src">YouTube – engineerguy · 5:35</span><br><span class="note">Engineer explains fibre-optic cables with neat hands-on models.</span></li><li><a href="https://www.youtube.com/watch?v=w8EcdiB8C1o" target="_blank" rel="noopener noreferrer">▶️ Optical Fiber Cables - Christmas Lectures with David Pye</a> <span class="src">YouTube – The Royal Institution · 8:00</span><br><span class="note">Royal Institution Christmas Lecture clip demonstrating light guided along fibres.</span></li><li><a href="https://www.youtube.com/watch?v=1UF9fJtZHAY" target="_blank" rel="noopener noreferrer">▶️ Scanning Fiber Endoscope</a> <span class="src">YouTube – NIBIB (US National Institutes of Health) · 4:37</span><br><span class="note">US National Institutes of Health (NIBIB) shows a tiny fibre-optic endoscope that looks inside the body.</span></li><li><a href="https://kfon.kerala.gov.in/" target="_blank" rel="noopener noreferrer">📄 K-FON – Kerala Fibre Optic Network</a> <span class="src">Government of Kerala (K-FON)</span><br><span class="note">Kerala&#x27;s own optical-fibre internet network – physics from this chapter at work in your state.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/refraction-and-lenses/refraction-phenomena/mirages" target="_blank" rel="noopener noreferrer">📄 Mirages</a> <span class="src">The Physics Classroom</span><br><span class="note">How hot air near the road bends light to make the &#x27;wet road&#x27; illusion.</span></li><li><a href="https://earthsky.org/earth/what-causes-a-highway-mirage/" target="_blank" rel="noopener noreferrer">📄 What is a mirage and an illusion?</a> <span class="src">EarthSky</span><br><span class="note">Short article on highway mirages: you are really seeing the sky.</span></li><li><a href="https://www.youtube.com/watch?v=1qqYeDu1zJM" target="_blank" rel="noopener noreferrer">▶️ Mirage | Middle School Science | Khan Academy </a> <span class="src">YouTube – Khan Academy India - English · 5:26</span><br><span class="note">Clear animated explanation of how a mirage forms.</span></li><li><a href="https://www.youtube.com/watch?v=CrgKUFbwNf0" target="_blank" rel="noopener noreferrer">▶️ Fata Morgana—Boats That Float In The Air</a> <span class="src">YouTube – The Action Lab · 6:38</span><br><span class="note">Fata Morgana: why ships sometimes seem to float in the air (a &#x27;superior&#x27; mirage).</span></li><li><a href="https://www.bbc.co.uk/bitesize/articles/z82dfdm" target="_blank" rel="noopener noreferrer">📄 What is critical angle and total internal reflection?</a> <span class="src">BBC Bitesize</span><br><span class="note">Covers totally reflecting 45° prisms, prism periscopes, and bicycle/car reflectors.</span></li><li><a href="https://www.explainthatstuff.com/binoculars.html" target="_blank" rel="noopener noreferrer">📄 How do binoculars work?</a> <span class="src">Explain that Stuff</span><br><span class="note">How the Porro or roof prisms inside binoculars flip the image the right way up.</span></li><li><a href="https://www.youtube.com/watch?v=z5cR6EA2jGY" target="_blank" rel="noopener noreferrer">▶️ Why you&#x27;ll never see a right angle on a stealth aircraft - corner cube reflectors</a> <span class="src">YouTube – Steve Mould · 9:14</span><br><span class="note">Corner-cube reflectors, the shape inside bicycle reflectors that sends light back to its source.</span></li><li><a href="https://www.youtube.com/watch?v=dsRsap2_RAc" target="_blank" rel="noopener noreferrer">▶️ Why Astronauts left a reflector on the Moon! (ft. MinutePhysics) - Smarter Every Day 73</a> <span class="src">YouTube – SmarterEveryDay · 5:58</span><br><span class="note">Smarter Every Day: why astronauts left corner-cube reflectors on the Moon.</span></li><li><a href="https://science.nasa.gov/missions/lro/laser-instrument-on-nasas-lro-successfully-pings-indian-moon-lander/" target="_blank" rel="noopener noreferrer">📄 Laser Instrument on NASA&#x27;s LRO Successfully &#x27;Pings&#x27; Indian Moon Lander</a> <span class="src">NASA Science</span><br><span class="note">A tiny reflector on ISRO&#x27;s Chandrayaan-3 Vikram lander bounced a NASA laser back – an Indian connection.</span></li></ul></div>
+
+<h2>6. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li><b>Optical fibre</b> (core, cladding, jacket): light hits the walls above the critical angle → repeated TIR → comes out only at the far end. Used in communication (OFC, many signals at once, little loss, at the speed of light, far away) and in <b>endoscopy</b>. Nobel 2009: <b>Charles K. Kao</b>.</li>
+<li><b>Mirage</b>: hot road → rarer air below, denser above → light bends away from the normal, then TIR → inverted image "on the road".</li>
+<li><b>Reflector</b> and <b>prism periscope</b>: light enters a 45°–45°–90° prism normally and meets the slanting face at 45° &gt; 42° → TIR (twice in a reflector, once per prism in a periscope).</li>
+<li>TIR reflects <b>all</b> the light and needs denser → rarer and i &gt; critical angle; a mirror reflects at any angle but not all the light.</li>
+</ul></div>
+<p>Next: <a href="12_intext_questions_solutions.html">All in-text questions with animated solutions ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Refraction of Light · Class 9 Physics", "icon": "🔦", "key": "physics_ch1_progress", "pages": [["index.html", "Home"], ["01_light_rays_reflection.html", "1 · Light, Rays & Reflection"], ["02_angles_normals_protractor.html", "2 · Angles, Normals & the Protractor"], ["03_speed_ratios_powers.html", "3 · Speed, Ratios & Powers of Ten"], ["04_media_slabs_prisms.html", "4 · Media, Slabs & Prisms"], ["05_light_changes_direction.html", "5 · Light Changes Direction"], ["06_refraction_refractive_index.html", "6 · Refraction & Refractive Index"], ["07_rules_of_refraction.html", "7 · Incident & Refracted Rays: the Rules"], ["08_glass_slab_everyday.html", "8 · Glass Slab & Everyday Refraction"], ["09_atmospheric_refraction.html", "9 · Atmospheric Refraction"], ["10_total_internal_reflection.html", "10 · Total Internal Reflection & Critical Angle"], ["11_tir_applications.html", "11 · Fibres, Mirages, Reflectors & Periscopes"], ["12_intext_questions_solutions.html", "12 · In-text Questions – Solutions"], ["13_assess_q1_q6_solutions.html", "13 · Let Us Assess Q1–6 – Solutions"], ["14_assess_q7_q11_solutions.html", "14 · Let Us Assess Q7–11 & Extended Activities"], ["15_applications_explore.html", "15 · Applications & Explore Online"], ["16_summary_revision.html", "16 · Summary & Quick Quiz"], ["17_model_test_paper.html", "17 · Model Test Paper"], ["18_model_test_solutions.html", "18 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+const {P, el, text} = K;
+const COL = {red:'var(--red)', blue:'var(--blue)', green:'var(--green)', amber:'var(--accent)', purple:'var(--purple)', text:'var(--text)', muted:'var(--muted)'};
+/* line with its own stroke (seg() carries class 'ln', which overrides stroke attributes) */
+const sline = (svg, a, b, attrs={}) => el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+/* number → string with ≤ d decimals and a true minus sign */
+const fx = (v, d=2) => K.num(K.fmt(v, d));
+/* left-anchored SVG text */
+const L = (svg, x, y, s, cls='lbl', extra={}) => text(svg, P(x, y), s, {class: cls, 'text-anchor': 'start', ...extra});
+/* arrow a→b with a filled head; o.c colour name, o.w width, o.label, o.lo {x,y} label offset from the tip, o.op opacity, o.head size */
+function arrow(svg, a, b, o={}){ const c = COL[o.c || 'red'], w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const Ln = K.dist(a, b); if (Ln < 1) return g; const u = K.unit(a, b), hs = Math.min(o.head ?? 11, Ln * .6), base = P(b.x - u.x * hs, b.y - u.y * hs);
+  el('line', {x1: a.x, y1: a.y, x2: base.x, y2: base.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round'}, g);
+  el('polygon', {points: `${b.x},${b.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g);
+  if (o.label) text(g, P(b.x + (o.lo ? o.lo.x : 0), b.y + (o.lo ? o.lo.y : -12)), o.label, {class: 'lbl sm ' + (o.lc || o.c || 'red'), 'text-anchor': o.anchor || 'middle'});
+  return g; }
+/* ---- optics ---- */
+/* refractive indices used for drawing and read-outs (Snell's law under the hood) */
+const MED = {
+  air:     {n: 1.00, name: 'air',     ml: 'വായു',  cls: 'm-air'},
+  water:   {n: 1.33, name: 'water',   ml: 'ജലം',   cls: 'm-water'},
+  glass:   {n: 1.5,  name: 'glass',   ml: 'ഗ്ലാസ്', cls: 'm-glass'},
+  diamond: {n: 2.42, name: 'diamond', ml: 'വജ്രം', cls: 'm-diamond'}
+};
+/* angle of refraction (deg) for n1 sin i = n2 sin r; null = no refracted ray (total internal reflection) */
+const snell = (n1, n2, i) => { const s = n1 * Math.sin(K.rad(i)) / n2; return s > 1 + 1e-12 ? null : K.deg(Math.asin(Math.min(1, s))); };
+/* critical angle (deg) going from n1 (denser) into n2 (default air) */
+const critical = (n1, n2=1) => K.deg(Math.asin(n2 / n1));
+/* unit direction at angle a (deg) to a VERTICAL normal; down = travelling downwards; right = moving to the right */
+const dirN = (a, down=true, right=true) => P((right ? 1 : -1) * Math.sin(K.rad(a)), (down ? 1 : -1) * Math.cos(K.rad(a)));
+const along = (p, u, len) => P(p.x + u.x * len, p.y + u.y * len);
+/* point where the ray p + t·u reaches the horizontal line y (or the vertical line x) */
+const hitY = (p, u, y) => along(p, u, (y - p.y) / u.y);
+const hitX = (p, u, x) => along(p, u, (x - p.x) / u.x);
+/* light ray a→b with chevron arrowhead(s) at fraction(s) o.at (default .5); o.c colour, o.w width, o.op opacity, o.dash, o.glow */
+function lray(svg, a, b, o={}){ const c = COL[o.c || 'red'], w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const Ln = K.dist(a, b); if (Ln < 1) return g;
+  if (o.glow) el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: c, 'stroke-width': w * 3.5, 'stroke-linecap': 'round', opacity: .16}, g);
+  el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round', 'stroke-dasharray': o.dash || null}, g);
+  const u = K.unit(a, b), hs = o.head ?? 10;
+  (o.at === undefined ? [.5] : [].concat(o.at)).forEach(f => { if (Ln < 2.2 * hs) return; const m = K.lerpPt(a, b, f), tip = along(m, u, hs / 2), base = along(m, u, -hs / 2);
+    el('polygon', {points: `${tip.x},${tip.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g); });
+  return g; }
+/* ray through several points (one arrowhead per piece) */
+function lpath(svg, pts, o={}){ const g = K.group(svg); for (let k = 0; k < pts.length - 1; k++) lray(g, pts[k], pts[k + 1], o); return g; }
+/* dashed normal through p (direction o.u, default vertical), half-length len; o.labels = ['N', 'N′'] at the two ends */
+function normal(svg, p, len=80, o={}){ const u = o.u || P(0, 1), a = along(p, u, -len), b = along(p, u, len);
+  const g = K.group(svg); sline(g, a, b, {stroke: 'var(--muted)', 'stroke-width': 1.5, 'stroke-dasharray': '6 5'});
+  if (o.labels){ text(g, along(a, u, -11), o.labels[0], {class: 'lbl sm muted'}); text(g, along(b, u, 11), o.labels[1], {class: 'lbl sm muted'}); }
+  return g; }
+/* filled angle arc at V between VA and VB with a label */
+const ang = (svg, V, A, B, r, label, cls='') => K.angleArc(svg, V, A, B, r, {cls, label, fill: true});
+/* rectangle of a medium (key of MED or a css class) with an optional label at the top-left */
+function band(svg, x, y, w, h, key, o={}){ const r = el('rect', {x, y, width: w, height: h, class: MED[key] ? MED[key].cls : key, rx: o.rx || 0}, svg);
+  if (o.label) L(svg, x + 8, y + (o.ly ?? 16), o.label, 'lbl sm muted'); return r; }
+/* an eye at p looking in direction angDeg (0 = to the right, 90 = down) */
+function eye(svg, p, angDeg=0, s=1){ const g = K.group(svg, {transform: `translate(${p.x} ${p.y}) rotate(${angDeg}) scale(${s})`});
+  el('path', {d: 'M-16,0 Q0,-12 16,0 Q0,12 -16,0 Z', fill: 'var(--surface)', stroke: 'var(--text)', 'stroke-width': 1.8}, g);
+  el('circle', {cx: 5, cy: 0, r: 5, fill: 'var(--blue)'}, g); el('circle', {cx: 6.5, cy: 0, r: 2.2, fill: 'var(--text)'}, g); return g; }
+/* laser torch whose beam leaves at tip, pointing along unit u */
+function laser(svg, tip, u, s=1){ const a = K.deg(Math.atan2(u.y, u.x)); const g = K.group(svg, {transform: `translate(${tip.x} ${tip.y}) rotate(${a}) scale(${s})`});
+  el('rect', {x: -64, y: -7, width: 58, height: 14, rx: 4, fill: 'var(--surface2)', stroke: 'var(--text)', 'stroke-width': 1.4}, g);
+  el('rect', {x: -8, y: -5, width: 8, height: 10, rx: 1.5, fill: 'var(--red)'}, g); el('rect', {x: -44, y: -10, width: 10, height: 4, rx: 1, fill: 'var(--red)'}, g); return g; }
+/* ---- page widgets ---- */
+function sorter(boxId, scoreId, items, cats){
+  const box = document.getElementById(boxId), sc = document.getElementById(scoreId); let right = 0;
+  items.forEach(it => { const row = document.createElement('div'); row.className = 'row';
+    row.innerHTML = `<span class="txt">${it.t}</span>` + cats.map((c, i) => `<button class="btn" data-i="${i}">${c}</button>`).join('') + '<span class="fbk"></span>';
+    row.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const ok = +b.dataset.i === it.a;
+      if (ok && !row.classList.contains('ok')) right++; if (!ok && row.classList.contains('ok')) right--;
+      row.classList.toggle('ok', ok); row.classList.toggle('bad', !ok);
+      row.querySelector('.fbk').innerHTML = (ok ? '✅ ' : '❌ Not quite – ') + it.why; sc.textContent = `${right} / ${items.length}`; });
+    box.appendChild(row); });
+}
+/* exam-layout stepper: rows [{h: heading, s: svg line, html: step text}], fig(svg,i,t) draws the figure; working is written at x0 */
+function examStepper(sel, rows, fig, x0=380, dy=62){
+  new K.Stepper(sel, {steps: rows.map(r => r.html), draw(svg, i, t){
+    fig(svg, i, t);
+    rows.forEach((r, k) => { if (k > i) return; const o = k === i ? t : 1, y = 30 + k * dy;
+      L(svg, x0, y, r.h, 'lbl sm muted', {opacity: o});
+      L(svg, x0, y + 22, r.s, k === rows.length - 1 ? 'lbl big green' : 'lbl', {opacity: o}); });
+  }});
+}
+
+/* ---- ray tracer through glass polygons and mirror segments ---- */
+/* t along p + t·d where it meets segment ab (null if it misses) */
+function raySeg(p, d, a, b){ const ex = b.x - a.x, ey = b.y - a.y, den = d.x * ey - d.y * ex; if (Math.abs(den) < 1e-12) return null;
+  const t = ((a.x - p.x) * ey - (a.y - p.y) * ex) / den, u = ((a.x - p.x) * d.y - (a.y - p.y) * d.x) / den; return (u >= -1e-9 && u <= 1 + 1e-9) ? t : null; }
+/* shapes: {pts: [...], n} closed glass polygon, or {seg: [a, b], mirror: true}; returns {path, events} */
+function traceShapes(shapes, p, d, maxHits=12){
+  const path = [p], events = []; let inside = null;
+  for (let k = 0; k < maxHits; k++){
+    let best = null;
+    shapes.forEach((s, si) => { const edges = s.mirror ? [s.seg] : s.pts.map((a, j) => [a, s.pts[(j + 1) % s.pts.length]]);
+      edges.forEach(([a, b]) => { const t = raySeg(p, d, a, b); if (t !== null && t > 1e-6 && (!best || t < best.t)) best = {t, a, b, si}; }); });
+    if (!best){ path.push(along(p, d, 1200)); break; }
+    const h = along(p, d, best.t); let nrm = K.unit(P(0, 0), P(-(best.b.y - best.a.y), best.b.x - best.a.x));
+    if (d.x * nrm.x + d.y * nrm.y > 0) nrm = P(-nrm.x, -nrm.y);
+    const cosi = Math.min(1, -(d.x * nrm.x + d.y * nrm.y)), i = K.deg(Math.acos(cosi)), s = shapes[best.si];
+    path.push(h);
+    if (s.mirror){ d = P(d.x + 2 * cosi * nrm.x, d.y + 2 * cosi * nrm.y); events.push({p: h, i, type: 'mirror'}); p = h; continue; }
+    const n1 = inside === best.si ? s.n : 1, n2 = inside === best.si ? 1 : s.n, eta = n1 / n2, s2 = eta * eta * (1 - cosi * cosi);
+    if (s2 > 1){ d = P(d.x + 2 * cosi * nrm.x, d.y + 2 * cosi * nrm.y); events.push({p: h, i, type: 'tir', nrm}); }
+    else { const ct = Math.sqrt(1 - s2); d = K.unit(P(0, 0), P(eta * d.x + (eta * cosi - ct) * nrm.x, eta * d.y + (eta * cosi - ct) * nrm.y));
+      events.push({p: h, i, r: K.deg(Math.asin(Math.sqrt(s2))), type: 'refract', enter: inside !== best.si, nrm}); inside = inside === best.si ? null : best.si; }
+    p = h;
+  }
+  return {path, events};
+}
+/* draw a polyline path partly (fraction f of its length) as a light ray */
+function drawPath(svg, pts, f=1, o={}){ const lens = []; let tot = 0; for (let k = 0; k < pts.length - 1; k++){ const l = K.dist(pts[k], pts[k + 1]); lens.push(l); tot += l; }
+  let left = tot * f; for (let k = 0; k < pts.length - 1 && left > 0; k++){ const l = lens[k], q = l <= left ? pts[k + 1] : K.lerpPt(pts[k], pts[k + 1], left / l); lray(svg, pts[k], q, o); left -= l; }
+  return tot; }
+/* point at fraction f along a polyline */
+function atFrac(pts, f){ let tot = 0; const lens = []; for (let k = 0; k < pts.length - 1; k++){ const l = K.dist(pts[k], pts[k + 1]); lens.push(l); tot += l; }
+  let left = tot * Math.max(0, Math.min(1, f)); for (let k = 0; k < lens.length; k++){ if (left <= lens[k]) return K.lerpPt(pts[k], pts[k + 1], lens[k] ? left / lens[k] : 0); left -= lens[k]; } return pts[pts.length - 1]; }
+
+/* ---------- 1. fibre lab ---------- */
+(function(){
+  const svg = document.getElementById('fibSvg'), out = document.getElementById('fibOut'), rIn = document.getElementById('fibR'), aIn = document.getElementById('fibA');
+  const X1 = 360, Y = 96, HW = 10, YEND = 410, NC = 1.5, NCL = 1.3, CRIT = critical(NC, NCL);
+  let stop = null;
+  function trace(Rb, alpha, off){
+    const C = P(X1, Y + Rb); let p = P(30, Y + off), d = P(Math.cos(K.rad(alpha)), Math.sin(K.rad(alpha)));
+    const pts = [p]; let minI = 90, nRef = 0;
+    for (let k = 0; k < 400; k++){
+      let best = null; const cand = (t, nrm) => { if (t > 1e-6 && (!best || t < best.t)) best = {t, nrm}; };
+      [Y - HW, Y + HW].forEach(yl => { if (Math.abs(d.y) > 1e-12){ const t = (yl - p.y) / d.y, q = along(p, d, t); if (q.x <= X1 + 1e-9 && q.x >= 20) cand(t, P(0, yl < Y ? 1 : -1)); } });
+      [Rb - HW, Rb + HW].forEach(rr => { const fx0 = p.x - C.x, fy0 = p.y - C.y, b = fx0 * d.x + fy0 * d.y, c = fx0 * fx0 + fy0 * fy0 - rr * rr, D = b * b - c; if (D < 0) return;
+        [-b - Math.sqrt(D), -b + Math.sqrt(D)].forEach(t => { const q = along(p, d, t); if (q.x >= X1 - 1e-9 && q.y <= C.y + 1e-9){ const ru = P((q.x - C.x) / rr, (q.y - C.y) / rr); cand(t, rr < Rb ? ru : P(-ru.x, -ru.y)); } }); });
+      [X1 + Rb - HW, X1 + Rb + HW].forEach(xl => { if (Math.abs(d.x) > 1e-12){ const t = (xl - p.x) / d.x, q = along(p, d, t); if (q.y >= C.y - 1e-9) cand(t, P(xl < X1 + Rb ? 1 : -1, 0)); } });
+      if (d.y > 1e-12){ const t = (YEND - p.y) / d.y, q = along(p, d, t); if (Math.abs(q.x - (X1 + Rb)) <= HW + 1) cand(t, null); }
+      if (!best) break;
+      const h = along(p, d, best.t); pts.push(h);
+      if (!best.nrm) return {pts, minI, nRef, end: true};
+      const nrm = best.nrm, cosi = Math.min(1, -(d.x * nrm.x + d.y * nrm.y)), i = K.deg(Math.acos(cosi)); minI = Math.min(minI, i);
+      if (i > CRIT){ d = P(d.x + 2 * cosi * nrm.x, d.y + 2 * cosi * nrm.y); nRef++; }
+      else { const eta = NC / NCL, s2 = eta * eta * (1 - cosi * cosi), ct = Math.sqrt(Math.max(0, 1 - s2));
+        const dOut = K.unit(P(0, 0), P(eta * d.x + (eta * cosi - ct) * nrm.x, eta * d.y + (eta * cosi - ct) * nrm.y));
+        pts.push(along(h, dOut, 70)); return {pts, minI, nRef, leak: h, leakI: i}; }
+      p = h;
+    }
+    return {pts, minI, nRef};
+  }
+  function fibrePath(Rb){ return `M20,${Y} L${X1},${Y} A${Rb},${Rb} 0 0,1 ${X1 + Rb},${Y + Rb} L${X1 + Rb},${YEND}`; }
+  function draw(f=1){
+    const Rb = +rIn.value, al = +aIn.value; K.clear(svg);
+    el('path', {d: fibrePath(Rb), fill: 'none', stroke: 'var(--muted)', 'stroke-width': 2 * HW + 26, opacity: .55}, svg);
+    el('path', {d: fibrePath(Rb), fill: 'none', stroke: 'var(--blue-soft)', 'stroke-width': 2 * HW + 12}, svg);
+    el('path', {d: fibrePath(Rb), fill: 'none', stroke: 'var(--green-soft)', 'stroke-width': 2 * HW}, svg);
+    el('rect', {x: 0, y: Y - 34, width: 22, height: 68, rx: 4, fill: '#fbbf24'}, svg); L(svg, 4, Y + 54, 'light', 'lbl sm amber');
+    /* Fig 1.24 labels */
+    [[120, Y - 3, 'core (ആന്തരകോർ)', 'green', -66], [210, Y + HW + 3, 'cladding (ക്ലാഡിങ്)', 'blue', 64], [300, Y - HW - 9, 'outer jacket (ബാഹ്യകവചം)', 'muted', -36]].forEach(([x, y, s, c, dy]) => {
+      sline(svg, P(x, y), P(x + 20, y + dy + (dy > 0 ? -6 : 6)), {stroke: 'var(--muted)', 'stroke-width': 1}); L(svg, x + 22, y + dy, s, 'lbl sm ' + c); });
+    const rays = [[al, -4, 'red'], [-al * .6, 4, 'amber'], [al * .3, 0, 'purple']].map(([a, off, c]) => ({c, r: trace(Rb, a, off)}));
+    rays.forEach(({c, r}) => drawPath(svg, r.pts, f, {c, w: 2.2, head: 8, op: .9}));
+    if (f >= 1){ rays.forEach(({c, r}) => { if (r.leak) el('circle', {cx: r.leak.x, cy: r.leak.y, r: 9, fill: 'none', stroke: 'var(--red)', 'stroke-width': 2.5}, svg); });
+      if (rays.some(({r}) => r.end)) el('circle', {cx: X1 + Rb, cy: YEND - 4, r: 16, fill: '#fde047', opacity: .7}, svg); }
+    else rays.forEach(({r}) => { const q = atFrac(r.pts, f); el('circle', {cx: q.x, cy: q.y, r: 6, fill: '#fde047', stroke: 'var(--accent)'}, svg); });
+    const leaks = rays.filter(({r}) => r.leak).length, minI = Math.min(...rays.map(({r}) => r.minI));
+    L(svg, 470, 30, leaks ? `${leaks} of 3 rays leak out at the bend!` : 'all the light reaches the far end', 'lbl', {'font-weight': 700, style: 'fill:' + (leaks ? 'var(--red)' : 'var(--green)')});
+    out.textContent = `Critical angle at the core–cladding wall: ${fx(CRIT, 1)}°.  Smallest angle of incidence met by any ray: ${fx(minI, 1)}°.\n` +
+      rays.map(({r}, k) => `ray ${k + 1}: ${r.nRef} total internal reflections` + (r.leak ? `, then hit the wall at only ${fx(r.leakI, 1)}° (< ${fx(CRIT, 1)}°) → refracted out, LOST` : r.end ? ' → comes out at the far end' : '')).join('\n');
+  }
+  const runR = K.slider(rIn, () => { if (stop){ stop(); stop = null; } draw(1); }, 0); K.slider(aIn, () => { if (stop){ stop(); stop = null; } draw(1); }, 0);
+  document.getElementById('fibGo').addEventListener('click', () => { if (stop) stop(); stop = K.animate(3500, (e, t) => draw(t), () => { stop = null; }); });
+  document.getElementById('fibSharp').addEventListener('click', () => { rIn.value = 34; runR(); });
+  document.getElementById('fibEasy').addEventListener('click', () => { rIn.value = 200; runR(); });
+})();
+
+/* ---------- 1b. endoscope ---------- */
+(function(){
+  const svg = document.getElementById('enSvg');
+  const tube = [P(150, 150), P(260, 150), P(330, 60), P(420, 60), P(470, 60), P(470, 150), P(470, 190), P(560, 190)];
+  const bez = (a, b, c, d, t) => { const m = 1 - t; return P(m*m*m*a.x + 3*m*m*t*b.x + 3*m*t*t*c.x + t*t*t*d.x, m*m*m*a.y + 3*m*m*t*b.y + 3*m*t*t*c.y + t*t*t*d.y); };
+  const pts = []; for (let k = 0; k <= 60; k++){ const t = k / 60; pts.push(t <= .5 ? bez(tube[0], tube[1], tube[2], tube[3], t * 2) : bez(tube[3], tube[4], tube[5], tube[7], (t - .5) * 2)); }
+  function draw(t=.35){
+    K.clear(svg);
+    /* screen + light unit */
+    el('rect', {x: 20, y: 100, width: 120, height: 100, rx: 8, fill: 'var(--surface2)', stroke: 'var(--text)', 'stroke-width': 1.5}, svg);
+    el('rect', {x: 32, y: 112, width: 96, height: 56, rx: 4, fill: '#0b1220'}, svg);
+    el('ellipse', {cx: 80, cy: 140, rx: 30, ry: 18, fill: '#f472b6', opacity: .35 + .4 * Math.abs(Math.sin(t * 9))}, svg);
+    L(svg, 30, 186, 'light + screen', 'lbl sm');
+    /* body outline: mouth, food pipe, stomach */
+    el('path', {d: 'M560,150 C640,110 740,150 730,215 C720,280 600,285 560,240 C540,215 540,175 560,150 Z', fill: 'var(--red-soft)', stroke: 'var(--red)', 'stroke-width': 2}, svg);
+    L(svg, 640, 270, 'stomach', 'lbl sm red'); L(svg, 395, 92, 'food pipe', 'lbl sm muted');
+    K.polyline(svg, pts, {stroke: 'var(--muted)', 'stroke-width': 14, 'stroke-linecap': 'round', opacity: .6});
+    K.polyline(svg, pts, {stroke: 'var(--surface)', 'stroke-width': 6, 'stroke-linecap': 'round'});
+    /* light going in, picture coming out */
+    for (let k = 0; k < 4; k++){ const fIn = (t * 2 + k / 4) % 1, q = atFrac(pts, fIn), r = atFrac(pts, 1 - fIn);
+      el('circle', {cx: q.x, cy: q.y - 2, r: 4, fill: '#facc15'}, svg); el('circle', {cx: r.x, cy: r.y + 2, r: 4, fill: '#f472b6'}, svg); }
+    const tip = pts[pts.length - 1]; el('path', {d: `M${tip.x},${tip.y} L${tip.x + 70},${tip.y - 28} L${tip.x + 70},${tip.y + 28} Z`, fill: '#fde047', opacity: .35}, svg);
+    L(svg, 170, 240, '● light in (one fibre bundle)', 'lbl sm amber'); L(svg, 170, 262, '● picture back (another bundle)', 'lbl sm', {style: 'fill:#db2777'});
+  }
+  draw(.35); let stop = null;
+  document.getElementById('enGo').addEventListener('click', () => { if (stop) stop(); stop = K.animate(5000, (e, t) => draw(t), () => { stop = null; }); });
+})();
+
+/* ---------- 2. mirage ---------- */
+(function(){
+  const svg = document.getElementById('mirSvg'), out = document.getElementById('mirOut'), tIn = document.getElementById('mirT');
+  const RY = 300, NL = 10, H = 10, TX = 120, EX = 715, EY = RY - 28, V = 3;   /* V: vertical stretch of the drawing */
+  const tree = {top: RY - 132, base: RY - 4};
+  let A = 0;
+  const nOf = k => k >= NL ? 1 : 1 - A * (NL - k) / NL;   /* layer 0 touches the road (hottest, rarest) */
+  /* trace from the eye towards the tree; beta > 0 = looking down (deg). Returns {pts, y, refl} or {road: true} */
+  function trace(beta){
+    let cur = Math.min(NL, Math.floor((RY - EY) / H)), x = EX, y = EY, down = beta > 0, refl = false;
+    const Kc = nOf(cur) * Math.cos(K.rad(Math.abs(beta))), pts = [P(x, y)];
+    for (let k = 0; k < 200; k++){
+      const cb = Math.min(1, Kc / nOf(cur)), slope = V * Math.sqrt(Math.max(0, 1 - cb * cb)) / cb;
+      if (down){ const yb = RY - cur * H, dx = slope > 1e-9 ? (yb - y) / slope : Infinity;
+        if (x - dx <= TX){ y += slope * (x - TX); x = TX; pts.push(P(x, y)); return {pts, y, refl}; }
+        x -= dx; y = yb; pts.push(P(x, y));
+        if (cur === 0) return {pts, road: true};
+        if (Kc / nOf(cur - 1) > 1){ down = false; refl = true; } else cur -= 1;
+      } else {
+        if (cur >= NL || slope < 1e-9){ y -= slope * (x - TX); x = TX; pts.push(P(x, y)); return {pts, y, refl}; }
+        const yt = RY - (cur + 1) * H, dx = (y - yt) / slope;
+        if (x - dx <= TX){ y -= slope * (x - TX); x = TX; pts.push(P(x, y)); return {pts, y, refl}; }
+        x -= dx; y = yt; pts.push(P(x, y)); cur += 1;
+      }
+    }
+    return {pts, y, refl};
+  }
+  function drawTree(g, map, op=1, ghost=false){ const top = map(tree.top), base = map(tree.base), cy = map(RY - 95), rr = Math.abs(map(RY - 60) - map(RY - 130)) / 2;
+    el('rect', {x: TX - 6, y: Math.min(base, map(RY - 62)), width: 12, height: Math.abs(base - map(RY - 62)), class: 'tree-t', opacity: op}, g);
+    el('circle', {cx: TX, cy: cy, r: rr, class: 'tree-c', opacity: op, 'stroke-dasharray': ghost ? '4 3' : null, stroke: ghost ? 'var(--green)' : null}, g); return {top, base}; }
+  function draw(){
+    const dT = +tIn.value; A = dT * 0.00045; K.clear(svg);
+    el('rect', {x: 0, y: 0, width: 800, height: RY, class: 'sky'}, svg);
+    for (let k = 0; k < NL; k++) el('rect', {x: 0, y: RY - (k + 1) * H, width: 800, height: H, fill: 'var(--accent)', opacity: A > 0 ? .02 + .3 * (NL - k) / NL * dT / 25 : 0}, svg);
+    for (let k = 1; k <= NL; k++) sline(svg, P(0, RY - k * H), P(800, RY - k * H), {stroke: 'var(--accent)', 'stroke-width': .6, opacity: .4});
+    el('rect', {x: 0, y: RY, width: 800, height: 120, class: 'road'}, svg);
+    for (let x = 20; x < 800; x += 70) el('rect', {x, y: RY + 36, width: 36, height: 5, fill: 'var(--surface)'}, svg);
+    L(svg, 300, RY - NL * H - 8, 'cooler, denser air ↑', 'lbl sm muted'); L(svg, 420, RY + 66, 'hot road – the air touching it is hottest and rarest', 'lbl sm');
+    drawTree(svg, y => y);
+    /* car + eye */
+    el('rect', {x: EX - 15, y: RY - 40, width: 90, height: 30, rx: 8, fill: '#ef4444'}, svg); el('rect', {x: EX - 2, y: RY - 56, width: 50, height: 20, rx: 6, fill: '#ef4444'}, svg);
+    el('circle', {cx: EX + 5, cy: RY - 8, r: 9, fill: 'var(--text)'}, svg); el('circle', {cx: EX + 58, cy: RY - 8, r: 9, fill: 'var(--text)'}, svg);
+    eye(svg, P(EX, EY), 180, .8);
+    /* direct ray: eye → middle of the canopy (looking slightly up) */
+    let lo = -20, hi = 0; for (let k = 0; k < 40; k++){ const m = (lo + hi) / 2, tr = trace(m); if (tr.y > RY - 95) hi = m; else lo = m; }
+    const direct = trace((lo + hi) / 2); lpath(svg, direct.pts.slice().reverse(), {c: 'blue', w: 2, head: 8});
+    /* mirage rays: scan downward sight lines */
+    const hits = []; for (let b = 0.02; b <= 9; b += 0.01){ const tr = trace(b); if (!tr.road && tr.refl && tr.y >= tree.top && tr.y <= tree.base) hits.push({b, tr}); }
+    let msg;
+    if (hits.length){
+      const pick = yy => hits.reduce((a, c) => Math.abs(c.tr.y - yy) < Math.abs(a.tr.y - yy) ? c : a);
+      const hTop = pick(tree.top + 4), hBase = pick(tree.base - 6);
+      [hTop, hBase].forEach(h => lpath(svg, h.tr.pts.slice().reverse(), {c: 'red', w: 2.4, head: 8}));
+      const app = h => EY + V * Math.tan(K.rad(h.b)) * (EX - TX);
+      [hTop, hBase].forEach(h => sline(svg, P(EX, EY), P(TX, app(h)), {stroke: 'var(--red)', 'stroke-width': 1.4, 'stroke-dasharray': '6 5', opacity: .7}));
+      const yA = app(hTop), yB = app(hBase), sc = (yA - yB) / ((tree.top + 4) - (tree.base - 6));
+      const map = y => yB + (y - (tree.base - 6)) * sc;
+      el('ellipse', {cx: TX + 30, cy: (yA + yB) / 2, rx: 120, ry: Math.abs(yA - yB) / 2 + 10, fill: 'var(--blue)', opacity: .18}, svg);
+      drawTree(svg, map, .45, true);
+      L(svg, TX + 60, Math.min(Math.max(yA, yB) + 16, 405), 'inverted image – "water" on the road', 'lbl sm', {'font-weight': 700});
+      msg = `Road ${dT} °C hotter. The red rays leave the tree slanting down, bend away from the normal in the ever rarer layers, are totally internally reflected near the road and rise to the eye.\n` +
+        `The eye traces them back in straight lines (dashed) – they seem to come from below the road: an inverted tree on a "wet" road. That is a mirage. (Blue = the ordinary direct view.)`;
+    } else msg = `Road only ${dT} °C hotter: the layers differ too little, no ray is totally internally reflected – no mirage. You see the tree (blue ray) and the dry road.`;
+    L(svg, 14, 24, hits.length ? 'mirage!' : 'no mirage', 'lbl big', {style: 'fill:' + (hits.length ? 'var(--red)' : 'var(--muted)')});
+    out.textContent = msg;
+  }
+  const run = K.slider(tIn, draw, 0);
+  document.getElementById('mirCool').addEventListener('click', () => { tIn.value = 3; run(); });
+  document.getElementById('mirHot').addEventListener('click', () => { tIn.value = 22; run(); });
+})();
+
+/* ---------- 3. reflector prism ---------- */
+(function(){
+  const svg = document.getElementById('refSvg'), out = document.getElementById('refOut'), yIn = document.getElementById('refY'), tIn = document.getElementById('refT');
+  const Pp = P(360, 60), Q = P(360, 340), X = P(500, 200), shapes = [{pts: [Pp, X, Q], n: MED.glass.n}];
+  let stop = null;
+  function draw(f=1){
+    const y0 = +yIn.value, tilt = +tIn.value; K.clear(svg);
+    K.polygon(svg, [Pp, X, Q], {class: 'prism'});
+    text(svg, P(Pp.x - 12, Pp.y - 8), 'P', {class: 'lbl big'}); text(svg, P(Q.x - 12, Q.y + 12), 'Q', {class: 'lbl big'});
+    L(svg, 380, 380, 'glass prism (n = 1.5): 45°–45°–90°', 'lbl sm green');
+    /* headlight on the left */
+    el('rect', {x: 6, y: y0 - 16, width: 30, height: 32, rx: 6, fill: '#fde047', stroke: 'var(--accent)'}, svg);
+    const d = P(Math.cos(K.rad(tilt)), Math.sin(K.rad(tilt))), start = P(40, y0 - Math.tan(K.rad(tilt)) * (Pp.x - 40));
+    const tr = traceShapes(shapes, start, d, 8);
+    const pts = tr.path;
+    drawPath(svg, pts, f, {glow: true});
+    let txt = [];
+    if (f >= 1) tr.events.forEach((ev, k) => {
+      if (ev.type === 'tir'){ normal(svg, ev.p, 34, {u: ev.nrm}); const nm = k === 1 ? 'A' : k === 2 ? 'B' : '';
+        text(svg, along(ev.p, P(-ev.nrm.x, -ev.nrm.y), 18), nm, {class: 'lbl big'}); L(svg, ev.p.x + 22, ev.p.y + (ev.p.y < 200 ? -14 : 22), `i = ${fx(ev.i, 1)}° > 42°: TIR`, 'lbl sm red');
+        txt.push(`${nm || 'wall'}: angle of incidence ${fx(ev.i, 1)}° > 42° → total internal reflection`); }
+      else if (ev.type === 'refract') txt.push(ev.enter ? `face PQ (entering): i = ${fx(ev.i, 1)}°${ev.i < .5 ? ' – along the normal, no refraction' : ` → r = ${fx(ev.r, 1)}°`}` : (ev.p.x <= Pp.x + .5 ? `face PQ (leaving): i = ${fx(ev.i, 1)}° → goes back to the left` : `LEAK: i = ${fx(ev.i, 1)}° < 42° → refracted out of the back face, lost`));
+    });
+    const last = K.unit(tr.path[tr.path.length - 2], tr.path[tr.path.length - 1]), back = last.x < 0;
+    out.textContent = txt.join('\n') + (back ? `\nThe light returns to the left${Math.abs(tilt) < .5 ? ', exactly parallel to the incoming beam – back to the driver.' : ', parallel to the incoming beam (turned through 180°).'}` : '\nThe light did not come back – the reflector would look dark from this direction.');
+  }
+  K.slider(yIn, () => { if (stop){ stop(); stop = null; } draw(1); }, 0); K.slider(tIn, () => { if (stop){ stop(); stop = null; } draw(1); }, 0);
+  document.getElementById('refGo').addEventListener('click', () => { if (stop) stop(); stop = K.animate(2500, (e, t) => draw(t), () => { stop = null; }); });
+  document.getElementById('refBook').addEventListener('click', () => { yIn.value = 120; tIn.value = 0; yIn.dispatchEvent(new Event('input')); tIn.dispatchEvent(new Event('input')); });
+})();
+
+/* ---------- 4. periscope ---------- */
+(function(){
+  const svg = document.getElementById('perSvg'), out = document.getElementById('perOut');
+  const S = 90, X0 = 330, YT = 40, YB = 330;
+  const top = [P(X0, YT + S), P(X0 + S, YT), P(X0 + S, YT + S)], bot = [P(X0, YB), P(X0 + S, YB), P(X0, YB + S)];
+  let mirrors = false, stop = null;
+  function draw(f=1){
+    K.clear(svg);
+    /* wall the observer hides behind */
+    el('rect', {x: 470, y: 200, width: 40, height: 260, fill: 'var(--accent-soft)', stroke: 'var(--accent)'}, svg); L(svg, 474, 450, 'wall', 'lbl sm amber');
+    /* tube */
+    el('path', {d: `M${X0 - 6},${YT - 6} L${X0 + S + 6},${YT - 6} M${X0 - 6},${YT - 6} L${X0 - 6},${YB} M${X0 + S + 6},${YT + S} L${X0 + S + 6},${YB + S + 6} L${X0 - 6},${YB + S + 6}`, class: 'tube'}, svg);
+    if (mirrors){ [[top[0], top[1]], [bot[2], bot[1]]].forEach(([a, b]) => sline(svg, a, b, {class: 'mirror', stroke: 'var(--muted)', 'stroke-width': 6})); }
+    else { K.polygon(svg, top, {class: 'prism'}); K.polygon(svg, bot, {class: 'prism'}); }
+    /* tree on the right */
+    el('rect', {x: 716, y: 90, width: 12, height: 80, class: 'tree-t'}, svg); el('circle', {cx: 722, cy: 75, r: 40, class: 'tree-c'}, svg);
+    eye(svg, P(120, YB + 45), 0, 1.3); L(svg, 80, YB + 90, 'eye', 'lbl sm muted');
+    const shapes = mirrors ? [{seg: [top[0], top[1]], mirror: true}, {seg: [bot[2], bot[1]], mirror: true}] : [{pts: top, n: 1.5}, {pts: bot, n: 1.5}];
+    const cols = ['red', 'amber', 'purple']; let tirs = 0;
+    [55, 85, 115].forEach((y, k) => { const tr = traceShapes(shapes, P(690, y), P(-1, 0), 10);
+      const pts = tr.path.slice(0, -1).concat([hitX(tr.path[tr.path.length - 2], P(-1, 0), 150)]);
+      drawPath(svg, pts, f, {c: cols[k], w: 2.4, head: 8});
+      if (mirrors && f >= 1){ const g = pts.map(p => P(p.x + 4, p.y + 4)); K.polyline(svg, g.slice(1), {stroke: COL[cols[k]], 'stroke-width': 1.2, opacity: .3}); }
+      tirs += tr.events.filter(e => e.type === 'tir').length; });
+    if (f >= 1 && !mirrors){ L(svg, X0 + S + 14, YT + S + 20, '45° > 42°: TIR', 'lbl sm red'); L(svg, X0 - 10, YB + S + 30, '45° > 42°: TIR', 'lbl sm red'); L(svg, X0 - 120, YT + 30, 'prism (പ്രിസം)', 'lbl sm green'); }
+    if (mirrors) L(svg, X0 + S + 14, YT + S + 20, 'plane mirrors (silvered glass)', 'lbl sm muted');
+    out.textContent = mirrors ? 'Mirror periscope: each silvered mirror reflects most – but not all – of the light (some is absorbed), and the front glass surface of each mirror adds a faint second reflection (the pale lines) → a dimmer image with faint double edges.'
+      : `Prism periscope: the light enters each prism along the normal, meets the slanting face at 45° (> critical angle 42°) and is totally internally reflected – ${tirs} total internal reflections for the 3 rays shown. All the light is reflected → bright, clear image. The top ray of the tree arrives as the top ray at the eye: the image is upright.`;
+  }
+  draw(1);
+  document.getElementById('perGo').addEventListener('click', () => { if (stop) stop(); stop = K.animate(3000, (e, t) => draw(t), () => { stop = null; }); });
+  document.getElementById('perMode').addEventListener('click', e => { mirrors = !mirrors; e.target.textContent = mirrors ? 'Back to prisms' : 'Compare: plane mirrors'; draw(1); });
+})();
+
+/* ---------- 5. Table 1.4 ---------- */
+sorter('t14Sort', 't14Score', [
+  {t: 'Happens only when the ray goes from an optically denser to a rarer medium at an angle of incidence greater than the critical angle.', a: 1, why: 'both conditions of TIR.'},
+  {t: 'The ray of light is not reflected completely.', a: 0, why: 'a mirror absorbs a little of the light.'},
+  {t: 'Reflection happens whatever the angle of incidence on the surface.', a: 0, why: 'a mirror reflects at any angle.'},
+  {t: 'The ray of light is reflected completely.', a: 1, why: 'in TIR no light is refracted out – it is all reflected.'},
+  {t: 'Used in optical fibres, cycle reflectors and prism periscopes.', a: 1, why: 'all of them trap or turn light by TIR (extra statement).'},
+  {t: 'Needs a polished, silvered surface.', a: 0, why: 'TIR needs only a clean boundary between a denser and a rarer medium (extra statement).'}
+], ['Mirror reflection', 'Total internal reflection']);
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'Light travels along an optical fibre because of', options: ['refraction at the walls', 'repeated total internal reflection', 'reflection from a silver coating', 'scattering'], answer: 1, explain: 'It meets the walls at more than the critical angle and is totally reflected again and again.', hint: 'Why does light come out only at the tips?'});
+K.mcq('#q2', {q: 'In a mirage on a hot road, the air just above the road is', options: ['cooler and optically denser', 'hotter and optically rarer', 'hotter and optically denser', 'the same as the air higher up'], answer: 1, explain: 'Hot air is optically rarer; density increases upwards, so light coming down goes from denser to rarer and can be totally reflected.', hint: 'TIR needs denser → rarer.'});
+K.mcq('#q3', {q: 'In a cycle reflector, light meets the slanting faces of the glass prism at', options: ['30°, less than the critical angle', '45°, greater than the critical angle 42°', '42°, equal to the critical angle', '90°'], answer: 1, explain: '45° > 42°, so total internal reflection happens at A and at B.', hint: 'Fig 1.22 (b).'});
+K.mcq('#q4', {q: 'Why is a prism periscope better than a mirror periscope?', options: ['Prisms magnify the image', 'Total internal reflection reflects all the light, giving a brighter, clearer image', 'Prisms are cheaper than mirrors', 'Prisms bend light towards the normal'], answer: 1, explain: 'No light is lost or doubled as in a silvered glass mirror.', hint: 'Compare in the periscope lab.'});
+K.mcq('#q5', {q: 'Charles K. Kao won the 2009 Nobel Prize in Physics for work on', options: ['the speed of light', 'transmission of light in optical fibres', 'mirages', 'the laser'], answer: 1, explain: 'His work made long-distance fibre-optic communication possible.', hint: 'See the box in section 1.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

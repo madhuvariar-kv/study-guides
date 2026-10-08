@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Refraction and Refractive Index – Refraction of Light</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.qa{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.6rem 1rem;margin:.7rem 0;box-shadow:var(--shadow)}
+.qa p{margin:.25em 0}
+.qbox{background:var(--surface);border:1px solid var(--border);border-left:6px solid var(--accent);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.why{font-size:.93rem;color:var(--muted);margin-top:.3rem}
+.diary{background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:1rem 0}
+.diary h3{margin:.1rem 0 .4rem;color:var(--accent-ink)}
+.obs td,.obs th{text-align:center}
+.obs tr.hl td{background:var(--accent-soft)}
+.obs td.q{color:var(--muted)}
+.bubble{background:var(--surface);border:2px solid var(--purple);border-radius:18px;padding:.6rem .9rem;font-size:.95rem;margin:.8rem 0}
+.bubbles{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.7rem;margin:.8rem 0}
+.bubbles .bubble{margin:0}
+.bubble .ml{display:block;font-weight:600;margin-bottom:.2rem}
+.tblwrap{overflow-x:auto}
+.sorter{display:grid;gap:.45rem;margin:.6rem 0}
+.sorter .row{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .6rem;padding:.45rem .7rem;border-radius:10px;background:var(--surface2);border-left:5px solid transparent}
+.sorter .row .txt{flex:1 1 220px}
+.sorter .row.ok{border-left-color:var(--green);background:var(--green-soft)}
+.sorter .row.bad{border-left-color:var(--red);background:var(--red-soft)}
+.sorter .row .fbk{flex-basis:100%;font-size:.9rem}
+.score{font-weight:700;color:var(--primary-ink)}
+.controls select{padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem}
+/* media (as in the textbook: air grey, water blue, glass green) */
+svg .m-air{fill:var(--surface2)}
+svg .m-water{fill:var(--blue-soft)}
+svg .m-glass{fill:var(--green-soft)}
+svg .m-diamond{fill:var(--purple-soft)}
+svg .m-smoke{fill:var(--muted);opacity:.16}
+svg .m-edge{fill:none;stroke:var(--muted);stroke-width:1.5}
+svg .body-fill{fill:var(--surface2);stroke:var(--text);stroke-width:1.8}
+/* page-specific */
+svg .glass-wall{fill:var(--blue);opacity:.06;stroke:var(--muted);stroke-width:2.5}
+svg .straw{stroke:#7c8cf8;stroke-width:9;stroke-linecap:round;fill:none}
+svg .straw-app{stroke:var(--purple);stroke-width:9;stroke-linecap:round;fill:none;opacity:.55}
+svg .tabletop{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.5}
+.nbig{font-size:1.15em;font-weight:700;color:var(--primary-ink)}
+</style>
+</head>
+<body data-page="06_refraction_refractive_index">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 1 · Section 2</span><span class="chip amber">Textbook pages 10–12</span>
+<h1>Refraction and Refractive Index <span class="ml">അപവർത്തനം, അപവർത്തനാങ്കം</span></h1>
+<p class="lead">Why does a straw look broken in water? You will pour water into a virtual glass, trace the light from the bottom of the straw to your eye, and see the bottom "rise" to a new place. Then you will meet a number that measures how strongly a medium slows light down – the <b>refractive index</b> <span class="ml">അപവർത്തനാങ്കം</span> – and calculate it for glass, water and diamond.</p>
+
+<div class="callout book"><div class="title">📖 What you need</div>
+<ul style="margin:0">
+<li>Light bends at an interface because its speed changes; optical density; Table 1.1 – <a href="05_light_changes_direction.html">page 5</a>.</li>
+<li>Dividing numbers like 3 × 10⁸ ÷ 2 × 10⁸ (the 10⁸ cancels), ratios have no unit – <a href="03_speed_ratios_powers.html">page 3</a>.</li>
+<li>We see an object when light from it enters our eye; our brain assumes light travels in straight lines – <a href="01_light_rays_reflection.html">page 1</a>.</li>
+</ul></div>
+
+<h2>1. Activity: the broken straw – Fig 1.5, 1.6</h2>
+<p><span class="ml">നാരങ്ങാവെള്ളത്തിൽ സ്ട്രോ ഒടിഞ്ഞതായി തോന്നിയതിന് കാരണം കണ്ടെത്തുന്നതിനായി ഒരു പ്രവർത്തനം ചെയ്തു നോക്കാം. ഗ്ലാസിൽ ഒരു സ്ട്രോ ചരിച്ചു വയ്ക്കുന്നു. പിന്നീട് അതിലേക്ക് ചിത്രത്തിലേതു പോലെ ജലം നിറയ്ക്കുന്നു. എന്തു വ്യത്യാസമാണ് നിരീക്ഷിക്കാൻ കഴിയുന്നത്? നിരീക്ഷണം സയൻസ് ഡയറിയിൽ ചിത്രീകരിക്കൂ.</span></p>
+<p>Lean a straw in an empty glass (Fig 1.5 a). Then fill the glass with water (Fig 1.5 b). What difference do you notice? Draw your observation in your science diary. Below, Fig 1.6 shows the path of the ray from the bottom B of the straw to the eye – (a) before and (b) after the water is poured.</p>
+<div class="lab" id="strawLab">
+  <div class="lab-title">🧪 Straw lab – pour water and trace the ray from B to the eye</div>
+  <svg id="stSvg" viewBox="0 0 800 440" role="img" aria-label="A glass with a slanted straw AB, an eye at the upper left, and the ray of light from the bottom B of the straw to the eye; with water the ray bends at the surface and B appears raised to C"></svg>
+  <div class="controls">
+    <label>water level <input id="stH" type="range" min="0" max="9" step="0.5" value="7"><output></output> cm</label>
+  </div>
+  <div class="controls">
+    <button class="btn" id="stEmpty">Fig 1.6 (a) – empty glass</button>
+    <button class="btn primary" id="stPour">▶ Fig 1.6 (b) – pour the water</button>
+  </div>
+  <div class="readout" id="stOut"></div>
+  <p class="hint">Red: the ray that really reaches the eye. Red dashed: the straight line the brain "draws back" from the eye – it ends at <b>C</b>, where B <em>appears</em> to be. The purple straw is the straw you <em>see</em>; the pale blue one is where it really is. The glass is 10 cm tall; n(water) = 1.33.</p>
+</div>
+
+<div class="qa"><p><b>Q1.</b> <span class="ml">സ്ട്രോ ഒടിഞ്ഞതായി തോന്നാനുള്ള കാരണമെന്താണ്?</span> – Why does the straw appear broken?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">Because light from the part of the straw under water <b>changes direction at the water surface</b> as it passes from water into air. The eye traces it back in a straight line, so the dipped part appears <b>raised</b> (B appears at C) – the straw seems to <b>break at the water surface</b>.<div class="why">Why: the part of the straw above the water sends light to the eye through air only (straight), the part below through water and then air (bent at the surface). The two parts no longer line up.</div></div></div></div>
+<div class="qa"><p><b>Q2.</b> <span class="ml">ജലം ഒഴിക്കുന്നതിനുമുമ്പ്, സ്ട്രോയുടെ B എന്ന ഭാഗത്തുനിന്ന് കണ്ണിൽ വന്നു പതിക്കുന്ന പ്രകാശരശ്മിക്ക് ദിശാവ്യതിയാനം സംഭവിക്കുന്നുണ്ടോ?</span> – Before the water is poured, does the ray from the part B of the straw to the eye change direction?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>No.</b> It travels in a straight line from B to the eye.<div class="why">Why: in the empty glass the light travels through one medium (air) all the way, so its path is a straight line – press "Fig 1.6 (a)" in the lab.</div></div></div></div>
+<p><span class="ml">ജലം ഒഴിച്ചശേഷം സ്ട്രോയുടെ, ജലത്തിൽ മുങ്ങിയിരിക്കുന്ന ഭാഗത്തുനിന്നു വരുന്ന പ്രകാശരശ്മി വായുവിലേക്ക് പ്രവേശിക്കുമ്പോൾ ജലോപരിതലത്തിൽ വച്ച് ദിശാവ്യതിയാനം സംഭവിക്കുന്നുണ്ടല്ലോ.</span> After the water is poured, the ray coming from the dipped part of the straw changes direction at the water surface when it enters the air.</p>
+<div class="qa"><p><b>Q3.</b> <span class="ml">B യിൽ നിന്നാണ് പ്രകാശരശ്മി യഥാർഥത്തിൽ വരുന്നതെങ്കിലും C എന്ന ഭാഗത്തുനിന്നും വരുന്നതായല്ലേ നാം കാണുന്നത്?</span> – Although the ray really comes from B, don't we see it as coming from C?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>Yes.</b> The ray reaching the eye seems to come from <b>C</b>, a point <b>above</b> B.<div class="why">Why: the eye cannot know that the ray bent at the surface. It assumes light travels straight, so it extends the ray backwards (red dashed line) – and that line passes through C, not B. <span class="ml">B എന്ന യഥാർഥ സ്ഥാനം C യിലേക്ക് ഉയർന്നതായി കാണപ്പെടുന്നതിനാൽ സ്ട്രോ ജലോപരിതലത്തിൽ വച്ച് ഒടിഞ്ഞതായി തോന്നുന്നു.</span> Since the real position B appears raised to C, the straw looks broken at the water surface.</div></div></div></div>
+
+<div class="callout key"><div class="title">⭐ Refraction <span class="ml">അപവർത്തനം</span> (textbook page 11)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">ഒരു മാധ്യമത്തിൽ നിന്ന് പ്രകാശികസാന്ദ്രതയിൽ വ്യത്യാസമുള്ള മറ്റൊരു മാധ്യമത്തിലേക്ക് പ്രകാശം ചരിഞ്ഞ് പ്രവേശിക്കുമ്പോൾ മാധ്യമങ്ങളുടെ വിഭജനതലത്തിൽ വച്ച് അതിന്റെ ദിശയ്ക്ക് വ്യതിയാനം ഉണ്ടാകുന്നു. ഈ പ്രതിഭാസമാണ് അപവർത്തനം (refraction).</p>
+<p style="margin:0">When light passes <b>obliquely</b> from one medium into another medium of <b>different optical density</b>, its direction changes at the <b>interface</b> of the media. This phenomenon is called <b>refraction</b>.</p></div>
+<div class="diary"><h3>📒 Science diary – Fig 1.6</h3>
+<p style="margin:.2rem 0">Draw the glass, the straw AB, and the eye. (a) Empty: one straight ray from B to the eye. (b) With water: the ray from B goes up to the water surface, bends <b>away from the normal</b> there and reaches the eye; extend the air part of the ray backwards with a dashed line to find <b>C</b> above B. Join the point where the straw meets the water surface to C – that is the "broken" straw you see.</p></div>
+
+<h2>2. Refractive index <span class="ml">അപവർത്തനാങ്കം</span></h2>
+<p><span class="ml">പ്രകാശത്തെ അപവർത്തനത്തിന് വിധേയമാക്കാനുള്ള മാധ്യമത്തിന്റെ കഴിവ് അതിന്റെ പ്രകാശികസാന്ദ്രതയെ ആശ്രയിച്ചിരിക്കുന്നു. പ്രകാശികസാന്ദ്രതയാകട്ടെ മാധ്യമത്തിന്റെ അപവർത്തനാങ്കവുമായി ബന്ധപ്പെട്ടിരിക്കുന്നു. വിവിധ പ്രകാശിക ഉപകരണങ്ങളുടെ രൂപകല്പനയിൽ അപവർത്തനാങ്കത്തിന്റെ പങ്ക് നിർണ്ണായകമാണ്.</span></p>
+<p>How strongly a medium refracts light depends on its <b>optical density</b>, and optical density is linked to a number called the <b>refractive index</b> of the medium. The refractive index is crucial in designing optical instruments – spectacles, camera lenses, microscopes, optical fibres.</p>
+<div class="callout key"><div class="title">⭐ Refractive index (textbook page 11)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">പ്രകാശത്തിന്റെ ശൂന്യതയിലെ വേഗവും ഒരു മാധ്യമത്തിലെ വേഗവും തമ്മിലുള്ള അനുപാത സംഖ്യയാണ് ആ മാധ്യമത്തിന്റെ അപവർത്തനാങ്കം.</p>
+<p style="margin:0 0 .4rem">The <b>refractive index</b> of a medium is the ratio of the speed of light in <b>vacuum</b> <span class="ml">ശൂന്യത</span> to the speed of light in that medium.</p>
+<div class="eq">refractive index (n) = <span class="frac"><span>speed of light in vacuum (c)</span><span>speed of light in the medium (v)</span></span> &nbsp;&nbsp; i.e. &nbsp; n = <span class="frac"><span>c</span><span>v</span></span></div>
+<p style="margin:0">Speed of light in vacuum: <b>c = 3 × 10⁸ m/s</b>. Because n is a speed divided by a speed, the units cancel – <b>the refractive index has no unit</b>.</p></div>
+<p class="small muted">The speed of light in air is almost exactly the same as in vacuum, so we take n(air) = 1 (more precisely 1.0003).</p>
+
+<h3>Table 1.2 – find the refractive index (page 11)</h3>
+<div class="qbox"><p><b>Textbook:</b> <span class="ml">ചില മാധ്യമങ്ങളിലൂടെയുള്ള പ്രകാശവേഗം പട്ടികയിൽ നൽകിയിരിക്കുന്നു. ഓരോ മാധ്യമത്തിന്റേയും അപവർത്തനാങ്കം കണ്ടെത്തി പട്ടിക പൂർത്തീകരിക്കൂ.</span> – The speed of light in some media is given in the table. Find the refractive index of each medium and complete the table.</p>
+<div class="tblwrap"><table class="obs"><thead><tr><th>Medium <span class="ml">മാധ്യമം</span></th><th>Speed of light (v)</th><th>Refractive index (n)</th></tr></thead><tbody>
+<tr><td>Air <span class="ml">വായു</span></td><td>3 × 10⁸ m/s</td><td>n = c/v = (3 × 10⁸ m/s) ÷ (3 × 10⁸ m/s) = 1</td></tr>
+<tr><td>Glass <span class="ml">ഗ്ലാസ്</span></td><td>2 × 10⁸ m/s</td><td class="q">?</td></tr>
+<tr><td>Water <span class="ml">ജലം</span></td><td>2.25 × 10⁸ m/s</td><td class="q">?</td></tr>
+</tbody></table></div>
+<div class="reveal" data-btn="💡 Show a hint"><p>Use n = c/v with c = 3 × 10⁸ m/s. The 10⁸ on top and bottom cancel, and so do the units m/s – so only 3 ÷ 2 and 3 ÷ 2.25 are left.</p></div></div>
+<div class="lab" id="exGlass"><div class="lab-title">🎬 Glass – exam layout, step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Bars comparing the speed of light in vacuum with the speed in glass: the glass bar fits one and a half times into the vacuum bar"></svg></div>
+<div class="lab" id="exWater"><div class="lab-title">🎬 Water – exam layout, step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Bars comparing the speed of light in vacuum with the speed in water: the water bar fits one and a third times into the vacuum bar"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> glass n = 3 ÷ 2 = <b>1.5</b>; water n = 3 ÷ 2.25 = 4/3 ≈ <b>1.33</b>; (air n = 1).<div class="why">Why: light is 1.5 times slower in glass and 1.33 times slower in water than in vacuum – the refractive index tells you "how many times slower". Full animated solutions: <a href="12_intext_questions_solutions.html">page 12</a>.</div></div></div>
+
+<h3>Diamond (page 12)</h3>
+<div class="qbox"><p><b>Q4.</b> <span class="ml">വജ്രത്തിന്റെ (diamond) അപവർത്തനാങ്കം 2.4 ആണ്. വജ്രത്തിൽ കൂടിയുള്ള പ്രകാശവേഗം എത്രയായിരിക്കും?</span> – The refractive index of diamond is 2.4. What is the speed of light in diamond?</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>n = c/v, so v = c/n. Divide 3 × 10⁸ m/s by 2.4 (3 ÷ 2.4 = 30 ÷ 24 = 1.25).</p></div></div>
+<div class="lab" id="exDia"><div class="lab-title">🎬 Diamond – exam layout, step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Bars: the speed of light in vacuum divided into 2.4 equal parts; one part is the speed in diamond"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> v = c/n = 3 × 10⁸ ÷ 2.4 = <b>1.25 × 10⁸ m/s</b>.<div class="why">Why: a refractive index of 2.4 means light is 2.4 times slower in diamond than in vacuum. This matches Table 1.1 (diamond 1.25 × 10⁸ m/s). (Tables of data give 2.42 for diamond; the textbook rounds it to 2.4 for this question.) Full animated solution: <a href="12_intext_questions_solutions.html">page 12</a>.</div></div></div>
+
+<h2>3. Speed of light and refractive index</h2>
+<div class="qa"><p><b>Q5.</b> <span class="ml">പ്രകാശവേഗം അപവർത്തനാങ്കവുമായി എങ്ങനെ ബന്ധപ്പെട്ടിരിക്കുന്നു?</span> – How is the speed of light related to the refractive index?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">The <b>greater the refractive index</b> of a medium, the <b>lower the speed of light</b> in it (and the smaller the refractive index, the higher the speed). <span class="ml">അപവർത്തനാങ്കം കൂടുതലുള്ള മാധ്യമത്തിൽ പ്രകാശവേഗം കുറവായിരിക്കും.</span><div class="why">Why: n = c/v. The top, c, is fixed (3 × 10⁸ m/s), so a bigger n can only come from a smaller v. If n doubles, v halves – speed and refractive index are <b>inversely</b> related. Try the slider below.</div></div></div></div>
+<div class="lab" id="nvLab">
+  <div class="lab-title">🧪 Slide the refractive index – watch the speed</div>
+  <svg id="nvSvg" viewBox="0 0 800 330" role="img" aria-label="Graph of the speed of light against refractive index, a falling curve with air, water, glass and diamond marked on it"></svg>
+  <div class="controls"><label>refractive index n <input id="nvN" type="range" min="1" max="2.5" step="0.01" value="1.33"><output></output></label>
+    <button class="btn" data-n="1">air</button><button class="btn" data-n="1.33">water</button><button class="btn" data-n="1.5">glass</button><button class="btn" data-n="2.42">diamond</button></div>
+  <div class="readout" id="nvOut"></div>
+</div>
+<div class="diary"><h3>📒 Science diary – optical density and refractive index (page 12)</h3>
+<p class="ml" style="margin:.2rem 0">പ്രകാശവേഗവും പ്രകാശികസാന്ദ്രതയും തമ്മിലുള്ള ബന്ധം നിങ്ങൾക്കറിയാമല്ലോ. എങ്കിൽ പ്രകാശികസാന്ദ്രത അപവർത്തനാങ്കവുമായി എങ്ങനെ ബന്ധപ്പെട്ടിരിക്കുന്നുവെന്ന് സയൻസ് ഡയറിയിൽ കുറിക്കൂ.</p>
+<p style="margin:.2rem 0">You know how the speed of light and optical density are related. So how is optical density related to the refractive index? Write it in your science diary.</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">A medium with a <b>higher refractive index</b> has a <b>higher optical density</b>.<div class="why">Why: optical density ↑ ⇒ speed of light ↓ (page 5), and speed of light ↓ ⇒ refractive index ↑ (n = c/v). So: <b>optical density ↑ ⇔ refractive index ↑ ⇔ speed of light ↓</b>. Air (1) &lt; water (1.33) &lt; glass (1.5) &lt; diamond (2.42) – the same order as on page 5.</div></div></div></div>
+
+<div class="callout book"><div class="title">💻 Try it on a computer – PhET "Bending Light"</div>
+<p>The textbook suggests the free PhET simulation <b>Bending Light → Intro</b> (University of Colorado). Shine its laser from air into water or glass, switch on the protractor, and change the "index of refraction" slider of the lower medium. Check: the larger the index, the more the ray bends towards the normal. The link is in the "Explore online" box below (needs internet).</p></div>
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://phet.colorado.edu/en/simulations/bending-light" target="_blank" rel="noopener noreferrer">🧪 Bending Light (PhET simulation)</a> <span class="src">PhET</span><br><span class="note">The sim your textbook names: open &#x27;Intro&#x27;, shine the laser into water or glass and watch the ray bend.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/refraction-and-lenses/refraction/boundary-behavior" target="_blank" rel="noopener noreferrer">📄 Refraction – Boundary Behavior</a> <span class="src">The Physics Classroom</span><br><span class="note">What happens to light when it crosses from one medium into another, with clear diagrams.</span></li><li><a href="https://www.youtube.com/watch?v=3c7jtUhgQ_s" target="_blank" rel="noopener noreferrer">▶️ Explanation: Refraction | Middle school physics | Khan Academy</a> <span class="src">YouTube – Khan Academy India - English · 3:15</span><br><span class="note">Short, simple explanation of why light changes direction at a boundary.</span></li><li><a href="https://www.youtube.com/watch?v=tWy2QfC9APM" target="_blank" rel="noopener noreferrer">▶️ How Does Light Bend? | Earth Science</a> <span class="src">YouTube – BBC Earth Science · 5:53</span><br><span class="note">BBC demo-style explainer of light bending as it passes between materials.</span></li><li><a href="https://www.youtube.com/watch?v=m9cUy6B--xc" target="_blank" rel="noopener noreferrer">▶️ Refraction - Science experiment</a> <span class="src">YouTube – Coolphysicsvideos Physics · 0:40</span><br><span class="note">40-second demo: a laser beam visibly bends as it enters water.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/refraction-and-lenses/refraction/optical-density-and-light-speed" target="_blank" rel="noopener noreferrer">📄 Optical Density and Light Speed</a> <span class="src">The Physics Classroom</span><br><span class="note">Why light travels slower in water and glass, and what &#x27;optically denser&#x27; means.</span></li><li><a href="https://www.bbc.co.uk/bitesize/guides/z88dd2p/revision/1" target="_blank" rel="noopener noreferrer">📄 Refractive index – Higher Physics revision</a> <span class="src">BBC Bitesize</span><br><span class="note">n = speed of light in vacuum ÷ speed in the medium, with worked examples.</span></li><li><a href="https://www.youtube.com/watch?v=6Zx8bHhSeQU" target="_blank" rel="noopener noreferrer">▶️ Absolute &amp; Relative refractive index</a> <span class="src">YouTube – Khan Academy India - English · 8:19</span><br><span class="note">Absolute vs relative refractive index, explained for Indian school students.</span></li><li><a href="https://www.youtube.com/watch?v=FAivtXJOsiI" target="_blank" rel="noopener noreferrer">▶️ The Speed of Light in Glass</a> <span class="src">YouTube – minutephysics · 1:41</span><br><span class="note">A 2-minute animation on how fast light actually goes in glass.</span></li></ul></div>
+
+<div class="callout real"><div class="title">🌴 Kerala connection</div>
+<p style="margin:0">In a jewellery shop in Thrissur, a real diamond sparkles far more than a piece of glass of the same cut. The reason is its huge refractive index, 2.42: light inside a diamond travels at only about 1.24 × 10⁸ m/s and bends very strongly at every face (you will see on <a href="10_total_internal_reflection.html">page 10</a> why it then gets trapped and bounces around inside). Opticians in your town choose "high-index" spectacle glass for strong powers – the higher n bends light more, so the lens can be thinner.</p></div>
+
+<h2>4. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li>A straw looks broken because light from the dipped part bends at the water surface; the eye traces it back, so B appears raised to C.</li>
+<li><b>Refraction</b>: change of direction of light at the interface when it passes obliquely into a medium of different optical density.</li>
+<li><b>Refractive index</b> n = c/v, c = 3 × 10⁸ m/s; no unit. Air 1, water 4/3 ≈ 1.33, glass 1.5, diamond 2.4 (2.42).</li>
+<li>Higher n ⇔ lower speed of light ⇔ higher optical density.</li>
+</ul></div>
+<p>Next: <a href="07_rules_of_refraction.html">Incident and refracted rays – the rules of refraction ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Refraction of Light · Class 9 Physics", "icon": "🔦", "key": "physics_ch1_progress", "pages": [["index.html", "Home"], ["01_light_rays_reflection.html", "1 · Light, Rays & Reflection"], ["02_angles_normals_protractor.html", "2 · Angles, Normals & the Protractor"], ["03_speed_ratios_powers.html", "3 · Speed, Ratios & Powers of Ten"], ["04_media_slabs_prisms.html", "4 · Media, Slabs & Prisms"], ["05_light_changes_direction.html", "5 · Light Changes Direction"], ["06_refraction_refractive_index.html", "6 · Refraction & Refractive Index"], ["07_rules_of_refraction.html", "7 · Incident & Refracted Rays: the Rules"], ["08_glass_slab_everyday.html", "8 · Glass Slab & Everyday Refraction"], ["09_atmospheric_refraction.html", "9 · Atmospheric Refraction"], ["10_total_internal_reflection.html", "10 · Total Internal Reflection & Critical Angle"], ["11_tir_applications.html", "11 · Fibres, Mirages, Reflectors & Periscopes"], ["12_intext_questions_solutions.html", "12 · In-text Questions – Solutions"], ["13_assess_q1_q6_solutions.html", "13 · Let Us Assess Q1–6 – Solutions"], ["14_assess_q7_q11_solutions.html", "14 · Let Us Assess Q7–11 & Extended Activities"], ["15_applications_explore.html", "15 · Applications & Explore Online"], ["16_summary_revision.html", "16 · Summary & Quick Quiz"], ["17_model_test_paper.html", "17 · Model Test Paper"], ["18_model_test_solutions.html", "18 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+const {P, el, text} = K;
+const COL = {red:'var(--red)', blue:'var(--blue)', green:'var(--green)', amber:'var(--accent)', purple:'var(--purple)', text:'var(--text)', muted:'var(--muted)'};
+/* line with its own stroke (seg() carries class 'ln', which overrides stroke attributes) */
+const sline = (svg, a, b, attrs={}) => el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+/* number → string with ≤ d decimals and a true minus sign */
+const fx = (v, d=2) => K.num(K.fmt(v, d));
+/* left-anchored SVG text */
+const L = (svg, x, y, s, cls='lbl', extra={}) => text(svg, P(x, y), s, {class: cls, 'text-anchor': 'start', ...extra});
+/* arrow a→b with a filled head; o.c colour name, o.w width, o.label, o.lo {x,y} label offset from the tip, o.op opacity, o.head size */
+function arrow(svg, a, b, o={}){ const c = COL[o.c || 'red'], w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const Ln = K.dist(a, b); if (Ln < 1) return g; const u = K.unit(a, b), hs = Math.min(o.head ?? 11, Ln * .6), base = P(b.x - u.x * hs, b.y - u.y * hs);
+  el('line', {x1: a.x, y1: a.y, x2: base.x, y2: base.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round'}, g);
+  el('polygon', {points: `${b.x},${b.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g);
+  if (o.label) text(g, P(b.x + (o.lo ? o.lo.x : 0), b.y + (o.lo ? o.lo.y : -12)), o.label, {class: 'lbl sm ' + (o.lc || o.c || 'red'), 'text-anchor': o.anchor || 'middle'});
+  return g; }
+/* ---- optics ---- */
+/* refractive indices used for drawing and read-outs (Snell's law under the hood) */
+const MED = {
+  air:     {n: 1.00, name: 'air',     ml: 'വായു',  cls: 'm-air'},
+  water:   {n: 1.33, name: 'water',   ml: 'ജലം',   cls: 'm-water'},
+  glass:   {n: 1.5,  name: 'glass',   ml: 'ഗ്ലാസ്', cls: 'm-glass'},
+  diamond: {n: 2.42, name: 'diamond', ml: 'വജ്രം', cls: 'm-diamond'}
+};
+/* angle of refraction (deg) for n1 sin i = n2 sin r; null = no refracted ray (total internal reflection) */
+const snell = (n1, n2, i) => { const s = n1 * Math.sin(K.rad(i)) / n2; return s > 1 + 1e-12 ? null : K.deg(Math.asin(Math.min(1, s))); };
+/* critical angle (deg) going from n1 (denser) into n2 (default air) */
+const critical = (n1, n2=1) => K.deg(Math.asin(n2 / n1));
+/* unit direction at angle a (deg) to a VERTICAL normal; down = travelling downwards; right = moving to the right */
+const dirN = (a, down=true, right=true) => P((right ? 1 : -1) * Math.sin(K.rad(a)), (down ? 1 : -1) * Math.cos(K.rad(a)));
+const along = (p, u, len) => P(p.x + u.x * len, p.y + u.y * len);
+/* point where the ray p + t·u reaches the horizontal line y (or the vertical line x) */
+const hitY = (p, u, y) => along(p, u, (y - p.y) / u.y);
+const hitX = (p, u, x) => along(p, u, (x - p.x) / u.x);
+/* light ray a→b with chevron arrowhead(s) at fraction(s) o.at (default .5); o.c colour, o.w width, o.op opacity, o.dash, o.glow */
+function lray(svg, a, b, o={}){ const c = COL[o.c || 'red'], w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const Ln = K.dist(a, b); if (Ln < 1) return g;
+  if (o.glow) el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: c, 'stroke-width': w * 3.5, 'stroke-linecap': 'round', opacity: .16}, g);
+  el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round', 'stroke-dasharray': o.dash || null}, g);
+  const u = K.unit(a, b), hs = o.head ?? 10;
+  (o.at === undefined ? [.5] : [].concat(o.at)).forEach(f => { if (Ln < 2.2 * hs) return; const m = K.lerpPt(a, b, f), tip = along(m, u, hs / 2), base = along(m, u, -hs / 2);
+    el('polygon', {points: `${tip.x},${tip.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g); });
+  return g; }
+/* ray through several points (one arrowhead per piece) */
+function lpath(svg, pts, o={}){ const g = K.group(svg); for (let k = 0; k < pts.length - 1; k++) lray(g, pts[k], pts[k + 1], o); return g; }
+/* dashed normal through p (direction o.u, default vertical), half-length len; o.labels = ['N', 'N′'] at the two ends */
+function normal(svg, p, len=80, o={}){ const u = o.u || P(0, 1), a = along(p, u, -len), b = along(p, u, len);
+  const g = K.group(svg); sline(g, a, b, {stroke: 'var(--muted)', 'stroke-width': 1.5, 'stroke-dasharray': '6 5'});
+  if (o.labels){ text(g, along(a, u, -11), o.labels[0], {class: 'lbl sm muted'}); text(g, along(b, u, 11), o.labels[1], {class: 'lbl sm muted'}); }
+  return g; }
+/* filled angle arc at V between VA and VB with a label */
+const ang = (svg, V, A, B, r, label, cls='') => K.angleArc(svg, V, A, B, r, {cls, label, fill: true});
+/* rectangle of a medium (key of MED or a css class) with an optional label at the top-left */
+function band(svg, x, y, w, h, key, o={}){ const r = el('rect', {x, y, width: w, height: h, class: MED[key] ? MED[key].cls : key, rx: o.rx || 0}, svg);
+  if (o.label) L(svg, x + 8, y + (o.ly ?? 16), o.label, 'lbl sm muted'); return r; }
+/* an eye at p looking in direction angDeg (0 = to the right, 90 = down) */
+function eye(svg, p, angDeg=0, s=1){ const g = K.group(svg, {transform: `translate(${p.x} ${p.y}) rotate(${angDeg}) scale(${s})`});
+  el('path', {d: 'M-16,0 Q0,-12 16,0 Q0,12 -16,0 Z', fill: 'var(--surface)', stroke: 'var(--text)', 'stroke-width': 1.8}, g);
+  el('circle', {cx: 5, cy: 0, r: 5, fill: 'var(--blue)'}, g); el('circle', {cx: 6.5, cy: 0, r: 2.2, fill: 'var(--text)'}, g); return g; }
+/* laser torch whose beam leaves at tip, pointing along unit u */
+function laser(svg, tip, u, s=1){ const a = K.deg(Math.atan2(u.y, u.x)); const g = K.group(svg, {transform: `translate(${tip.x} ${tip.y}) rotate(${a}) scale(${s})`});
+  el('rect', {x: -64, y: -7, width: 58, height: 14, rx: 4, fill: 'var(--surface2)', stroke: 'var(--text)', 'stroke-width': 1.4}, g);
+  el('rect', {x: -8, y: -5, width: 8, height: 10, rx: 1.5, fill: 'var(--red)'}, g); el('rect', {x: -44, y: -10, width: 10, height: 4, rx: 1, fill: 'var(--red)'}, g); return g; }
+/* ---- page widgets ---- */
+function sorter(boxId, scoreId, items, cats){
+  const box = document.getElementById(boxId), sc = document.getElementById(scoreId); let right = 0;
+  items.forEach(it => { const row = document.createElement('div'); row.className = 'row';
+    row.innerHTML = `<span class="txt">${it.t}</span>` + cats.map((c, i) => `<button class="btn" data-i="${i}">${c}</button>`).join('') + '<span class="fbk"></span>';
+    row.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const ok = +b.dataset.i === it.a;
+      if (ok && !row.classList.contains('ok')) right++; if (!ok && row.classList.contains('ok')) right--;
+      row.classList.toggle('ok', ok); row.classList.toggle('bad', !ok);
+      row.querySelector('.fbk').innerHTML = (ok ? '✅ ' : '❌ Not quite – ') + it.why; sc.textContent = `${right} / ${items.length}`; });
+    box.appendChild(row); });
+}
+/* exam-layout stepper: rows [{h: heading, s: svg line, html: step text}], fig(svg,i,t) draws the figure; working is written at x0 */
+function examStepper(sel, rows, fig, x0=380, dy=62){
+  new K.Stepper(sel, {steps: rows.map(r => r.html), draw(svg, i, t){
+    fig(svg, i, t);
+    rows.forEach((r, k) => { if (k > i) return; const o = k === i ? t : 1, y = 30 + k * dy;
+      L(svg, x0, y, r.h, 'lbl sm muted', {opacity: o});
+      L(svg, x0, y + 22, r.s, k === rows.length - 1 ? 'lbl big green' : 'lbl', {opacity: o}); });
+  }});
+}
+
+/* ---------- 1. straw lab (Fig 1.6) ---------- */
+(function(){
+  const svg = document.getElementById('stSvg'), out = document.getElementById('stOut'), inp = document.getElementById('stH');
+  const BOT = 400, RIM = 190, GL = 300, GR = 620, PXCM = (BOT - RIM) / 10, nW = MED.water.n;
+  const A = P(668, 112), B = P(450, 392), E = P(170, 52);
+  let stop = null;
+  /* the point S on the surface y = ys where a ray from Q (under water) refracts into the eye */
+  function surfacePoint(Q, ys){ let lo = E.x, hi = Q.x;
+    const f = x => nW * Math.sin(Math.atan2(Q.x - x, Q.y - ys)) - Math.sin(Math.atan2(x - E.x, ys - E.y));
+    for (let k = 0; k < 60; k++){ const m = (lo + hi) / 2; if (f(m) > 0) lo = m; else hi = m; } return P((lo + hi) / 2, ys); }
+  /* refracted (air) direction for a ray Q→S leaving the water */
+  function outDir(Q, S){ const i = Math.atan2(Q.x - S.x, Q.y - S.y), r = Math.asin(Math.min(1, nW * Math.sin(i))); return P(-Math.sin(r), -Math.cos(r)); }
+  /* apparent image of Q seen by the eye: crossing of the back-extensions of two neighbouring rays */
+  function image(Q, ys){ const S1 = surfacePoint(Q, ys), S2 = P(S1.x + 1.5, ys), d1 = outDir(Q, S1), d2 = outDir(Q, S2);
+    return K.intersect(S1, along(S1, d1, -10), S2, along(S2, d2, -10)) || Q; }
+  function draw(hcm){
+    K.clear(svg);
+    el('rect', {x: 0, y: BOT + 6, width: 800, height: 40, class: 'tabletop'}, svg);
+    const ys = BOT - hcm * PXCM, wet = hcm > 0.05;
+    if (wet) band(svg, GL + 3, ys, GR - GL - 6, BOT - ys, 'water');
+    el('path', {d: `M${GL},${RIM} L${GL + 6},${BOT} Q${GL + 8},${BOT + 6} ${GL + 16},${BOT + 6} L${GR - 16},${BOT + 6} Q${GR - 8},${BOT + 6} ${GR - 6},${BOT} L${GR},${RIM}`, class: 'glass-wall'}, svg);
+    if (wet) sline(svg, P(GL + 3, ys), P(GR - 3, ys), {stroke: 'var(--blue)', 'stroke-width': 2});
+    /* straw: real */
+    const W = wet ? K.intersect(A, B, P(0, ys), P(800, ys)) : null;
+    el('line', {x1: A.x, y1: A.y, x2: B.x, y2: B.y, class: 'straw', opacity: wet ? .35 : 1}, svg);
+    if (wet) el('line', {x1: A.x, y1: A.y, x2: W.x, y2: W.y, class: 'straw'}, svg);
+    text(svg, P(A.x + 14, A.y - 6), 'A', {class: 'lbl big'}); text(svg, P(B.x + 2, B.y + 18), 'B', {class: 'lbl big'});
+    eye(svg, E, K.deg(Math.atan2(B.y - E.y, B.x - E.x)), 1.3);
+    text(svg, P(E.x - 34, E.y + 18), 'eye', {class: 'lbl sm muted'});
+    let txt;
+    if (!wet){
+      lray(svg, B, E, {at: [.3, .7]});
+      txt = 'Empty glass: light from B travels through air only – one straight line to the eye. No change of direction.';
+    } else {
+      /* apparent straw: from the point W where it enters the water to the image C of B */
+      const S = surfacePoint(B, ys), C = image(B, ys);
+      el('line', {x1: W.x, y1: W.y, x2: C.x, y2: C.y, class: 'straw-app'}, svg);
+      normal(svg, S, 60);
+      lray(svg, B, S, {at: .55}); lray(svg, S, E, {at: .5});
+      sline(svg, S, C, {stroke: 'var(--red)', 'stroke-width': 2, 'stroke-dasharray': '6 5'});
+      K.dot(svg, C, {r: 5, class: 'pt red'}); text(svg, P(C.x - 16, C.y - 4), 'C', {class: 'lbl big purple'});
+      const i = K.deg(Math.atan2(B.x - S.x, B.y - S.y)), r = snell(nW, 1, i);
+      K.angleArc(svg, S, along(S, P(Math.sin(K.rad(i)), Math.cos(K.rad(i))), 10), P(S.x, S.y + 10), 30, {cls: 'blue', fill: true});
+      K.angleArc(svg, S, E, P(S.x, S.y - 10), 30, {cls: 'amber', fill: true});
+      const dReal = (B.y - ys) / PXCM, dApp = (C.y - ys) / PXCM;
+      L(svg, 640, 300, 'real B: ' + fx(dReal, 1) + ' cm deep', 'lbl sm blue'); L(svg, 640, 322, 'C seems: ' + fx(dApp, 1) + ' cm deep', 'lbl sm purple');
+      txt = `Water level ${fx(hcm, 1)} cm. In water the ray makes ${fx(i, 1)}° with the normal; in air ${fx(r, 1)}° – it bends AWAY from the normal (water → air).\n` +
+        `B is really ${fx(dReal, 1)} cm below the surface but appears only ${fx(dApp, 1)} cm deep, at C. The dipped part looks raised → the straw looks broken.`;
+    }
+    L(svg, 470, 30, wet ? 'Fig 1.6 (b) – with water' : 'Fig 1.6 (a) – empty glass', 'lbl', {'font-weight': 700});
+    out.textContent = txt;
+  }
+  const run = K.slider(inp, v => { if (stop){ stop(); stop = null; } draw(v); }, 1);
+  document.getElementById('stEmpty').addEventListener('click', () => { if (stop){ stop(); stop = null; } inp.value = 0; run(); });
+  document.getElementById('stPour').addEventListener('click', () => { if (stop) stop(); stop = K.animate(2500, (e, t) => { const v = 7 * t; inp.value = v; inp.parentElement.querySelector('output').textContent = fx(v, 1); draw(v); }, () => { stop = null; inp.value = 7; run(); }); });
+})();
+
+/* ---------- 2. exam steppers: n = c/v ---------- */
+/* bar figure: c bar on top; v bar below; "fits" marks show c ÷ v */
+function barsFig(v, vLabel, med){ return (svg, i, t) => {
+  const X0 = 30, PX = 300 / 3;   /* 3 × 10⁸ m/s → 300 px */
+  L(svg, X0, 40, 'speed of light (× 10⁸ m/s)', 'lbl sm muted');
+  el('rect', {x: X0, y: 60, width: 300, height: 26, rx: 5, fill: 'var(--accent)', opacity: .55}, svg); L(svg, X0 + 8, 78, 'vacuum: c = 3', 'lbl sm');
+  const e = i === 0 ? t : 1;
+  band(svg, X0, 110, v * PX * e, 26, med, {rx: 5}); el('rect', {x: X0, y: 110, width: v * PX * e, height: 26, rx: 5, fill: 'none', stroke: 'var(--muted)'}, svg);
+  if (e > .5) L(svg, X0 + 8, 128, vLabel, 'lbl sm');
+  if (i >= 2){ const k = i === 2 ? t : 1; const nFit = 3 / v; let x = X0, m = 0;
+    while (x < X0 + 300 * k - 1 && m < 6){ const w = Math.min(v * PX, X0 + 300 * k - x); el('rect', {x, y: 170, width: w, height: 22, rx: 3, class: MED[med].cls, stroke: 'var(--text)', 'stroke-width': 1}, svg); x += v * PX; m++; }
+    L(svg, X0, 216, `c ÷ v: the ${med} bar fits ${fx(nFit, 2)} times into c`, 'lbl sm purple'); }
+  for (let k = 0; k <= 3; k++){ const x = X0 + k * PX; sline(svg, P(x, 236), P(x, 244), {stroke: 'var(--muted)', 'stroke-width': 1.5}); text(svg, P(x, 258), String(k), {class: 'lbl sm muted'}); }
+  sline(svg, P(X0, 240), P(X0 + 300, 240), {stroke: 'var(--muted)', 'stroke-width': 1.5});
+}; }
+examStepper('#exGlass', [
+  {h: 'Given', s: 'c = 3 × 10⁸ m/s,  v (glass) = 2 × 10⁸ m/s,  n = ?', html: '<b>Given:</b> speed of light in vacuum c = 3 × 10⁸ m/s; speed of light in glass v = 2 × 10⁸ m/s. To find: refractive index n of glass.'},
+  {h: 'Formula', s: 'n = c / v', html: '<b>Formula:</b> refractive index n = c/v (speed in vacuum ÷ speed in the medium).'},
+  {h: 'Substitution', s: 'n = (3 × 10⁸ m/s) ÷ (2 × 10⁸ m/s) = 3 ÷ 2', html: '<b>Substitution:</b> n = (3 × 10⁸ m/s) ÷ (2 × 10⁸ m/s). The 10⁸ and the units m/s cancel, leaving 3 ÷ 2.'},
+  {h: 'Answer', s: 'n (glass) = 1.5  (no unit)', html: '<b>Answer:</b> refractive index of glass n = <b>1.5</b> (no unit).'}
+], barsFig(2, 'glass: v = 2', 'glass'), 400);
+examStepper('#exWater', [
+  {h: 'Given', s: 'c = 3 × 10⁸ m/s,  v (water) = 2.25 × 10⁸ m/s,  n = ?', html: '<b>Given:</b> c = 3 × 10⁸ m/s; speed of light in water v = 2.25 × 10⁸ m/s. To find: n of water.'},
+  {h: 'Formula', s: 'n = c / v', html: '<b>Formula:</b> n = c/v.'},
+  {h: 'Substitution', s: 'n = 3 × 10⁸ ÷ 2.25 × 10⁸ = 3 ÷ 2.25 = 300 ÷ 225', html: '<b>Substitution:</b> n = (3 × 10⁸ m/s) ÷ (2.25 × 10⁸ m/s) = 3 ÷ 2.25 = 300 ÷ 225 = 4/3.'},
+  {h: 'Answer', s: 'n (water) = 4/3 ≈ 1.33', html: '<b>Answer:</b> refractive index of water n = 4/3 ≈ <b>1.33</b> (no unit).'}
+], barsFig(2.25, 'water: v = 2.25', 'water'), 400);
+examStepper('#exDia', [
+  {h: 'Given', s: 'n (diamond) = 2.4,  c = 3 × 10⁸ m/s,  v = ?', html: '<b>Given:</b> refractive index of diamond n = 2.4; c = 3 × 10⁸ m/s. To find: speed of light in diamond v.'},
+  {h: 'Formula', s: 'n = c / v   ⇒   v = c / n', html: '<b>Formula:</b> n = c/v. Multiply both sides by v and divide by n: <b>v = c/n</b>.'},
+  {h: 'Substitution', s: 'v = 3 × 10⁸ ÷ 2.4 = (30 ÷ 24) × 10⁸', html: '<b>Substitution:</b> v = (3 × 10⁸ m/s) ÷ 2.4. 3 ÷ 2.4 = 30 ÷ 24 = 1.25.'},
+  {h: 'Answer', s: 'v = 1.25 × 10⁸ m/s', html: '<b>Answer:</b> speed of light in diamond v = <b>1.25 × 10⁸ m/s</b>.'}
+], barsFig(1.25, 'diamond: v = 1.25', 'diamond'), 400);
+
+/* ---------- 3. n – v graph ---------- */
+(function(){
+  const svg = document.getElementById('nvSvg'), out = document.getElementById('nvOut'), inp = document.getElementById('nvN');
+  const O = P(90, 280), SX = 420, SY = 75;   /* n from 1 to 2.5 → 630 px; v (× 10⁸) 0..3 → 225 px */
+  const X = n => O.x + (n - 1) * SX, Y = v => O.y - v * SY;
+  function draw(n){
+    K.clear(svg);
+    for (let v = 0.5; v <= 3; v += 0.5) sline(svg, P(O.x, Y(v)), P(X(2.5), Y(v)), {stroke: 'var(--grid)', 'stroke-width': 1});
+    arrow(svg, O, P(X(2.5) + 30, O.y), {c: 'text', w: 1.8, head: 9}); arrow(svg, O, P(O.x, Y(3) - 22), {c: 'text', w: 1.8, head: 9});
+    for (let k = 1; k <= 2.5 + 1e-9; k += 0.5){ text(svg, P(X(k), O.y + 16), fx(k, 1), {class: 'lbl sm'}); }
+    for (let v = 1; v <= 3; v += 1) text(svg, P(O.x - 10, Y(v)), String(v), {class: 'lbl sm', 'text-anchor': 'end'});
+    text(svg, P(X(1.75), O.y + 40), 'refractive index n', {class: 'lbl sm blue'});
+    text(svg, P(30, Y(1.5)), 'v (× 10⁸ m/s)', {class: 'lbl sm blue', transform: `rotate(-90 30 ${Y(1.5)})`});
+    const pts = []; for (let q = 1; q <= 2.5001; q += 0.02) pts.push(P(X(q), Y(3 / q)));
+    K.polyline(svg, pts, {stroke: 'var(--purple)', 'stroke-width': 3});
+    [['air', 1], ['water', 1.33], ['glass', 1.5], ['diamond', 2.42]].forEach(([k, q], j) => { const p = P(X(q), Y(3 / q)); K.dot(svg, p, {r: 5, class: 'pt'}); text(svg, P(p.x + 6, p.y - 14 - (j === 2 ? 8 : 0)), k, {class: 'lbl sm', 'text-anchor': 'start'}); });
+    const v = 3 / n, p = P(X(n), Y(v));
+    sline(svg, P(p.x, O.y), p, {stroke: 'var(--red)', 'stroke-width': 1.5, 'stroke-dasharray': '4 4'}); sline(svg, P(O.x, p.y), p, {stroke: 'var(--red)', 'stroke-width': 1.5, 'stroke-dasharray': '4 4'});
+    K.dot(svg, p, {r: 7, class: 'pt red'});
+    L(svg, X(1.6), Y(2.75), `n = ${fx(n, 2)}  →  v = 3 × 10⁸ ÷ ${fx(n, 2)} = ${fx(v, 2)} × 10⁸ m/s`, 'lbl', {'font-weight': 700});
+    out.textContent = `n = ${fx(n, 2)}:  v = c/n = ${fx(v, 3)} × 10⁸ m/s  (light is ${fx(n, 2)} times slower than in vacuum)\nBigger n → smaller v → optically denser.`;
+  }
+  const run = K.slider(inp, draw, 2);
+  document.querySelectorAll('#nvLab button[data-n]').forEach(b => b.addEventListener('click', () => { inp.value = b.dataset.n; run(); }));
+})();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'The bottom B of a straw in water appears at C. Compared with B, C is', options: ['lower', 'at the same place', 'higher (raised)', 'outside the glass'], answer: 2, explain: 'Light from B bends away from the normal at the surface; traced back, it seems to come from a raised point C.', hint: 'Does the straw look shorter or longer under water?'});
+K.mcq('#q2', {q: 'Refraction happens when light passes obliquely between two media that differ in', options: ['colour', 'optical density', 'temperature only', 'mass'], answer: 1, explain: 'Key box: different optical density → change of direction at the interface.', hint: 'See the key box on refraction.'});
+K.numq('#q3', {q: 'The speed of light in a medium is 2 × 10⁸ m/s. Its refractive index is …', answer: 1.5, tol: 0.01, unit: '', explain: 'n = c/v = 3 × 10⁸ ÷ 2 × 10⁸ = 1.5.', hint: 'n = c/v with c = 3 × 10⁸ m/s.'});
+K.mcq('#q4', {q: 'What is the unit of refractive index?', options: ['m/s', 'm', 's/m', 'It has no unit'], answer: 3, explain: 'n is a ratio of two speeds; the units cancel.', hint: 'Speed divided by speed.'});
+K.numq('#q5', {q: 'A liquid has refractive index 1.5. The speed of light in it is … × 10⁸ m/s.', answer: 2, tol: 0.01, unit: '× 10⁸ m/s', explain: 'v = c/n = 3 × 10⁸ ÷ 1.5 = 2 × 10⁸ m/s.', hint: 'v = c/n.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>
