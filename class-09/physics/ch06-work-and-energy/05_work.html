@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Work and How to Measure It</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.qa{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.6rem 1rem;margin:.7rem 0;box-shadow:var(--shadow)}
+.qa p{margin:.25em 0}
+.qbox{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.7rem 1rem;margin:.8rem 0;box-shadow:var(--shadow)}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.bubbles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.7rem;margin:.8rem 0}
+.bubble{background:var(--surface);border:2px solid var(--purple);border-radius:18px;padding:.6rem .9rem;font-size:.95rem}
+.bubble .ml{display:block;font-weight:600;margin-bottom:.2rem}
+.obs td,.obs th{text-align:center;vertical-align:middle}
+.tw{overflow-x:auto}
+.diary{background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:1rem 0}
+.diary h3{margin:.1rem 0 .4rem;color:var(--accent-ink)}
+.yn{display:inline-flex;gap:.3rem}
+.yn .btn{padding:.25rem .6rem;font-size:.9rem}
+.btn.ok{background:var(--green-soft);border-color:var(--green);color:var(--text)}
+.btn.bad{background:var(--red-soft);border-color:var(--red);color:var(--text)}
+.btn.given{opacity:.85;pointer-events:none;background:var(--green-soft);border-color:var(--green)}
+</style>
+</head>
+<body data-page="05_work">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 6 · Section 1</span><span class="chip amber">Textbook pages 107–110</span>
+<h1>Work and How to Measure It <span class="ml">പ്രവൃത്തി</span></h1>
+<p class="lead">In everyday Malayalam or English, "work" means any effort – studying, holding a bag, pushing a wall. In physics the word has a sharp meaning: a force does <b>work</b> only when it actually <b>moves</b> something in its own direction. On this page you sort real situations, push wheelchairs in a virtual hospital corridor, and meet the unit of work – the <b>joule</b>.</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 1–4 of this guide)</div>
+<ul style="margin:0">
+<li><b>Force</b> (<span class="ml">ബലം</span>) is a push or a pull, measured in newtons (N). It has a direction.</li>
+<li><b>Displacement</b> (<span class="ml">സ്ഥാനാന്തരം</span>) is the shortest distance from the start to the end position, in a definite direction, in metres (m).</li>
+<li><b>Friction</b> (<span class="ml">ഘർഷണബലം</span>) acts opposite to the motion. To move something steadily along a level floor we push just as hard as friction pulls back.</li>
+</ul></div>
+
+<h2>1. The dam and a big question (page 107)</h2>
+<p>The chapter opens with a huge dam in the hills of Kerala. Two students look at it:</p>
+<div class="bubbles">
+<div class="bubble"><span class="ml">വൻതോതിൽ വൈദ്യുതി ഉൽപാദിപ്പിക്കുന്നത് ഡാമിലെ ഈ ജലം ഉപയോഗിച്ചാണ്.</span>Electricity is produced in large quantities using the water in this dam.</div>
+<div class="bubble"><span class="ml">ഇത്രമാത്രം ഊർജം ജലത്തിന് എങ്ങനെയാണ് ലഭിക്കുന്നത്?</span>How does the water get so much energy?</div>
+</div>
+<div class="lab">
+  <div class="lab-title">🎬 From the dam to your bulb</div>
+  <svg id="damSvg" viewBox="0 0 800 330" role="img" aria-label="Water from a reservoir behind a dam flows down a pipe, turns a turbine in a power house, and the electricity lights bulbs in a house"></svg>
+  <div class="controls"><button class="btn primary" id="damGo">▶ Open the intake gate</button><button class="btn" id="damStop">⟲ Close it</button></div>
+  <p class="hint">Keep this question in mind: <span class="ml">ഇത് എങ്ങനെയാണ് സാധ്യമാകുന്നത് എന്ന് നമുക്ക് നോക്കാം</span> – let us see how this is possible. To answer it we need two ideas – <b>work</b> (this page and the next) and <b>energy</b> (pages 7–9). The full answer comes on page 10.</p>
+</div>
+
+<h2>2. When is work done? (Fig 6.1, Table 6.1)</h2>
+<p><span class="ml">നിത്യജീവിതത്തിൽ നാം ചെയ്യുന്ന ചില പ്രവർത്തനങ്ങളാണ് ചിത്രത്തിൽ നൽകിയിരിക്കുന്നത്. ഇവ വിശകലനം ചെയ്ത് പട്ടിക 6.1 പൂർത്തിയാക്കുക.</span> – The pictures show some things we do every day. Analyse them and complete Table 6.1. Press ▶ on a row to watch that situation, then choose Yes or No.</p>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: work or no work? (Fig 6.1 a–d)</div>
+  <svg id="sortSvg" viewBox="0 0 800 340" role="img" aria-label="The chosen everyday situation, with the applied force as a red arrow and the displacement of the object as a green arrow"></svg>
+  <div class="tw"><table class="obs"><caption class="small muted">Table 6.1 – row (a) and part of row (b) are filled in the textbook; you do the rest</caption>
+  <thead><tr><th>Situation <span class="ml">ബലം പ്രയോഗിച്ച സന്ദർഭം</span></th><th>Object acted on <span class="ml">ബലം പ്രയോഗിക്കപ്പെട്ട വസ്തു</span></th><th>Displaced? <span class="ml">സ്ഥാനാന്തരം സംഭവിച്ചു / ഇല്ല</span></th><th>Displaced in the direction of the force? <span class="ml">ബലം പ്രയോഗിച്ച ദിശയിൽ സ്ഥാനാന്തരം ഉണ്ട്/ഇല്ല</span></th></tr></thead>
+  <tbody id="sortBody"></tbody></table></div>
+  <div class="readout" id="sortOut"></div>
+</div>
+<p><span class="ml">പട്ടിക 6.1 ൽ നിന്ന് എല്ലാ സന്ദർഭങ്ങളിലും ബലം പ്രയോഗിച്ച ദിശയിൽ വസ്തുവിന് സ്ഥാനാന്തരമുണ്ടാകുന്നില്ല എന്ന് മനസ്സിലായല്ലോ.</span> – So, from Table 6.1, a force does <b>not</b> always cause a displacement in its own direction.</p>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 108) – Work <span class="ml">പ്രവൃത്തി</span></div>
+<p class="ml" style="margin:.2rem 0 .4rem">ഒരു വസ്തുവിൽ ബലം പ്രയോഗിക്കുകയും അതുമൂലം വസ്തുവിന് ബലത്തിന്റെ ദിശയിൽ സ്ഥാനാന്തരം സംഭവിക്കുകയും ചെയ്യുന്നുണ്ടെങ്കിൽ ബലം വസ്തുവിൽ പ്രവൃത്തി ചെയ്തതായി കണക്കാക്കാം.</p>
+<p>When a force acts on an object and, because of it, the object is <b>displaced in the direction of the force</b>, the force is said to have done <b>work</b> on the object.</p></div>
+<div class="qa"><p><b>Textbook questions (page 108)</b></p>
+<ol style="margin:.3rem 0">
+<li><span class="ml">പട്ടിക 6.1 ൽ ഏതൊക്കെ സന്ദർഭങ്ങളിലാണ് പ്രവൃത്തി ചെയ്യപ്പെട്ടത്?</span> – In which situations of Table 6.1 is work done?</li>
+<li><span class="ml">ഇവിടെ പ്രവൃത്തി ചെയ്യപ്പെടാത്ത സന്ദർഭങ്ങൾ ഏതൊക്കെയാണ്?</span> – In which situations is no work done?</li>
+</ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">
+1. Work is done in <b>(a) loading the sack into the lorry</b> and <b>(c) pushing the trolley</b>. <i>Why:</i> in both, the object moves, and it moves in the direction of the applied force (the sack goes up as it is lifted up; the trolley goes forward as it is pushed forward).<br>
+2. No work is done in <b>(b) pushing the big rock</b> and <b>(d) standing with a sack on the head</b>. <i>Why:</i> the rock does not move at all, and the sack on the head stays where it is – a force with <b>zero displacement</b> does no work, however tiring it feels.</div></div></div>
+<div class="callout real"><div class="title">🌴 Kerala connection – headload workers (<span class="ml">ചുമട്ടുതൊഴിലാളികൾ</span>)</div>
+<p>When a headload worker at a market carries sacks up a plank into a lorry, the upward force on each sack moves it upwards – <b>work is done on the sack</b>. When the same worker stands still, waiting with a 50 kg sack on his head, he gets tired, yet in physics his force does <b>no work on the sack</b> because the sack is not displaced. His tiredness comes from his muscles constantly tightening and relaxing inside his body – the energy is used up there, not on the sack.</p></div>
+<div class="callout think"><div class="title">💡 Go further – a force at an angle</div>
+<p>Class 9 uses forces along the line of motion. If a force is slanted (say you pull a suitcase by a handle that points up and forward), only the part of the force <b>along the motion</b> does work; the upward part does none, because the suitcase does not move upward.</p></div>
+
+<h2>3. How much work? – the wheelchair (Fig 6.2)</h2>
+<p>The thinking boy asks: <span class="ml">പ്രവൃത്തിയുടെ അളവ് കണക്കാക്കാനാകുമോ?</span> – <em>Can the amount of work be calculated?</em></p>
+<p><span class="ml">നിരപ്പായ വരാന്തയിലൂടെ 10 m അകലേക്ക് രോഗികളെ ഒരു അറ്റൻഡർ കൊണ്ടുപോയ രണ്ട് സന്ദർഭങ്ങൾ ചിത്രീകരിച്ചിരിക്കുന്നത് ശ്രദ്ധിക്കൂ.</span> – In a hospital, an attendant pushes two patients in wheelchairs, each 10 m along a level corridor, at the same steady speed along the same path. Patient 1 needs a force of <b>40 N</b>; patient 2, who is heavier, needs <b>70 N</b>. A heavier patient presses the wheelchair harder on the floor, so the <b>friction</b> (<span class="ml">ഘർഷണബലം</span>) is greater. The displacement (10 m) is the same in both cases.</p>
+<p><span class="ml">തറയിലൂടെ തിരശ്ചീനമായ തലത്തിൽ വസ്തുക്കളെ ചലിപ്പിക്കുമ്പോൾ നാം ഘർഷണത്തിനെതിരെയാണ് ബലം പ്രയോഗിക്കുന്നത്.</span> – When we move things along a level floor, we push <b>against friction</b>, so the work we do here is work against friction.</p>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: push the wheelchair</div>
+  <div class="controls"><button class="btn primary" id="wcP1">🧓 Patient 1 (40 N)</button><button class="btn" id="wcP2">👴 Patient 2 (70 N)</button></div>
+  <svg id="wcSvg" viewBox="0 0 800 400" role="img" aria-label="An attendant pushes a wheelchair along a level corridor; arrows show the push, friction and the displacement; a bar shows the work done"></svg>
+  <div class="controls"><label>distance pushed <input id="wcS" type="range" min="0" max="20" step="1" value="10"><output></output> m</label>
+  <button class="btn primary" id="wcGo">▶ Push</button><button class="btn" id="wcRec">📝 Record</button><button class="btn" id="wcClr">Clear table</button></div>
+  <div class="readout" id="wcOut"></div>
+  <div class="tw"><table class="obs"><thead><tr><th>Trial</th><th>Patient</th><th>Force F (N)</th><th>Displacement s (m)</th><th>Work W = F × s (J)</th></tr></thead><tbody id="wcBody"></tbody></table></div>
+  <p class="hint">The chair moves at a steady speed, so the push exactly balances friction (red and blue arrows are equal). Try the textbook's three cases: patient 1 for 10 m, patient 2 for 10 m, patient 2 for 20 m.</p>
+</div>
+<div class="qa"><p><b>Textbook questions (page 109)</b></p>
+<ol style="margin:.3rem 0">
+<li><span class="ml">ഏത് സന്ദർഭത്തിലാണ് കൂടുതൽ പ്രവൃത്തി ചെയ്തിട്ടുണ്ടാവുക? എന്തുകൊണ്ട്?</span> – In which situation is more work done? Why? (situation 1 / situation 2)</li>
+<li><span class="ml">ഇവിടെ പ്രവൃത്തിയുടെ അളവിനെ സ്വാധീനിക്കുന്ന ഘടകമേതാണ്?</span> – Which factor affects the amount of work here? (force / displacement)</li>
+<li><span class="ml">രണ്ടാമത്തെ സന്ദർഭത്തിലെ രോഗിയെ സമാന സാഹചര്യങ്ങളിൽ 20 m അകലേക്ക് കൊണ്ടുപോകേണ്ടിവന്നുവെങ്കിൽ ... ഇവിടെ പ്രവൃത്തിയുടെ അളവ് വർധിക്കാൻ കാരണമായ ഘടകമേതാണ്?</span> – If patient 2 is taken 20 m under the same conditions, more work is done. Which factor caused the increase? (force / displacement)</li>
+</ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">
+1. <b>Situation 2.</b> <i>Why:</i> the displacement is the same (10 m) but the force is bigger (70 N &gt; 40 N): 70 × 10 = 700 J against 40 × 10 = 400 J.<br>
+2. <b>Force.</b> <i>Why:</i> only the force changed between the two situations.<br>
+3. <b>Displacement.</b> <i>Why:</i> the force stayed 70 N but the displacement doubled (10 m → 20 m), so the work doubled: 70 × 20 = 1400 J.</div></div></div>
+<div class="diary"><h3>📒 Science diary (<span class="ml">സയൻസ് ഡയറി</span>) – factors that affect work</h3>
+<p style="margin-top:0"><span class="ml">മുകളിൽ പരിചയപ്പെട്ട സന്ദർഭങ്ങളിൽ നിന്ന് പ്രവൃത്തിയെ സ്വാധീനിക്കുന്ന ഘടകങ്ങൾ ഏതെല്ലാമാണെന്ന് സയൻസ് ഡയറിയിൽ കുറിക്കൂ.</span> – Note the factors that decide the amount of work.</p>
+<ul style="margin:0"><li><b>Force</b> (<span class="ml">ബലം</span>)</li><li><span class="reveal" data-btn="Show the second factor"><b>Displacement in the direction of the force</b> (<span class="ml">സ്ഥാനാന്തരം</span>)</span></li></ul></div>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 109) – amount of work</div>
+<p class="ml" style="margin:.2rem 0 .4rem">പ്രയോഗിച്ച ബലത്തിന്റെയും വസ്തുവിന് ബലത്തിന്റെ ദിശയിലുണ്ടായ സ്ഥാനാന്തരത്തിന്റെയും ഗുണനഫലം ആയിരിക്കും പ്രവൃത്തിയുടെ അളവ്.</p>
+<p>The amount of work = the <b>product of the force applied</b> and the <b>displacement of the object in the direction of the force</b>.</p>
+<p class="eq" style="margin-bottom:0">Work = force × displacement &nbsp;&nbsp; <span class="ml">പ്രവൃത്തി = ബലം × സ്ഥാനാന്തരം</span><br><b>W = F s</b></p></div>
+<p>If a force of F newtons acts steadily and the object is displaced s metres in the direction of the force, the work done is W = F × s.</p>
+<div class="qbox"><p><b>Numerical (wheelchair values).</b> Find the work done by the attendant in each case: patient 1 (40 N) for 10 m, patient 2 (70 N) for 10 m, patient 2 for 20 m.</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Multiply force (N) by displacement (m). The answer is in N m – that is, joules (J).</p></div></div>
+<div class="lab" id="wcCalc">
+  <div class="lab-title">🎬 Solution in exam layout</div>
+  <svg viewBox="0 0 800 330" role="img" aria-label="Work done in the three wheelchair cases, shown as growing bars"></svg>
+</div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> W₁ = 40 × 10 = <b>400 J</b>; W₂ = 70 × 10 = <b>700 J</b>; patient 2 for 20 m: 70 × 20 = <b>1400 J</b>. More solved questions: <a href="11_intext_numericals_solutions.html">page 11 ▶</a></div></div>
+
+<h2>4. The unit of work – the joule</h2>
+<p><span class="ml">പ്രവൃത്തിയുടെ യൂണിറ്റ് = ബലത്തിന്റെ യൂണിറ്റ് × സ്ഥാനാന്തരത്തിന്റെ യൂണിറ്റ്</span></p>
+<p class="eq">unit of work = unit of force × unit of displacement = newton × metre = <b>N m</b> (newton metre, <span class="ml">ന്യൂട്ടൺ മീറ്റർ</span>)</p>
+<p><span class="ml">ഇത് SI യൂണിറ്റിൽ ജൂൾ (J) എന്ന് അറിയപ്പെടുന്നു. ജെയിംസ് പ്രെസ്കോട്ട് ജൂളിനോടുള്ള ആദരസൂചകമായാണ് ഈ പേര് നൽകിയത്.</span> – In SI units the newton metre is called the <b>joule (J)</b> (<span class="ml">ജൂൾ</span>), in honour of James Prescott Joule. So 1 J = 1 N m. Bigger amounts: 1 kilojoule (kJ) = 1000 J; 1 megajoule (MJ) = 10<sup>6</sup> J.</p>
+<div class="callout book"><div class="title">📚 James Prescott Joule (<span class="ml">ജെയിംസ് പ്രെസ്കോട്ട് ജൂൾ</span>)</div>
+<p><b>Country</b> (<span class="ml">ജന്മരാജ്യം</span>): England &nbsp;·&nbsp; <b>Lived</b> (<span class="ml">ജീവിത കാലം</span>): 1818–1889</p>
+<ul style="margin:0">
+<li>Did basic research on phenomena related to <b>heat</b>.</li>
+<li>Found the equation for the <b>heat produced when electricity flows</b> through a conductor.</li>
+<li>Related <b>mechanical energy</b> and <b>heat energy</b> (showed that a fixed amount of work always produces the same amount of heat); this played a major part in forming the <b>first law of thermodynamics</b>.</li>
+<li>Was elected a <b>Fellow of the Royal Society</b> in 1850.</li>
+</ul></div>
+<div class="qbox"><p><b>Textbook question (page 110).</b> <span class="ml">1 N ബലത്തിന് വിധേയമായി ഒരു വസ്തുവിനെ തിരശ്ചീനമായ പ്രതലത്തിലൂടെ ബലത്തിന്റെ ദിശയിൽ 1 m ദൂരം ചലിപ്പിക്കുന്നുവെങ്കിൽ, ഇവിടെ ബലം വസ്തുവിൽ ചെയ്ത പ്രവൃത്തി കണക്കാക്കുക.</span> – A force of 1 N moves an object 1 m along a level surface in the direction of the force. Find the work done by the force.</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Fill in the blanks of W = F × s: F = 1 N, s = ? Then multiply.</p></div></div>
+<div class="lab" id="jLab">
+  <div class="lab-title">🎬 Solution in exam layout – one joule</div>
+  <svg viewBox="0 0 800 300" role="img" aria-label="A 1 N force pushes a block 1 m along a level surface"></svg>
+</div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> F = 1 N, s = <b>1 m</b>, W = F × s = <b>1 × 1 = 1 J</b>. More: <a href="11_intext_numericals_solutions.html">page 11 ▶</a></div></div>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 110) – one joule</div>
+<p class="ml" style="margin:.2rem 0 .4rem">ഒരു വസ്തുവിൽ 1 N ബലം പ്രയോഗിച്ചപ്പോൾ വസ്തുവിന് ബലത്തിന്റെ ദിശയിൽ 1 m സ്ഥാനാന്തരം ഉണ്ടാകുന്നുവെങ്കിൽ ബലം വസ്തുവിൽ ചെയ്ത പ്രവൃത്തിയുടെ അളവ് 1 J ആണ്.</p>
+<p>When a force of <b>1 N</b> acting on an object displaces it through <b>1 m</b> in the direction of the force, the work done by the force is <b>1 joule (1 J)</b>.</p></div>
+<div class="callout think"><div class="title">💡 How big is a joule?</div>
+<p>A small apple has a mass of about 100 g, so it weighs about 1 N. Lifting it slowly through 1 m (from the floor to a table top) takes about <b>1 J</b> of work. Pushing a wheelchair 10 m took hundreds of joules – that is why we often use kilojoules.</p></div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.physicsclassroom.com/tutorial/work-and-energy/forms-of-energy/definition-and-mathematics-of-work" target="_blank" rel="noopener noreferrer">📄 Definition and Mathematics of Work</a> <span class="src">The Physics Classroom</span><br><span class="note">W = F x s explained step by step, including when a force does no work at all.</span></li><li><a href="https://phet.colorado.edu/en/simulations/the-ramp" target="_blank" rel="noopener noreferrer">🧪 The Ramp (PhET simulation)</a> <span class="src">PhET, University of Colorado Boulder</span><br><span class="note">Push a crate up a ramp and watch the work done by you, by friction and by gravity add up.</span></li><li><a href="https://energyeducation.ca/encyclopedia/Work" target="_blank" rel="noopener noreferrer">📄 Work - Energy Education</a> <span class="src">Energy Education (University of Calgary)</span><br><span class="note">A short, clear page: work is force times displacement, and its unit is the joule.</span></li><li><a href="https://en.wikipedia.org/wiki/James_Prescott_Joule" target="_blank" rel="noopener noreferrer">📄 James Prescott Joule</a> <span class="src">Wikipedia</span><br><span class="note">The brewer-scientist who showed work can be turned into heat; the joule is named after him.</span></li><li><a href="https://www.famousscientists.org/james-prescott-joule/" target="_blank" rel="noopener noreferrer">📄 James Prescott Joule - Biography, Facts and Pictures</a> <span class="src">Famous Scientists</span><br><span class="note">An easy-to-read life story of Joule and his famous paddle-wheel experiment.</span></li><li><a href="https://en.wikipedia.org/wiki/James_Watt" target="_blank" rel="noopener noreferrer">📄 James Watt</a> <span class="src">Wikipedia</span><br><span class="note">The engineer who improved the steam engine; the unit of power, the watt, honours him.</span></li><li><a href="https://www.lindahall.org/about/news/scientist-of-the-day/james-watt/" target="_blank" rel="noopener noreferrer">📄 Scientist of the Day - James Watt</a> <span class="src">Linda Hall Library</span><br><span class="note">A short illustrated story of Watt and his steam engine.</span></li></ul></div>
+
+<h2>5. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li>A force does <b>work</b> only when the object is <b>displaced in the direction of the force</b>. No displacement → no work (pushing a rock that does not move, holding a sack still).</li>
+<li>The amount of work depends on the <b>force</b> and the <b>displacement</b>: <b>W = F s</b>.</li>
+<li>Unit: N × m = N m = <b>joule (J)</b>. 1 J = work done when 1 N moves an object 1 m in its direction.</li>
+<li>Wheelchair: 40 N × 10 m = 400 J; 70 N × 10 m = 700 J; 70 N × 20 m = 1400 J.</li>
+</ul></div>
+<p>Next: <a href="06_work_against_gravity_negative.html">Work against gravity and negative work ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Work and Energy · Class 9 Physics", "icon": "⚡", "key": "physics_ch6_progress", "pages": [["index.html", "Home"], ["01_force_displacement_recap.html", "1 · Force, Displacement & Weight Recap"], ["02_units_powers_conversions.html", "2 · Units, Powers of Ten & Conversions"], ["03_squares_and_ratios.html", "3 · Squares, Ratios & Rearranging Formulas"], ["04_forms_of_energy.html", "4 · Forms of Energy Around Us"], ["05_work.html", "5 · Work and How to Measure It"], ["06_work_against_gravity_negative.html", "6 · Work Against Gravity & Negative Work"], ["07_energy_mechanical_potential.html", "7 · Energy, Mechanical & Potential Energy"], ["08_kinetic_energy.html", "8 · Kinetic Energy"], ["09_transformation_conservation.html", "9 · Energy Transformation & Conservation"], ["10_sun_hydroelectric_power.html", "10 · The Sun, Hydroelectric Power & Power"], ["11_intext_numericals_solutions.html", "11 · In-text Questions – Solutions"], ["12_assess_q1_q8_solutions.html", "12 · Let Us Assess Q1–8 – Solutions"], ["13_assess_q9_q15_solutions.html", "13 · Let Us Assess Q9–15 & Extended Activities"], ["14_applications_explore.html", "14 · Applications & Explore Online"], ["15_summary_revision.html", "15 · Summary & Quick Quiz"], ["16_model_test_paper.html", "16 · Model Test Paper"], ["17_model_test_solutions.html", "17 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ---------- page helpers (Chapter 6, pages 5–10; same code on each page) ---------- */
+const {P} = K;
+const COL = {red: 'var(--red)', blue: 'var(--blue)', green: 'var(--green)', amber: 'var(--accent)', purple: 'var(--purple)', text: 'var(--text)', muted: 'var(--muted)', primary: 'var(--primary)'};
+const cv = c => COL[c] || c;
+/* a line with its own stroke (seg() carries class 'ln', whose CSS would override it) */
+const sline = (svg, a, b, attrs={}) => K.el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+const ln = (svg, a, b, c='text', w=2, extra={}) => sline(svg, a, b, {stroke: cv(c), 'stroke-width': w, ...extra});
+const rect = (svg, x, y, w, h, attrs={}) => K.el('rect', {x, y, width: Math.max(0, w), height: Math.max(0, h), ...attrs}, svg);
+const circ = (svg, c, r, attrs={}) => K.el('circle', {cx: c.x, cy: c.y, r, ...attrs}, svg);
+const path = (svg, d, attrs={}) => K.el('path', {d, fill: 'none', ...attrs}, svg);
+/* true minus for negative numbers only */
+const minus = s => String(s).replace(/(^|[\s(=:,/×+])-(?=[\d.])/g, '$1−');
+/* number with at most d decimals, digit groups of three (with a space) for five or more digits, true minus */
+const nf = (v, d=2) => { const s = K.fmt(Math.abs(+v), d); let [a, b] = s.split('.'); if (a.length > 4) a = a.replace(/\B(?=(\d{3})+(?!\d))/g, ' '); return (+v < 0 && +s !== 0 ? '−' : '') + a + (b ? '.' + b : ''); };
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+/* SVG text that understands subscripts: "E_p" → E with a lowered p */
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+function text(svg, p, str, attrs={}){ const s = String(str);
+  if (!/_/.test(s)) return K.text(svg, p, s, attrs);
+  return K.el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs,
+    html: esc(s).replace(/_(\w+)/g, '<tspan baseline-shift="sub" font-size="72%">$1</tspan>')}, svg); }
+const tl = (svg, x, y, str, cls='', extra={}) => text(svg, P(x, y), str, {class: ('lbl ' + cls).trim(), 'text-anchor': 'start', ...extra});
+/* working lines: rows = [[step, text, cls], …]; rows whose step ≤ i are shown, the newest fades in */
+function lines(svg, rows, i, t, o={}){ const x = o.x ?? 400, y0 = o.y ?? 36, lh = o.lh ?? 32, an = o.anchor ?? 'start'; let k = 0;
+  rows.forEach(r => { if (r[0] > i) return; const ind = (r[1].match(/^ */)[0].length) * 4.3; text(svg, P(x + ind, y0 + k * lh), minus(r[1].trim()), {class: 'lbl ' + (r[2] || ''), 'text-anchor': an, opacity: r[0] === i ? t : 1}); k++; }); }
+/* arrow from a to b with a filled head; o.c colour, o.w width, o.label, o.lo label offset, o.anchor, o.op */
+function arrow(svg, a, b, o={}){ const c = cv(o.c || 'red'), w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const L = K.dist(a, b); if (L < 1) return g; const u = K.unit(a, b), hs = Math.min(o.head ?? 11, L * .6); const base = P(b.x - u.x * hs, b.y - u.y * hs);
+  K.el('line', {x1: a.x, y1: a.y, x2: base.x, y2: base.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round', ...(o.dash ? {'stroke-dasharray': o.dash} : {})}, g);
+  K.el('polygon', {points: `${b.x},${b.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g);
+  if (o.label) text(g, P(b.x + (o.lo ? o.lo.x : 0), b.y + (o.lo ? o.lo.y : -12)), minus(o.label), {class: 'lbl sm ' + (o.lc || o.c || 'red'), 'text-anchor': o.anchor || 'middle', 'font-weight': 700});
+  return g; }
+/* vertical energy bar: bottom-left (x, base), width w, full height H for value max */
+function ebar(svg, x, base, w, H, val, max, c, label, vstr){ const h = max > 0 ? clamp(val / max, 0, 1.05) * H : 0;
+  rect(svg, x, base - H, w, H, {fill: 'var(--surface2)', stroke: 'var(--border)'});
+  rect(svg, x, base - h, w, h, {fill: cv(c), opacity: .85});
+  text(svg, P(x + w / 2, base + 16), label, {class: 'lbl sm'});
+  if (vstr) text(svg, P(x + w / 2, base - h - 12), vstr, {class: 'lbl sm ' + (c in COL ? c : ''), 'font-weight': 700}); }
+/* simple stick person: feet at (x, y), height s; o.arms = [angle1, angle2] in degrees from straight down (positive = forwards), o.lean, o.c */
+function person(svg, x, y, s=110, o={}){ const c = cv(o.c || 'text'), lean = o.lean || 0, dir = o.dir || 1, w = o.w ?? 4;
+  const hip = P(x + lean * s * .15 * dir, y - s * .48), neck = P(x + lean * s * .35 * dir, y - s * .82), head = P(neck.x + lean * s * .05 * dir, neck.y - s * .1);
+  const st = {stroke: c, 'stroke-width': w, 'stroke-linecap': 'round', fill: 'none'};
+  const sp = o.step || 0;
+  path(svg, `M${x - s * .12 - sp},${y} L${hip.x},${hip.y} L${x + s * .12 + sp},${y}`, st);
+  sline(svg, hip, neck, st);
+  const arms = o.arms || [20, -20], L = s * .34;
+  arms.forEach(a => { const r = K.rad(a); const e = P(neck.x + Math.sin(r) * L * dir, neck.y + s * .04 + Math.cos(r) * L); sline(svg, P(neck.x, neck.y + s * .04), e, st); });
+  circ(svg, head, s * .09, {fill: o.face || 'var(--surface)', stroke: c, 'stroke-width': w * .8});
+  return {hip, neck, head, hand: (k=0) => { const r = K.rad(arms[k]); return P(neck.x + Math.sin(r) * L * dir, neck.y + s * .04 + Math.cos(r) * L); }}; }
+function groundLine(svg, y, x0=0, x1=800){ rect(svg, x0, y, x1 - x0, 6, {fill: 'var(--muted)', opacity: .35}); ln(svg, P(x0, y), P(x1, y), 'muted', 2); }
+const setOut = (id, s) => { document.getElementById(id).textContent = minus(s); };
+
+/* ---------- 1. dam to bulb ---------- */
+(function(){
+  const svg = document.getElementById('damSvg'); let stop = null, run = false;
+  function draw(ph, on){
+    K.clear(svg);
+    rect(svg, 0, 0, 800, 330, {fill: 'var(--blue-soft)', opacity: .35});
+    path(svg, 'M0,150 L60,70 L130,110 L200,40 L260,90 L260,330 L0,330 Z', {fill: '#4d7c0f', opacity: .55});
+    rect(svg, 0, 120, 250, 180, {fill: '#2563eb', opacity: .35}); ln(svg, P(0, 120), P(250, 120), 'blue', 2);
+    tl(svg, 20, 150, 'reservoir', 'sm blue');
+    K.polygon(svg, [P(240, 100), P(275, 100), P(320, 300), P(240, 300)], {fill: '#a8a29e', stroke: 'var(--text)', 'stroke-width': 1.5});
+    tl(svg, 250, 90, 'dam', 'sm');
+    groundLine(svg, 300);
+    /* penstock */
+    const pen = [P(250, 250), P(330, 250), P(470, 285)];
+    K.polyline(svg, pen, {stroke: '#475569', 'stroke-width': 16, 'stroke-linejoin': 'round'});
+    K.polyline(svg, pen, {stroke: '#60a5fa', 'stroke-width': 9, 'stroke-linejoin': 'round', opacity: on ? 1 : .25});
+    if (on){ for (let k = 0; k < 6; k++){ const f = (ph * 1.5 + k / 6) % 1; const d = f < .4 ? K.lerpPt(pen[0], pen[1], f / .4) : K.lerpPt(pen[1], pen[2], (f - .4) / .6); circ(svg, d, 3, {fill: '#fff'}); } }
+    tl(svg, 300, 230, 'penstock', 'sm muted');
+    /* power house */
+    rect(svg, 460, 230, 110, 70, {fill: 'var(--surface2)', stroke: 'var(--text)', 'stroke-width': 1.5});
+    const tc = P(495, 275), ang = on ? ph * 40 : 0;
+    circ(svg, tc, 17, {fill: 'var(--accent-soft)', stroke: 'var(--accent)', 'stroke-width': 2});
+    for (let k = 0; k < 6; k++){ const a = K.rad(ang * 30 + k * 60); ln(svg, tc, P(tc.x + 15 * Math.cos(a), tc.y + 15 * Math.sin(a)), 'amber', 2); }
+    rect(svg, 520, 258, 36, 34, {fill: 'var(--purple-soft)', stroke: 'var(--purple)', 'stroke-width': 1.5});
+    tl(svg, 466, 220, 'turbine + generator', 'sm');
+    /* wires and house */
+    path(svg, 'M556,262 Q610,170 660,190', {stroke: on ? 'var(--accent)' : 'var(--muted)', 'stroke-width': 2});
+    K.polygon(svg, [P(640, 220), P(700, 175), P(760, 220)], {fill: '#b45309', opacity: .7});
+    rect(svg, 650, 220, 100, 80, {fill: 'var(--surface)', stroke: 'var(--text)', 'stroke-width': 1.5});
+    [670, 700, 730].forEach(x => { if (on) circ(svg, P(x, 248), 14, {fill: '#fde047', opacity: .45}); circ(svg, P(x, 248), 7, {fill: on ? '#facc15' : 'var(--surface2)', stroke: 'var(--text)', 'stroke-width': 1}); });
+    tl(svg, 655, 285, on ? 'bulbs glow!' : 'bulbs off', 'sm ' + (on ? 'amber' : 'muted'));
+    text(svg, P(560, 40), on ? 'Falling water spins the turbine → electricity → light' : 'Where does the water get its energy?', {class: 'lbl', 'font-weight': 700});
+    if (on) text(svg, P(560, 66), '(answered on page 10)', {class: 'lbl sm muted'});
+  }
+  draw(0, false);
+  document.getElementById('damGo').addEventListener('click', () => { if (stop) stop(); run = true; stop = K.animate(6000, (e, t) => draw(t * 6, true), () => draw(0.3, true)); });
+  document.getElementById('damStop').addEventListener('click', () => { if (stop) stop(); run = false; draw(0, false); });
+})();
+
+/* ---------- 2. work / no work sorter ---------- */
+(function(){
+  const svg = document.getElementById('sortSvg'), body = document.getElementById('sortBody'), out = document.getElementById('sortOut');
+  const S = [
+    {k: 'a', ml: 'ലോറിയിലേക്ക് ചുമട് കയറ്റുന്നു', en: '(a) loading a sack into a lorry', obj: 'sack <span class="ml">ചുമട്</span>', ans: [1, 1], given: [1, 1]},
+    {k: 'b', ml: 'വലിയ പാറ തള്ളി നീക്കാൻ ശ്രമിക്കുന്നു', en: '(b) trying to push a big rock', obj: 'rock <span class="ml">പാറ</span>', ans: [0, 0], given: [1, 0]},
+    {k: 'c', ml: 'സൂപ്പർ മാർക്കറ്റിൽ ട്രോളി തള്ളിക്കൊണ്ടു പോകുന്നു', en: '(c) pushing a trolley in a supermarket', obj: 'trolley <span class="ml">ട്രോളി</span>', ans: [1, 1], given: [0, 0]},
+    {k: 'd', ml: 'തലയിൽ ചുമടുമായി ഒരാൾ നിൽക്കുന്നു', en: '(d) a man standing with a sack on his head', obj: 'sack <span class="ml">ചുമട്</span>', ans: [0, 0], given: [0, 0]}
+  ];
+  const pick = S.map(s => [s.given[0] ? s.ans[0] : null, s.given[1] ? s.ans[1] : null]);
+  let stop = null;
+  function scene(k, t){
+    K.clear(svg); groundLine(svg, 300);
+    const s = S[k];
+    text(svg, P(400, 24), s.en.replace(/^\(\w\) /, 'Fig 6.1 (' + s.k + '): '), {class: 'lbl', 'font-weight': 700});
+    let disp = 0, F0, F1, D0, D1, note;
+    if (s.k === 'a'){
+      rect(svg, 440, 190, 320, 90, {fill: '#eab308', opacity: .6, stroke: 'var(--text)', 'stroke-width': 1.5});
+      rect(svg, 440, 190, 320, 12, {fill: '#a16207'});
+      tl(svg, 600, 240, 'lorry', 'muted');
+      [500, 700].forEach(x => circ(svg, P(x, 282), 18, {fill: '#334155', stroke: 'var(--text)'}));
+      ln(svg, P(390, 300), P(432, 190), 'red', 4); ln(svg, P(410, 300), P(452, 190), 'red', 4);
+      for (let r = 0; r < 6; r++){ const f = (r + .5) / 6; ln(svg, K.lerpPt(P(390, 300), P(432, 190), f), K.lerpPt(P(410, 300), P(452, 190), f), 'red', 3); }
+      const f = Math.min(1, t * 1.05); const feet = K.lerpPt(P(385, 300), P(470, 190), f);
+      person(svg, feet.x, feet.y, 90, {arms: [150, 165]});
+      const sack = P(feet.x + 6, feet.y - 100);
+      K.el('ellipse', {cx: sack.x, cy: sack.y, rx: 24, ry: 16, fill: '#d6d3d1', stroke: 'var(--text)', 'stroke-width': 1.5}, svg);
+      const s0 = P(385 + 6, 300 - 100);
+      F0 = P(sack.x + 45, sack.y + 25); F1 = P(sack.x + 45, sack.y - 25);
+      D0 = P(s0.x - 80, s0.y); D1 = P(sack.x - 80, sack.y); disp = K.dist(s0, sack);
+      note = disp > 5 ? 'The sack moves UP into the lorry – in the direction of the upward force.' : 'The worker holds the sack up with an upward force.';
+    } else if (s.k === 'b'){
+      K.polygon(svg, [P(430, 300), P(420, 210), P(470, 140), P(560, 120), P(640, 160), P(660, 240), P(640, 300)], {fill: '#57534e', stroke: 'var(--text)', 'stroke-width': 1.5});
+      const jig = Math.sin(t * 40) * 2;
+      person(svg, 360 + jig, 300, 120, {lean: 1.1, arms: [80, 70], step: 10});
+      F0 = P(360, 160); F1 = P(420, 160); note = t > .3 ? 'He pushes and pushes… the rock does not move: displacement = 0.' : 'A boy pushes hard on a big rock.';
+    } else if (s.k === 'c'){
+      const x = 200 + 280 * t;
+      person(svg, x - 70, 300, 120, {lean: .4, arms: [75, 70], step: 6 * Math.sin(t * 25)});
+      K.polyline(svg, [P(x - 30, 200), P(x, 210), P(x + 90, 210), P(x + 80, 260), P(x + 10, 260), P(x, 210)], {stroke: 'var(--text)', 'stroke-width': 2.5});
+      rect(svg, x + 15, 190, 25, 20, {fill: '#f97316'}); rect(svg, x + 45, 185, 20, 25, {fill: '#22c55e'});
+      [x + 18, x + 75].forEach(cx => circ(svg, P(cx, 290), 9, {fill: 'var(--surface)', stroke: 'var(--text)', 'stroke-width': 2}));
+      ln(svg, P(x + 18, 260), P(x + 18, 281), 'text', 2); ln(svg, P(x + 75, 260), P(x + 75, 281), 'text', 2);
+      F0 = P(x - 40, 170); F1 = P(x + 20, 170); D0 = P(200, 120); D1 = P(x, 120); disp = x - 200;
+      note = disp > 5 ? 'The trolley moves FORWARD – the direction of the push.' : 'A shopper pushes the trolley forwards.';
+    } else {
+      person(svg, 400, 300, 130, {arms: [170, 190], dir: 1});
+      K.el('ellipse', {cx: 400, cy: 150, rx: 42, ry: 20, fill: '#93c5fd', stroke: 'var(--text)', 'stroke-width': 1.5}, svg);
+      F0 = P(470, 190); F1 = P(470, 130);
+      const c = P(620, 150); circ(svg, c, 30, {fill: 'var(--surface)', stroke: 'var(--text)', 'stroke-width': 2});
+      ln(svg, c, P(c.x + 22 * Math.sin(t * 6.28), c.y - 22 * Math.cos(t * 6.28)), 'red', 2.5); text(svg, P(620, 200), 'time passes…', {class: 'lbl sm muted'});
+      note = t > .3 ? 'Time passes, he gets tired – but the sack stays where it is: displacement = 0.' : 'He holds the sack up with an upward force.';
+    }
+    arrow(svg, F0, F1, {c: 'red', w: 4, label: 'force', lo: F1.y < F0.y ? {x: 0, y: -12} : {x: 0, y: -14}});
+    if (D0 && disp > 6) arrow(svg, D0, D1, {c: 'green', w: 4, label: 'displacement', lo: s.k === 'a' ? {x: -8, y: 0} : {x: 0, y: -14}, anchor: s.k === 'a' ? 'end' : 'middle'});
+    text(svg, P(400, 326), note, {class: 'lbl ' + (disp > 5 ? 'green' : 'purple')});
+  }
+  function play(k){ if (stop) stop(); stop = K.animate(2200, (e, t) => scene(k, t)); }
+  function table(){
+    let right = 0, total = 0;
+    body.innerHTML = S.map((s, r) => `<tr><td style="text-align:left"><button class="btn" data-play="${r}" title="watch">▶</button> ${s.en}<br><span class="ml">${s.ml}</span></td><td>${s.obj}</td>` +
+      [0, 1].map(c => { const g = s.given[c], v = pick[r][c]; total++; if (v === s.ans[c]) right++;
+        return '<td><span class="yn">' + [1, 0].map(opt => { let cls = 'btn'; if (v === opt) cls += g ? ' given' : (opt === s.ans[c] ? ' ok' : ' bad'); return `<button class="${cls}" data-r="${r}" data-c="${c}" data-v="${opt}">${opt ? (c ? 'Yes / ഉണ്ട്' : 'Yes / സംഭവിച്ചു') : 'No / ഇല്ല'}</button>`; }).join('') + '</span></td>'; }).join('') + '</tr>').join('');
+    out.textContent = right === total ? '✔ Table complete and correct!\nWork is done in (a) and (c): the object moved in the direction of the force.\nNo work in (b) and (d): no displacement at all.'
+      : `${right} of ${total} boxes correct. Watch each situation (▶) and choose Yes or No. A green button is right, a red one needs another look.`;
+  }
+  body.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.play !== undefined){ play(+b.dataset.play); return; }
+    const r = +b.dataset.r, c = +b.dataset.c; pick[r][c] = +b.dataset.v; table(); play(r); });
+  table(); scene(0, 1);
+})();
+
+/* ---------- 3. wheelchair lab ---------- */
+const X0 = 230, PXM = 26, BASE = 260, SC = 1.1;   /* corridor: 0 m at x = 230, 26 px per metre; drawing scale */
+function wheelchair(svg, s, big){
+  const x = X0 + s * PXM, g = K.group(svg, {transform: `translate(${x},${BASE}) scale(${SC})`});
+  /* chair (local units, front wheel on the floor at 0,0): big rear wheel, small front wheel, seat, backrest, handle */
+  circ(g, P(-45, -28), 28, {fill: 'none', stroke: 'var(--text)', 'stroke-width': 3});
+  circ(g, P(-45, -28), 3, {fill: 'var(--text)'});
+  circ(g, P(0, -8), 8, {fill: 'none', stroke: 'var(--text)', 'stroke-width': 2.5});
+  K.polyline(g, [P(-96, -118), P(-78, -118), P(-70, -62), P(-8, -62), P(0, -16), P(8, -16)], {stroke: 'var(--text)', 'stroke-width': 4, 'stroke-linejoin': 'round', 'stroke-linecap': 'round'});
+  /* patient */
+  const pc = big ? 'var(--blue)' : 'var(--purple)', pw = big ? 11 : 6;
+  circ(g, P(-58, -142), big ? 14 : 12, {fill: 'var(--surface)', stroke: pc, 'stroke-width': 3});
+  sline(g, P(-62, -126), P(-56, -70), {stroke: pc, 'stroke-width': pw});
+  K.polyline(g, [P(-56, -70), P(-14, -70), P(-6, -24)], {stroke: pc, 'stroke-width': pw - 1, 'stroke-linecap': 'round', 'stroke-linejoin': 'round'});
+  sline(g, P(-60, -112), P(-30, -86), {stroke: pc, 'stroke-width': 4});
+  /* attendant: hands on the handle */
+  person(g, -173, 0, 190, {lean: .3, arms: [62, 60], c: 'green', step: 6 * Math.sin(s * 3)});
+  return {handle: P(x - 96 * SC, BASE - 118 * SC), wheel: P(x - 45 * SC, BASE), front: x};
+}
+(function(){
+  const svg = document.getElementById('wcSvg'), out = document.getElementById('wcOut'), bodyT = document.getElementById('wcBody');
+  const b1 = document.getElementById('wcP1'), b2 = document.getElementById('wcP2'), inp = document.getElementById('wcS');
+  let F = 40, s = 10, stop = null; const rows = [];
+  function draw(sv){
+    K.clear(svg); const W = F * sv;
+    rect(svg, 0, 0, 800, BASE, {fill: 'var(--surface2)', opacity: .5}); groundLine(svg, BASE);
+    for (let m = 0; m <= 20; m++){ const x = X0 + m * PXM; ln(svg, P(x, BASE + 6), P(x, BASE + (m % 5 ? 12 : 18)), 'muted', 1.2); if (m % 5 === 0) text(svg, P(x, BASE + 30), m + ' m', {class: 'lbl sm muted'}); }
+    const c = wheelchair(svg, sv, F === 70);
+    arrow(svg, P(c.handle.x, c.handle.y - 62), P(c.handle.x + F * 1.2, c.handle.y - 62), {c: 'red', w: 4, label: `push ${F} N`, lo: {x: 6, y: 0}, anchor: 'start'});
+    ln(svg, c.handle, P(c.handle.x, c.handle.y - 62), 'red', 1, {'stroke-dasharray': '3 4'});
+    arrow(svg, P(c.front + 6, BASE - 4), P(c.front + 6 - F * 1.2, BASE - 4), {c: 'blue', w: 3});
+    tl(svg, c.front + 16, BASE - 12, `friction ${F} N`, 'sm blue', {'font-weight': 700});
+    if (sv > 0.05) arrow(svg, P(X0, BASE + 50), P(X0 + sv * PXM, BASE + 50), {c: 'green', w: 4, label: `displacement s = ${nf(sv, 1)} m`, lo: {x: 0, y: 18}, anchor: sv > 8 ? 'end' : 'start'});
+    /* work bar */
+    tl(svg, 20, 360, `W = F × s = ${F} × ${nf(sv, 1)} = ${nf(W, 0)} J`, 'big');
+    const bx = 400, bw = 380;
+    rect(svg, bx, 350, bw, 20, {fill: 'var(--surface2)', stroke: 'var(--border)'});
+    rect(svg, bx, 350, bw * W / 1400, 20, {fill: 'var(--accent)'});
+    [400, 700, 1400].forEach(v => { const x = bx + bw * v / 1400; ln(svg, P(x, 346), P(x, 374), 'muted', 1.2); text(svg, P(x, 388), v + ' J', {class: 'lbl sm muted', 'text-anchor': v === 1400 ? 'end' : 'middle'}); });
+  }
+  function show(){ draw(s); out.textContent = `Patient ${F === 40 ? 1 : 2}: force F = ${F} N, displacement s = ${s} m\nWork done W = F × s = ${F} N × ${s} m = ${nf(F * s, 0)} N m = ${nf(F * s, 0)} J` + (s === 0 ? '\nNo displacement → no work, however hard you push.' : ''); }
+  function setP(f){ F = f; b1.classList.toggle('primary', f === 40); b2.classList.toggle('primary', f === 70); show(); }
+  b1.addEventListener('click', () => setP(40)); b2.addEventListener('click', () => setP(70));
+  K.slider(inp, v => { if (stop){ stop(); stop = null; } s = v; show(); }, 0);
+  document.getElementById('wcGo').addEventListener('click', () => { if (stop) stop(); const target = s || 10; s = target; stop = K.animate(2500, (e, t) => draw(target * t), show); });
+  function table(){ bodyT.innerHTML = rows.map((r, i) => `<tr><td>${i + 1}</td><td>${r.F === 40 ? '1' : '2'}</td><td>${r.F}</td><td>${r.s}</td><td><b>${nf(r.F * r.s, 0)}</b></td></tr>`).join('') || '<tr><td colspan="5" class="muted">Press “Record” to add your trials here.</td></tr>'; }
+  document.getElementById('wcRec').addEventListener('click', () => { if (rows.length < 8) rows.push({F, s}); table(); });
+  document.getElementById('wcClr').addEventListener('click', () => { rows.length = 0; table(); });
+  table(); setP(40);
+})();
+
+/* ---------- 3b. wheelchair numbers in exam layout ---------- */
+(function(){
+  const rows = [
+    [0, 'Given: F₁ = 40 N, F₂ = 70 N, s = 10 m', 'blue'],
+    [0, '            (then s = 20 m for patient 2)', 'blue'],
+    [1, 'Formula: W = F × s', 'purple'],
+    [2, 'Substitution: W₁ = 40 N × 10 m', ''],
+    [2, '                      W₂ = 70 N × 10 m', ''],
+    [3, '                      W₃ = 70 N × 20 m', ''],
+    [4, 'Answer: W₁ = 400 J, W₂ = 700 J,', 'big green'],
+    [4, '              W₃ = 1400 J', 'big green']
+  ];
+  new K.Stepper('#wcCalc', {steps: [
+    '<b>Given:</b> force for patient 1, F₁ = 40 N; for patient 2, F₂ = 70 N; displacement s = 10 m (and 20 m in the last case).',
+    '<b>Formula:</b> work = force × displacement, <b>W = F × s</b>.',
+    '<b>Substitution:</b> W₁ = 40 × 10; W₂ = 70 × 10.',
+    'Patient 2 taken 20 m: W₃ = 70 × 20.',
+    '<b>Answer:</b> W₁ = <b>400 J</b>, W₂ = <b>700 J</b>, W₃ = <b>1400 J</b>. More force → more work; more displacement → more work.'
+  ], ms: 900, draw(svg, i, t){
+    const base = 290, H = 220, vals = [[400, 'patient 1, 10 m', 'purple', 2], [700, 'patient 2, 10 m', 'blue', 2], [1400, 'patient 2, 20 m', 'blue', 3]];
+    vals.forEach((v, k) => { const show = i > v[3] || (i === v[3] && (k < 2 || true)); const f = i > v[3] ? 1 : (i === v[3] ? t : 0); if (i < v[3]) { ebar(svg, 40 + k * 100, base, 60, H, 0, 1400, v[2], v[1].split(',')[0]); return; } ebar(svg, 40 + k * 100, base, 60, H, v[0] * f, 1400, v[2], v[1].split(',')[0], f > .99 ? v[0] + ' J' : ''); text(svg, P(70 + k * 100, base + 32), v[1].split(', ')[1], {class: 'lbl sm muted'}); });
+    lines(svg, rows, i, t, {x: 360, y: 36, lh: 34});
+  }});
+})();
+
+/* ---------- 4. one joule ---------- */
+(function(){
+  const rows = [
+    [0, 'Given: F = 1 N', 'blue'],
+    [0, '            s = 1 m', 'blue'],
+    [1, 'Formula: W = F × s', 'purple'],
+    [2, 'Substitution: W = 1 N × 1 m', ''],
+    [3, 'Answer: W = 1 N m = 1 J', 'big green']
+  ];
+  new K.Stepper('#jLab', {steps: [
+    '<b>Given:</b> force F = 1 N; the object moves s = 1 m in the direction of the force.',
+    '<b>Formula:</b> W = F × s.',
+    '<b>Substitution:</b> W = 1 N × 1 m.',
+    '<b>Answer:</b> W = 1 N m = <b>1 joule (1 J)</b>. This is the definition of one joule.'
+  ], ms: 1000, draw(svg, i, t){
+    groundLine(svg, 220, 20, 360);
+    const x0 = 60, L = 220, mv = i >= 2 ? (i === 2 ? t : 1) : 0, x = x0 + L * mv;
+    rect(svg, x, 170, 60, 50, {fill: 'var(--accent-soft)', stroke: 'var(--accent)', 'stroke-width': 2, rx: 4});
+    arrow(svg, P(x - 50, 195), P(x, 195), {c: 'red', w: 4, label: 'F = 1 N', lo: {x: -25, y: -14}});
+    ln(svg, P(x0, 232), P(x0, 248), 'muted', 1.5); ln(svg, P(x0 + L, 232), P(x0 + L, 248), 'muted', 1.5);
+    if (i >= 0) arrow(svg, P(x0, 240), P(x0 + L, 240), {c: 'green', w: 3, label: 's = 1 m', lo: {x: -110, y: 18}});
+    lines(svg, rows, i, t, {x: 400, y: 50, lh: 40});
+  }});
+})();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'In which case is work done on the object (in the physics sense)?', options: ['A student holds a heavy school bag still for 10 minutes', 'A man pushes a wall with all his strength', 'A girl lifts a water bottle from the floor to a table', 'A coolie stands with a suitcase on his head'], answer: 2, explain: 'The bottle moves up, in the direction of her upward force.', hint: 'Look for a displacement in the direction of the force.'});
+K.numq('#q2', {q: 'A boy pushes a box 6 m along the floor with a steady force of 25 N. How much work does he do (in J)?', answer: 150, tol: 0.01, unit: 'J', explain: 'W = F × s = 25 × 6 = 150 J.', hint: 'W = F × s.'});
+K.mcq('#q3', {q: 'The SI unit of work is…', options: ['newton (N)', 'joule (J), which equals N m', 'watt (W)', 'N/m'], answer: 1, explain: 'Unit of work = N × m = newton metre = joule.', hint: 'Unit of force × unit of displacement.'});
+K.mcq('#q4', {q: 'Patient 2 needs 70 N and is pushed 20 m. Patient 1 needs 40 N and is pushed 10 m. Compared with patient 1, the work for patient 2 is…', options: ['the same', 'less', 'more – 1400 J against 400 J', 'impossible to compare'], answer: 2, explain: '70 × 20 = 1400 J; 40 × 10 = 400 J.', hint: 'Find W = F s for both.'});
+K.numq('#q5', {q: 'A force of 50 N does 400 J of work on a box. Through what distance (in m) did the box move in the direction of the force?', answer: 8, tol: 0.01, unit: 'm', explain: 's = W ÷ F = 400 ÷ 50 = 8 m.', hint: 'Rearrange W = F s to s = W / F.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kinetic Energy</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.qa{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.6rem 1rem;margin:.7rem 0;box-shadow:var(--shadow)}
+.qa p{margin:.25em 0}
+.qbox{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.7rem 1rem;margin:.8rem 0;box-shadow:var(--shadow)}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.obs td,.obs th{text-align:center;vertical-align:middle}
+.tw{overflow-x:auto}
+.diary{background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:1rem 0}
+.diary h3{margin:.1rem 0 .4rem;color:var(--accent-ink)}
+.tree{display:flex;flex-direction:column;align-items:center;gap:.3rem;margin:.8rem 0}
+.tree .row{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center}
+.tree .node{border:2px solid var(--accent);background:var(--accent-soft);border-radius:10px;padding:.35rem .8rem;text-align:center;font-weight:600;min-width:9rem}
+.tree .node .ml{display:block;font-size:.9em}
+.tree .down{color:var(--purple);font-weight:700}
+</style>
+</head>
+<body data-page="08_kinetic_energy">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 6 · Section 4</span><span class="chip amber">Textbook pages 116–119</span>
+<h1>Kinetic Energy <span class="ml">ഗതികോർജം</span></h1>
+<p class="lead">A gentle breeze barely moves a leaf, but a cyclone throws roofs off houses. A slowly rolling ball hardly pushes anything, but a fast cricket ball can break a window. Moving things carry energy – <b>kinetic energy</b>. On this page you find, by experiment and then by algebra, exactly how it depends on mass and velocity: <b>E<sub>k</sub> = ½mv²</b>.</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 1, 3, 6 and 7 of this guide)</div>
+<ul style="margin:0">
+<li>Newton's second law F = ma, and the equation of motion v² = u² + 2as (page 1).</li>
+<li>Squaring: when v doubles, v² becomes 4 times; when v triples, 9 times; when v halves, ¼ (page 3).</li>
+<li>Work W = F s and potential energy E<sub>p</sub> = mgh (pages 6–7).</li>
+</ul></div>
+
+<h2>1. Moving air and moving water do work (Fig 6.7)</h2>
+<p><span class="ml">ചുഴലിക്കാറ്റിൽ വൻമരങ്ങൾ വീഴുന്നതിന്റെയും കെട്ടിടങ്ങളുടെ മേൽക്കൂരകൾ പറന്നുപോകുന്നതിന്റെയും ഉരുൾപൊട്ടലിൽ കെട്ടിടങ്ങൾ തകരുന്നതിന്റെയും മറ്റും ദൃശ്യങ്ങൾ നിങ്ങൾ കണ്ടിട്ടില്ലേ?</span> – Haven't you seen pictures of huge trees falling in a cyclone, roofs being blown away and buildings destroyed by landslides and floods? <span class="ml">കാറ്റിനും വെള്ളത്തിനും പ്രവൃത്തി ചെയ്യാൻ കഴിയുന്നത് അവയുടെ ചലനം കാരണമല്ലേ?</span> – Isn't it because they are <b>moving</b> that wind and water can do work?</p>
+<div class="lab">
+  <div class="lab-title">🌀 Virtual lab: how strong is the wind?</div>
+  <svg id="wdSvg" viewBox="0 0 800 300" role="img" aria-label="Wind blowing on a tree and a house; the tree bends more and the roof sheet lifts as the wind speed grows"></svg>
+  <div class="controls"><label>wind speed <input id="wdV" type="range" min="0" max="200" step="10" value="60"><output></output> km/h</label></div>
+  <div class="readout" id="wdOut"></div>
+  <p class="hint">Each cubic metre of air has a mass of about 1.2 kg (approx.). The readout uses E<sub>k</sub> = ½mv² from later on this page – watch how fast the energy grows with speed.</p>
+</div>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 116) – Kinetic energy <span class="ml">ഗതികോർജം</span></div>
+<p class="ml" style="margin:.2rem 0 .4rem">ചലനം മൂലം വസ്തുക്കൾക്ക് ലഭിക്കുന്ന ഊർജമാണ് ഗതികോർജം (Kinetic energy).</p>
+<p><b>Kinetic energy</b> is the energy an object has because of its <b>motion</b>.</p></div>
+<div class="callout real"><div class="title">🌴 Kerala connection – cyclones, floods and landslides</div>
+<p>Kerala has felt the power of moving air and water: Cyclone Ockhi (2017) struck the southern coast, the great floods of 2018 swept away houses and bridges, and landslides such as the one at Mundakkai–Chooralmala in Wayanad (2024) carried huge rocks downhill. In every case it is the <b>kinetic energy</b> of fast-moving air, water, mud and rock that does the damage.</p></div>
+<div class="safety">⚠ During a storm stay indoors, keep away from trees, hoardings and electric lines, and follow the disaster-management warnings.</div>
+
+<h2>2. Activity – the tin and the block (Fig 6.8)</h2>
+<p>The textbook's heading: <span class="ml">ഗതികോർജത്തെ സ്വാധീനിക്കുന്ന ഘടകങ്ങൾ</span> – <b>factors that affect kinetic energy</b>. <span class="ml">ചിത്രത്തിൽ കാണുന്നതുപോലെ ചരിഞ്ഞ പ്രതലത്തിലൂടെ സിലിണ്ടർ ആകൃതിയിലുള്ള ടിൻ ഒരു ചതുരക്കട്ടയിൽ വന്നിടിക്കാവുന്നരീതിയിൽ ഉരുട്ടി വിടുക. ചതുരക്കട്ട സഞ്ചരിച്ച ദൂരം നിരീക്ഷിക്കുക.</span> – Roll a cylindrical tin down a sloping board so that it hits a wooden block. Note how far the block moves. Then fill the tin with sand and repeat, with the block at the same starting place. Finally release the sand-filled tin from higher up.</p>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: roll the tin into the block</div>
+  <div class="controls"><button class="btn primary" id="tbE">🥫 Empty tin (100 g)</button><button class="btn" id="tbS">🏖️ Tin filled with sand (500 g)</button></div>
+  <svg id="tbSvg" viewBox="0 0 800 330" role="img" aria-label="A tin rolls down a sloping board and hits a wooden block on the table, which slides some distance"></svg>
+  <div class="controls"><label>release height <input id="tbH" type="range" min="5" max="30" step="5" value="10"><output></output> cm</label>
+  <button class="btn primary" id="tbGo">▶ Release the tin</button><button class="btn" id="tbClr">Clear table</button></div>
+  <div class="readout" id="tbOut"></div>
+  <div class="tw"><table class="obs"><thead><tr><th>Trial</th><th>Tin</th><th>Release height (cm)</th><th>Speed at the bottom (m/s)</th><th>Kinetic energy (J)</th><th>Block moved (cm)</th></tr></thead><tbody id="tbBody"></tbody></table></div>
+  <p class="hint">Model (approx.): the tin reaches the bottom with speed v = √(2gh) (spinning and friction ignored), so its kinetic energy is mgh; about half of that pushes the 500 g block against a steady friction of about 2 N. Do the textbook's three trials: empty tin from 10 cm, sand tin from 10 cm, sand tin from 20 cm.</p>
+</div>
+<div class="qa"><p><b>Textbook questions (page 117)</b></p>
+<ol style="margin:.3rem 0">
+<li><span class="ml">ചതുരക്കട്ട കൂടുതൽ ദൂരം നീങ്ങി പോകുമോ? കാരണം എന്തായിരിക്കും?</span> – (Sand-filled tin) Does the block move farther? What could be the reason?</li>
+<li><span class="ml">ഗതികോർജത്തെ സ്വാധീനിക്കുന്ന മറ്റേതെങ്കിലും ഘടകമുണ്ടോ?</span> – Is there any other factor that affects kinetic energy?</li>
+<li><span class="ml">മണ്ണ് നിറച്ച ഇതേ ടിൻ കൂടുതൽ ഉയരത്തിൽനിന്ന് ഉരുട്ടി വിട്ട് പരീക്ഷണം ആവർത്തിക്കുക (ചരിവുതലത്തിന്റെ ഉയരം വർധിപ്പിച്ച്). എന്ത് നിരീക്ഷിക്കാൻ കഴിയും?</span> – Repeat with the same sand-filled tin released from a greater height. What do you observe?</li>
+</ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">
+1. <b>Yes</b>, the block moves farther (in our lab 2.5 cm → 12.5 cm from 10 cm). <i>Why:</i> the tin's <b>mass increased</b>, so at the same speed it carries more kinetic energy and can do more work on the block (<span class="ml">മാസ് കൂടുമ്പോൾ ഗതികോർജം കൂടുന്നു</span>).<br>
+2. <b>Yes – its velocity.</b> We can test it by making the tin move faster.<br>
+3. The block moves <b>even farther</b> (12.5 cm → 25 cm when the height doubles). <i>Why:</i> from a greater height the tin reaches the bottom with a <b>greater velocity</b>, so it has more kinetic energy (<span class="ml">ഇവിടെ പ്രവേഗം കൂടിയതുകൊണ്ടാണല്ലോ ചതുരക്കട്ട കൂടുതൽ ദൂരേക്ക് നീങ്ങിയത്</span>).</div></div></div>
+<div class="diary"><h3>📒 Science diary – two factors that affect kinetic energy</h3>
+<p style="margin-top:0"><span class="ml">ഗതികോർജത്തെ സ്വാധീനിക്കുന്ന രണ്ട് ഘടകങ്ങൾ എഴുതൂ.</span></p>
+<ul style="margin:0"><li><b>Mass of the object (m)</b> – <span class="ml">വസ്തുവിന്റെ മാസ് (m)</span></li><li><span class="reveal" data-btn="Show the second factor"><b>Velocity of the object (v)</b> – <span class="ml">വസ്തുവിന്റെ പ്രവേഗം (v)</span></span></li></ul></div>
+
+<h2>3. Calculating kinetic energy – E<sub>k</sub> = ½mv²</h2>
+<p>The thinking boy asks: <span class="ml">ഗതികോർജം കണക്കാക്കാനാകുമോ?</span> – <em>Can kinetic energy be calculated?</em> Idea: push an object that starts at rest with a steady force F through a distance s. The work done on it becomes its kinetic energy.</p>
+<div class="lab" id="dvLab">
+  <div class="lab-title">🎬 Derivation step by step (page 117)</div>
+  <svg viewBox="0 0 800 320" role="img" aria-label="A trolley starting from rest is pushed by a force F through a distance s and reaches velocity v"></svg>
+</div>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 117) – formula for kinetic energy</div>
+<p class="ml" style="margin:.2rem 0 .4rem">വസ്തുവിന്റെ ഗതികോർജം E<sub>k</sub> = ½ mv². m എന്നത് kg യൂണിറ്റിലുള്ള മാസും v എന്നത് m/s യൂണിറ്റിലുള്ള പ്രവേഗവും ആണെങ്കിൽ E<sub>k</sub> സൂചിപ്പിക്കുന്നത് ജൂൾ യൂണിറ്റിലുള്ള ഗതികോർജമാണ്.</p>
+<p class="eq" style="margin:.3rem 0"><b>E<sub>k</sub> = ½ mv²</b></p>
+<p>With m in kilograms and v in metres per second, E<sub>k</sub> is in <b>joules</b>. Only v is squared – not the ½ and not the m.</p></div>
+<p>The textbook's chart puts it all together:</p>
+<div class="tree" aria-label="Chart: mechanical energy divides into potential energy and kinetic energy; potential energy divides into energy due to position (mgh) and due to configuration">
+  <div class="node">Mechanical energy<span class="ml">യാന്ത്രികോർജം</span></div>
+  <div class="down">↙ &nbsp;&nbsp;&nbsp;&nbsp; ↘</div>
+  <div class="row"><div class="node">Potential energy<span class="ml">സ്ഥിതികോർജം</span></div><div class="node">Kinetic energy<span class="ml">ഗതികോർജം</span>½ mv²</div></div>
+  <div class="down">↙ &nbsp;&nbsp;&nbsp;&nbsp; ↘ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+  <div class="row"><div class="node">due to position<span class="ml">സ്ഥാനം മൂലമുള്ള സ്ഥിതികോർജം</span>mgh</div><div class="node">due to configuration<span class="ml">കോൺഫിഗറേഷൻ മൂലമുള്ള സ്ഥിതികോർജം</span></div></div>
+</div>
+
+<h2>4. Table 6.4 – how mass and velocity change E<sub>k</sub></h2>
+<p><span class="ml">വസ്തുക്കളുടെ ഗതികോർജവുമായി ബന്ധപ്പെട്ട പട്ടിക 6.4 പൂർത്തിയാക്കുക.</span> – Complete Table 6.4. Press ▶ on a row to load it into the lab; the kinetic energy is then filled in.</p>
+<div class="lab">
+  <div class="lab-title">🧪 Table 6.4 builder and the kinetic energy–velocity graph</div>
+  <svg id="t4Svg" viewBox="0 0 800 330" role="img" aria-label="A trolley of the chosen mass moving at the chosen velocity, and a graph of kinetic energy against velocity, which is a parabola"></svg>
+  <div class="controls"><label>mass m <input id="t4M" type="range" min="1" max="20" step="1" value="10"><output></output> kg</label>
+  <label>velocity v <input id="t4V" type="range" min="0" max="10" step="0.5" value="2"><output></output> m/s</label></div>
+  <div class="controls"><button class="btn" id="t4m2">× 2 mass</button><button class="btn" id="t4v3">× 3 velocity</button><button class="btn" id="t4vh">½ velocity</button></div>
+  <div class="readout" id="t4Out"></div>
+  <div class="tw"><table class="obs"><caption class="small muted">Table 6.4</caption><thead><tr><th></th><th>Mass m (kg) <span class="ml">വസ്തുവിന്റെ മാസ്</span></th><th>Velocity v (m/s) <span class="ml">വസ്തുവിന്റെ പ്രവേഗം</span></th><th>Kinetic energy E<sub>k</sub> = ½mv² (J)</th></tr></thead><tbody id="t4Body"></tbody></table></div>
+</div>
+<div class="qa"><p><b>Textbook questions (page 118).</b> <span class="ml">പട്ടിക 6.4 അടിസ്ഥാനപ്പെടുത്തി താഴെ കൊടുത്ത സന്ദർഭങ്ങളിൽ ഗതികോർജത്തിൽ എന്ത് മാറ്റമാണ് വരുന്നത് എന്ന് എഴുതുക</span> – Using Table 6.4, write how the kinetic energy changes when:</p>
+<ol type="a" style="margin:.3rem 0">
+<li><span class="ml">മാസ് രണ്ട് മടങ്ങായി വർധിക്കുമ്പോൾ</span> – the mass is doubled</li>
+<li><span class="ml">പ്രവേഗം മൂന്ന് മടങ്ങായി വർധിക്കുമ്പോൾ</span> – the velocity is tripled</li>
+<li><span class="ml">പ്രവേഗം പകുതിയാകുമ്പോൾ</span> – the velocity is halved</li>
+</ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">
+(a) KE <b>doubles</b> (5 kg → 10 kg at 2 m/s: 10 J → 20 J). <i>Why:</i> E<sub>k</sub> is proportional to m.<br>
+(b) KE becomes <b>9 times</b> (3² = 9). <i>Why:</i> E<sub>k</sub> depends on v²; e.g. 10 kg at 1 m/s → 5 J, at 3 m/s → 45 J.<br>
+(c) KE becomes <b>¼</b> (one quarter), because (½)² = ¼; e.g. 10 kg at 2 m/s → 20 J, at 1 m/s → 5 J.</div></div></div>
+
+<h2>5. Textbook numericals (pages 118–119)</h2>
+<div class="qbox"><p><b>Q1.</b> <span class="ml">ഒരു മോട്ടോർ സൈക്കിൾ യാത്രക്കാരൻ 10 m/s വേഗത്തിൽ നേർദിശയിൽ സഞ്ചരിക്കുന്നു. മോട്ടോർ സൈക്കിളിനും യാത്രക്കാരനും കൂടിയുള്ള മാസ് 300 kg ആണ്.</span> – A motorcyclist travels in a straight line at 10 m/s. The motorcycle and rider together have a mass of 300 kg. (a) <span class="ml">മോട്ടോർസൈക്കിളിന്റെയും യാത്രക്കാരന്റെയും കൂടിയുള്ള ഗതികോർജം എത്രയായിരിക്കും?</span> What is their kinetic energy? (b) <span class="ml">വേഗം രണ്ട് മടങ്ങായി വർധിപ്പിച്ചാൽ ഗതികോർജം എത്രയായിരിക്കും?</span> What is it if the speed is doubled?</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>E<sub>k</sub> = ½ × m × v². Square only the velocity. For (b), use v = 20 m/s – or remember that doubling v makes E<sub>k</sub> four times.</p></div></div>
+<div class="lab" id="mcLab">
+  <div class="lab-title">🎬 Solution in exam layout – the motorcycle</div>
+  <svg viewBox="0 0 800 320" role="img" aria-label="A motorcycle at 10 m/s and at 20 m/s with kinetic-energy bars"></svg>
+</div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> (a) E<sub>k</sub> = ½ × 300 × 10² = <b>15 000 J</b>; (b) E<sub>k</sub> = ½ × 300 × 20² = <b>60 000 J</b> (4 times as much). More: <a href="11_intext_numericals_solutions.html">page 11 ▶</a></div></div>
+<div class="callout real"><div class="title">🌴 Kerala connection – why speed limits and helmets matter</div>
+<p>Riding at 60 km/h instead of 30 km/h doubles the speed but makes the kinetic energy <b>four times</b> as large. In a crash all that energy has to be absorbed by the vehicle, the road – and the rider. That is why speed limits matter so much, and why a good helmet (which crumples to absorb energy) saves lives.</p></div>
+<div class="safety">⚠ Always wear a helmet on a two-wheeler, even for short rides, and never ride with more than one pillion.</div>
+
+<div class="qbox"><p><b>Q2.</b> <span class="ml">ഒരു അത്‌ലറ്റ് 6 kg മാസുള്ള ഷോട്ട് 12 m/s പ്രവേഗത്തിൽ എറിയുന്നു. ഈ അവസരത്തിൽ ഷോട്ടിന്റെ ഗതികോർജം എത്രയായിരിക്കും?</span> – An athlete throws a shot of mass 6 kg with a velocity of 12 m/s. What is its kinetic energy?</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>12² = 144. Then ½ × 6 × 144.</p></div></div>
+<div class="lab" id="spLab">
+  <div class="lab-title">🎬 Solution in exam layout – the shot put</div>
+  <svg viewBox="0 0 800 300" role="img" aria-label="An athlete releases a 6 kg shot at 12 m/s"></svg>
+</div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> E<sub>k</sub> = ½ × 6 × 12² = 3 × 144 = <b>432 J</b>. More: <a href="11_intext_numericals_solutions.html">page 11 ▶</a></div></div>
+
+<div class="qbox"><p><b>Q3.</b> <span class="ml">0.5 kg മാസുള്ള ഒരു ബോൾ തറനിരപ്പിൽ നിന്ന് നിശ്ചിത ഉയരത്തിൽ സ്ഥിതി ചെയ്യുന്നു.</span> – A ball of mass 0.5 kg is held at a certain height above the ground. (a) <span class="ml">ഈ ബോളിലെ സ്ഥിതികോർജം 98 J ആണെങ്കിൽ ബോൾ എത്ര ഉയരത്തിലായിരിക്കും? (g = 9.8 m/s²)</span> If its potential energy is 98 J, at what height is it? (b) <span class="ml">ബോൾ സ്വതന്ത്രമായി താഴേക്ക് പതിക്കുകയാണെങ്കിൽ തറയിൽ പതിക്കുന്നതിനു തൊട്ടുമുമ്പ് അതിന്റെ ഗതികോർജം എത്രയായിരിക്കും?</span> If it falls freely, what is its kinetic energy just before it touches the ground?</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>(a) Rearrange E<sub>p</sub> = mgh to h = E<sub>p</sub> ÷ (mg). (b) While falling freely, its potential energy turns into kinetic energy.</p></div></div>
+<div class="lab" id="blLab">
+  <div class="lab-title">🎬 Solution in exam layout – the falling ball</div>
+  <svg viewBox="0 0 800 340" role="img" aria-label="A 0.5 kg ball falls from 20 m; bars show potential energy turning into kinetic energy"></svg>
+</div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> (a) h = 98 ÷ (0.5 × 9.8) = <b>20 m</b>; (b) E<sub>k</sub> = <b>98 J</b> – all the potential energy has become kinetic energy (air resistance ignored). <span class="ml">ഇവിടെ ബോളിന്റെ സ്ഥിതികോർജമാണല്ലോ ഗതികോർജമായി മാറിയത്.</span> More: <a href="11_intext_numericals_solutions.html">page 11 ▶</a></div></div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.physicsclassroom.com/tutorial/work-and-energy/forms-of-energy/kinetic-energy" target="_blank" rel="noopener noreferrer">📄 Kinetic Energy</a> <span class="src">The Physics Classroom</span><br><span class="note">KE = 1/2 mv2 explained - see why doubling the speed makes four times the energy.</span></li><li><a href="https://www.sciencelearn.org.nz/resources/1586-calculating-potential-and-kinetic-energy" target="_blank" rel="noopener noreferrer">📄 Calculating potential and kinetic energy (activity)</a> <span class="src">Science Learning Hub, New Zealand</span><br><span class="note">A student activity: calculate the PE and KE of a real object using the formulas.</span></li><li><a href="https://www.exploratorium.edu/snacks/bottle-racer" target="_blank" rel="noopener noreferrer">📄 Bottle Racer (Exploratorium Science Snack)</a> <span class="src">Exploratorium</span><br><span class="note">Make a rubber-band racer at home: stored energy in a twisted band becomes kinetic energy.</span></li></ul></div>
+
+<h2>6. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li><b>Kinetic energy</b> is energy due to motion. It depends on the <b>mass</b> and the <b>velocity</b> of the object.</li>
+<li>From W = Fs = mas and v² = 2as: <b>E<sub>k</sub> = ½mv²</b> (m in kg, v in m/s, E<sub>k</sub> in J).</li>
+<li>Double the mass → double E<sub>k</sub>; double the velocity → 4 × E<sub>k</sub>; triple v → 9 ×; halve v → ¼.</li>
+<li>Motorcycle 300 kg at 10 m/s: 15 000 J (60 000 J at 20 m/s). Shot 6 kg at 12 m/s: 432 J. Ball 0.5 kg with 98 J of E<sub>p</sub>: 20 m high, 98 J of E<sub>k</sub> at the ground.</li>
+</ul></div>
+<p>Next: <a href="09_transformation_conservation.html">Energy transformation and conservation of energy ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Work and Energy · Class 9 Physics", "icon": "⚡", "key": "physics_ch6_progress", "pages": [["index.html", "Home"], ["01_force_displacement_recap.html", "1 · Force, Displacement & Weight Recap"], ["02_units_powers_conversions.html", "2 · Units, Powers of Ten & Conversions"], ["03_squares_and_ratios.html", "3 · Squares, Ratios & Rearranging Formulas"], ["04_forms_of_energy.html", "4 · Forms of Energy Around Us"], ["05_work.html", "5 · Work and How to Measure It"], ["06_work_against_gravity_negative.html", "6 · Work Against Gravity & Negative Work"], ["07_energy_mechanical_potential.html", "7 · Energy, Mechanical & Potential Energy"], ["08_kinetic_energy.html", "8 · Kinetic Energy"], ["09_transformation_conservation.html", "9 · Energy Transformation & Conservation"], ["10_sun_hydroelectric_power.html", "10 · The Sun, Hydroelectric Power & Power"], ["11_intext_numericals_solutions.html", "11 · In-text Questions – Solutions"], ["12_assess_q1_q8_solutions.html", "12 · Let Us Assess Q1–8 – Solutions"], ["13_assess_q9_q15_solutions.html", "13 · Let Us Assess Q9–15 & Extended Activities"], ["14_applications_explore.html", "14 · Applications & Explore Online"], ["15_summary_revision.html", "15 · Summary & Quick Quiz"], ["16_model_test_paper.html", "16 · Model Test Paper"], ["17_model_test_solutions.html", "17 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ---------- page helpers (Chapter 6, pages 5–10; same code on each page) ---------- */
+const {P} = K;
+const COL = {red: 'var(--red)', blue: 'var(--blue)', green: 'var(--green)', amber: 'var(--accent)', purple: 'var(--purple)', text: 'var(--text)', muted: 'var(--muted)', primary: 'var(--primary)'};
+const cv = c => COL[c] || c;
+/* a line with its own stroke (seg() carries class 'ln', whose CSS would override it) */
+const sline = (svg, a, b, attrs={}) => K.el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+const ln = (svg, a, b, c='text', w=2, extra={}) => sline(svg, a, b, {stroke: cv(c), 'stroke-width': w, ...extra});
+const rect = (svg, x, y, w, h, attrs={}) => K.el('rect', {x, y, width: Math.max(0, w), height: Math.max(0, h), ...attrs}, svg);
+const circ = (svg, c, r, attrs={}) => K.el('circle', {cx: c.x, cy: c.y, r, ...attrs}, svg);
+const path = (svg, d, attrs={}) => K.el('path', {d, fill: 'none', ...attrs}, svg);
+/* true minus for negative numbers only */
+const minus = s => String(s).replace(/(^|[\s(=:,/×+])-(?=[\d.])/g, '$1−');
+/* number with at most d decimals, digit groups of three (with a space) for five or more digits, true minus */
+const nf = (v, d=2) => { const s = K.fmt(Math.abs(+v), d); let [a, b] = s.split('.'); if (a.length > 4) a = a.replace(/\B(?=(\d{3})+(?!\d))/g, ' '); return (+v < 0 && +s !== 0 ? '−' : '') + a + (b ? '.' + b : ''); };
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+/* SVG text that understands subscripts: "E_p" → E with a lowered p */
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+function text(svg, p, str, attrs={}){ const s = String(str);
+  if (!/_/.test(s)) return K.text(svg, p, s, attrs);
+  return K.el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs,
+    html: esc(s).replace(/_(\w+)/g, '<tspan baseline-shift="sub" font-size="72%">$1</tspan>')}, svg); }
+const tl = (svg, x, y, str, cls='', extra={}) => text(svg, P(x, y), str, {class: ('lbl ' + cls).trim(), 'text-anchor': 'start', ...extra});
+/* working lines: rows = [[step, text, cls], …]; rows whose step ≤ i are shown, the newest fades in */
+function lines(svg, rows, i, t, o={}){ const x = o.x ?? 400, y0 = o.y ?? 36, lh = o.lh ?? 32, an = o.anchor ?? 'start'; let k = 0;
+  rows.forEach(r => { if (r[0] > i) return; const ind = (r[1].match(/^ */)[0].length) * 4.3; text(svg, P(x + ind, y0 + k * lh), minus(r[1].trim()), {class: 'lbl ' + (r[2] || ''), 'text-anchor': an, opacity: r[0] === i ? t : 1}); k++; }); }
+/* arrow from a to b with a filled head; o.c colour, o.w width, o.label, o.lo label offset, o.anchor, o.op */
+function arrow(svg, a, b, o={}){ const c = cv(o.c || 'red'), w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const L = K.dist(a, b); if (L < 1) return g; const u = K.unit(a, b), hs = Math.min(o.head ?? 11, L * .6); const base = P(b.x - u.x * hs, b.y - u.y * hs);
+  K.el('line', {x1: a.x, y1: a.y, x2: base.x, y2: base.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round', ...(o.dash ? {'stroke-dasharray': o.dash} : {})}, g);
+  K.el('polygon', {points: `${b.x},${b.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g);
+  if (o.label) text(g, P(b.x + (o.lo ? o.lo.x : 0), b.y + (o.lo ? o.lo.y : -12)), minus(o.label), {class: 'lbl sm ' + (o.lc || o.c || 'red'), 'text-anchor': o.anchor || 'middle', 'font-weight': 700});
+  return g; }
+/* vertical energy bar: bottom-left (x, base), width w, full height H for value max */
+function ebar(svg, x, base, w, H, val, max, c, label, vstr){ const h = max > 0 ? clamp(val / max, 0, 1.05) * H : 0;
+  rect(svg, x, base - H, w, H, {fill: 'var(--surface2)', stroke: 'var(--border)'});
+  rect(svg, x, base - h, w, h, {fill: cv(c), opacity: .85});
+  text(svg, P(x + w / 2, base + 16), label, {class: 'lbl sm'});
+  if (vstr) text(svg, P(x + w / 2, base - h - 12), vstr, {class: 'lbl sm ' + (c in COL ? c : ''), 'font-weight': 700}); }
+/* simple stick person: feet at (x, y), height s; o.arms = [angle1, angle2] in degrees from straight down (positive = forwards), o.lean, o.c */
+function person(svg, x, y, s=110, o={}){ const c = cv(o.c || 'text'), lean = o.lean || 0, dir = o.dir || 1, w = o.w ?? 4;
+  const hip = P(x + lean * s * .15 * dir, y - s * .48), neck = P(x + lean * s * .35 * dir, y - s * .82), head = P(neck.x + lean * s * .05 * dir, neck.y - s * .1);
+  const st = {stroke: c, 'stroke-width': w, 'stroke-linecap': 'round', fill: 'none'};
+  const sp = o.step || 0;
+  path(svg, `M${x - s * .12 - sp},${y} L${hip.x},${hip.y} L${x + s * .12 + sp},${y}`, st);
+  sline(svg, hip, neck, st);
+  const arms = o.arms || [20, -20], L = s * .34;
+  arms.forEach(a => { const r = K.rad(a); const e = P(neck.x + Math.sin(r) * L * dir, neck.y + s * .04 + Math.cos(r) * L); sline(svg, P(neck.x, neck.y + s * .04), e, st); });
+  circ(svg, head, s * .09, {fill: o.face || 'var(--surface)', stroke: c, 'stroke-width': w * .8});
+  return {hip, neck, head, hand: (k=0) => { const r = K.rad(arms[k]); return P(neck.x + Math.sin(r) * L * dir, neck.y + s * .04 + Math.cos(r) * L); }}; }
+function groundLine(svg, y, x0=0, x1=800){ rect(svg, x0, y, x1 - x0, 6, {fill: 'var(--muted)', opacity: .35}); ln(svg, P(x0, y), P(x1, y), 'muted', 2); }
+const setOut = (id, s) => { document.getElementById(id).textContent = minus(s); };
+const G = 9.8;
+
+/* ---------- 1. wind ---------- */
+(function(){
+  const svg = document.getElementById('wdSvg'), out = document.getElementById('wdOut');
+  let v = 60, stop = null;
+  function draw(ph){
+    K.clear(svg); const ms = v / 3.6, E = 0.5 * 1.2 * ms * ms, s = Math.min(1, v / 180);
+    rect(svg, 0, 0, 800, 260, {fill: 'var(--blue-soft)', opacity: .3}); groundLine(svg, 260);
+    /* wind streaks */
+    for (let k = 0; k < 8; k++){ const y = 40 + k * 26, x = ((ph * (40 + v * 3) + k * 97) % 900) - 100; if (v > 0) path(svg, `M${x},${y} q30,-${4 + s * 6} 60,0 t60,0`, {stroke: 'var(--muted)', 'stroke-width': 1.5 + s * 2, opacity: .6}); }
+    /* tree bends with the wind */
+    const bend = s * 70 + Math.sin(ph * 12) * s * 8, base = P(250, 260), top = P(250 + bend, 90 + s * 20);
+    path(svg, `M${base.x},${base.y} Q${base.x + 6},${150} ${top.x},${top.y}`, {stroke: '#92400e', 'stroke-width': 12, 'stroke-linecap': 'round'});
+    circ(svg, P(top.x + 10 * s, top.y - 10), 48, {fill: '#16a34a', opacity: .85});
+    if (s > .85){ text(svg, P(250, 290), 'the tree may be uprooted!', {class: 'lbl sm red', 'font-weight': 700}); }
+    /* house with a roof sheet */
+    rect(svg, 520, 170, 160, 90, {fill: 'var(--surface)', stroke: 'var(--text)', 'stroke-width': 1.5});
+    const lift = s > .6 ? (s - .6) / .4 : 0, ang = -lift * 35 + Math.sin(ph * 15) * lift * 4;
+    K.polygon(svg, [P(505, 172), P(600, 125), P(695, 172)], {fill: '#b45309', opacity: .25});
+    const g = K.group(svg, {transform: `rotate(${ang} 505 172) translate(${lift * 40} ${-lift * 30})`});
+    K.polygon(g, [P(505, 172), P(600, 125), P(695, 172), P(690, 178), P(600, 133), P(510, 178)], {fill: '#64748b', stroke: 'var(--text)'});
+    if (lift > 0) text(svg, P(600, 290), 'the roof sheet is lifting!', {class: 'lbl sm red', 'font-weight': 700});
+    tl(svg, 20, 24, `wind ${v} km/h = ${nf(ms, 1)} m/s`, '', {'font-weight': 700});
+    out.textContent = `Wind speed ${v} km/h = ${v} ÷ 3.6 = ${nf(ms, 1)} m/s\nKinetic energy of each cubic metre of air (≈ 1.2 kg) = ½ × 1.2 × ${nf(ms, 1)}² ≈ ${nf(E, 0)} J\n` + (v ? `Compared with a 20 km/h breeze, this is ${nf((v / 20) ** 2, 1)} times as much energy in every cubic metre.` : 'Still air: no kinetic energy, no push.');
+  }
+  K.slider('#wdV', x => { v = x; if (stop) stop(); stop = K.animate(4000, (e, t) => draw(t * 4), () => draw(0)); }, 0);
+})();
+
+/* ---------- 2. tin and block ---------- */
+(function(){
+  const svg = document.getElementById('tbSvg'), out = document.getElementById('tbOut'), bodyT = document.getElementById('tbBody');
+  const bE = document.getElementById('tbE'), bS = document.getElementById('tbS');
+  let m = 0.1, h = 10, stop = null; const rows = [];
+  const FR = 0.4 * 0.5 * G; /* friction on the 500 g block ≈ 1.96 N */
+  const TBL = 250, RX0 = 60, RX1 = 360, BX = 400; /* table top y, ramp foot x, block start x */
+  function calc(){ const hm = h / 100, v = Math.sqrt(2 * G * hm), E = m * G * hm, d = 0.5 * E / FR; return {v, E, d}; }
+  function draw(f, phase){
+    K.clear(svg); const {v, E, d} = calc(), rtop = TBL - h * 6, R = m > .2 ? 16 : 14;
+    rect(svg, 20, TBL, 760, 16, {fill: '#d97706', opacity: .6, stroke: 'var(--text)'}); ln(svg, P(40, TBL + 16), P(40, 320), '#92400e', 8); ln(svg, P(760, TBL + 16), P(760, 320), '#92400e', 8);
+    /* sloping board on a support */
+    ln(svg, P(RX0, rtop), P(RX1, TBL - 2), '#a16207', 6); rect(svg, RX0 - 4, rtop, 8, TBL - rtop, {fill: '#92400e'});
+    text(svg, P(RX0 - 12, (rtop + TBL) / 2), `${h} cm`, {class: 'lbl sm blue', 'text-anchor': 'end'});
+    /* tin position */
+    let c, rot = 0;
+    const u = K.unit(P(RX0, rtop), P(RX1, TBL)), nrm = P(u.y, -u.x);
+    if (phase === 0){ const p = K.lerpPt(P(RX0 + 20, rtop + (TBL - rtop) * 20 / (RX1 - RX0)), P(RX1, TBL), f); c = P(p.x + nrm.x * R, p.y + nrm.y * R); rot = f * 500; }
+    else { c = P(RX1 + (BX - R - RX1) * Math.min(1, phase === 1 ? f : 1) + 0, TBL - R); rot = 500 + f * 100; }
+    circ(svg, c, R, {fill: m > .2 ? '#a8a29e' : '#cbd5e1', stroke: 'var(--text)', 'stroke-width': 2});
+    for (let k = 0; k < 3; k++){ const a = K.rad(rot + k * 60); ln(svg, P(c.x - R * .8 * Math.cos(a), c.y - R * .8 * Math.sin(a)), P(c.x + R * .8 * Math.cos(a), c.y + R * .8 * Math.sin(a)), m > .2 ? '#78350f' : 'muted', 1.5); }
+    /* block */
+    const slide = phase === 2 ? d * f : 0, bx = BX + slide * 100 * 8; /* 8 px per cm */
+    rect(svg, bx, TBL - 30, 50, 30, {fill: '#fde68a', stroke: 'var(--text)', 'stroke-width': 1.5, rx: 2});
+    ln(svg, P(BX, TBL + 30), P(BX, TBL + 40), 'muted', 1.2);
+    for (let k = 0; k <= 40; k += 5){ ln(svg, P(BX + k * 8, TBL + 18), P(BX + k * 8, TBL + 26), 'muted', 1.2); text(svg, P(BX + k * 8, TBL + 38), String(k), {class: 'lbl sm muted'}); }
+    tl(svg, BX + 330, TBL + 38, 'cm', 'sm muted');
+    if (phase === 2 && slide > 0.001) arrow(svg, P(BX, TBL - 44), P(bx, TBL - 44), {c: 'green', w: 3, label: `${nf(d * 100 * f, 1)} cm`, lo: {x: 0, y: -12}});
+    tl(svg, 400, 30, `${m > .2 ? 'sand-filled tin, 500 g' : 'empty tin, 100 g'} from ${h} cm`, '', {'font-weight': 700});
+    tl(svg, 400, 58, `speed at the bottom ≈ ${nf(v, 2)} m/s`, 'sm');
+    tl(svg, 400, 82, `kinetic energy = ½mv² = mgh ≈ ${nf(E, 3)} J`, 'sm amber', {'font-weight': 700});
+  }
+  function result(){ const {v, E, d} = calc(); out.textContent = `${m > .2 ? 'Sand-filled tin (0.5 kg)' : 'Empty tin (0.1 kg)'} released from ${h} cm\nSpeed at the bottom ≈ √(2 × 9.8 × ${nf(h / 100, 2)}) = ${nf(v, 2)} m/s, kinetic energy ≈ ${nf(E, 3)} J\nThe block slid ≈ ${nf(d * 100, 1)} cm.`; return {v, E, d}; }
+  function table(){ bodyT.innerHTML = rows.map((r, k) => `<tr><td>${k + 1}</td><td>${r.m > .2 ? 'sand-filled' : 'empty'}</td><td>${r.h}</td><td>${nf(r.v, 2)}</td><td>${nf(r.E, 3)}</td><td><b>${nf(r.d * 100, 1)}</b></td></tr>`).join('') || '<tr><td colspan="6" class="muted">Release the tin to record a trial.</td></tr>';
+    if (rows.length >= 2) out.textContent += '\nInference: more mass (same height) → block goes farther; higher release (more speed) → farther still. Kinetic energy depends on mass and velocity.'; }
+  function setT(x){ m = x; bE.classList.toggle('primary', x < .2); bS.classList.toggle('primary', x > .2); if (stop){ stop(); stop = null; } draw(0, 0); result(); }
+  bE.addEventListener('click', () => setT(0.1)); bS.addEventListener('click', () => setT(0.5));
+  K.slider('#tbH', x => { h = x; if (stop){ stop(); stop = null; } draw(0, 0); result(); }, 0);
+  document.getElementById('tbGo').addEventListener('click', () => { if (stop) stop();
+    stop = K.animate(1400, (e, t) => draw(t * t, 0), () => { stop = K.animate(300, (e, t) => draw(t, 1), () => { stop = K.animate(1200, (e) => draw(e, 2), () => { draw(1, 2); const r = result(); if (rows.length < 8) rows.push({m, h, ...r}); table(); }); }); }); });
+  document.getElementById('tbClr').addEventListener('click', () => { rows.length = 0; table(); result(); });
+  draw(0, 0); result(); table();
+})();
+
+/* ---------- 3. derivation ---------- */
+(function(){
+  const rows = [
+    [0, 'W = F s', ''],
+    [1, 'F = ma  ⇒  W = (ma) s = m (as)', 'blue'],
+    [2, 'v² = u² + 2as,  u = 0  ⇒  v² = 2as', 'purple'],
+    [3, 'as = v² ÷ 2', 'purple'],
+    [4, 'W = m × v² ÷ 2 = ½ mv²', ''],
+    [5, 'E_k = ½ mv²', 'big green']
+  ];
+  new K.Stepper('#dvLab', {steps: [
+    'A trolley of mass m is at rest (u = 0). A steady force F pushes it through a distance s. Work done on it: <b>W = F s</b>.',
+    'Newton\'s second law: <b>F = ma</b> (a = acceleration). So W = (ma) s = m × (as).',
+    'Equation of motion: v² = u² + 2as. It starts from rest, u = 0, so <b>v² = 2as</b>.',
+    'Therefore <b>as = v²/2</b>.',
+    'Put this into W = m(as): <b>W = m × v²/2 = ½ mv²</b>.',
+    'All this work is now stored in the moving trolley as kinetic energy: <b>E<sub>k</sub> = ½ mv²</b> (m in kg, v in m/s → joules).'
+  ], ms: 1100, draw(svg, i, t){
+    groundLine(svg, 250, 10, 420);
+    const f = i === 0 ? t : 1, x = 40 + 260 * f * f;
+    rect(svg, x, 190, 80, 40, {fill: 'var(--blue-soft)', stroke: 'var(--blue)', 'stroke-width': 2, rx: 4}); circ(svg, P(x + 18, 238), 10, {fill: '#334155'}); circ(svg, P(x + 62, 238), 10, {fill: '#334155'});
+    text(svg, P(x + 40, 210), 'm', {class: 'lbl i'});
+    arrow(svg, P(x - 50, 210), P(x - 2, 210), {c: 'red', w: 4, label: 'F', lo: {x: -24, y: -12}});
+    ln(svg, P(40, 262), P(40, 276), 'muted', 1.5); if (f > .05){ ln(svg, P(x, 262), P(x, 276), 'muted', 1.5); arrow(svg, P(40, 270), P(x, 270), {c: 'green', w: 2.5, label: 's', lo: {x: -(x - 40) / 2, y: 16}}); }
+    text(svg, P(80, 170), 'u = 0', {class: 'lbl sm muted'}); if (f > .9) text(svg, P(x + 40, 170), 'velocity v', {class: 'lbl sm green', 'font-weight': 700});
+    lines(svg, rows, i, t, {x: 440, y: 40, lh: 44});
+  }});
+})();
+
+/* ---------- 4. Table 6.4 builder ---------- */
+(function(){
+  const svg = document.getElementById('t4Svg'), out = document.getElementById('t4Out'), bodyT = document.getElementById('t4Body');
+  const iM = document.getElementById('t4M'), iV = document.getElementById('t4V');
+  const T = [[10, 2, true], [5, 2], [10, 4], [10, 1]], done = [true, false, false, false];
+  let m = 10, v = 2, prev = null, note = '';
+  function E(mm, vv){ return 0.5 * mm * vv * vv; }
+  function draw(){
+    K.clear(svg); const Ek = E(m, v);
+    groundLine(svg, 120, 10, 380);
+    const w = 40 + m * 3;
+    rect(svg, 60, 120 - 30 - m, w, 30 + m, {fill: 'var(--blue-soft)', stroke: 'var(--blue)', 'stroke-width': 2, rx: 4}); text(svg, P(60 + w / 2, 105 - m / 2), `${m} kg`, {class: 'lbl sm'});
+    if (v > 0) arrow(svg, P(70 + w, 70), P(70 + w + 20 + v * 14, 70), {c: 'green', w: 3, label: `${nf(v, 1)} m/s`, lo: {x: 6, y: 0}, anchor: 'start'});
+    tl(svg, 20, 170, `E_k = ½ × ${m} × ${nf(v, 1)}²`, '');
+    tl(svg, 20, 200, `     = ½ × ${m} × ${nf(v * v, 2)} = ${nf(Ek, 2)} J`, 'big amber');
+    if (note) tl(svg, 20, 240, note, 'sm purple', {'font-weight': 700});
+    /* graph */
+    const GX = 450, GB = 290, GW = 320, GH = 240, maxE = 1000;
+    ln(svg, P(GX, GB), P(GX + GW, GB), 'text', 1.2); ln(svg, P(GX, GB), P(GX, GB - GH - 6), 'text', 1.2);
+    tl(svg, GX + 6, GB - GH - 14, 'E_k (J)', 'sm'); text(svg, P(GX + GW, GB + 32), 'velocity v (m/s)', {class: 'lbl sm', 'text-anchor': 'end'});
+    for (let k = 0; k <= 10; k += 2){ const xx = GX + k / 10 * GW; ln(svg, P(xx, GB), P(xx, GB + 5), 'text', 1); text(svg, P(xx, GB + 14), String(k), {class: 'lbl sm'}); }
+    for (let e = 0; e <= 1000; e += 250){ const yy = GB - e / maxE * GH; ln(svg, P(GX - 5, yy), P(GX, yy), 'text', 1); text(svg, P(GX - 8, yy), String(e), {class: 'lbl sm', 'text-anchor': 'end'}); }
+    const pts = []; for (let k = 0; k <= 50; k++){ const vv = k / 5, e = E(m, vv); if (e > maxE * 1.02) break; pts.push(P(GX + vv / 10 * GW, GB - e / maxE * GH)); }
+    K.polyline(svg, pts, {stroke: 'var(--blue)', 'stroke-width': 2.5});
+    if (Ek <= maxE){ circ(svg, P(GX + v / 10 * GW, GB - Ek / maxE * GH), 6, {fill: 'var(--red)'}); }
+    text(svg, P(GX + GW - 4, GB - GH + 4), `curve for m = ${m} kg (a parabola)`, {class: 'lbl sm blue', 'text-anchor': 'end'});
+    out.textContent = `m = ${m} kg, v = ${nf(v, 1)} m/s\nE_k = ½mv² = ½ × ${m} × ${nf(v, 1)}² = ${nf(Ek, 2)} J` + (prev ? `\nBefore: ${nf(prev, 2)} J → now ${nf(Ek, 2)} J: ${prev ? nf(Ek / prev, 3) : '–'} times` : '');
+    out.textContent = out.textContent.replace(/E_k/g, 'Ek');
+  }
+  function table(){ bodyT.innerHTML = T.map((r, k) => `<tr><td><button class="btn" data-k="${k}">▶</button></td><td>${r[0]}</td><td>${r[1]}</td><td>${done[k] ? '<b>' + nf(E(r[0], r[1]), 2) + '</b>' + (r[2] ? ' <span class="small muted">(given)</span>' : '') : '…'}</td></tr>`).join(''); }
+  bodyT.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const k = +b.dataset.k; done[k] = true; prev = null; note = `Table 6.4 row ${k + 1} filled.`; set(T[k][0], T[k][1]); table(); });
+  function set(mm, vv){ m = mm; v = vv; iM.value = m; iV.value = v; iM.parentElement.querySelector('output').textContent = m; iV.parentElement.querySelector('output').textContent = nf(v, 1); draw(); }
+  K.slider(iM, x => { m = x; prev = null; note = ''; draw(); }, 0); K.slider(iV, x => { v = x; prev = null; note = ''; draw(); }, 1);
+  document.getElementById('t4m2').addEventListener('click', () => { const p = E(m, v); if (m * 2 > 20){ note = 'mass would go above 20 kg – lower it first'; draw(); return; } note = 'mass doubled → E_k doubles'; set(m * 2, v); prev = p; draw(); });
+  document.getElementById('t4v3').addEventListener('click', () => { const p = E(m, v); if (v * 3 > 10){ note = 'velocity would go above 10 m/s – lower it first'; draw(); return; } note = 'velocity tripled → E_k × 9'; set(m, v * 3); prev = p; draw(); });
+  document.getElementById('t4vh').addEventListener('click', () => { const p = E(m, v); note = 'velocity halved → E_k ÷ 4'; set(m, v / 2); prev = p; draw(); });
+  table(); draw();
+})();
+
+/* ---------- 5a. motorcycle ---------- */
+function bike(svg, x, y, c){ circ(svg, P(x, y), 16, {fill: 'none', stroke: 'var(--text)', 'stroke-width': 4}); circ(svg, P(x + 70, y), 16, {fill: 'none', stroke: 'var(--text)', 'stroke-width': 4});
+  K.polygon(svg, [P(x + 5, y - 18), P(x + 30, y - 32), P(x + 60, y - 30), P(x + 68, y - 12), P(x + 20, y - 8)], {fill: c, stroke: 'var(--text)'});
+  person(svg, x + 35, y - 22, 50, {lean: .5, arms: [80, 70], w: 3}); circ(svg, P(x + 46, y - 69), 7, {fill: c}); }
+(function(){
+  const rows = [
+    [0, 'Given: m = 300 kg, v = 10 m/s', 'blue'],
+    [1, 'Formula: E_k = ½ mv²', 'purple'],
+    [2, '(a) E_k = ½ × 300 × 10² = 150 × 100', ''],
+    [3, '      = 15 000 J', 'big green'],
+    [4, '(b) v = 20 m/s: E_k = ½ × 300 × 20²', ''],
+    [4, '      = 150 × 400 = 60 000 J (4 times)', 'big green']
+  ];
+  new K.Stepper('#mcLab', {steps: [
+    '<b>Given:</b> mass of motorcycle + rider m = 300 kg; velocity v = 10 m/s.',
+    '<b>Formula:</b> E<sub>k</sub> = ½ mv².',
+    '<b>(a) Substitution:</b> E<sub>k</sub> = ½ × 300 × 10² = 150 × 100.',
+    '<b>Answer (a):</b> E<sub>k</sub> = <b>15 000 J</b>.',
+    '<b>(b)</b> Speed doubled: v = 20 m/s. E<sub>k</sub> = ½ × 300 × 20² = 150 × 400 = <b>60 000 J</b> – four times as much, because v is squared (2² = 4).'
+  ], ms: 1000, draw(svg, i, t){
+    groundLine(svg, 280, 10, 380); const fast = i >= 4;
+    const x = 30 + ((fast ? 2 : 1) * 120 * t) % 200; bike(svg, x, 264, fast ? 'var(--red)' : 'var(--blue)');
+    arrow(svg, P(x + 100, 230), P(x + 120 + (fast ? 60 : 30), 230), {c: 'green', w: 3, label: fast ? '20 m/s' : '10 m/s', lo: {x: 0, y: -12}});
+    ebar(svg, 60, 160, 40, 110, i >= 3 ? 15000 : 0, 60000, 'blue', '10 m/s', i >= 3 ? '15 000 J' : '');
+    ebar(svg, 150, 160, 40, 110, i >= 4 ? 60000 * t : 0, 60000, 'red', '20 m/s', i >= 4 && t > .95 ? '60 000 J' : '');
+    lines(svg, rows, i, t, {x: 400, y: 40, lh: 42});
+  }});
+})();
+
+/* ---------- 5b. shot put ---------- */
+(function(){
+  const rows = [
+    [0, 'Given: m = 6 kg, v = 12 m/s', 'blue'],
+    [1, 'Formula: E_k = ½ mv²', 'purple'],
+    [2, 'Substitution: E_k = ½ × 6 × 12²', ''],
+    [2, '                      = 3 × 144', ''],
+    [3, 'Answer: E_k = 432 J', 'big green']
+  ];
+  new K.Stepper('#spLab', {steps: [
+    '<b>Given:</b> mass of the shot m = 6 kg; velocity at release v = 12 m/s.',
+    '<b>Formula:</b> E<sub>k</sub> = ½ mv².',
+    '<b>Substitution:</b> E<sub>k</sub> = ½ × 6 × 12² = 3 × 144.',
+    '<b>Answer:</b> E<sub>k</sub> = <b>432 J</b>. (At school sports, this energy comes from the athlete\'s muscles – chemical energy from food.)'
+  ], ms: 1100, draw(svg, i, t){
+    groundLine(svg, 270, 10, 380);
+    person(svg, 80, 270, 130, {arms: [i >= 2 ? 150 : 120, 40], c: 'purple'});
+    const f = i >= 2 ? (i === 2 ? t : 1) : 0, X = 110 + 240 * f, Y = 140 - 90 * f + 160 * f * f;
+    circ(svg, P(X, Math.min(Y, 258)), 12, {fill: '#475569', stroke: 'var(--text)'});
+    if (i >= 1 && f < .3) arrow(svg, P(X + 14, Y - 6), P(X + 60, Y - 30), {c: 'green', w: 3, label: '12 m/s', lo: {x: 8, y: -4}, anchor: 'start'});
+    lines(svg, rows, i, t, {x: 400, y: 50, lh: 44});
+  }});
+})();
+
+/* ---------- 5c. falling ball ---------- */
+(function(){
+  const rows = [
+    [0, 'Given: m = 0.5 kg, E_p = 98 J, g = 9.8 m/s²', 'blue'],
+    [1, 'Formula: E_p = mgh  ⇒  h = E_p ÷ (mg)', 'purple'],
+    [2, '(a) h = 98 ÷ (0.5 × 9.8) = 98 ÷ 4.9', ''],
+    [2, '      = 20 m', 'big green'],
+    [3, '(b) falls freely: E_p → E_k', ''],
+    [4, 'Answer: (a) 20 m   (b) E_k = 98 J', 'big green']
+  ];
+  new K.Stepper('#blLab', {steps: [
+    '<b>Given:</b> m = 0.5 kg; potential energy E<sub>p</sub> = 98 J; g = 9.8 m/s².',
+    '<b>Formula:</b> E<sub>p</sub> = mgh, so h = E<sub>p</sub> ÷ (mg).',
+    '<b>(a)</b> h = 98 ÷ (0.5 × 9.8) = 98 ÷ 4.9 = <b>20 m</b>.',
+    '<b>(b)</b> As the ball falls freely, its height (and E<sub>p</sub>) decreases and its speed (and E<sub>k</sub>) increases. Watch the bars.',
+    '<b>Answer:</b> (a) 20 m; (b) just before it touches the ground E<sub>p</sub> ≈ 0, so all 98 J has become kinetic energy: <b>E<sub>k</sub> = 98 J</b> (its speed is then √(2 × 9.8 × 20) ≈ 19.8 m/s; air resistance ignored).'
+  ], ms: 1400, draw(svg, i, t){
+    const GY = 320, PX = 13; groundLine(svg, GY, 10, 380);
+    for (let k = 0; k <= 20; k += 5){ ln(svg, P(40, GY - k * PX), P(48, GY - k * PX), 'muted', 1.2); tl(svg, 52, GY - k * PX, k + ' m', 'sm muted'); }
+    const f = i < 3 ? 0 : (i === 3 ? t * t : 1), hh = 20 * (1 - f), y = GY - hh * PX - 10;
+    circ(svg, P(150, y), 10, {fill: 'var(--red)', stroke: 'var(--text)'});
+    const Ep = 0.5 * G * hh, Ek = 98 - Ep;
+    ebar(svg, 220, 286, 34, 190, Ep, 98, 'blue', 'E_p', nf(Ep, 1) + ' J');
+    ebar(svg, 290, 286, 34, 190, Ek, 98, 'green', 'E_k', nf(Ek, 1) + ' J');
+    lines(svg, rows, i, t, {x: 400, y: 40, lh: 44});
+  }});
+})();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'Kinetic energy is the energy an object has because of its…', options: ['position', 'shape', 'motion', 'temperature'], answer: 2, explain: 'Kinetic energy is energy due to motion.', hint: 'Moving air and water – what makes them able to do work?'});
+K.numq('#q2', {q: 'A 2 kg ball moves at 3 m/s. Its kinetic energy (in J)?', answer: 9, tol: 0.01, unit: 'J', explain: 'E_k = ½ × 2 × 3² = 9 J.', hint: 'Square only the velocity.'});
+K.mcq('#q3', {q: 'The velocity of a car doubles. Its kinetic energy becomes…', options: ['double', 'four times', 'half', 'unchanged'], answer: 1, explain: 'E_k ∝ v², and 2² = 4.', hint: 'Which quantity is squared in ½mv²?'});
+K.mcq('#q4', {q: 'Which step is used to get E_k = ½mv² from W = Fs?', options: ['F = mg and h = s', 'F = ma and v² = u² + 2as with u = 0', 'P = W/t', 'v = u + at with a = 0'], answer: 1, explain: 'W = mas and as = v²/2 give W = ½mv².', hint: 'Look at the derivation stepper.'});
+K.numq('#q5', {q: 'A 1000 kg car has 50 000 J of kinetic energy. What is its speed (in m/s)?', answer: 10, tol: 0.01, unit: 'm/s', explain: 'v² = 2E/m = 100 000/1000 = 100, so v = 10 m/s.', hint: 'v² = 2E_k ÷ m, then take the square root.'});
+K.mcq('#q6', {q: 'In the tin-and-block activity, the sand-filled tin pushes the block farther from the same height because…', options: ['it is slower', 'it has more mass, so more kinetic energy', 'the block becomes lighter', 'friction disappears'], answer: 1, explain: 'Same speed, more mass → more kinetic energy → more work on the block.', hint: 'What changed between the two trials?'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

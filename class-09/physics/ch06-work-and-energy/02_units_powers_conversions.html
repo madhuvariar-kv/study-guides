@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Units, Powers of Ten and Conversions – Work and Energy</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.6rem 0;background:var(--green-soft)}
+.qbox{background:var(--surface);border:1px solid var(--border);border-left:6px solid var(--accent);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+.controls select{padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;max-width:100%}
+svg .panel{fill:var(--surface2);stroke:var(--border);stroke-width:1.2}
+svg .box{fill:var(--surface);stroke:var(--border);stroke-width:1.5}
+svg .road{fill:var(--surface2);stroke:var(--muted);stroke-width:1.5}
+</style>
+</head>
+<body data-page="02_units_powers_conversions">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 6 · Prerequisite 2 of 4</span><span class="chip amber">Basics for textbook pages 107–130</span>
+<h1>Units, Powers of Ten and Conversions</h1>
+<p class="lead">Work and energy questions are full of units: joules and kilojoules, watts, kilowatts and megawatts, calories and kilocalories, horsepower, grams, minutes and km/h. Almost every mistake in this chapter's numericals is a <b>unit mistake</b>. This page shows you how to write very big numbers with powers of ten, how to change any unit into the one the formula needs, and how the joule and the watt are built from the kilogram, the metre and the second.</p>
+
+<div class="callout book"><div class="title">📖 What you need</div>
+<ul style="margin:0"><li>Multiplying and dividing by 10, 100 and 1000 (move the decimal point).</li><li>Force in newtons and W = m g (page 1).</li></ul></div>
+
+<h2>1. The three units everything is built from</h2>
+<p>In physics we use the <b>SI system</b> of units. Every quantity in this chapter can be built from just three <b>base units</b>:</p>
+<table>
+<tr><th>Quantity</th><th>SI unit</th><th>Symbol</th><th>Common other units → change to SI</th></tr>
+<tr><td>mass</td><td>kilogram</td><td>kg</td><td>gram: 1 g = 0.001 kg (÷ 1000) · tonne: 1 t = 1000 kg</td></tr>
+<tr><td>length, height, displacement</td><td>metre</td><td>m</td><td>cm: 1 cm = 0.01 m (÷ 100) · km: 1 km = 1000 m</td></tr>
+<tr><td>time</td><td>second</td><td>s</td><td>minute: 1 min = 60 s · hour: 1 h = 3600 s</td></tr>
+</table>
+<div class="callout warn"><div class="title">⚠️ Golden rule</div>
+<p>Before you put numbers into W = F s, E<sub>p</sub> = m g h, E<sub>k</sub> = ½ m v² or P = W/t, change every quantity to <b>kg, m, s, N and J</b>. Then the answer comes out in J or W automatically.</p></div>
+
+<h2>2. Powers of ten</h2>
+<p>Energy numbers get big very fast: a hammer of a pile driver has about 98 000 J; one KSEB “unit” of electricity is 3 600 000 J. Instead of writing many zeros we use <b>powers of ten</b>: 10³ means 10 × 10 × 10 = 1000 (a 1 followed by three zeros), and 10⁶ means a 1 followed by six zeros = 10,00,000 (ten lakh, or one million). A number like 3 600 000 is written <b>3.6 × 10⁶</b>: move the decimal point six places to the right.</p>
+<div class="lab">
+  <div class="lab-title">🧪 Power-of-ten machine</div>
+  <svg id="powSvg" viewBox="0 0 800 260" role="img" aria-label="A number written as a times ten to the power n, shown in full with Indian and international commas and its name"></svg>
+  <div class="controls"><label>number in front, a <input id="pA" type="range" min="1" max="9.9" step="0.1" value="3.6"><output></output></label>
+  <label>power n <input id="pN" type="range" min="0" max="9" step="1" value="6"><output></output></label></div>
+  <div class="readout" id="powOut"></div>
+  <p class="hint">Each step of n moves the decimal point one place to the right (multiplies by 10). India groups digits as lakh and crore (10,00,000); most of the world groups them in threes (1,000,000). Physics books often just leave a small space: 1 000 000.</p>
+</div>
+<div class="callout key"><div class="title">⭐ Worth remembering</div>
+<p>10³ = 1000 (one thousand) · 10⁵ = 1,00,000 (one lakh) · 10⁶ = 10,00,000 (ten lakh = one million) · 10⁷ = 1,00,00,000 (one crore).</p></div>
+
+<h2>3. Kilo and mega: bigger units</h2>
+<p>A <b>prefix</b> in front of a unit multiplies it by a power of ten. You will meet two of them all through the chapter:</p>
+<div class="eq">kilo (k) = 10³ = 1000 &nbsp;&nbsp;·&nbsp;&nbsp; mega (M) = 10⁶ = 10,00,000</div>
+<p>So 1 kJ (kilojoule) = 1000 J, 1 MJ = 10⁶ J, 1 kW (kilowatt) = 1000 W, 1 MW (megawatt) = 1000 kW = 10⁶ W, and 1 kg = 1000 g. The Idukki project's Moolamattom power house can produce about 780 MW – that is 780 000 kW, or 7.8 × 10⁸ W.</p>
+<ul><li>Going to a <b>smaller</b> unit (kJ → J): the number gets <b>bigger</b> – multiply by 1000.</li><li>Going to a <b>bigger</b> unit (J → kJ, g → kg): the number gets <b>smaller</b> – divide by 1000.</li></ul>
+<div class="lab">
+  <div class="lab-title">🧪 The prefix staircase</div>
+  <svg id="ladSvg" viewBox="0 0 800 280" role="img" aria-label="Three steps for mega, kilo and the plain unit, showing the same amount in each unit"></svg>
+  <div class="controls"><label>quantity <select id="ladQ"><option value="E" selected>energy (J, kJ, MJ)</option><option value="P">power (W, kW, MW)</option><option value="M">mass (g, kg, tonne)</option></select></label>
+  <label>value <input id="ladV" type="range" min="0.5" max="1000" step="0.5" value="2.5"><output></output></label>
+  <label>in <select id="ladU"><option value="0">smallest unit</option><option value="1" selected>middle unit</option><option value="2">biggest unit</option></select></label></div>
+  <div class="readout" id="ladOut"></div>
+  <p class="hint">Every step down the staircase multiplies by 1000; every step up divides by 1000. The amount is the same on every step – only the unit changes.</p>
+</div>
+
+<h3>Worked example 1 · Kilojoules to joules</h3>
+<div class="qbox"><p><b>Q.</b> A mixer grinder does 2.5 kJ of work in crushing a handful of rice for dosa batter. Express this in joules.</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>1 kJ = 1000 J. Going to a smaller unit, so the number gets bigger: multiply by 1000.</p></div></div>
+<div class="lab" id="we1"><div class="lab-title">🎬 Exam layout, step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Converting 2.5 kilojoules to joules"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> 2.5 kJ = 2.5 × 1000 J = <b>2500 J</b>.</div></div>
+
+<h2>4. Time and speed: minutes, hours and km/h</h2>
+<p>Power is work <b>per second</b>, so times must be in seconds: 1 min = 60 s, 1 h = 60 × 60 = 3600 s. Kinetic energy needs speeds in <b>m/s</b>, but speedometers show <b>km/h</b>:</p>
+<div class="eq">1 km/h = 1000 m ÷ 3600 s = <span class="frac"><span>5</span><span>18</span></span> m/s &nbsp;&nbsp;·&nbsp;&nbsp; km/h → m/s: × <span class="frac"><span>5</span><span>18</span></span> &nbsp;&nbsp;·&nbsp;&nbsp; m/s → km/h: × <span class="frac"><span>18</span><span>5</span></span></div>
+<div class="lab">
+  <div class="lab-title">🧪 How many metres every second?</div>
+  <svg id="spdSvg" viewBox="0 0 800 240" role="img" aria-label="A speed in kilometres per hour and a strip showing the metres covered in one second"></svg>
+  <div class="controls"><label>speed (km/h) <input id="spV" type="range" min="0" max="144" step="9" value="54"><output></output></label></div>
+  <div class="readout" id="spdOut"></div>
+  <p class="hint">The slider moves in steps of 9 km/h; each step adds exactly 2.5 m/s (9 × 5/18 = 2.5). A motorcycle at 54 km/h covers 15 m – about three autorickshaw lengths – every second.</p>
+</div>
+
+<h3>Worked example 2 · A motorcycle's speed</h3>
+<div class="qbox"><p><b>Q.</b> A motorcycle moves at 54 km/h. Express its speed in m/s.</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Multiply by 5/18. Divide 54 by 18 first – it goes exactly.</p></div></div>
+<div class="lab" id="we2"><div class="lab-title">🎬 Exam layout, step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Converting 54 kilometres per hour to metres per second"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> 54 × 5/18 = 3 × 5 = <b>15 m/s</b>.</div></div>
+
+<h2>5. Food energy: calories and joules</h2>
+<p>The SI unit of energy is the <b>joule</b> (<span class="ml">ജൂൾ</span>), but food packets and diet charts use the <b>calorie</b> (<span class="ml">കലോറി</span>) and the <b>kilocalorie</b> (<span class="ml">കിലോകലോറി</span>). Your textbook uses these values:</p>
+<div class="eq">1 cal = 4.2 J &nbsp;&nbsp;·&nbsp;&nbsp; 1 kcal = 1000 cal = 4200 J</div>
+<p>To change calories into joules, multiply by 4.2; to change joules into calories, divide by 4.2. (A more exact value is 4.186 J, but use 4.2 J in the exam.) When a food label says “Energy 90 kcal”, it means 90 kilocalories.</p>
+<div class="lab">
+  <div class="lab-title">🧪 What is your snack worth in joules?</div>
+  <svg id="foodSvg" viewBox="0 0 800 300" role="img" aria-label="A chain of boxes changing kilocalories to calories, joules and kilojoules, and how high that energy could lift a 40 kilogram student"></svg>
+  <div class="controls"><label>food energy (kcal) <input id="fdK" type="range" min="10" max="300" step="10" value="90"><output></output></label></div>
+  <div class="readout" id="foodOut"></div>
+  <p class="hint">Typical values (approx.): one idli ≈ 40 kcal, a banana ≈ 90 kcal, a cup of cooked rice ≈ 200 kcal. The last line uses the work against gravity, m g h (page 6): if <i>all</i> of that energy could lift a 40 kg student, how high would she go? (Real muscles turn only about a quarter of food energy into work – the rest becomes body heat.)</p>
+</div>
+
+<h2>6. Power units: watt, kilowatt, megawatt and horsepower</h2>
+<p><b>Power</b> (<span class="ml">പവർ</span>) is measured in <b>watts</b> (<span class="ml">വാട്ട്</span>, W): 1 W = 1 joule every second. Bigger units are the kilowatt (1 kW = 1000 W) and the megawatt (1 MW = 10⁶ W). Water pumps, motors and vehicles are often rated in <b>horsepower</b> (<span class="ml">കുതിരശക്തി</span>, HP). Your textbook uses</p>
+<div class="eq">1 HP = 746 W</div>
+<div class="lab">
+  <div class="lab-title">🧪 Horsepower ↔ watt</div>
+  <svg id="hpSvg" viewBox="0 0 800 215" role="img" aria-label="A scale in watts with one tick every 746 watts, and a pointer at the chosen horsepower"></svg>
+  <div class="controls"><label>motor rating (HP) <input id="hpV" type="range" min="0" max="10" step="0.5" value="1"><output></output></label></div>
+  <div class="readout" id="hpOut"></div>
+  <p class="hint">A “1 HP” pump that fills an overhead tank in a Kerala home uses 746 W. Every red tick on the watt scale is one more horsepower.</p>
+</div>
+
+<h3>Worked example 3 · A pump motor</h3>
+<div class="qbox"><p><b>Q.</b> The motor of a well pump is rated 2 HP. Express its power in watts and in kilowatts. (1 HP = 746 W)</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Multiply by 746 to get watts. Then divide by 1000 to get kilowatts.</p></div></div>
+<div class="lab" id="we3"><div class="lab-title">🎬 Exam layout, step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Converting 2 horsepower to watts and kilowatts"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> 2 HP = 2 × 746 W = <b>1492 W</b> = 1492 ÷ 1000 = <b>1.492 kW</b>.</div></div>
+
+<h2>7. How the joule and the watt are built</h2>
+<p>The newton, the joule and the watt are <b>derived units</b>: each one is made from kg, m and s through a formula. Step through the chain – it is exactly what the textbook's “Let us assess” question 3 asks.</p>
+<div class="lab" id="unitLab"><div class="lab-title">🎬 From kg, m and s to the watt</div><svg viewBox="0 0 800 300" role="img" aria-label="Building the newton, joule and watt from kilogram, metre and second"></svg></div>
+<div class="callout key"><div class="title">⭐ Units of the chapter</div>
+<p><b>Newton</b>: 1 N = 1 kg m/s². <b>Joule</b> (work and energy): 1 J = 1 N m = 1 kg m²/s². <b>Watt</b> (power): 1 W = 1 J/s = 1 kg m²/s³. And the electricity “unit” on a KSEB bill is 1 kWh = 1000 W × 3600 s = 3.6 × 10⁶ J.</p></div>
+
+<h2>8. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div>
+<p>Next: <a href="03_squares_and_ratios.html">Squares, ratios and rearranging formulas ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Work and Energy · Class 9 Physics", "icon": "⚡", "key": "physics_ch6_progress", "pages": [["index.html", "Home"], ["01_force_displacement_recap.html", "1 · Force, Displacement & Weight Recap"], ["02_units_powers_conversions.html", "2 · Units, Powers of Ten & Conversions"], ["03_squares_and_ratios.html", "3 · Squares, Ratios & Rearranging Formulas"], ["04_forms_of_energy.html", "4 · Forms of Energy Around Us"], ["05_work.html", "5 · Work and How to Measure It"], ["06_work_against_gravity_negative.html", "6 · Work Against Gravity & Negative Work"], ["07_energy_mechanical_potential.html", "7 · Energy, Mechanical & Potential Energy"], ["08_kinetic_energy.html", "8 · Kinetic Energy"], ["09_transformation_conservation.html", "9 · Energy Transformation & Conservation"], ["10_sun_hydroelectric_power.html", "10 · The Sun, Hydroelectric Power & Power"], ["11_intext_numericals_solutions.html", "11 · In-text Questions – Solutions"], ["12_assess_q1_q8_solutions.html", "12 · Let Us Assess Q1–8 – Solutions"], ["13_assess_q9_q15_solutions.html", "13 · Let Us Assess Q9–15 & Extended Activities"], ["14_applications_explore.html", "14 · Applications & Explore Online"], ["15_summary_revision.html", "15 · Summary & Quick Quiz"], ["16_model_test_paper.html", "16 · Model Test Paper"], ["17_model_test_solutions.html", "17 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+const {P, text} = K;
+const sline = (svg, a, b, attrs={}) => K.el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+const f = (v, d=2) => K.num(K.fmt(v, d));
+const L = (svg, x, y, s, cls='lbl', extra={}) => text(svg, P(x, y), s, {class: cls, 'text-anchor': 'start', ...extra});
+function arrow(svg, a, b, c='var(--red)', w=3.2){
+  const g = K.group(svg); const len = K.dist(a, b); if (len < 3) return g;
+  const u = K.unit(a, b), n = P(-u.y, u.x), hs = Math.min(9, len * .45), base = P(b.x - u.x * hs * 1.5, b.y - u.y * hs * 1.5);
+  sline(g, a, base, {stroke: c, 'stroke-width': w});
+  K.el('polygon', {points: `${b.x},${b.y} ${base.x + n.x * hs * .8},${base.y + n.y * hs * .8} ${base.x - n.x * hs * .8},${base.y - n.y * hs * .8}`, fill: c}, g);
+  return g; }
+function examStepper(sel, rows, fig, x0=380, dy=62){
+  new K.Stepper(sel, {steps: rows.map(r => r.html), draw(svg, i, t){
+    fig(svg, i, t);
+    rows.forEach((r, k) => { if (k > i) return; const o = k === i ? t : 1, y = 30 + k * dy;
+      L(svg, x0, y, r.h, 'lbl sm muted', {opacity: o});
+      L(svg, x0, y + 22, r.s, k === rows.length - 1 ? 'lbl big green' : 'lbl', {opacity: o}); });
+  }});
+}
+/* number with thin-space thousands: 1500000 → "1 500 000"; decimals kept */
+function sp(v){ if (!isFinite(v)) return '—'; const neg = v < 0; v = Math.abs(v);
+  let s = v >= 1e-3 || v === 0 ? (+v.toPrecision(10)).toString() : null;
+  if (s === null || s.includes('e')){ const e = Math.floor(Math.log10(v)); return `${(neg ? '−' : '')}${K.fmt(v / Math.pow(10, e), 3)} × 10${K.supStr(e).replace('-', '⁻')}`; }
+  const [ip, dp] = s.split('.'); const g = ip.replace(/\B(?=(\d{3})+(?!\d))/g, ' '); return (neg ? '−' : '') + g + (dp ? '.' + dp : ''); }
+function indian(intStr){ if (intStr.length <= 3) return intStr; const last = intStr.slice(-3), rest = intStr.slice(0, -3); return rest.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + ',' + last; }
+function intl(intStr){ return intStr.replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+const supN = n => K.supStr(n).replace('-', '⁻');
+
+/* ---- 1. powers of ten ---- */
+(function(){ const svg = document.getElementById('powSvg'), out = document.getElementById('powOut'); let A = 3.6, N = 6;
+  const NAMES = ['one', 'ten', 'hundred', 'thousand', 'ten thousand', 'one lakh', 'ten lakh (one million)', 'one crore', 'ten crore', 'hundred crore (one billion)'];
+  const PREF = {3: 'kilo (k)', 6: 'mega (M)', 9: 'giga (G)'};
+  const draw = () => { K.clear(svg); const a10 = Math.round(A * 10);
+    let full; if (N === 0) full = K.fmt(a10 / 10, 1); else { full = String(a10) + '0'.repeat(N - 1); }
+    const isInt = N >= 1, intStr = isInt ? full : null;
+    text(svg, P(400, 40), `${K.fmt(A, 1)} × 10${supN(N)}`, {class: 'lbl', 'font-size': '30px', 'font-weight': 700});
+    /* digit boxes */
+    const digits = isInt ? intStr.split('') : full.split(''), bw = 30, x0 = 400 - digits.length * bw / 2;
+    digits.forEach((d, k) => { K.el('rect', {x: x0 + k * bw, y: 70, width: bw - 4, height: 40, rx: 5, class: d === '0' && k > 1 ? 'fill-surface' : 'fill-amber', stroke: 'var(--border)'}, svg); text(svg, P(x0 + k * bw + (bw - 4) / 2, 90), d, {class: 'lbl', 'font-size': '20px'}); });
+    if (isInt){
+      L(svg, 60, 150, `Indian commas: ${indian(intStr)}`, 'lbl purple', {'font-weight': 700});
+      L(svg, 60, 185, `international commas: ${intl(intStr)}`, 'lbl blue');
+      L(svg, 60, 220, `10${supN(N)} = 1 followed by ${N} zero${N === 1 ? '' : 's'} = ${NAMES[N]}`, 'lbl sm');
+      if (PREF[N]) L(svg, 60, 245, `prefix for 10${supN(N)}: ${PREF[N]}`, 'lbl sm green', {'font-weight': 700});
+    } else { L(svg, 60, 160, `10⁰ = 1, so ${K.fmt(A, 1)} × 10⁰ = ${K.fmt(A, 1)}`, 'lbl'); }
+    out.textContent = `${K.fmt(A, 1)} × 10${supN(N)} = ` + (isInt ? `${indian(intStr)} (Indian) = ${intl(intStr)} (international)` : K.fmt(A, 1)) + `.  Moving the decimal point ${N} place${N === 1 ? '' : 's'} to the right.`; };
+  K.slider('#pA', v => { A = v; draw(); }, 1); K.slider('#pN', v => { N = v; draw(); }, 0); })();
+
+/* ---- 2. prefix staircase ---- */
+(function(){ const svg = document.getElementById('ladSvg'), out = document.getElementById('ladOut'), q = document.getElementById('ladQ'), u = document.getElementById('ladU'); let V = 2.5;
+  const UN = {E: ['J', 'kJ', 'MJ'], P: ['W', 'kW', 'MW'], M: ['g', 'kg', 'tonne']};
+  const draw = () => { K.clear(svg); const units = UN[q.value], k = +u.value, base = V * Math.pow(1000, k);
+    const vals = [base, base / 1000, base / 1e6];
+    /* steps: biggest unit at the top-left */
+    for (let s = 2; s >= 0; s--){ const row = 2 - s, x = 40 + row * 120, y = 30 + row * 75, w = 300;
+      K.el('rect', {x, y, width: w, height: 54, rx: 8, class: s === k ? 'fill-amber' : 'box', stroke: s === k ? 'var(--accent)' : 'var(--border)', 'stroke-width': 1.5}, svg);
+      text(svg, P(x + w / 2, y + 27), `${sp(vals[s])} ${units[s]}`, {class: 'lbl', 'font-size': '19px', 'font-weight': 700});
+      if (s > 0){ arrow(svg, P(620, y + 27), P(620, y + 102), 'var(--red)', 2.4); text(svg, P(628, y + 64), '× 1000', {class: 'lbl sm red', 'text-anchor': 'start'});
+        arrow(svg, P(700, y + 102), P(700, y + 27), 'var(--green)', 2.4); text(svg, P(708, y + 64), '÷ 1000', {class: 'lbl sm green', 'text-anchor': 'start'}); } }
+    text(svg, P(160, 262), 'bigger unit → smaller number', {class: 'lbl sm muted'});
+    text(svg, P(600, 262), 'down a step: × 1000 · up a step: ÷ 1000', {class: 'lbl sm muted'});
+    out.textContent = `${sp(V)} ${units[k]} = ${sp(vals[0])} ${units[0]} = ${sp(vals[1])} ${units[1]} = ${sp(vals[2])} ${units[2]}.`; };
+  q.addEventListener('change', draw); u.addEventListener('change', draw); K.slider('#ladV', v => { V = v; draw(); }, 1); })();
+
+examStepper('#we1', [
+  {h: 'Given', s: 'work = 2.5 kJ', html: '<b>Given:</b> work = 2.5 kJ. To find: the work in joules.'},
+  {h: 'Formula (unit fact)', s: '1 kJ = 1000 J', html: '<b>Formula:</b> 1 kJ = 1000 J, so J = kJ × 1000.'},
+  {h: 'Substitution', s: '2.5 kJ = 2.5 × 1000 J', html: '<b>Substitution:</b> 2.5 × 1000.'},
+  {h: 'Answer', s: '= 2500 J', html: '<b>Answer:</b> 2.5 kJ = <b>2500 J</b>.'}
+], (svg, i, t) => { K.el('rect', {x: 40, y: 60, width: 260, height: 60, rx: 8, class: 'fill-amber', stroke: 'var(--accent)'}, svg); text(svg, P(170, 90), '2.5 kJ', {class: 'lbl big'});
+  if (i >= 1){ const e = i === 1 ? t : 1; arrow(svg, P(170, 125), P(170, 125 + 60 * e), 'var(--red)'); text(svg, P(182, 158), '× 1000', {class: 'lbl sm red', 'text-anchor': 'start', opacity: e}); }
+  if (i >= 2){ K.el('rect', {x: 40, y: 195, width: 260, height: 60, rx: 8, class: 'box'}, svg); text(svg, P(170, 225), i >= 3 ? '2500 J' : '? J', {class: 'lbl big green'}); }
+});
+
+/* ---- 3. km/h → m/s ---- */
+(function(){ const svg = document.getElementById('spdSvg'), out = document.getElementById('spdOut'); let V = 54;
+  const draw = () => { K.clear(svg); const ms = V * 5 / 18, X0 = 40, S = 18;
+    K.el('rect', {x: 20, y: 120, width: 760, height: 40, class: 'road'}, svg);
+    for (let m = 0; m <= 40; m++){ const x = X0 + m * S; if (x > 770) break; sline(svg, P(x, 160), P(x, m % 5 ? 166 : 172), {stroke: 'var(--muted)', 'stroke-width': 1}); if (m % 5 === 0) text(svg, P(x, 186), `${m} m`, {class: 'lbl sm muted'}); }
+    const x1 = X0 + Math.min(40, ms) * S;
+    K.el('rect', {x: X0, y: 128, width: x1 - X0, height: 24, rx: 4, class: 'fill-blue', stroke: 'var(--blue)'}, svg);
+    /* motorcycle-ish marker */
+    K.el('circle', {cx: x1, cy: 140, r: 9, fill: 'var(--red)', stroke: 'var(--text)', 'stroke-width': 1.2}, svg);
+    text(svg, P(400, 40), `${V} km/h × 5/18 = ${f(ms, 1)} m/s`, {class: 'lbl', 'font-size': '24px', 'font-weight': 700});
+    text(svg, P(400, 80), `in 1 second it covers ${f(ms, 1)} m (blue strip)`, {class: 'lbl blue'});
+    text(svg, P(400, 220), `back again: ${f(ms, 1)} m/s × 18/5 = ${V} km/h`, {class: 'lbl sm muted'});
+    out.textContent = `${V} km/h = ${V} × 1000 m ÷ 3600 s = ${V} × 5/18 m/s = ${f(ms, 2)} m/s.`; };
+  K.slider('#spV', v => { V = v; draw(); }, 0); })();
+
+examStepper('#we2', [
+  {h: 'Given', s: 'speed = 54 km/h', html: '<b>Given:</b> speed = 54 km/h. To find: speed in m/s.'},
+  {h: 'Formula (unit fact)', s: '1 km/h = 5/18 m/s', html: '<b>Formula:</b> 1 km/h = 1000 m ÷ 3600 s = 5/18 m/s, so m/s = km/h × 5/18.'},
+  {h: 'Substitution', s: '54 × 5/18 = 3 × 5', html: '<b>Substitution:</b> 54 × 5/18; 54 ÷ 18 = 3, so 3 × 5.'},
+  {h: 'Answer', s: '= 15 m/s', html: '<b>Answer:</b> 54 km/h = <b>15 m/s</b>.'}
+], (svg, i, t) => { K.el('rect', {x: 20, y: 160, width: 330, height: 30, class: 'road'}, svg);
+  const e = i >= 2 ? (i === 2 ? t : 1) : 0; K.el('rect', {x: 30, y: 166, width: 300 * e, height: 18, rx: 3, class: 'fill-blue'}, svg);
+  text(svg, P(180, 120), '1 hour → 54 km = 54 000 m', {class: 'lbl sm'}); text(svg, P(180, 145), '1 second → ? m', {class: 'lbl sm'});
+  if (i >= 3) text(svg, P(180, 220), '15 m every second', {class: 'lbl big blue', opacity: t});
+});
+
+/* ---- 4. food energy ---- */
+(function(){ const svg = document.getElementById('foodSvg'), out = document.getElementById('foodOut'); let KC = 90;
+  const draw = () => { K.clear(svg); const cal = KC * 1000, J = cal * 4.2, kJ = J / 1000, h = J / (40 * 9.8), dams = h / 169;
+    const boxes = [[`${KC} kcal`, 'var(--accent)'], [`${sp(cal)} cal`, 'var(--purple)'], [`${sp(J)} J`, 'var(--red)'], [`${sp(kJ)} kJ`, 'var(--blue)']];
+    const ops = ['× 1000', '× 4.2', '÷ 1000'];
+    boxes.forEach((b, k) => { const x = 20 + k * 196; K.el('rect', {x, y: 30, width: 150, height: 54, rx: 8, class: 'box', stroke: b[1], 'stroke-width': 2}, svg); text(svg, P(x + 75, 57), b[0], {class: 'lbl', 'font-weight': 700, style: `fill:${b[1]}`});
+      if (k < 3){ arrow(svg, P(x + 152, 57), P(x + 194, 57), 'var(--muted)', 2); text(svg, P(x + 173, 100), ops[k], {class: 'lbl sm muted'}); } });
+    /* lift a student */
+    text(svg, P(400, 140), `could lift a 40 kg student: h = E ÷ (m g) = ${sp(J)} ÷ (40 × 9.8) ≈ ${sp(Math.round(h))} m`, {class: 'lbl sm', 'font-weight': 700});
+    const n = Math.min(18, Math.floor(dams)), frac = dams - Math.floor(dams);
+    for (let k = 0; k < n; k++){ const x = 30 + k * 40; K.el('path', {d: `M${x},270 L${x + 6},200 L${x + 22},200 L${x + 34},270 Z`, class: 'fill-surface', stroke: 'var(--muted)'}, svg); }
+    if (n < 18 && frac > 0.05){ const x = 30 + n * 40, hh = 70 * frac; K.el('path', {d: `M${x},270 L${x + 6 * frac},${270 - hh} L${x + 22 + 12 * (1 - frac)},${270 - hh} L${x + 34},270 Z`, class: 'fill-surface', stroke: 'var(--muted)', 'stroke-dasharray': '3 3'}, svg); }
+    text(svg, P(400, 170), `≈ ${f(dams, 1)} times the height of the Idukki arch dam (about 169 m)` + (dams > 18 ? ' (only 18 drawn)' : ''), {class: 'lbl sm muted'});
+    out.textContent = `${KC} kcal = ${sp(cal)} cal = ${sp(cal)} × 4.2 J = ${sp(J)} J = ${sp(kJ)} kJ.  Work against gravity m g h = ${sp(J)} J would raise 40 kg by h = ${sp(J)} ÷ 392 ≈ ${sp(Math.round(h))} m.`; };
+  K.slider('#fdK', v => { KC = v; draw(); }, 0); })();
+
+/* ---- 5. HP ↔ W ---- */
+(function(){ const svg = document.getElementById('hpSvg'), out = document.getElementById('hpOut'); let H = 1;
+  const draw = () => { K.clear(svg); const W = H * 746, X0 = 40, X1 = 760, Wmax = 7460, T = w => X0 + (X1 - X0) * w / Wmax, Y = 95;
+    sline(svg, P(X0, Y), P(X1, Y), {stroke: 'var(--blue)', 'stroke-width': 2});
+    for (let w = 0; w <= 7000; w += 1000){ sline(svg, P(T(w), Y), P(T(w), Y + 12), {stroke: 'var(--blue)', 'stroke-width': 1.4}); text(svg, P(T(w), Y + 28), `${w}`, {class: 'lbl sm blue'}); }
+    text(svg, P(X1, Y + 52), 'watts (W)', {class: 'lbl sm blue', 'text-anchor': 'end'});
+    for (let h = 0; h <= 10; h++){ sline(svg, P(T(h * 746), Y), P(T(h * 746), Y - 12), {stroke: 'var(--red)', 'stroke-width': 1.4}); text(svg, P(T(h * 746), Y - 24), `${h}`, {class: 'lbl sm red'}); }
+    text(svg, P(X0, Y - 50), 'horsepower (HP)', {class: 'lbl sm red', 'text-anchor': 'start'});
+    K.el('rect', {x: X0, y: Y - 6, width: T(W) - X0, height: 12, fill: 'var(--accent)', opacity: .5}, svg);
+    K.el('circle', {cx: T(W), cy: Y, r: 7, fill: 'var(--accent)', stroke: 'var(--text)'}, svg);
+    text(svg, P(400, 185), `${f(H, 1)} HP = ${f(H, 1)} × 746 = ${sp(W)} W = ${f(W / 1000, 3)} kW`, {class: 'lbl big'});
+    out.textContent = `${f(H, 1)} HP × 746 = ${sp(W)} W;  ${sp(W)} W ÷ 1000 = ${f(W / 1000, 3)} kW.  Back again: ${sp(W)} W ÷ 746 = ${f(H, 1)} HP.`; };
+  K.slider('#hpV', v => { H = v; draw(); }, 1); })();
+
+examStepper('#we3', [
+  {h: 'Given', s: 'P = 2 HP,  1 HP = 746 W', html: '<b>Given:</b> power = 2 HP; 1 HP = 746 W. To find: power in W and kW.'},
+  {h: 'Formula (unit facts)', s: 'W = HP × 746;  kW = W ÷ 1000', html: '<b>Formula:</b> watts = HP × 746; kilowatts = watts ÷ 1000.'},
+  {h: 'Substitution', s: '2 × 746 = 1492;  1492 ÷ 1000', html: '<b>Substitution:</b> 2 × 746 = 1492 W; 1492 ÷ 1000.'},
+  {h: 'Answer', s: '1492 W = 1.492 kW', html: '<b>Answer:</b> <b>1492 W</b> = <b>1.492 kW</b> (about 1.5 kW).'}
+], (svg, i, t) => { /* motor */
+  K.el('rect', {x: 70, y: 120, width: 140, height: 80, rx: 14, class: 'fill-blue', stroke: 'var(--blue)', 'stroke-width': 2}, svg);
+  for (let k = 0; k < 5; k++) sline(svg, P(90 + k * 25, 128), P(90 + k * 25, 192), {stroke: 'var(--blue)', 'stroke-width': 1.2});
+  K.el('rect', {x: 210, y: 150, width: 50, height: 20, class: 'fill-surface', stroke: 'var(--text)'}, svg);
+  K.el('rect', {x: 60, y: 200, width: 160, height: 12, class: 'fill-surface', stroke: 'var(--text)'}, svg);
+  text(svg, P(140, 100), 'motor: 2 HP', {class: 'lbl', 'font-weight': 700});
+  if (i >= 2) text(svg, P(140, 245), '2 × 746 W', {class: 'lbl sm red', opacity: i === 2 ? t : 1});
+  if (i >= 3) text(svg, P(140, 272), '= 1492 W', {class: 'lbl green', 'font-weight': 700, opacity: t});
+});
+
+/* ---- 6. unit builder ---- */
+new K.Stepper('#unitLab', {steps: [
+  '<b>Start with the base units:</b> kilogram (kg) for mass, metre (m) for length and second (s) for time.',
+  '<b>Newton.</b> F = m × a, and acceleration is in m/s². So 1 N = 1 kg × 1 m/s² = <b>1 kg m/s²</b>.',
+  '<b>Joule.</b> Work W = F × s. So 1 J = 1 N × 1 m = <b>1 N m</b> (newton metre, <span class="ml">ന്യൂട്ടൺ മീറ്റർ</span>).',
+  '<b>Joule in base units:</b> 1 N m = (kg m/s²) × m = <b>kg m²/s²</b>. Energy has the same unit, because energy is the capacity to do work.',
+  '<b>Watt.</b> Power P = W ÷ t. So 1 W = 1 J ÷ 1 s = <b>1 J/s</b>.',
+  '<b>Watt in base units:</b> (kg m²/s²) ÷ s = <b>kg m²/s³</b>. This is the answer to “Let us assess” Q3.',
+  '<b>Bonus – the KSEB unit.</b> 1 kWh is the energy used by a 1 kW appliance in 1 hour: 1000 W × 3600 s = 3 600 000 J = <b>3.6 × 10⁶ J</b>.'
+], draw(svg, i, t){
+  const rows = [
+    ['base units', 'kg · m · s', 'var(--text)'],
+    ['newton', '1 N = 1 kg × 1 m/s² = 1 kg m/s²', 'var(--purple)'],
+    ['joule', '1 J = 1 N × 1 m = 1 N m', 'var(--red)'],
+    ['', '= (kg m/s²) × m = kg m²/s²', 'var(--red)'],
+    ['watt', '1 W = 1 J ÷ 1 s = 1 J/s', 'var(--blue)'],
+    ['', '= (kg m²/s²) ÷ s = kg m²/s³', 'var(--blue)'],
+    ['1 kWh', '= 1000 W × 3600 s = 3.6 × 10⁶ J', 'var(--accent)']];
+  rows.forEach((r, k) => { if (k > i) return; const o = k === i ? t : 1, y = 28 + k * 40;
+    if (r[0]) text(svg, P(150, y), r[0], {class: 'lbl', 'text-anchor': 'end', 'font-weight': 700, opacity: o, style: `fill:${r[2]}`});
+    text(svg, P(175, y), r[1], {class: 'lbl', 'text-anchor': 'start', 'font-size': '19px', opacity: o, style: `fill:${r[2]}`}); });
+}});
+
+/* ---- quiz ---- */
+K.numq('#q1', {q: 'Express 3.5 kJ in joules.', answer: 3500, tol: 0.01, unit: 'J', explain: '3.5 × 1000 = 3500 J.', hint: 'kJ → J: multiply by 1000.'});
+K.mcq('#q2', {q: '10⁶ W is the same as', options: ['1 kW', '1 MW', '100 kW', '10 kW'], answer: 1, explain: 'Mega = 10⁶, so 10⁶ W = 1 MW (= 1000 kW).', hint: 'Which prefix means 10⁶?'});
+K.numq('#q3', {q: 'A bus moves at 72 km/h. What is its speed in m/s?', answer: 20, tol: 0.01, unit: 'm/s', explain: '72 × 5/18 = 4 × 5 = 20 m/s.', hint: 'Multiply by 5/18.'});
+K.numq('#q4', {q: 'A biscuit gives 2 kcal of energy. How many joules is that? (1 kcal = 4200 J)', answer: 8400, tol: 0.01, unit: 'J', explain: '2 × 4200 = 8400 J.', hint: '1 kcal = 4200 J.'});
+K.numq('#q5', {q: 'A motor is rated 3 HP. What is its power in watts? (1 HP = 746 W)', answer: 2238, tol: 0.01, unit: 'W', explain: '3 × 746 = 2238 W.', hint: 'Multiply by 746.'});
+K.mcq('#q6', {q: 'The unit of power, written in kg, m and s, is', options: ['kg m/s²', 'kg m²/s²', 'kg m²/s³', 'kg m/s'], answer: 2, explain: 'W = J/s = (kg m²/s²) ÷ s = kg m²/s³. (kg m/s² is the newton; kg m²/s² is the joule.)', hint: 'Start from 1 J = 1 kg m²/s² and divide by a second.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>
