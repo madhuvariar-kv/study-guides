@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Buoyant Force – How to Measure It</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.qa{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.6rem 1rem;margin:.7rem 0;box-shadow:var(--shadow)}
+.qa p{margin:.25em 0}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.bubbles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.7rem;margin:.8rem 0}
+.bubble{background:var(--surface);border:2px solid var(--purple);border-radius:18px;padding:.6rem .9rem;font-size:.95rem}
+.bubble .ml{display:block;font-weight:600;margin-bottom:.2rem}
+.obs td,.obs th{text-align:center}
+.diary{background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:1rem 0}
+.diary h3{margin:.1rem 0 .4rem;color:var(--accent-ink)}
+.tag{display:inline-block;font-size:.78rem;font-weight:700;padding:.05rem .45rem;border-radius:6px;background:var(--surface2);color:var(--muted);margin-left:.3rem}
+</style>
+</head>
+<body data-page="05_buoyant_force">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 5 · Section 1</span><span class="chip amber">Textbook pages 95–97</span>
+<h1>Buoyant Force <span class="ml">പ്ലവക്ഷമബലം</span></h1>
+<p class="lead">An iron nail sinks, yet a steel ship weighing thousands of tonnes floats. An empty bottle shoots back up when you push it under water. A bucket feels light while it is under water and suddenly heavy when it comes out. One hidden upward push explains all of these – and on this page you learn to <b>see it, feel it and measure it</b> with a spring balance.</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 1–4 of this guide)</div>
+<ul style="margin:0">
+<li>Weight W = mg, with g = 9.8 m/s². A 100 g mass weighs 0.1 × 9.8 = 0.98 N. Also 1 kgwt = 9.8 N.</li>
+<li>A spring balance (<span class="ml">സ്പ്രിങ് ബാലൻസ്</span>) shows the pull on its hook in newtons.</li>
+<li>Forces are drawn as arrows; when the upward and downward forces are equal, the object stays still.</li>
+<li>Page 4: water pushes harder on the deeper bottom face of an object than on its top face – that is where the upward push comes from.</li>
+</ul></div>
+
+<h2>1. A ship floats, a nail sinks</h2>
+<p>The chapter opens with India's aircraft carrier <b>INS Vikrant</b> on the sea, with Kochi's Chinese fishing nets on the shore. A boy wonders:</p>
+<div class="bubbles">
+<div class="bubble"><span class="ml">വളരെ കുറഞ്ഞ ഭാരമുള്ള ഇരുമ്പാണി പോലും ജലത്തിൽ മുങ്ങി പോകുന്നു. എന്നാൽ ടൺ കണക്കിന് ഭാരമുള്ള കപ്പൽ എങ്ങനെയാണ് സമുദ്രജലത്തിൽ പൊങ്ങിക്കിടക്കുന്നത്?</span>Even a very light iron nail sinks in water. So how does a ship weighing thousands of tonnes float on the sea?</div>
+</div>
+<div class="lab">
+  <div class="lab-title">🎬 Nail and ship – both made of iron and steel</div>
+  <svg id="openSvg" viewBox="0 0 800 300" role="img" aria-label="A large ship floats on the sea while a small iron nail dropped beside it sinks to the sea bed"></svg>
+  <div class="controls"><button class="btn primary" id="openGo">▶ Drop the nail</button><button class="btn" id="openReset">⟲ Reset</button></div>
+  <p class="hint">Hold on to this puzzle. You will solve it completely on page 8 (principle of floatation). The first clue is right here: water pushes <b>up</b> on everything put into it.</p>
+</div>
+<div class="callout real"><div class="title">🌴 Kerala connection – INS Vikrant, built at Cochin Shipyard</div>
+<p>INS Vikrant, India's first home-built aircraft carrier, was built at <b>Cochin Shipyard</b> in Kochi and joined the Navy in 2022. It is about 262 m long and, fully loaded, has a mass of <b>about 43 000 tonnes</b> – that is about 43 000 × 1000 × 9.8 ≈ 4.2 × 10<sup>8</sup> N of weight. Yet it floats. By the end of page 8 you will be able to explain exactly how.</p></div>
+
+<h2>2. Activity – an empty bottle in a bucket (Fig 5.1)</h2>
+<p>Take a transparent bucket about three-quarters (¾) full of water. Put an empty plastic bottle with its cap closed on the water surface (<span class="ml">ജലോപരിതലം</span>). Now try to push it down into the water with your hand. Share what you feel with your friends.</p>
+<div class="safety">⚠ Never lean over a well or play near deep water; do water experiments in a bucket or tub, with an adult nearby.</div>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: push the bottle down, then let go</div>
+  <svg id="botSvg" viewBox="0 0 800 360" role="img" aria-label="A capped empty bottle in a bucket of water; arrows show its weight and the upward push of the water"></svg>
+  <div class="controls"><label>push the bottle down <input id="botS" type="range" min="0" max="145" step="1" value="0"><output></output> %</label>
+  <button class="btn primary" id="botGo">✋ Let go</button></div>
+  <div class="readout" id="botOut"></div>
+  <p class="hint">Sample bottle: 1 litre (1000 cm³), mass 25 g (approx.). Up to 100 % the slider says how much of the bottle is under water; beyond 100 % you push the whole bottle deeper. Watch the blue arrow: it grows while more of the bottle goes under, then <b>stops growing</b> once the bottle is completely under water.</p>
+</div>
+<div class="qa"><p><b>Textbook questions (page 95)</b> – think first, then check.</p>
+<ol style="margin:.3rem 0">
+<li><span class="ml">ഈ കുപ്പി ജലത്തിൽ പൂർണ്ണമായി താഴ്ത്തിയ ശേഷം കുപ്പിയിൽ നിന്ന് കൈ എടുക്കുക. എന്ത് നിരീക്ഷിക്കുന്നു?</span> Push the bottle fully under, then take your hand away. What do you observe?</li>
+<li><span class="ml">പ്ലാസ്റ്റിക് കുപ്പി ജലോപരിതലത്തിലേക്ക് ഉയർന്നുവരാനുള്ള കാരണം എന്തായിരിക്കും?</span> Why does the bottle come up to the surface?</li>
+<li><span class="ml">ഭൂഗുരുത്വാകർഷണ ബലം ഈ കുപ്പിയിൽ അനുഭവപ്പെടുന്നുണ്ടോ? ഉണ്ടെങ്കിൽ ഏത് ദിശയിൽ?</span> Does the Earth's gravitational force act on the bottle? If so, in which direction?</li>
+<li><span class="ml">എന്തുകൊണ്ടാണ് കുപ്പി ജലത്തിൽ മുങ്ങിക്കിടക്കാത്തത്?</span> Why doesn't the bottle stay under water?</li>
+</ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">
+1. The bottle <b>shoots up</b> to the surface (it may even jump out a little) and then floats. <i>Why:</i> nothing holds it down any more, and an upward force is acting on it.<br>
+2. The <b>water pushes it upwards</b> with a force. <i>Why:</i> you had to push hard to keep it under – the water was pushing back up on it all the time.<br>
+3. <b>Yes – downwards</b>, towards the centre of the Earth. That pull is the bottle's weight (here only about 0.25 N).<br>
+4. Because the upward force of the water on the fully immersed bottle (about 9.8 N for a 1 litre bottle) is <b>much greater than its weight</b> (about 0.25 N). The net force is upwards, so the bottle rises until only a small part of it is under water.</div></div></div>
+
+<h2>3. The bucket from the well and the mug in the bucket (Fig 5.2)</h2>
+<p>The textbook (page 96) asks: <span class="ml">കിണറ്റിൽ നിന്ന് ജലം ഉയർത്തുമ്പോൾ ബക്കറ്റ് ജലോപരിതലത്തിൽ എത്തുന്നത് വരെ ഭാരക്കുറവ് അനുഭവപ്പെടാറുണ്ട്. എന്തായിരിക്കും ഈ ഭാരക്കുറവിന് കാരണം?</span> – <em>When we draw water from a well, the bucket feels lighter until it reaches the water surface. What is the reason for this loss of weight?</em></p>
+<p>The activity (Fig 5.2): take a bucket ¾ full of water. Lift a mug full of water from the bottom of the bucket up to the surface, and then out of the water. Compare what your hand feels.</p>
+<div class="safety">⚠ Never lean over a well or play near deep water; do water experiments in a bucket or tub, with an adult nearby. Drawing water from a well is an adult's job – use the bucket-and-mug version yourself.</div>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: lift it slowly – what does your hand feel?</div>
+  <div class="controls"><button class="btn primary" id="liftMug">🥤 Mug in a bucket (Fig 5.2)</button><button class="btn" id="liftWell">🪣 Bucket in a well</button></div>
+  <svg id="liftSvg" viewBox="0 0 800 360" role="img" aria-label="A container lifted through water; graph of the force felt by the hand against height"></svg>
+  <div class="controls"><label>lift it <input id="liftH" type="range" min="0" max="100" step="1" value="0"><output></output> %</label></div>
+  <div class="readout" id="liftOut"></div>
+  <p class="hint">Sample values (approx.): mug 0.1 kg of plastic (density ≈ 1200 kg/m³) holding 500 mL of water; well bucket 0.5 kg of plastic holding 10 L of water. Force felt = weight − buoyant force. The water inside the container is held up by the water outside as long as both are under the surface.</p>
+</div>
+<div class="qa"><p><b>Q (Fig 5.2).</b> <span class="ml">ബക്കറ്റിലെ ജലത്തിനുള്ളിലും ജലനിരപ്പിന് മുകളിലും കപ്പിന്റെ ഭാരത്തിൽ എന്ത് വ്യത്യാസമാണ് അനുഭവപ്പെട്ടത്? എന്തായിരിക്കും കാരണം?</span> – What difference did you feel in the weight of the mug inside the water and above the water surface? What is the reason?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">Inside the water the mug feels <b>much lighter</b> (in our lab about 0.16 N); above the surface it feels heavy (about 5.9 N). <i>Why:</i> the water exerts an <b>upward force</b> on the mug and on the water inside it. Out of the water this support is gone, so your hand has to hold the full weight.</div></div></div>
+<div class="qa"><p><b>Q (page 96).</b> Why does the well bucket feel lighter until it reaches the water surface?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">While the bucket is under water, the water of the well pushes it <b>upwards</b> (buoyant force), so the rope has to pull only weight − buoyant force – less than 1 N in our lab. As the bucket rises out of the water this upward push shrinks to zero and we must lift its <b>full weight</b> (about 103 N ≈ 10.5 kgwt). <i>Why it changes gradually:</i> the buoyant force depends on how much of the bucket is still under water.</div></div></div>
+<p><span class="ml">ദ്രാവകത്തിൽ സ്ഥിതി ചെയ്യുന്ന വസ്തുക്കളിൽ ആ ദ്രാവകം മുകളിലേക്ക് ബലം പ്രയോഗിക്കുന്നതായി അനുഭവപ്പെട്ടല്ലോ?</span> – So a liquid exerts an upward force on objects in it.</p>
+
+<h2>4. Only in liquids? – the helium balloon</h2>
+<p><span class="ml">അന്തരീക്ഷവായുവിൽ സ്വതന്ത്രമാക്കുന്ന ഹീലിയം നിറച്ച ബലൂണിന് എന്ത് സംഭവിക്കും?</span> – What happens to a helium-filled balloon released in air?</p>
+<div class="lab">
+  <div class="lab-title">🎈 Let the balloon go</div>
+  <svg id="balSvg" viewBox="0 0 800 300" role="img" aria-label="A helium balloon rises in air; the upward push of the air is bigger than its weight"></svg>
+  <div class="controls"><button class="btn primary" id="balGo">▶ Release</button><button class="btn" id="balReset">⟲ Reset</button></div>
+  <p class="hint">Sample balloon (approx.): 10 litres of helium; rubber 3 g + helium 1.8 g → weight ≈ 0.047 N. The air it pushes aside has a mass of about 12.9 g, so the air pushes it up with ≈ 0.126 N.</p>
+</div>
+<div class="qa"><p><b>Q.</b> What happens to the helium balloon, and why?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">It <b>rises</b>. <i>Why:</i> the balloon has weight, but the <b>air pushes it upwards with a force greater than its weight</b> (<span class="ml">അതിനെക്കാൾ കൂടിയ ബലം അന്തരീക്ഷവായു മുകളിലേക്ക് പ്രയോഗിച്ചതുമൂലമല്ലേ ബലൂൺ ഉയർന്നു പൊങ്ങിയത്</span>). So gases push objects upwards too.</div></div></div>
+<p>So the upward push is felt not only in liquids (<span class="ml">ദ്രാവകങ്ങൾ</span>) but also in gases (<span class="ml">വാതകങ്ങൾ</span>). Liquids and gases together are called <b>fluids</b> (<span class="ml">ദ്രവങ്ങൾ</span>) – they can flow.</p>
+<p>From these activities, <b>two forces</b> act on an object in a fluid:</p>
+<ul>
+<li>the force acting <b>downwards</b> on the object – its <b>weight</b> (<span class="ml">ഭാരം</span>);</li>
+<li>the force the fluid exerts <b>upwards</b> on the object.</li>
+</ul>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 96) – Buoyant force</div>
+<p class="ml" style="margin:.2rem 0 .4rem">ഒരു വസ്തു പൂർണ്ണമായോ ഭാഗികമായോ ഒരു ദ്രവത്തിൽ മുങ്ങിയിരിക്കുമ്പോൾ ആ വസ്തുവിൽ ദ്രവം മുകളിലേക്ക് പ്രയോഗിക്കുന്ന ബലമാണ് പ്ലവക്ഷമബലം.</p>
+<p>When an object is fully or partly immersed in a fluid, the <b>upward force exerted on it by the fluid</b> is called the <b>buoyant force</b> (<span class="ml">പ്ലവക്ഷമബലം</span>).</p></div>
+
+<div class="diary"><h3>📒 Science diary (<span class="ml">സയൻസ് ഡയറി</span>) – where do we feel buoyant force?</h3>
+<p style="margin-top:0">The textbook gives the first one; try to add more yourself before opening the list.</p>
+<ul style="margin:0"><li><span class="ml">ജലത്തിനുള്ളിൽ നിന്ന് വായു കുമിളകൾ ഉയരുന്നത്.</span> – Air bubbles rise up through water.</li></ul>
+<div class="reveal" data-btn="Show more examples"><ul style="margin:.3rem 0 0">
+<li>A log, a coconut or a country boat floats on a river or on Vembanad lake.</li>
+<li>We feel lighter in a pond or a swimming pool, and can lift a friend easily in water.</li>
+<li>A beach ball or a float is very hard to hold under water.</li>
+<li>A mug of water or a bucket feels light under water and heavy above it.</li>
+<li>Hot-air balloons and helium balloons rise in air (buoyant force of air).</li>
+<li>Ships, boats and the house boats of Alappuzha float.</li>
+<li>Smoke and steam rise; oil drops rise to the top of water.</li>
+</ul></div></div>
+
+<h2>5. Can we measure the buoyant force? (Fig 5.3, Table 5.1)</h2>
+<p>The thinking boy asks: <span class="ml">പ്ലവക്ഷമബലം കണക്കാക്കാനാകുമോ?</span> – <em>Can the buoyant force be calculated?</em> The textbook's experiment: take a spring balance marked in newtons, a trough about ¾ full of water, a stone, an iron block and a glass slab. Weigh each in air (<b>W₁</b>, <span class="ml">വായുവിലെ ഭാരം</span>), then lower it completely into the water and weigh it again (<b>W₂</b>, <span class="ml">ജലത്തിലെ ഭാരം</span>).</p>
+<div class="lab" id="measLab">
+  <div class="lab-title">🎬 Fig 5.3 step by step – the stone in air and in water</div>
+  <svg viewBox="0 0 800 420" role="img" aria-label="A stone hangs from a spring balance, first in air and then fully under water in a trough"></svg>
+</div>
+
+<div class="lab">
+  <div class="lab-title">🧪 Your own trials – complete Table 5.1</div>
+  <div class="controls"><label>object <select id="sbObj"><option value="stone">stone (കല്ല്)</option><option value="iron">iron block (ഇരുമ്പുകട്ട)</option><option value="glass">glass slab (ഗ്ലാസ് സ്ലാബ്)</option></select></label>
+  <label>lower the balance <input id="sbD" type="range" min="0" max="100" step="1" value="0"><output></output> %</label></div>
+  <svg id="sbSvg" viewBox="0 0 800 420" role="img" aria-label="Spring balance lowering the chosen object into a trough of water, with live readings"></svg>
+  <div class="controls"><button class="btn primary" id="sbRec">📝 Record in Table 5.1</button><button class="btn" id="sbClr">Clear table</button></div>
+  <table class="obs"><caption class="small muted">Table 5.1 – sample readings (your real readings will differ slightly)</caption>
+  <thead><tr><th>Object <span class="ml">വസ്തു</span></th><th>Weight in air W₁ (N)</th><th>Weight in water W₂ (N)</th><th>Loss of weight in water = buoyant force W₁ − W₂ (N)</th></tr></thead>
+  <tbody id="sbBody"></tbody></table>
+  <div class="readout" id="sbInf"></div>
+  <p class="hint">Sample objects (approx.): stone 300 g (density ≈ 2600 kg/m³), iron block 500 g (7800 kg/m³), glass slab 200 g (≈ 2500 kg/m³). The lab works out the buoyant force from F = ρ<sub>water</sub> × V<sub>under water</sub> × g – you will meet this formula on page 7.</p>
+</div>
+<div class="qa"><p><b>Q.</b> <span class="ml">ജലത്തിൽ വസ്തുക്കൾക്ക് ഭാരക്കുറവ് അനുഭവപ്പെട്ടത് പ്ലവക്ഷമബലം മൂലമല്ലേ?</span> – Isn't the loss of weight felt by the objects in water due to the buoyant force?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>Yes.</b> The mass of the stone did not change and the Earth still pulls it with W₁. The balance reads less only because the water pushes the stone <b>up</b> and takes part of its weight. So the apparent loss of weight (<span class="ml">ഭാരക്കുറവ്</span>) W₁ − W₂ is exactly the buoyant force.</div></div></div>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 97)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">ഒരു വസ്തു ദ്രവത്തിൽ സ്ഥിതി ചെയ്യുമ്പോൾ അതിൽ അനുഭവപ്പെടുന്ന പ്ലവക്ഷമ ബലം വസ്തുവിന്റെ ഭാരക്കുറവിന് തുല്യമായിരിക്കും.</p>
+<p>When an object is in a fluid, the <b>buoyant force</b> on it is <b>equal to its apparent loss of weight</b>.</p>
+<p class="eq" style="margin-bottom:0">Buoyant force = W₁ − W₂ &nbsp; (weight in air − weight in the liquid)</p></div>
+<div class="callout think"><div class="title">💡 “Apparent” loss – the weight is not really lost</div>
+<p>The Earth's pull on the stone (mg) is the same in air and in water. What changes is the <b>reading</b>: two upward forces now share the job of holding the stone – the spring balance (W₂) and the water (buoyant force). So W₂ + buoyant force = W₁.</p></div>
+
+<div class="callout book"><div class="title">🧪 The textbook's simulation – PhET → Buoyant Force (KITE Ubuntu)</div>
+<p>The textbook's box “PhET → Buoyant Force (KITE Ubuntu)” refers to the copy of the PhET buoyancy simulation installed offline on the <b>KITE Ubuntu</b> school laptops – open it from the Education/Science menu if your school computer has it. In it you drop blocks of different materials into different liquids and read the forces on a scale – exactly what this page's labs do. Online, the matching PhET simulations are called <b>“Buoyancy”</b> and <b>“Buoyancy: Basics”</b> (and <b>“Density”</b>) – see the Explore box below.</p></div>
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://phet.colorado.edu/en/simulations/buoyancy-basics" target="_blank" rel="noopener noreferrer">🧪 Buoyancy: Basics (PhET simulation)</a> <span class="src">PhET, University of Colorado Boulder</span><br><span class="note">Drop blocks into water and watch the upward buoyant force balance their weight.</span></li><li><a href="https://phet.colorado.edu/en/simulations/buoyancy" target="_blank" rel="noopener noreferrer">🧪 Buoyancy (PhET simulation)</a> <span class="src">PhET, University of Colorado Boulder</span><br><span class="note">The fuller version (the textbook&#x27;s &#x27;Buoyant Force&#x27; sim): change fluid density and see force arrows for weight and buoyancy.</span></li><li><a href="https://www.physicsclassroom.com/interactive/fluids/buoyancy-sim" target="_blank" rel="noopener noreferrer">🧪 Interactive - Buoyancy Simulation</a> <span class="src">The Physics Classroom</span><br><span class="note">Lower an object into a fluid and read off the buoyant force and the apparent loss of weight.</span></li><li><a href="https://vp.hbcse.tifr.res.in/wp-content/uploads/2025/01/Will_it_sink_or_float_TV_12dec2024.pdf" target="_blank" rel="noopener noreferrer">📄 Will it sink or float? (Vigyan Pratibha learning unit, PDF)</a> <span class="src">HBCSE-TIFR (Vigyan Pratibha), India</span><br><span class="note">Indian hands-on lab unit: measure upthrust with a spring balance and find what it depends on.</span></li></ul></div>
+
+<h2>6. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li>Liquids and gases are <b>fluids</b>. A fluid pushes <b>upwards</b> on any object fully or partly immersed in it: the <b>buoyant force</b>.</li>
+<li>Two forces act on an object in a fluid: its weight (down) and the buoyant force (up). If the buoyant force is bigger, the object rises (bottle, balloon).</li>
+<li>Buoyant force = apparent loss of weight = <b>W₁ − W₂</b>. Sample: stone 2.94 N in air, 1.81 N in water → buoyant force 1.13 N.</li>
+<li>Once an object is fully under water, pushing it deeper does not increase the buoyant force.</li>
+</ul></div>
+<p>Next: <a href="06_factors_buoyant_force.html">What decides the buoyant force? ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Buoyant Force · Class 9 Physics", "icon": "🚢", "key": "physics_ch5_progress", "pages": [["index.html", "Home"], ["01_mass_weight_kgwt.html", "1 · Mass, Weight, Newton & kgwt"], ["02_volume_displacement.html", "2 · Volume & Measuring by Displacement"], ["03_density.html", "3 · Density – Mass per Volume"], ["04_pressure_in_liquids.html", "4 · Pressure in Liquids"], ["05_buoyant_force.html", "5 · Buoyant Force & How to Measure It"], ["06_factors_buoyant_force.html", "6 · What Decides the Buoyant Force?"], ["07_archimedes_principle.html", "7 · Archimedes' Principle"], ["08_floatation.html", "8 · Principle of Floatation – Boats & Ships"], ["09_relative_density_hydrometer.html", "9 · Relative Density, Hydrometer & Lactometer"], ["10_intext_questions_solutions.html", "10 · In-text Questions – Solutions"], ["11_assess_solutions.html", "11 · Let Us Assess & Extended Activities – Solutions"], ["12_applications_explore.html", "12 · Applications & Explore Online"], ["13_summary_revision.html", "13 · Summary & Quick Quiz"], ["14_model_test_paper.html", "14 · Model Test Paper"], ["15_model_test_solutions.html", "15 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+const {P, text, el, multiText} = K;
+const G = 9.8;
+const CV = c => 'var(--' + (c === 'amber' ? 'accent' : c) + ')';
+function ln(svg, a, b, color='text', w=2, extra=''){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, style: `stroke:${CV(color)};stroke-width:${w};stroke-linecap:round;${extra}`}, svg); }
+function arrow(svg, a, b, color='red', w=3, head=11){
+  const L = K.dist(a, b); if (L < 2) return; const hh = Math.min(head, L * .6);
+  const u = K.unit(a, b), n = P(-u.y, u.x), base = P(b.x - u.x * hh, b.y - u.y * hh);
+  ln(svg, a, base, color, w);
+  K.polygon(svg, [b, P(base.x + n.x * hh * .55, base.y + n.y * hh * .55), P(base.x - n.x * hh * .55, base.y - n.y * hh * .55)], {style: `fill:${CV(color)}`});
+}
+function rect(svg, x, y, w, h, style, rx=0){ return el('rect', {x, y, width: w, height: h, rx, style}, svg); }
+function col(svg, rows, upto, i, t, x0, y0=40, dy=30){ rows.forEach((r, k) => { if (k >= upto[i]) return; const fresh = i === 0 || k >= upto[i - 1]; text(svg, P(x0, y0 + k * dy), r[0], {class: r[1] || 'lbl', 'text-anchor': 'start', opacity: fresh ? t : 1}); }); }
+const T2 = v => v.toFixed(2);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+/* open-topped container with liquid; surf = y of the liquid surface */
+function tank(svg, x, y, w, h, surf, fill='#3b82f6', op=.25){
+  rect(svg, x, surf, w, y + h - surf, `fill:${fill};opacity:${op}`);
+  ln(svg, P(x, surf), P(x + w, surf), 'blue', 1.5);
+  K.polyline(svg, [P(x, y), P(x, y + h), P(x + w, y + h), P(x + w, y)], {style: 'stroke:var(--muted);stroke-width:3;fill:none;stroke-linejoin:round'});
+}
+/* hand-held spring balance; y = top of the body; returns y of the hook */
+function balance(svg, x, y, R, max){
+  rect(svg, x - 20, y - 40, 40, 24, 'fill:#f5c49b;stroke:#92400e;stroke-width:1.5', 10);
+  ln(svg, P(x, y - 16), P(x, y), 'text', 2);
+  rect(svg, x - 17, y, 34, 150, 'fill:var(--accent-soft);stroke:var(--accent);stroke-width:2', 5);
+  const y0 = y + 14, L = 120, step = max <= 1 ? .2 : (max <= 5 ? 1 : 2);
+  for (let v = 0; v <= max + 1e-9; v += step){ const yy = y0 + v / max * L; ln(svg, P(x + 2, yy), P(x + 14, yy), 'text', 1.2); text(svg, P(x + 20, yy), K.fmt(v, 1), {class: 'lbl sm', 'text-anchor': 'start'}); }
+  for (let v = 0; v <= max + 1e-9; v += step / 5){ const yy = y0 + v / max * L; ln(svg, P(x + 8, yy), P(x + 14, yy), 'muted', .8); }
+  const py = y0 + clamp(R, 0, max * 1.02) / max * L;
+  ln(svg, P(x - 6, y + 6), P(x - 6, py), 'blue', 2);
+  K.polygon(svg, [P(x - 12, py - 4), P(x + 10, py), P(x - 12, py + 4)], {style: 'fill:var(--red)'});
+  ln(svg, P(x, y + 150), P(x, y + 162), 'text', 2.5);
+  el('path', {d: `M${x},${y + 162} q0,8 6,8 q6,0 6,-6`, style: 'stroke:var(--text);stroke-width:2.5;fill:none'}, svg);
+  text(svg, P(x - 26, y + 140), 'N', {class: 'lbl sm muted', 'text-anchor': 'end'});
+  return y + 170;
+}
+const MAT = {stone: '#78716c', iron: '#475569', glass: '#67e8f9', copper: '#c2410c', brass: '#ca8a04'};
+function lump(svg, kind, cx, top, w, h){
+  if (kind === 'stone'){ const q = [[.1,.3],[.35,0],[.75,.08],[1,.45],[.85,.95],[.3,1],[0,.7]].map(([a, b]) => P(cx - w / 2 + a * w, top + b * h)); return K.polygon(svg, q, {style: `fill:${MAT.stone};stroke:var(--text);stroke-width:1.5`}); }
+  return rect(svg, cx - w / 2, top, w, h, `fill:${MAT[kind]};stroke:var(--text);stroke-width:1.5;opacity:${kind === 'glass' ? .75 : 1}`, 3);
+}
+
+/* ---------- 1. ship and nail ---------- */
+(function(){
+  const svg = document.getElementById('openSvg'); let stop = null;
+  const SURF = 140;
+  function draw(t){
+    K.clear(svg);
+    rect(svg, 0, 0, 800, SURF, 'fill:var(--blue-soft);opacity:.45');
+    rect(svg, 0, SURF, 800, 160, 'fill:#1d4ed8;opacity:.3'); ln(svg, P(0, SURF), P(800, SURF), 'blue', 2);
+    rect(svg, 0, 284, 800, 16, 'fill:#a16207;opacity:.5');
+    /* ship hull (part under water) */
+    K.polygon(svg, [P(60, 110), P(420, 110), P(400, 168), P(90, 168)], {style: 'fill:#64748b;stroke:var(--text);stroke-width:1.5'});
+    rect(svg, 70, 96, 360, 14, 'fill:#94a3b8;stroke:var(--text);stroke-width:1');
+    rect(svg, 300, 60, 40, 36, 'fill:#94a3b8;stroke:var(--text);stroke-width:1');
+    ln(svg, P(320, 60), P(320, 34), 'text', 2);
+    text(svg, P(240, 126), 'ship: thousands of tonnes', {class: 'lbl sm', style: 'fill:#fff;stroke:none'});
+    arrow(svg, P(160, 236), P(160, 176), 'blue', 4); text(svg, P(172, 220), 'water pushes up', {class: 'lbl sm blue', 'text-anchor': 'start'});
+    arrow(svg, P(350, 70), P(350, 120), 'red', 3); text(svg, P(362, 46), 'weight', {class: 'lbl sm red', 'text-anchor': 'start'});
+    /* nail */
+    const ny = t < .25 ? 70 + t / .25 * 70 : 140 + Math.min(1, (t - .25) / .75) * 128;
+    rect(svg, 596, ny - 18, 6, 36, 'fill:#475569;stroke:var(--text);stroke-width:1');
+    rect(svg, 590, ny - 22, 18, 5, 'fill:#475569;stroke:var(--text);stroke-width:1');
+    text(svg, P(640, Math.min(ny, 250)), 'iron nail, 5 g', {class: 'lbl sm', 'text-anchor': 'start'});
+    if (t >= 1){ text(svg, P(640, 200), 'sinks to the bottom!', {class: 'lbl red', 'text-anchor': 'start'}); }
+    text(svg, P(20, 22), 'Same material… one floats, one sinks. Why?', {class: 'lbl', 'text-anchor': 'start'});
+  }
+  draw(0);
+  document.getElementById('openGo').addEventListener('click', () => { if (stop) stop(); stop = K.animate(2200, (e, t) => draw(t)); });
+  document.getElementById('openReset').addEventListener('click', () => { if (stop) stop(); draw(0); });
+})();
+
+/* ---------- 2. bottle in a bucket ---------- */
+(function(){
+  const svg = document.getElementById('botSvg'), out = document.getElementById('botOut'), inp = document.getElementById('botS');
+  const SURF = 130, H = 140, BW = 56, CX = 240, V = 0.001, M = 0.025, W = M * G, EQ = M / (1000 * V) * 100; /* 2.5 % */
+  const PXN = 12; let stop = null; let cur = 0; let hand = true;
+  function draw(s){
+    K.clear(svg);
+    const sEff = Math.max(s, EQ); const top = sEff <= 100 ? SURF - H + sEff / 100 * H : SURF + (sEff - 100) / 100 * H;
+    const f = sEff <= 100 ? sEff / 100 : 1, FB = 1000 * V * f * G, push = Math.max(0, FB - W);
+    tank(svg, 70, 40, 340, 310, SURF);
+    text(svg, P(240, 342), 'bucket, ¾ full of water', {class: 'lbl sm muted'});
+    /* bottle */
+    rect(svg, CX - BW / 2, top + 14, BW, H - 14, 'fill:var(--surface2);stroke:var(--text);stroke-width:1.5;opacity:.9', 10);
+    rect(svg, CX - 12, top, 24, 16, 'fill:var(--red);stroke:var(--text);stroke-width:1', 3);
+    ln(svg, P(CX - BW / 2 + 6, top + 50), P(CX + BW / 2 - 6, top + 50), 'muted', 1);
+    /* hand pushing */
+    if (hand && s > EQ + .5){ rect(svg, CX - 26, top - 30, 52, 28, 'fill:#f5c49b;stroke:#92400e;stroke-width:1.5', 12); arrow(svg, P(CX + 50, top - 40), P(CX + 50, top - 40 + Math.max(14, push * PXN)), 'green', 3); text(svg, P(CX + 60, top - 34), 'your push', {class: 'lbl sm green', 'text-anchor': 'start'}); }
+    /* force arrows from centre of bottle */
+    const cy = top + H / 2;
+    arrow(svg, P(CX - 70, cy), P(CX - 70, cy - Math.max(4, FB * PXN)), 'blue', 4);
+    text(svg, P(CX - 80, cy - Math.max(4, FB * PXN) / 2), 'buoyant force', {class: 'lbl sm blue', 'text-anchor': 'end'});
+    arrow(svg, P(CX + 38, cy), P(CX + 38, cy + 14), 'red', 3, 8);
+    text(svg, P(CX + 48, cy + 10), 'weight', {class: 'lbl sm red', 'text-anchor': 'start'});
+    /* panel */
+    const X = 450;
+    text(svg, P(X, 50), 'Forces on the bottle', {class: 'lbl big', 'text-anchor': 'start'});
+    text(svg, P(X, 90), `part under water: ${Math.round(f * 100)} %`, {class: 'lbl', 'text-anchor': 'start'});
+    text(svg, P(X, 120), `weight (down): ${T2(W)} N`, {class: 'lbl red', 'text-anchor': 'start'});
+    text(svg, P(X, 150), `buoyant force (up): ${T2(FB)} N`, {class: 'lbl blue', 'text-anchor': 'start'});
+    text(svg, P(X, 180), hand && s > EQ + .5 ? `your push needed: ${T2(push)} N` : 'no push – the bottle floats', {class: 'lbl green', 'text-anchor': 'start'});
+    if (sEff > 100) text(svg, P(X, 220), `fully under, ${Math.round((sEff - 100) / 100 * 14)} cm deeper:`, {class: 'lbl sm', 'text-anchor': 'start'});
+    if (sEff > 100) text(svg, P(X, 242), 'buoyant force no longer grows', {class: 'lbl sm purple', 'text-anchor': 'start'});
+    multiText(svg, P(X, 290), ['arrows: 12 px per newton (the weight', 'arrow is drawn bigger than scale)'], {class: 'lbl sm muted', 'text-anchor': 'start'}, 18);
+    out.textContent = hand && s > EQ + .5
+      ? `Weight of bottle = 0.025 kg × 9.8 = ${T2(W)} N (down)\nBuoyant force = 1000 kg/m³ × ${K.fmt(V * f * 1e6, 0)} cm³ under water × 9.8 = ${T2(FB)} N (up)\nYour hand must push ${T2(FB)} − ${T2(W)} = ${T2(push)} N to hold it there.`
+      : `Floating freely: only ${K.fmt(EQ, 1)} % of the bottle is under water.\nThen the buoyant force = its weight = ${T2(W)} N, so it stays still.`;
+  }
+  K.slider(inp, v => { if (stop){ stop(); stop = null; } hand = true; cur = v; draw(v); }, 0);
+  document.getElementById('botGo').addEventListener('click', () => {
+    if (stop) stop(); const s0 = Math.max(cur, EQ); hand = false;
+    stop = K.animate(1800, (e, t) => { const s = EQ + (s0 - EQ) * Math.exp(-4 * t) * Math.cos(2.5 * Math.PI * t); draw(Math.max(0, s)); }, () => { cur = EQ; inp.value = 0; inp.parentElement.querySelector('output').textContent = '0'; draw(0); out.textContent += '\nYou let go: the bottle shot up and now floats.'; });
+  });
+})();
+
+/* ---------- 3. lifting the mug / well bucket ---------- */
+(function(){
+  const svg = document.getElementById('liftSvg'), out = document.getElementById('liftOut');
+  const MODES = {
+    mug: {name: 'mug', W: 0.6 * G, Vmat: 0.1 / 1200, Vin: 0.0005, Hcm: 10, depth: 30, surf: 22.5, gmax: 7, gstep: 1, unit: 'cm'},
+    well: {name: 'bucket', W: 10.5 * G, Vmat: 0.5 / 1200, Vin: 0.010, Hcm: 30, depth: 300, surf: 150, gmax: 120, gstep: 20, unit: 'cm'}
+  };
+  let mode = 'mug', h = 0;
+  const btnM = document.getElementById('liftMug'), btnW = document.getElementById('liftWell');
+  /* felt force as a function of lift fraction s (0..1): bottom of object rises from the floor to above the surface */
+  function state(md, s){
+    const travel = md.surf + md.Hcm * 1.6; const bot = s * travel; /* cm above floor */
+    const top = bot + md.Hcm; const under = clamp(md.surf - bot, 0, md.Hcm) / md.Hcm;
+    const FB = 1000 * (md.Vmat + md.Vin) * under * G; return {bot, top, under, FB, felt: md.W - FB};
+  }
+  function draw(){
+    const md = MODES[mode]; K.clear(svg); const st = state(md, h / 100);
+    /* container: x 40..300, floor at 330, scale px per cm */
+    const FL = 330, TOP = 40, k = (FL - TOP) / (md.depth + md.Hcm * 0.2); const Y = c => FL - c * k;
+    if (mode === 'mug'){ tank(svg, 50, Y(md.depth), 250, md.depth * k, Y(md.surf)); text(svg, P(175, 350), 'bucket, ¾ full', {class: 'lbl sm muted'}); }
+    else {
+      for (let yy = 30; yy < FL; yy += 22){ rect(svg, 70, yy, 22, 20, 'fill:#b45309;opacity:.55'); rect(svg, 258, yy, 22, 20, 'fill:#b45309;opacity:.55'); }
+      rect(svg, 92, Y(md.surf), 166, FL - Y(md.surf), 'fill:#3b82f6;opacity:.25'); ln(svg, P(92, Y(md.surf)), P(258, Y(md.surf)), 'blue', 1.5);
+      text(svg, P(175, 350), 'well (laterite wall)', {class: 'lbl sm muted'});
+    }
+    /* object */
+    const ow = mode === 'mug' ? 56 : 90, cx = 175, yb = Y(st.bot), yt = Y(st.top);
+    const inSurf = Y(md.surf);
+    rect(svg, cx - ow / 2, yt, ow, yb - yt, 'fill:var(--red);opacity:.85;stroke:var(--text);stroke-width:1.5', 4);
+    /* water inside the container */
+    if (st.under < 1) rect(svg, cx - ow / 2 + 4, yt + 4, ow - 8, yb - yt - 8, 'fill:#3b82f6;opacity:.55');
+    else rect(svg, cx - ow / 2 + 4, yt + 4, ow - 8, yb - yt - 8, 'fill:#3b82f6;opacity:.35');
+    if (mode === 'mug'){ el('path', {d: `M${cx + ow / 2},${yt + 8} q18,4 0,${(yb - yt) * .6}`, style: 'stroke:var(--red);stroke-width:4;fill:none'}, svg); rect(svg, cx - 22, yt - 26, 34, 22, 'fill:#f5c49b;stroke:#92400e;stroke-width:1.5', 9); }
+    else { ln(svg, P(cx, yt - 14), P(cx, 0), 'accent', 2.5); el('path', {d: `M${cx - ow / 2},${yt} Q${cx},${yt - 28} ${cx + ow / 2},${yt}`, style: 'stroke:var(--text);stroke-width:2;fill:none'}, svg); }
+    /* graph: felt force vs lift */
+    const GX = 360, GY = 300, GW = 400, GH = 240, gx = s => GX + s * GW, gy = F => GY - F / md.gmax * GH;
+    ln(svg, P(GX, GY), P(GX + GW, GY), 'text', 1.2); ln(svg, P(GX, GY), P(GX, GY - GH - 10), 'text', 1.2);
+    for (let F = 0; F <= md.gmax + 1e-9; F += md.gstep){ ln(svg, P(GX - 4, gy(F)), P(GX, gy(F)), 'text', 1); text(svg, P(GX - 8, gy(F)), K.fmt(F, 0), {class: 'lbl sm', 'text-anchor': 'end'}); }
+    text(svg, P(GX + 4, GY - GH - 20), 'force felt by the hand (N)', {class: 'lbl sm', 'text-anchor': 'start'});
+    text(svg, P(GX + GW, GY + 20), `lifted →  (${md.name} leaves the water at the dashed line)`, {class: 'lbl sm', 'text-anchor': 'end'});
+    const sOut = md.surf / (md.surf + md.Hcm * 1.6), sIn = (md.surf - md.Hcm) / (md.surf + md.Hcm * 1.6);
+    ln(svg, P(gx(sIn), GY), P(gx(sIn), GY - GH), 'muted', 1, 'stroke-dasharray:4 4'); ln(svg, P(gx(sOut), GY), P(gx(sOut), GY - GH), 'muted', 1, 'stroke-dasharray:4 4');
+    text(svg, P(gx(sIn) - 4, GY - GH + 10), 'top reaches surface', {class: 'lbl sm muted', 'text-anchor': 'end'});
+    const pts = []; for (let k2 = 0; k2 <= 100; k2++) pts.push(P(gx(k2 / 100), gy(state(md, k2 / 100).felt)));
+    K.polyline(svg, pts, {style: 'stroke:var(--blue);stroke-width:2.5;fill:none'});
+    K.circle(svg, P(gx(h / 100), gy(st.felt)), 6, {class: '', style: 'fill:var(--red)'});
+    text(svg, P(GX + 20, gy(st.felt) - 14 < 70 ? gy(st.felt) + 18 : gy(st.felt) - 14), `${T2(st.felt)} N`, {class: 'lbl red', 'text-anchor': 'start'});
+    out.textContent = `${md.name === 'mug' ? 'Mug + 500 mL water' : 'Bucket + 10 L water'}: weight = ${T2(md.W)} N (${K.fmt(md.W / G, 2)} kgwt)\n` +
+      `Part under water: ${Math.round(st.under * 100)} %   Buoyant force = ${T2(st.FB)} N\n` +
+      `Force felt = ${T2(md.W)} − ${T2(st.FB)} = ${T2(st.felt)} N` + (st.under >= 1 ? '  → feels very light under water' : (st.under <= 0 ? '  → full weight: no water to help' : '  → getting heavier as it comes out'));
+  }
+  function setMode(m){ mode = m; btnM.classList.toggle('primary', m === 'mug'); btnW.classList.toggle('primary', m === 'well'); draw(); }
+  btnM.addEventListener('click', () => setMode('mug')); btnW.addEventListener('click', () => setMode('well'));
+  K.slider('#liftH', v => { h = v; draw(); }, 0);
+})();
+
+/* ---------- 4. balloon ---------- */
+(function(){
+  const svg = document.getElementById('balSvg'); let stop = null;
+  function draw(t){
+    K.clear(svg);
+    rect(svg, 0, 270, 800, 30, 'fill:var(--green-soft)');
+    const y = 200 - 190 * t * t;
+    el('ellipse', {cx: 250, cy: y, rx: 34, ry: 42, style: 'fill:#f43f5e;opacity:.85;stroke:var(--text);stroke-width:1.5'}, svg);
+    el('path', {d: `M250,${y + 42} q-10,20 4,40 q10,20 -2,40`, style: 'stroke:var(--text);stroke-width:1.2;fill:none'}, svg);
+    if (t === 0){ rect(svg, 236, y + 118, 26, 20, 'fill:#f5c49b;stroke:#92400e;stroke-width:1.5', 8); }
+    arrow(svg, P(320, y + 10), P(320, y + 10 - 50), 'blue', 4); text(svg, P(330, y - 22), 'push of the air ≈ 0.126 N', {class: 'lbl sm blue', 'text-anchor': 'start'});
+    arrow(svg, P(180, y), P(180, y + 19), 'red', 3, 8); text(svg, P(170, y + 10), 'weight ≈ 0.047 N', {class: 'lbl sm red', 'text-anchor': 'end'});
+    multiText(svg, P(620, 110), ['upward push > weight', '⇒ the balloon rises', '(arrows: 400 px per N)'], {class: 'lbl', 'text-anchor': 'middle'}, 24);
+  }
+  draw(0);
+  document.getElementById('balGo').addEventListener('click', () => { if (stop) stop(); stop = K.animate(2200, (e, t) => draw(t * .95)); });
+  document.getElementById('balReset').addEventListener('click', () => { if (stop) stop(); draw(0); });
+})();
+
+/* ---------- 5. Fig 5.3 stepper ---------- */
+const OBJ = {
+  stone: {name: 'stone', ml: 'കല്ല്', m: 0.3, rho: 2600, w: 56, h: 50},
+  iron: {name: 'iron block', ml: 'ഇരുമ്പുകട്ട', m: 0.5, rho: 7800, w: 44, h: 42},
+  glass: {name: 'glass slab', ml: 'ഗ്ലാസ് സ്ലാബ്', m: 0.2, rho: 2500, w: 78, h: 28}
+};
+/* scene: balance lowered by d (0..100); trough rim 300, floor 410, water surface 328 */
+const RIM = 300, FLOOR = 410, SURF = 328;
+function sbDraw(svg, key, d, x=190){
+  const o = OBJ[key]; const W = o.m * G, V = o.m / o.rho;
+  const by = 40 + d, top = by + 170 + 30;
+  const f = clamp((top + o.h - SURF) / o.h, 0, 1), FB = 1000 * V * f * G, R = W - FB;
+  tank(svg, x - 130, RIM, 260, FLOOR - RIM, SURF);
+  balance(svg, x, by, R, 5);
+  ln(svg, P(x, by + 170), P(x, top), 'text', 1.2);
+  lump(svg, key, x, top, o.w, o.h);
+  if (f > 0) { arrow(svg, P(x + o.w / 2 + 16, top + o.h), P(x + o.w / 2 + 16, top + o.h - FB * 40), 'blue', 3, 9); }
+  return {o, W, V, f, FB, R};
+}
+(function(){
+  const rows = [
+    ['Stone in air:', 'lbl'],
+    ['W₁ = 0.3 kg × 9.8 = 2.94 N', 'lbl big'],
+    ['Lowering… reading falls', 'lbl blue'],
+    ['Fully under water:', 'lbl'],
+    ['W₂ = 1.81 N', 'lbl big'],
+    ['Loss = W₁ − W₂', 'lbl purple'],
+    ['     = 2.94 − 1.81 = 1.13 N', 'lbl purple'],
+    ['Loss of weight', 'lbl big green'],
+    ['= buoyant force = 1.13 N', 'lbl big green']
+  ];
+  const upto = [2, 3, 5, 7, 9];
+  new K.Stepper('#measLab', {steps: [
+    'Hang the stone from the spring balance and hold it in air above the trough, which is about ¾ full of water. The reading is the weight in air: <b>W₁ = 0.3 kg × 9.8 m/s² = 2.94 N</b> (sample).',
+    'Lower the balance slowly. As soon as the stone touches the water, the pointer starts to move <b>up</b> – the reading falls. The blue arrow is the water\'s upward push, growing as more of the stone goes under.',
+    'Lower it until the stone is <b>completely under water</b> (it must not touch the bottom or sides). Now the reading is the weight in water: <b>W₂ = 1.81 N</b>.',
+    'The stone seems to have lost <b>W₁ − W₂ = 2.94 − 1.81 = 1.13 N</b> of weight in water. This is the <b>apparent loss of weight</b> (<span class="ml">ഭാരക്കുറവ്</span>).',
+    '<b>Inference:</b> the loss of weight is caused by the water pushing up: <b>buoyant force = W₁ − W₂ = 1.13 N</b>. Do the same for the iron block and the glass slab in the lab below.'
+  ], ms: 1000, draw(svg, i, t){
+    const s = sbDraw(svg, 'stone', i === 0 ? 0 : (i === 1 ? 70 * t : (i === 2 ? 70 + 30 * t : 100)), 190);
+    text(svg, P(300, 70 + (i >= 2 ? 30 : 0)), `reading ${T2(s.R)} N`, {class: 'lbl red', 'text-anchor': 'start'});
+    col(svg, rows, upto, i, t, 470, 40, 34);
+  }});
+})();
+
+/* ---------- 5b. free lab, Table 5.1 ---------- */
+(function(){
+  const svg = document.getElementById('sbSvg'), body = document.getElementById('sbBody'), inf = document.getElementById('sbInf'), sel = document.getElementById('sbObj');
+  const rec = {}; let cur = null;
+  function table(){
+    body.innerHTML = Object.keys(OBJ).map(k => { const r = rec[k]; return `<tr><td>${OBJ[k].name} <span class="ml">${OBJ[k].ml}</span></td><td>${r ? T2(r.W) : ''}</td><td>${r ? T2(r.R) : ''}</td><td>${r ? '<b>' + T2(r.W - r.R) + '</b>' : ''}</td></tr>`; }).join('');
+    const n = Object.keys(rec).length;
+    inf.textContent = n === 3 ? 'All three objects recorded.\nInference: every object weighs less in water. The loss W₁ − W₂ is the buoyant force of the water on it:\nstone 1.13 N, iron block 0.63 N, glass slab 0.78 N. (Different objects get different buoyant forces – page 6 finds out why.)'
+      : `Lower each object until it is completely under water, then press “Record” (${n} of 3 recorded).`;
+  }
+  function draw(){
+    K.clear(svg); const d = +document.getElementById('sbD').value; const s = sbDraw(svg, sel.value, d, 190); cur = s;
+    const X = 420;
+    text(svg, P(X, 40), `${s.o.name} (${s.o.m * 1000} g)`, {class: 'lbl big', 'text-anchor': 'start'});
+    text(svg, P(X, 75), `weight in air W₁ = ${T2(s.W)} N`, {class: 'lbl', 'text-anchor': 'start'});
+    text(svg, P(X, 105), `under water: ${Math.round(s.f * 100)} %`, {class: 'lbl', 'text-anchor': 'start'});
+    text(svg, P(X, 135), `buoyant force = ${T2(s.FB)} N`, {class: 'lbl blue', 'text-anchor': 'start'});
+    text(svg, P(X, 170), `balance reads ${T2(s.R)} N`, {class: 'lbl big red', 'text-anchor': 'start'});
+    text(svg, P(X, 205), s.f >= 1 ? '✔ fully immersed: this is W₂' : (s.f > 0 ? 'partly in water – lower more' : 'still in air: this is W₁'), {class: 'lbl sm ' + (s.f >= 1 ? 'green' : 'muted'), 'text-anchor': 'start'});
+    text(svg, P(X, 240), `volume ${K.fmt(s.V * 1e6, 1)} cm³ (density ${s.o.rho} kg/m³)`, {class: 'lbl sm muted', 'text-anchor': 'start'});
+  }
+  K.slider('#sbD', draw, 0);
+  sel.addEventListener('change', draw);
+  document.getElementById('sbRec').addEventListener('click', () => { if (!cur) return; if (cur.f < 1){ inf.textContent = 'Not yet! Lower the balance until the ' + cur.o.name + ' is completely under water, then record.'; return; } rec[sel.value] = {W: cur.W, R: cur.R}; table(); });
+  document.getElementById('sbClr').addEventListener('click', () => { for (const k in rec) delete rec[k]; table(); });
+  table(); draw();
+})();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'Which of these are fluids (<span class="ml">ദ്രവങ്ങൾ</span>)?', options: ['Only liquids', 'Only gases', 'Liquids and gases', 'Solids and liquids'], answer: 2, explain: 'Liquids and gases can both flow, so both are fluids – and both exert buoyant force.', hint: 'Remember the helium balloon.'});
+K.numq('#q2', {q: 'A stone weighs 5 N in air and 3.2 N when fully under water. What is the buoyant force on it (in N)?', answer: 1.8, tol: 0.01, unit: 'N', explain: 'Buoyant force = W₁ − W₂ = 5 − 3.2 = 1.8 N.', hint: 'Buoyant force = apparent loss of weight = W₁ − W₂.'});
+K.mcq('#q3', {q: 'In which direction does the buoyant force act?', options: ['Downwards', 'Upwards', 'Sideways', 'In the direction of motion'], answer: 1, explain: 'The fluid pushes the object up; its weight acts down.', hint: 'The bottle shot up when released.'});
+K.mcq('#q4', {q: 'A bucket full of water feels lighter while it is under the well water because…', options: ['the water in it has no weight under water', 'the well water pushes it up (buoyant force)', 'the rope becomes lighter', 'gravity does not act under water'], answer: 1, explain: 'Gravity still acts; the buoyant force supports part of the weight.', hint: 'Does gravity disappear under water?'});
+K.mcq('#q5', {q: 'A bottle completely under water is pushed 10 cm deeper. The buoyant force on it…', options: ['increases a lot', 'stays the same', 'becomes zero', 'turns downwards'], answer: 1, explain: 'Once fully immersed, the volume under water no longer changes, so the buoyant force stays the same.', hint: 'Watch the blue arrow in the bottle lab beyond 100 %.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Applications &amp; Explore Online – Buoyant Force</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.exam{font-size:.92rem;background:var(--purple-soft);border-left:4px solid var(--purple);border-radius:8px;padding:.45rem .8rem;margin:.5rem 0 0}
+.exam b{color:var(--purple)}
+.lab select{padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;max-width:100%}
+.btnrow{display:flex;flex-wrap:wrap;gap:.4rem;margin:.3rem 0}
+.lab .controls label{flex-wrap:wrap;max-width:100%;min-width:0}
+.lab .controls select{min-width:0;width:auto;max-width:100%}
+</style>
+</head>
+<body data-page="12_applications_explore">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 5 · Applications</span><span class="chip green">Buoyancy at work</span><span class="chip blue">Explore online</span>
+<h1>Applications &amp; Explore Online <span class="ml">പ്ലവക്ഷമബലം</span></h1>
+<p class="lead">The buoyant force keeps INS Vikrant afloat off Kochi, takes a submarine down and brings it back up, holds your head above the water when you wear a life jacket on the Water Metro, lifts a hot-air balloon, lets a fish hover without effort, hides nine-tenths of an iceberg and catches watered milk at the milk society. Every lab below uses only the ideas of this chapter – and the computer works out every number from F<sub>B</sub> = ρ × V × g.</p>
+
+<div class="callout book"><div class="title">📖 The ideas behind every lab</div>
+<ul style="margin:0">
+<li><b>Buoyant force</b> (<span class="ml">പ്ലവക്ഷമബലം</span>): the upward push of a fluid (<span class="ml">ദ്രവങ്ങൾ</span>) – a liquid or a gas – on an object in it – <a href="05_buoyant_force.html">page 5</a>.</li>
+<li><b>Archimedes’ principle</b> (<span class="ml">ആർക്കിമിഡീസ് തത്വം</span>): buoyant force = weight of the fluid displaced (<span class="ml">ആദേശം ചെയ്ത ജലം</span>), F<sub>B</sub> = ρ<sub>fluid</sub> × V<sub>under</sub> × g. It grows with the density of the fluid and with the volume under it, and does not change with depth once the object is fully under – <a href="06_factors_buoyant_force.html">page 6</a>, <a href="07_archimedes_principle.html">page 7</a>.</li>
+<li><b>Principle of floatation</b> (<span class="ml">പ്ലവനതത്വം</span>): a floating object displaces its own weight of fluid, so F<sub>B</sub> = W. It floats when its density is less than the fluid’s, with the fraction ρ<sub>object</sub> ÷ ρ<sub>fluid</sub> of its volume under – <a href="08_floatation.html">page 8</a>.</li>
+<li><b>Relative density</b> (<span class="ml">ആപേക്ഷികസാന്ദ്രത</span>) = density ÷ density of water (no unit); hydrometers and lactometers float higher in denser liquids – <a href="09_relative_density_hydrometer.html">page 9</a>.</li>
+</ul>
+<p style="margin:.4rem 0 0">Numbers used: g = 9.8 m/s², 1 kgwt = 9.8 N, water 1000 kg/m³, sea water 1025 kg/m³ (approx.), ice 917 kg/m³. Values marked “approx.” are typical values, not from the textbook.</p></div>
+
+<h2 id="ship">1. Ships and the Plimsoll load line</h2>
+<p>A steel ship floats because of its <b>shape</b>. Its hollow hull pushes aside a huge volume of water, and it settles until the weight of the water it displaces equals its own weight (<span class="ml">പ്ലവനതത്വം</span>). Load more cargo and the ship sinks deeper – its <b>draft</b>, the depth of the hull under the water, increases. A ship must not sink too deep, so every cargo ship carries a <b>load line</b>, or <b>Plimsoll mark</b>, painted on its side: a circle with a line through it, and short lines marked <b>S</b> (load line in sea water) and <b>F</b> (in fresh water). The F line is higher because fresh water is less dense: the same ship sinks deeper in a river than in the sea. India’s first home-built aircraft carrier, <b>INS Vikrant</b> (the ship on the first page of this chapter), was built at <b>Cochin Shipyard</b> in Kochi. It displaces about 43&#8239;000 tonnes, so the sea pushes up on it with about 43&#8239;000&#8239;000 kgwt ≈ 4.2 × 10<sup>8</sup> N.</p>
+<div class="lab"><div class="lab-title">🚢 Ship lab: load the cargo, then sail from the river into the sea</div>
+  <svg id="s1" viewBox="0 0 800 340" role="img" aria-label="A cargo ship with containers floating in water, its draft, the weight and buoyant-force arrows, and an enlarged view of its load-line marks"></svg>
+  <div class="controls"><label>cargo (tonnes) <input id="c1" type="range" min="0" max="14000" step="50" value="6000"><output></output></label>
+    <label>water <select id="w1"><option value="water" selected>fresh water – river / backwaters (1000 kg/m³)</option><option value="sea">sea water (1025 kg/m³, approx.)</option></select></label></div>
+  <div class="btnrow"><button class="btn primary" id="go1">▶ Sail from the river into the sea</button><button class="btn" id="un1">📦 Unload at the port</button><button class="btn" data-set1="c1:12450,w1:water">⚓ Load to the F mark in the river</button><button class="btn" data-set1="c1:13500,w1:sea">⚠️ Overload</button></div>
+  <div class="readout" id="o1"></div>
+  <p class="hint">The ship weighs 6000 tonnes empty. Its hull is treated as a box 100 m long and 20 m wide, so draft = volume of water displaced ÷ (100 m × 20 m). Heights are drawn three times taller than lengths so that you can see the draft change. 1 tonne = 1000 kg.</p>
+  <p class="exam"><b>📝 In the exam this looks like:</b> “A boat on a lake displaces 6000 kg of water. What is the buoyant force on it?” → buoyant force = weight of the water displaced = <b>6000 kgwt = 6000 × 9.8 = 58&#8239;800 N</b> (and, since it floats, the boat also weighs 6000 kgwt). “A ship rises a little when it sails from a river into the sea – why?” → sea water is denser, so a smaller volume of it already weighs as much as the ship. “A ship rises after unloading at a port – why?” → its weight decreases, so it needs to displace less water to float (principle of floatation) – Let us assess Q3(b).</p></div>
+
+<h2 id="submarine">2. Submarines – ballast tanks</h2>
+<p>A <b>submarine</b> (<span class="ml">അന്തർവാഹിനി</span>) cannot change its shape, so the buoyant force on it, once it is fully under water, is fixed: ρ<sub>sea</sub> × V<sub>hull</sub> × g. Instead it changes its <b>weight</b>. It has <b>ballast tanks</b>. To dive, valves open and sea water floods into the tanks – the submarine becomes heavier than the water it displaces and sinks. To come up, compressed air blows the water out – it becomes lighter and the buoyant force pushes it up. With the tanks partly filled it can <b>hover</b>, its weight exactly equal to the buoyant force.</p>
+<div class="lab"><div class="lab-title">🫧 Submarine lab: flood and blow the ballast tanks</div>
+  <svg id="s2" viewBox="0 0 800 320" role="img" aria-label="A submarine in the sea with two ballast tanks, and a force diagram of its weight and the buoyant force"></svg>
+  <div class="controls"><label>water in the ballast tanks (%) <input id="f2" type="range" min="0" max="100" step="1" value="0"><output></output></label></div>
+  <div class="btnrow"><button class="btn primary" data-set2="100">💧 Flood the tanks (dive)</button><button class="btn" data-set2="73">⚖️ Fill to 73 % (hover)</button><button class="btn" data-set2="0">💨 Blow the tanks with compressed air</button><button class="btn" id="rs2">⟲ Back to the surface</button></div>
+  <div class="readout" id="o2"></div>
+  <p class="hint">Example submarine: hull volume 2000 m³, mass 1750 tonnes with empty tanks, ballast tanks 400 m³; sea water 1025 kg/m³ (approx.). Fully under water the buoyant force is 2000 × 1025 = 2&#8239;050&#8239;000 kgwt, at any depth. The submarine moves slowly because the water drags on it.</p>
+  <p class="exam"><b>📝 In the exam this looks like:</b> “How does a submarine dive and surface?” → It takes sea water into its ballast tanks: its weight becomes <b>greater than</b> the buoyant force and it sinks. Compressed air pushes the water out: its weight becomes <b>less than</b> the buoyant force and it rises. Its volume, and so the buoyant force when fully under water, does not change. When weight = buoyant force under water, it stays at the same depth.</p></div>
+
+<h2 id="lifejacket">3. Life jackets and boat safety</h2>
+<p>Our bodies are only a little denser than water, so a person in water floats very low, with the mouth and nose under the surface – and in fresh water may slowly sink. A <b>life jacket</b> (<span class="ml">ലൈഫ് ജാക്കറ്റ്</span>) is filled with a very light foam (or air). It adds a large <b>volume</b> but almost no <b>weight</b>. The person and jacket together displace enough water for the buoyant force to equal their total weight while the head stays above the water. That is why life jackets are compulsory on boats – the Kochi Water Metro, ferries, houseboats on Vembanad lake and fishing boats.</p>
+<div class="lab"><div class="lab-title">🦺 Life-jacket lab: will your head stay above water?</div>
+  <svg id="s3" viewBox="0 0 800 330" role="img" aria-label="A person floating upright in water with or without a life jacket, a houseboat in the background, and bars comparing the weight with the buoyant force"></svg>
+  <div class="controls"><label>your mass (kg) <input id="m3" type="range" min="20" max="100" step="1" value="45"><output></output></label>
+    <label>foam in the life jacket (litres) <input id="v3" type="range" min="0" max="20" step="1" value="0"><output></output></label>
+    <label>water <select id="w3"><option value="water" selected>lake / backwaters (fresh, 1000 kg/m³)</option><option value="sea">sea (1025 kg/m³, approx.)</option></select></label></div>
+  <div class="btnrow"><button class="btn primary" data-set3="v3:10">🦺 Put on a life jacket (10 L)</button><button class="btn" data-set3="v3:0">🚫 No jacket</button><button class="btn" data-set3="m3:90,v3:10">🧔 Adult (90 kg), child’s jacket</button><button class="btn" data-set3="m3:90,v3:16">🧔 Adult, adult jacket (16 L)</button></div>
+  <div class="readout" id="o3"></div>
+  <p class="hint">A simplified model: average body density 1010 kg/m³ (approx.; it changes with breathing), body volume spread evenly over the height, foam jacket 100 kg/m³ (approx.) worn around the chest. The person floats where the buoyant force equals the total weight. For the mouth to stay out, the buoyant force from everything below the mouth must be at least the total weight.</p>
+  <div class="safety">⚠ Always wear a life jacket on any boat – even if you can swim – and fasten every strap. Never lean over a well or play near deep water; do water experiments in a bucket or tub, with an adult nearby.</div>
+  <p class="exam"><b>📝 In the exam this looks like:</b> Let us assess Q4 – “Life jackets are compulsory in boats. Explain on the basis of buoyant force.” → A life jacket is filled with very light material, so it adds a large volume with very little weight. The person and the jacket together displace more water; the buoyant force (the weight of the water displaced) becomes equal to their total weight while the head is still above the water, so the person floats and can breathe.</p></div>
+
+<h2 id="balloons">4. Balloons – buoyant force in air</h2>
+<p>Air is a fluid too, so it pushes up on everything in it with a buoyant force equal to the weight of the air displaced. For most things this is tiny compared with their weight. A balloon is different: it is big but very light. A <b>helium</b> balloon rises because helium is much less dense than air – the balloon weighs less than the air it pushes aside. A balloon filled with <b>carbon dioxide</b> (denser than air) sinks (Let us assess Q3a). A <b>hot-air balloon</b> rises because heated air expands and becomes less dense than the cooler air around it.</p>
+<div class="lab"><div class="lab-title">🎈 Balloon lab: toy balloon and hot-air balloon</div>
+  <svg id="s4" viewBox="0 0 800 340" role="img" aria-label="Left: a toy balloon with weight and buoyant-force arrows. Right: a hot-air balloon with a burner, its load and the forces on it"></svg>
+  <div class="controls"><label>toy balloon gas <select id="g4"><option value="he" selected>helium</option><option value="co2">carbon dioxide</option><option value="air">air (blown with a pump)</option></select></label>
+    <label>toy balloon volume (litres) <input id="v4" type="range" min="2" max="30" step="1" value="10"><output></output></label>
+    <label>hot air temperature (°C) <input id="T4" type="range" min="20" max="120" step="1" value="100"><output></output></label>
+    <label>balloon + basket + people (kg) <input id="L4" type="range" min="200" max="900" step="10" value="500"><output></output></label></div>
+  <div class="btnrow"><button class="btn primary" id="go4">▶ Let go of both balloons</button><button class="btn" id="rs4">⟲ Back to the start</button></div>
+  <div class="readout" id="o4"></div>
+  <p class="hint">Densities (approx.): air 1.2 kg/m³ at 20 °C, helium 0.17, carbon dioxide 1.84 kg/m³; rubber of the toy balloon 3 g. The hot-air balloon’s envelope holds 2800 m³ (approx.); hot air’s density is worked out from the gas laws: 1.2 × (273 + 20) ÷ (273 + T). The buoyant force on both balloons is the weight of the cool outside air they displace.</p>
+  <p class="exam"><b>📝 In the exam this looks like:</b> Let us assess Q3(a) – “Helium balloons rise in air but carbon dioxide balloons sink. Why?” → Helium is less dense than air, so the weight of the balloon is less than the weight of the air it displaces (the buoyant force) – it rises. Carbon dioxide is denser than air, so the balloon’s weight is greater than the buoyant force – it sinks. Also: “A helium balloon rises when released – which force pushes it up?” → the buoyant force of the air.</p></div>
+
+<h2 id="fish">5. Fish and the swim bladder</h2>
+<p>Fish flesh and bones are a little denser than water. Most bony fish have a <b>swim bladder</b> (<span class="ml">വായുസഞ്ചി</span>) – a bag of gas inside the body. By putting gas into it or taking gas out, the fish changes its <b>volume</b> without changing its <b>mass</b>. A bigger bladder displaces more water, so the buoyant force grows and the fish rises; a smaller bladder lets it sink. With just the right amount of gas its average density equals the water’s and it hovers without effort – like a submarine, but by changing volume instead of weight.</p>
+<div class="lab"><div class="lab-title">🐟 Swim-bladder lab: rise, sink or hover</div>
+  <svg id="s5" viewBox="0 0 800 300" role="img" aria-label="A fish in a pond with a gas-filled swim bladder, and a force diagram of its weight and the buoyant force"></svg>
+  <div class="controls"><label>gas in the swim bladder (cm³) <input id="b5" type="range" min="0" max="60" step="0.5" value="40"><output></output></label>
+    <label>water <select id="w5"><option value="water" selected>pond / river (fresh, 1000 kg/m³)</option><option value="sea">sea (1025 kg/m³, approx.)</option></select></label></div>
+  <div class="btnrow"><button class="btn" id="up5">⬆ Fill the bladder (rise)</button><button class="btn" id="dn5">⬇ Shrink the bladder (sink)</button><button class="btn primary" id="hv5">⚖️ Just enough gas (hover)</button></div>
+  <div class="readout" id="o5"></div>
+  <p class="hint">Example fish: mass 500 g, body without the bladder 467 cm³ (density about 1070 kg/m³, approx.); the gas itself weighs almost nothing. A sea fish needs a smaller bladder than a river fish of the same mass, because sea water is denser.</p>
+  <p class="exam"><b>📝 In the exam this looks like:</b> “How does a fish rise or sink in water?” → by changing the amount of gas in its swim bladder. More gas → more volume → more water displaced → buoyant force greater than its weight → it rises. Less gas → less volume → buoyant force less than its weight → it sinks. Its mass does not change; its average density does.</p></div>
+
+<h2 id="ice">6. Ice and icebergs</h2>
+<p>Water is unusual: it <b>expands</b> when it freezes, so ice (917 kg/m³) is less dense than water and floats. By the principle of floatation, the fraction of a floating object under the liquid is ρ<sub>object</sub> ÷ ρ<sub>liquid</sub>. For ice in sea water: 917 ÷ 1025 ≈ 0.89, so about <b>89 %</b> of an iceberg (<span class="ml">മഞ്ഞുമല</span>) is hidden under the sea – only about one-tenth shows. That hidden part is what made icebergs so dangerous to ships such as the Titanic (1912). In fresh water a little more of the ice is under: 917 ÷ 1000 ≈ 92 %.</p>
+<div class="lab"><div class="lab-title">🧊 Iceberg lab: how much is under the surface?</div>
+  <svg id="s6" viewBox="0 0 800 360" role="img" aria-label="An iceberg-shaped block floating in a liquid, with a bar showing the share of its volume above and below the surface"></svg>
+  <div class="controls"><label>object <select id="o6s"><option value="ice" selected>ice (917 kg/m³)</option><option value="wax">wax (≈ 900 kg/m³)</option><option value="teak">teak wood (≈ 650 kg/m³)</option></select></label>
+    <label>liquid <select id="l6"><option value="sea" selected>sea water (1025 kg/m³, approx.)</option><option value="water">fresh water (1000 kg/m³)</option><option value="coconut">coconut oil (920 kg/m³)</option><option value="kerosene">kerosene (810 kg/m³)</option><option value="glycerine">glycerine (1260 kg/m³)</option></select></label></div>
+  <div class="btnrow"><button class="btn primary" id="go6">▶ Drop it in</button><button class="btn" data-set6="o6s:ice,l6:water">🥤 Ice in a glass of water</button><button class="btn" data-set6="o6s:ice,l6:coconut">🥥 Ice in coconut oil</button><button class="btn" data-set6="o6s:ice,l6:kerosene">⛽ Ice in kerosene</button></div>
+  <div class="readout" id="o6"></div>
+  <p class="hint">The computer finds the water line by balancing the areas: it slides the line until the share of the shape below it equals ρ<sub>object</sub> ÷ ρ<sub>liquid</sub> (a flat “slice” of an iceberg – every slice of a real iceberg floats the same way). If the object is denser than the liquid, the share would be more than 1 – it sinks.</p>
+  <p class="exam"><b>📝 In the exam this looks like:</b> “Why does ice float on water?” → The density of ice (917 kg/m³) is less than that of water (1000 kg/m³); it floats with part of it above the surface, where the weight of the water displaced equals its weight. “About what fraction of an iceberg is under sea water (densities 917 and 1025 kg/m³)?” → 917 ÷ 1025 ≈ 0.89, i.e. about <b>89 %</b> (nine-tenths).</p></div>
+
+<h2 id="lactometer">7. The lactometer at the milk society</h2>
+<p>At a village milk society (<span class="ml">ക്ഷീരസംഘം</span>) the staff dip a <b>lactometer</b> (<span class="ml">ലാക്ടോമീറ്റർ</span>) into every can of milk. It is a hydrometer (<span class="ml">ഹൈഡ്രോമീറ്റർ</span>) made for milk: a weighted glass float with a thin stem. It sinks until it displaces its own weight of milk, so it floats <b>higher in denser milk</b>; the number on the stem at the milk surface is the relative density (<span class="ml">ആപേക്ഷികസാന്ദ്രത</span>). Pure cow’s milk has a relative density of about 1.028–1.032 (approx.). Water (1.000) lowers it, so watered milk – an offence (<span class="ml">മായം ചേർക്കൽ</span>) – reads lower. Societies often write only the last two digits: a reading of “30” means 1.030.</p>
+<div class="lab"><div class="lab-title">🥛 Lactometer lab: add water to the milk</div>
+  <svg id="s7" viewBox="0 0 800 340" role="img" aria-label="A lactometer floating in a jar of milk, an enlarged view of its stem at the milk surface, and the milk society's chart of readings"></svg>
+  <div class="controls"><label>milk <select id="k7"><option value="whole" selected>whole (full-cream) milk, RD ≈ 1.030</option><option value="skim">skimmed milk (fat removed), RD ≈ 1.035</option></select></label>
+    <label>water added (%) <input id="x7" type="range" min="0" max="50" step="1" value="0"><output></output></label></div>
+  <div class="btnrow"><button class="btn primary" id="go7">▶ Pour in water slowly</button><button class="btn" data-set7="k7:whole,x7:0">🥛 Pure milk</button><button class="btn" data-set7="k7:skim,x7:17">🕵️ Skimmed milk + 17 % water</button></div>
+  <div class="readout" id="o7"></div>
+  <p class="hint">Example lactometer: mass 60 g, stem cross-section 0.5 cm². The depth it sinks to is worked out from “weight of milk displaced = weight of the lactometer”; that is why the gaps between the marks on its scale are not all equal, and why the values increase <b>downwards</b>. The relative density of a mixture is found from the share of each liquid by volume.</p>
+  <p class="exam"><b>📝 In the exam this looks like:</b> “Will a lactometer show the same reading in pure milk and in milk with water added? Why?” → <b>No.</b> Watered milk is less dense, so the lactometer sinks deeper and reads lower. “How can we find out whether water has been added to milk?” → measure its relative density with a lactometer; a reading below the pure-milk value shows added water. “Does the lactometer sink more in pure milk or in skimmed milk?” → in pure (whole) milk; removing the fat, which is lighter than water, makes skimmed milk denser.</p></div>
+
+<h2 id="check">✅ Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div>
+
+<h2 id="explore">🌐 Explore online – resources hub</h2>
+<p>Everything in this guide works offline. The links below are extras – websites and simulations from trusted sources (PhET and others), grouped by topic. They <b>need internet</b> and open in a <b>new tab</b>, so you will not lose your place here. <b>Ask a parent or teacher before you go online.</b> The PhET simulations <i>Buoyancy</i>, <i>Buoyancy: Basics</i> and <i>Density</i> run directly in your browser – nothing to install. (The “Buoyant Force” simulation named in the textbook is the offline PhET copy on the KITE Ubuntu school laptops.)</p>
+<h3>Buoyant force – why things float or sink</h3><div class="explore"><div class="title">🌐 Buoyant force – why things float or sink <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://phet.colorado.edu/en/simulations/buoyancy-basics" target="_blank" rel="noopener noreferrer">🧪 Buoyancy: Basics (PhET simulation)</a> <span class="src">PhET, University of Colorado Boulder</span><br><span class="note">Drop blocks into water and watch the upward buoyant force balance their weight.</span></li><li><a href="https://phet.colorado.edu/en/simulations/buoyancy" target="_blank" rel="noopener noreferrer">🧪 Buoyancy (PhET simulation)</a> <span class="src">PhET, University of Colorado Boulder</span><br><span class="note">The fuller version (the textbook&#x27;s &#x27;Buoyant Force&#x27; sim): change fluid density and see force arrows for weight and buoyancy.</span></li><li><a href="https://www.physicsclassroom.com/interactive/fluids/buoyancy-sim" target="_blank" rel="noopener noreferrer">🧪 Interactive - Buoyancy Simulation</a> <span class="src">The Physics Classroom</span><br><span class="note">Lower an object into a fluid and read off the buoyant force and the apparent loss of weight.</span></li><li><a href="https://vp.hbcse.tifr.res.in/wp-content/uploads/2025/01/Will_it_sink_or_float_TV_12dec2024.pdf" target="_blank" rel="noopener noreferrer">📄 Will it sink or float? (Vigyan Pratibha learning unit, PDF)</a> <span class="src">HBCSE-TIFR (Vigyan Pratibha), India</span><br><span class="note">Indian hands-on lab unit: measure upthrust with a spring balance and find what it depends on.</span></li></ul></div><h3>Density of liquids and solids</h3><div class="explore"><div class="title">🌐 Density of liquids and solids <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://phet.colorado.edu/en/simulations/density" target="_blank" rel="noopener noreferrer">🧪 Density (PhET simulation)</a> <span class="src">PhET, University of Colorado Boulder</span><br><span class="note">Change mass and volume of blocks and see why density, not weight, decides floating.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/matter/density/concepts-and-mathematics-of-density" target="_blank" rel="noopener noreferrer">📄 Concepts and Mathematics of Density</a> <span class="src">The Physics Classroom</span><br><span class="note">Clear explanation of density = mass / volume, with layered liquids and worked examples.</span></li><li><a href="https://www.noaa.gov/ocean/ll-eggs" target="_blank" rel="noopener noreferrer">📄 Learning Lesson: Salt &#x27;n Lighter</a> <span class="src">NOAA</span><br><span class="note">Classic egg experiment: an egg sinks in tap water but floats when you add enough salt.</span></li><li><a href="https://www.noaa.gov/jetstream/ocean/sea-water" target="_blank" rel="noopener noreferrer">📄 Sea Water (JetStream)</a> <span class="src">NOAA National Weather Service</span><br><span class="note">Why sea water is denser than fresh water and how salt and temperature change density.</span></li><li><a href="https://en.wikipedia.org/wiki/Dead_Sea" target="_blank" rel="noopener noreferrer">📄 Dead Sea</a> <span class="src">Wikipedia</span><br><span class="note">The super-salty lake where people float easily without swimming.</span></li><li><a href="https://www.omnicalculator.com/physics/density" target="_blank" rel="noopener noreferrer">🔗 Density Calculator</a> <span class="src">Omni Calculator</span><br><span class="note">Type in mass and volume to get density, or work backwards to find either one.</span></li></ul></div><h3>Archimedes and his principle</h3><div class="explore"><div class="title">🌐 Archimedes and his principle <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.physicsclassroom.com/tutorial/fluids/pressure/buoyant-force-and-archimedes-principle" target="_blank" rel="noopener noreferrer">📄 Buoyant Force and Archimedes&#x27; Principle</a> <span class="src">The Physics Classroom</span><br><span class="note">Why pressure pushes up harder from below, and why buoyant force equals the weight of fluid displaced.</span></li><li><a href="https://www.grc.nasa.gov/www/k-12/WindTunnel/Activities/buoy_Archimedes.html" target="_blank" rel="noopener noreferrer">📄 Buoyancy: Archimedes Principle</a> <span class="src">NASA Glenn Research Center</span><br><span class="note">NASA&#x27;s short, student-friendly statement of Archimedes&#x27; principle with a worked problem.</span></li><li><a href="https://mathshistory.st-andrews.ac.uk/Biographies/Archimedes/" target="_blank" rel="noopener noreferrer">📄 Archimedes (287 BC - 212 BC) - Biography</a> <span class="src">MacTutor History of Mathematics, University of St Andrews</span><br><span class="note">Life and discoveries of Archimedes of Syracuse, including the crown story.</span></li><li><a href="https://math.nyu.edu/Archimedes/Crown/CrownIntro.html" target="_blank" rel="noopener noreferrer">📄 The Golden Crown</a> <span class="src">Chris Rorres, Archimedes Home Page (NYU Courant)</span><br><span class="note">The &#x27;Eureka!&#x27; crown story told step by step, with Vitruvius&#x27;s and Galileo&#x27;s versions.</span></li><li><a href="https://exhibits.museogalileo.it/archimedes/section/VitruviusArchimedes.html" target="_blank" rel="noopener noreferrer">📄 Vitruvius and Archimedes</a> <span class="src">Museo Galileo, Florence</span><br><span class="note">Museum exhibit page on how the crown story was first written down by Vitruvius.</span></li><li><a href="https://www.scientificamerican.com/article/fact-or-fiction-archimede/" target="_blank" rel="noopener noreferrer">📄 Fact or Fiction?: Archimedes Coined the Term &quot;Eureka!&quot; in the Bath</a> <span class="src">Scientific American</span><br><span class="note">Did the bath-tub story really happen? A look at what is legend and what is physics.</span></li></ul></div><h3>Principle of floatation, boats and ships</h3><div class="explore"><div class="title">🌐 Principle of floatation, boats and ships <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.physicsclassroom.com/tutorial/fluids/pressure/sinking-and-floating" target="_blank" rel="noopener noreferrer">📄 Sinking and Floating</a> <span class="src">The Physics Classroom</span><br><span class="note">Compare weight with buoyant force to predict sink, float or hang; includes the ice-cube example.</span></li><li><a href="https://www.explainthatstuff.com/how-ships-work.html" target="_blank" rel="noopener noreferrer">📄 Ships and boats: How do they float?</a> <span class="src">Explain that Stuff</span><br><span class="note">Why a giant steel ship floats while a steel nail sinks.</span></li><li><a href="https://www.explainthatstuff.com/submarines.html" target="_blank" rel="noopener noreferrer">📄 How do submarines work?</a> <span class="src">Explain that Stuff</span><br><span class="note">Ballast tanks let a submarine fill with water to dive and blow it out to rise.</span></li><li><a href="https://heritage.lrfoundation.org.uk/what-is-the-plimsoll-line" target="_blank" rel="noopener noreferrer">📄 What is the Plimsoll line?</a> <span class="src">Lloyd&#x27;s Register Foundation Heritage Centre</span><br><span class="note">History and meaning of the load-line marks painted on every ship&#x27;s side.</span></li><li><a href="https://en.wikipedia.org/wiki/Load_line_(watercraft)" target="_blank" rel="noopener noreferrer">🖼️ Load line (watercraft)</a> <span class="src">Wikipedia</span><br><span class="note">Diagram of the Plimsoll mark: TF, F, T, S, W lines for fresh, tropical and sea water.</span></li><li><a href="https://cochinshipyard.in/news/view/44" target="_blank" rel="noopener noreferrer">📄 CSL delivers Indigenous Aircraft Carrier, Project-71 (Vikrant) to the Indian Navy</a> <span class="src">Cochin Shipyard Ltd</span><br><span class="note">Official Cochin Shipyard news on handing over INS Vikrant, built in Kochi.</span></li><li><a href="https://www.pib.gov.in/PressReleasePage.aspx?PRID=1856230&amp;reg=48&amp;lang=2" target="_blank" rel="noopener noreferrer">📄 PM commissions India&#x27;s first indigenous aircraft carrier INS Vikrant in Kochi</a> <span class="src">Press Information Bureau, Govt of India</span><br><span class="note">Government release on INS Vikrant, a ship of about 43,000 tonnes that floats by displacing sea water.</span></li><li><a href="https://www.grc.nasa.gov/www/k-12/TRC/Aeronautics/Hot_Air_Balloon.html" target="_blank" rel="noopener noreferrer">📄 Hot Air Balloon</a> <span class="src">NASA Glenn Research Center</span><br><span class="note">Buoyancy in air: hot, less-dense air makes a balloon rise.</span></li></ul></div><h3>Relative density</h3><div class="explore"><div class="title">🌐 Relative density <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://en.wikipedia.org/wiki/Relative_density" target="_blank" rel="noopener noreferrer">📄 Relative density</a> <span class="src">Wikipedia</span><br><span class="note">Relative density (specific gravity) = density of substance / density of water; no unit.</span></li><li><a href="https://www.omnicalculator.com/physics/specific-gravity" target="_blank" rel="noopener noreferrer">🔗 Specific Gravity Calculator</a> <span class="src">Omni Calculator</span><br><span class="note">Enter a density and get the relative density compared with water.</span></li><li><a href="https://oceanservice.noaa.gov/education/dyw-pass-salt.html" target="_blank" rel="noopener noreferrer">📄 Please Pass the Salt (Discover Your World)</a> <span class="src">NOAA Ocean Service</span><br><span class="note">Activity comparing fresh and salt water: the denser liquid holds objects higher.</span></li></ul></div><h3>Hydrometer and lactometer</h3><div class="explore"><div class="title">🌐 Hydrometer and lactometer <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.exploratorium.edu/snacks/eyedropper-hydrometer" target="_blank" rel="noopener noreferrer">📄 Eyedropper Hydrometer</a> <span class="src">Exploratorium</span><br><span class="note">Build a simple hydrometer from an eyedropper and watch it float higher in salty water.</span></li><li><a href="https://en.wikipedia.org/wiki/Hydrometer" target="_blank" rel="noopener noreferrer">📄 Hydrometer</a> <span class="src">Wikipedia</span><br><span class="note">How hydrometers work, with a section on the lactometer used to test milk.</span></li><li><a href="https://www.downtoearth.org.in/health/how-to-check-if-your-milk-is-adulterated-57584" target="_blank" rel="noopener noreferrer">📄 How to check if your milk is adulterated</a> <span class="src">Down To Earth (Centre for Science and Environment)</span><br><span class="note">Simple home tests for added water and other adulterants in milk, from FSSAI&#x27;s DART booklet.</span></li></ul></div><h3>Water safety and life jackets</h3><div class="explore"><div class="title">🌐 Water safety and life jackets <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.who.int/news-room/fact-sheets/detail/drowning" target="_blank" rel="noopener noreferrer">📄 Drowning (fact sheet)</a> <span class="src">World Health Organization</span><br><span class="note">Key facts on drowning and how life jackets, swimming skills and supervision save lives.</span></li><li><a href="https://www.onmanorama.com/news/kerala/2023/05/08/know-these-about-life-saving-equipment-before-next-boat-ride-kerala-tanur-tragedy.html" target="_blank" rel="noopener noreferrer">📄 What do the Rules say about life jackets, lifebuoys in Kerala boats</a> <span class="src">Onmanorama (Malayala Manorama)</span><br><span class="note">Kerala Inland Vessels Rules: one life jacket per passenger, lifebuoys on every boat.</span></li><li><a href="https://en.wikipedia.org/wiki/Personal_flotation_device" target="_blank" rel="noopener noreferrer">📄 Personal flotation device</a> <span class="src">Wikipedia</span><br><span class="note">How a life jacket adds buoyancy to keep your head above water.</span></li></ul></div><h3>More to explore</h3><div class="explore"><div class="title">🌐 More to explore <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.sciencelearn.org.nz/resources/3181-building-science-concepts-floating-and-sinking" target="_blank" rel="noopener noreferrer">📄 Building Science Concepts: Floating and sinking</a> <span class="src">Science Learning Hub, New Zealand</span><br><span class="note">Big-picture guide to density, displacement and floating, with common mistakes explained.</span></li><li><a href="https://www.exploratorium.edu/snacks/tag/buoyancy" target="_blank" rel="noopener noreferrer">📄 Science Snacks: buoyancy</a> <span class="src">Exploratorium</span><br><span class="note">A collection of easy home experiments on buoyancy and floating.</span></li></ul></div>
+
+<div class="callout"><div class="title">🧭 Next</div>
+<p style="margin:0">Now pull the whole chapter together: <a href="13_summary_revision.html">Summary &amp; Quick Quiz ▶</a></p></div>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Buoyant Force · Class 9 Physics", "icon": "🚢", "key": "physics_ch5_progress", "pages": [["index.html", "Home"], ["01_mass_weight_kgwt.html", "1 · Mass, Weight, Newton & kgwt"], ["02_volume_displacement.html", "2 · Volume & Measuring by Displacement"], ["03_density.html", "3 · Density – Mass per Volume"], ["04_pressure_in_liquids.html", "4 · Pressure in Liquids"], ["05_buoyant_force.html", "5 · Buoyant Force & How to Measure It"], ["06_factors_buoyant_force.html", "6 · What Decides the Buoyant Force?"], ["07_archimedes_principle.html", "7 · Archimedes' Principle"], ["08_floatation.html", "8 · Principle of Floatation – Boats & Ships"], ["09_relative_density_hydrometer.html", "9 · Relative Density, Hydrometer & Lactometer"], ["10_intext_questions_solutions.html", "10 · In-text Questions – Solutions"], ["11_assess_solutions.html", "11 · Let Us Assess & Extended Activities – Solutions"], ["12_applications_explore.html", "12 · Applications & Explore Online"], ["13_summary_revision.html", "13 · Summary & Quick Quiz"], ["14_model_test_paper.html", "14 · Model Test Paper"], ["15_model_test_solutions.html", "15 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ---- buoyancy helpers shared by pages 12–15 of Chapter 5 (inlined by _gen/gen.py) ---- */
+const {P, polyline} = K;
+const COL = {red:'var(--red)', blue:'var(--blue)', green:'var(--green)', amber:'var(--accent)', purple:'var(--purple)', text:'var(--text)', muted:'var(--muted)'};
+/* a line with its own stroke attributes (seg() carries class 'ln', whose CSS would override them) */
+const sline = (svg, a, b, attrs={}) => K.el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+/* true minus for negative numbers only (hyphens inside words stay hyphens) */
+const minus = s => String(s).replace(/(^|[\s(=:,/])-(?=[\d.])/g, '$1−');
+/* number with at most d decimals, true minus sign: fx(-2.85, 1) → "−2.9" */
+const fx = (v, d=2) => minus(K.fmt(v, d));
+/* fixed decimals: f3(1.0294, 3) → "1.029" */
+const fd = (v, d=2) => minus((+v).toFixed(d));
+/* thousands grouped with a narrow space for numbers of five or more digits: gr(58800) → "58 800", gr(6000) → "6000" */
+const gr = (v, d=0) => { const s = Math.abs(+v).toFixed(d), [a, b] = s.split('.'); return (v < 0 ? '−' : '') + (a.length > 4 ? a.replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : a) + (b ? '.' + b : ''); };
+/* SVG text that understands subscripts: "F_B" → F with a lowered small B, "ρ_l" → ρ with a lowered l */
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+function text(svg, p, str, attrs={}){ const s = String(str);
+  if (!/_/.test(s)) return K.text(svg, p, s, attrs);
+  return K.el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs,
+    html: esc(s).replace(/_(\w+)/g, '<tspan baseline-shift="sub" font-size="72%">$1</tspan>')}, svg); }
+/* working lines: rows = [[step, text, cls], …]; rows whose step ≤ i are shown, the newest fades in. o.x, o.y, o.lh, o.anchor */
+function lines(svg, rows, i, t, o={}){ const x = o.x ?? 400, y0 = o.y ?? 36, lh = o.lh ?? 34, an = o.anchor ?? 'middle'; let k = 0;
+  rows.forEach(r => { if (r[0] > i) return; text(svg, P(x, y0 + k * lh), minus(r[1]), {class: 'lbl ' + (r[2] || ''), 'text-anchor': an, opacity: r[0] === i ? t : 1}); k++; }); }
+/* force arrow from a to b with a filled head; o.c colour name, o.w width, o.label, o.lo label offset {x,y}, o.op opacity */
+function arrow(svg, a, b, o={}){ const c = COL[o.c || 'red'], w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const L = K.dist(a, b); if (L < 1){ return g; } const u = K.unit(a, b), hs = Math.min(o.head ?? 11, L * .6); const base = P(b.x - u.x * hs, b.y - u.y * hs);
+  K.el('line', {x1: a.x, y1: a.y, x2: base.x, y2: base.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round'}, g);
+  K.el('polygon', {points: `${b.x},${b.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g);
+  if (o.label) text(g, P(b.x + (o.lo ? o.lo.x : 0), b.y + (o.lo ? o.lo.y : -12)), minus(o.label), {class: 'lbl sm ' + (o.lc || o.c || 'red'), 'text-anchor': o.anchor || 'middle', 'font-weight': 700});
+  return g; }
+/* weight (red, down) and buoyant force (green, up) drawn from the centre c; k = px per unit of force; labels lw, lb */
+function forces(svg, c, W, FB, k, o={}){ const dx = o.dx ?? 0;
+  if (W > 0) arrow(svg, P(c.x + dx, c.y), P(c.x + dx, c.y + W * k), {c: 'red', label: o.lw, lo: o.low || {x: 0, y: 14}, anchor: o.anchor, op: o.op});
+  if (FB > 0) arrow(svg, P(c.x - dx, c.y), P(c.x - dx, c.y - FB * k), {c: 'green', label: o.lb, lo: o.lob || {x: 0, y: -12}, anchor: o.anchor, op: o.op}); }
+
+/* ---------- physics ---------- */
+const GR = 9.8;                                        /* g in m/s² (textbook value) */
+/* densities in kg/m³ – textbook Table 5.3 and the content plan; "approx." values are marked so on the pages */
+const RHO = {water: 1000, sea: 1025, salt: 1025, kerosene: 810, glycerine: 1260, coconut: 920, iron: 7800, copper: 8900, aluminium: 2700,
+  brass: 8500, teak: 650, wax: 900, ice: 917, mercury: 13600, stone: 2600, glass: 2500};
+/* share of the volume under the liquid for a floating object (1 = fully immersed or sunk) */
+const under = (ro, rl) => Math.min(1, ro / rl);
+/* liquids: [fill colour, fill opacity, English name, Malayalam name] */
+const LQ = {water: ['var(--blue)', .22, 'water', 'ജലം'], sea: ['var(--blue)', .4, 'sea water', 'കടൽജലം'], salt: ['var(--blue)', .32, 'saturated salt solution', 'പൂരിത ഉപ്പുലായനി'],
+  kerosene: ['var(--accent)', .16, 'kerosene', 'മണ്ണെണ്ണ'], glycerine: ['var(--purple)', .28, 'glycerine', 'ഗ്ലിസറിൻ'], coconut: ['var(--accent)', .38, 'coconut oil', 'വെളിച്ചെണ്ണ'],
+  milk: ['#f3ecd9', .95, 'milk', 'പാൽ'], air: ['var(--surface2)', 0, 'air', 'വായു']};
+/* a body of liquid: rectangle + surface line */
+function liq(svg, x, y, w, h, kind='water', o={}){ const L = LQ[kind] || LQ.water;
+  K.el('rect', {x, y, width: w, height: Math.max(0, h), fill: L[0], 'fill-opacity': o.op ?? L[1]}, svg);
+  if (o.surface !== false) sline(svg, P(x, y), P(x + w, y), {stroke: kind === 'milk' ? '#a8a29e' : 'var(--blue)', 'stroke-width': o.sw ?? 2});
+  if (o.label) text(svg, P(o.lx ?? x + 8, o.ly ?? y + h - 10), o.label, {class: 'lbl sm ' + (o.lc || 'blue'), 'text-anchor': o.la || 'start'}); }
+/* an open glass vessel (beaker / trough) with its liquid: top-left (x, y), size w × h, liquid level at height lev from the bottom */
+function vessel(svg, x, y, w, h, lev, kind='water', o={}){
+  if (lev > 0) liq(svg, x + 2, y + h - lev, w - 4, lev - 2, kind, o);
+  polyline(svg, [P(x - 4, y), P(x, y), P(x, y + h), P(x + w, y + h), P(x + w, y), P(x + w + 4, y)], {stroke: 'var(--muted)', 'stroke-width': 2.5, 'stroke-linejoin': 'round'}); }
+/* spring balance hanging from the hook point top; reading in N on a scale 0…max; returns the bottom hook point */
+function balance(svg, top, reading, max, o={}){ const bw = 26, bh = o.h ?? 92, x = top.x - bw / 2, y = top.y + 10;
+  sline(svg, P(top.x, top.y - 12), P(top.x, y), {stroke: 'var(--text)', 'stroke-width': 2});
+  K.el('rect', {x, y, width: bw, height: bh, rx: 5, fill: 'var(--accent-soft)', stroke: 'var(--accent)', 'stroke-width': 1.8}, svg);
+  const y0 = y + 10, y1 = y + bh - 12;
+  for (let q = 0; q <= 10; q++){ const yy = y0 + (y1 - y0) * q / 10; sline(svg, P(x + 4, yy), P(x + (q % 5 ? 10 : 14), yy), {stroke: 'var(--muted)', 'stroke-width': 1}); }
+  const r = Math.max(0, Math.min(max, reading)), yp = y0 + (y1 - y0) * r / max;
+  K.polygon(svg, [P(x + bw - 3, yp - 4), P(x + bw - 3, yp + 4), P(x + 8, yp)], {fill: 'var(--red)'});
+  if (o.label !== false) text(svg, P(o.lx ?? x - 6, o.ly ?? y + bh / 2), o.label ?? `${fx(reading, o.d ?? 2)} N`, {class: 'lbl sm', 'text-anchor': 'end', 'font-weight': 700});
+  const hook = P(top.x, y + bh + 14); sline(svg, P(top.x, y + bh), hook, {stroke: 'var(--text)', 'stroke-width': 2}); return hook; }
+/* a little eye-catching tick/cross badge */
+const verdict = (ok, warn=false) => ok ? '✔' : warn ? '⚠' : '✘';
+/* scientific notation for plain text: sci(117600000, 2) → "1.18 × 10⁸"; sciH(…) gives HTML with <sup> */
+const sciParts = (v, d=2) => { if (v === 0) return ['0', 0]; let e = Math.floor(Math.log10(Math.abs(v))), m = v / 10 ** e; if (+Math.abs(m).toFixed(d) >= 10){ m /= 10; e += 1; } return [fx(m, d), e]; };
+const sci = (v, d=2) => { const [m, e] = sciParts(v, d); return e === 0 ? m : `${m} × 10${(e < 0 ? '⁻' : '') + K.supStr(Math.abs(e))}`; };
+const sciH = (v, d=2) => { const [m, e] = sciParts(v, d); return e === 0 ? m : `${m} × 10<sup>${e < 0 ? '−' : ''}${Math.abs(e)}</sup>`; };
+
+const $ = s => document.querySelector(s);
+function anim(ms, fn, done){ let raf = null; const t0 = performance.now(); const step = now => { const f = Math.min(1, (now - t0) / ms); fn(f); if (f < 1) raf = requestAnimationFrame(step); else { raf = null; if (done) done(); } }; raf = requestAnimationFrame(step); return () => { if (raf) cancelAnimationFrame(raf); raf = null; }; }
+/* runs step(dt) every frame until it returns true or maxMs has passed */
+function loop(step, maxMs=12000){ let raf = null, last = performance.now(); const t0 = last;
+  const f = now => { const dt = Math.min(.05, Math.max(0, (now - last) / 1000)); last = now; const done = step(dt); if (!done && now - t0 < maxMs) raf = requestAnimationFrame(f); else raf = null; };
+  raf = requestAnimationFrame(f); return () => { if (raf) cancelAnimationFrame(raf); raf = null; }; }
+const setVal = (id, v) => { const el = $('#' + id); el.value = v; el.dispatchEvent(new Event(el.tagName === 'SELECT' ? 'change' : 'input', {bubbles: true})); };
+const presets = attr => document.querySelectorAll(`[data-${attr}]`).forEach(b => b.addEventListener('click', () => { b.dataset[attr.replace(/-(\w)/g, (m, c) => c.toUpperCase())].split(',').forEach(p => { const [id, v] = p.split(':'); setVal(id, v); }); }));
+const ease = K.ease;
+const ro = (id, str) => { $(id).innerHTML = esc(str).replace(/_(\w+)/g, '<sub>$1</sub>'); };
+
+/* ---------- 1. ship and load line ---------- */
+const SH = {L: 100, B: 20, H: 12, m0: 6000, S: 9.0};                         /* m, m, m, tonnes, m */
+SH.maxT = SH.S * SH.L * SH.B * RHO.sea / 1000;                                /* tonnes at the S mark in sea water: 18 450 */
+SH.F = SH.maxT * 1000 / (RHO.water * SH.L * SH.B);                           /* the same load in fresh water: 9.225 m */
+let rho1 = RHO.water, stop1 = null;
+function draw1(){ const svg = $('#s1'); K.clear(svg); const c = +$('#c1').value, M = SH.m0 + c, d = M * 1000 / (rho1 * SH.L * SH.B), kx = 4, ky = 12, yw = 150, xs = 40, xe = xs + SH.L * kx;
+  const kind = rho1 > 1012.5 ? 'sea' : 'water';
+  K.el('rect', {x: 0, y: 0, width: 530, height: yw, fill: 'var(--blue)', 'fill-opacity': .05}, svg);
+  liq(svg, 0, yw, 530, 340 - yw, kind, {surface: false});
+  const yb = yw + d * ky, yt = yb - SH.H * ky, bowTop = P(xe + 34, yt - 8), bx = y => xe + 34 * (yb - y) / (yb - bowTop.y);
+  /* bridge, funnel and containers */
+  K.el('rect', {x: xs + 6, y: yt - 54, width: 64, height: 54, fill: '#e2e8f0', stroke: '#64748b', 'stroke-width': 1.2}, svg);
+  for (let q = 0; q < 4; q++) K.el('rect', {x: xs + 12 + q * 14, y: yt - 46, width: 9, height: 8, fill: '#0ea5e9'}, svg);
+  K.el('rect', {x: xs + 26, y: yt - 74, width: 18, height: 20, fill: '#b91c1c'}, svg);
+  const nC = Math.round(c / 500), cols = ['#f97316', '#2563eb', '#16a34a', '#eab308', '#7c3aed'];
+  for (let q = 0; q < nC; q++){ const r = Math.floor(q / 12), cc = q % 12; K.el('rect', {x: xs + 82 + cc * 26, y: yt - 14 - r * 14, width: 24, height: 13, fill: cols[(q * 7 + r) % 5], stroke: '#0f172a', 'stroke-width': .6}, svg); }
+  /* hull: grey above the summer line, red below */
+  K.polygon(svg, [P(xs, yt), bowTop, P(xe, yb), P(xs, yb)], {fill: '#334155', stroke: '#0f172a', 'stroke-width': 1.5});
+  const yS = yb - SH.S * ky, yF = yb - SH.F * ky; K.polygon(svg, [P(xs, yS), P(bx(yS), yS), P(xe, yb), P(xs, yb)], {fill: '#b91c1c'});
+  /* little load-line mark on the hull */
+  K.el('circle', {cx: 300, cy: yS, r: 6, fill: 'none', stroke: '#f8fafc', 'stroke-width': 1.5}, svg); sline(svg, P(290, yS), P(310, yS), {stroke: '#f8fafc', 'stroke-width': 1.5});
+  sline(svg, P(318, yS - 10), P(318, yS + 4), {stroke: '#f8fafc', 'stroke-width': 1.2}); sline(svg, P(318, yS), P(326, yS), {stroke: '#f8fafc', 'stroke-width': 1.2}); sline(svg, P(318, yF), P(326, yF), {stroke: '#f8fafc', 'stroke-width': 1.2});
+  /* water in front of the hull, surface line */
+  K.el('rect', {x: 0, y: yw, width: 530, height: 340 - yw, fill: 'var(--blue)', 'fill-opacity': .22}, svg);
+  sline(svg, P(0, yw), P(530, yw), {stroke: 'var(--blue)', 'stroke-width': 2});
+  /* draft */
+  sline(svg, P(22, yw), P(22, yb), {stroke: 'var(--text)', 'stroke-width': 1.5}); sline(svg, P(16, yb), P(28, yb), {stroke: 'var(--text)', 'stroke-width': 1.5});
+  text(svg, P(30, yb + 14), `draft ${fd(d, 2)} m`, {class: 'lbl sm', 'text-anchor': 'start', 'font-weight': 700});
+  /* forces: equal when floating */
+  const kF = .0052, cg = (yt + yb) / 2; forces(svg, P(250, cg), M, M, kF, {dx: -16, lw: 'W', lb: 'F_B', low: {x: 14, y: -6}, lob: {x: -14, y: 4}});
+  text(svg, P(265, 18), `${LQ[kind][2]}: ρ = ${fx(rho1, 0)} kg/m³` + (rho1 > 1000 && rho1 < 1025 ? ' (river meets sea)' : ''), {class: 'lbl sm blue', 'font-weight': 700});
+  text(svg, P(265, 38), 'floating: F_B = W', {class: 'lbl sm green', 'font-weight': 700});
+  /* zoomed load-line marks */
+  const bx0 = 560, by0 = 40, bw = 225, bh = 260, yc = by0 + bh / 2, kz = 110, Dref = 9.1, ym = D => yc - (D - Dref) * kz;
+  text(svg, P(bx0 + bw / 2, 22), 'load-line marks (enlarged)', {class: 'lbl sm', 'font-weight': 700});
+  K.el('rect', {x: bx0, y: by0, width: bw, height: bh, fill: '#334155'}, svg); K.el('rect', {x: bx0, y: ym(SH.S), width: bw, height: by0 + bh - ym(SH.S), fill: '#b91c1c', opacity: .9}, svg);
+  const wz = Math.max(by0, Math.min(by0 + bh, ym(d)));
+  K.el('rect', {x: bx0, y: wz, width: bw, height: by0 + bh - wz, fill: 'var(--blue)', 'fill-opacity': kind === 'sea' ? .6 : .45}, svg);
+  const ink = {stroke: '#f8fafc', 'stroke-width': 3};
+  K.el('circle', {cx: bx0 + 60, cy: ym(SH.S), r: 26, fill: 'none', ...ink}, svg); sline(svg, P(bx0 + 20, ym(SH.S)), P(bx0 + 100, ym(SH.S)), ink);
+  sline(svg, P(bx0 + 130, ym(SH.S) - 50), P(bx0 + 130, ym(SH.S) + 26), ink); sline(svg, P(bx0 + 130, ym(SH.S)), P(bx0 + 170, ym(SH.S)), ink); sline(svg, P(bx0 + 130, ym(SH.F)), P(bx0 + 170, ym(SH.F)), ink);
+  text(svg, P(bx0 + 185, ym(SH.S) + 2), 'S', {class: 'lbl', style: 'fill:#f8fafc;stroke:none', 'font-weight': 700}); text(svg, P(bx0 + 185, ym(SH.F) - 2), 'F', {class: 'lbl', style: 'fill:#f8fafc;stroke:none', 'font-weight': 700});
+  sline(svg, P(bx0, wz), P(bx0 + bw, wz), {stroke: '#7dd3fc', 'stroke-width': 2.5});
+  if (ym(d) < by0) text(svg, P(bx0 + bw / 2, by0 + 14), '↑ water far above the marks!', {class: 'lbl sm', style: 'fill:#fecaca;stroke:none', 'font-weight': 700});
+  if (ym(d) > by0 + bh) text(svg, P(bx0 + bw / 2, by0 + bh - 12), '↓ water line far below the marks', {class: 'lbl sm', style: 'fill:#e2e8f0;stroke:none'});
+  text(svg, P(bx0 + bw / 2, 318), 'S: limit in sea water · F: limit in fresh water', {class: 'lbl sm muted'});
+  const lim = kind === 'sea' ? SH.S : SH.F, ok = d <= lim + 1e-9;
+  text(svg, P(265, 330), ok ? `✔ water below the ${kind === 'sea' ? 'S' : 'F'} mark – safely loaded` : `✘ water above the ${kind === 'sea' ? 'S' : 'F'} mark – overloaded, unsafe`, {class: 'lbl sm ' + (ok ? 'green' : 'red'), 'font-weight': 700});
+  const dF = M * 1000 / (RHO.water * SH.L * SH.B), dS = M * 1000 / (RHO.sea * SH.L * SH.B);
+  ro('#o1', `mass = ${gr(SH.m0)} t (ship) + ${gr(c)} t (cargo) = ${gr(M)} t = ${gr(M * 1000)} kg → weight W = ${gr(M * 1000)} kgwt = ${sci(M * 1000 * GR, 2)} N\n`
+    + `floating ⇒ buoyant force F_B = W ⇒ the ship displaces ${gr(M * 1000)} kg of water\n`
+    + `volume displaced = ${gr(M * 1000)} ÷ ${fx(rho1, 0)} = ${gr(M * 1000 / rho1)} m³ → draft = ${gr(M * 1000 / rho1)} ÷ (100 × 20) = ${fd(d, 2)} m\n`
+    + `same load: draft ${fd(dF, 2)} m in fresh water, ${fd(dS, 2)} m in sea water – it rises ${fx((dF - dS) * 100, 0)} cm when it enters the sea.  `
+    + (ok ? '✔ safe.' : `✘ overloaded by ${gr((d - lim) * rho1 * SH.L * SH.B / 1000)} t – unload cargo.`)); }
+K.slider('#c1', () => { draw1(); }, 0);
+$('#w1').addEventListener('change', () => { if (stop1){ stop1(); stop1 = null; } rho1 = RHO[$('#w1').value]; draw1(); });
+presets('set1');
+$('#go1').addEventListener('click', () => { if (stop1) stop1(); $('#w1').value = 'water'; stop1 = anim(3500, q => { rho1 = RHO.water + (RHO.sea - RHO.water) * ease(q); draw1(); }, () => { stop1 = null; rho1 = RHO.sea; $('#w1').value = 'sea'; draw1(); }); });
+$('#un1').addEventListener('click', () => { if (stop1) stop1(); const c0 = +$('#c1').value; stop1 = anim(3000, q => { $('#c1').value = Math.round(c0 * (1 - ease(q)) / 50) * 50; $('#c1').dispatchEvent(new Event('input')); }, () => { stop1 = null; }); });
+
+/* ---------- 2. submarine ---------- */
+const SUB = {V: 2000, m0: 1750, Vt: 400};                                     /* m³, tonnes, m³ */
+SUB.FB = SUB.V * RHO.sea / 1000;                                              /* tonnes-weight when fully under: 2050 */
+const Y2 = {surf: 70, bed: 296, Hs: 54};
+const subMass = f => SUB.m0 + SUB.Vt * RHO.sea / 1000 * f;
+const subFrac = yB => Math.max(0, Math.min(1, (yB - Y2.surf) / Y2.Hs));
+const subEq = M => Y2.surf + Y2.Hs * Math.min(1, M / SUB.FB);
+const s2 = {yB: subEq(SUB.m0), v: 0, stop: null};
+function draw2(){ const svg = $('#s2'); K.clear(svg); const f = +$('#f2').value / 100, M = subMass(f), yB = s2.yB, sf = subFrac(yB), FB = SUB.FB * sf, net = FB - M;
+  K.el('rect', {x: 0, y: 0, width: 540, height: Y2.surf, fill: 'var(--blue)', 'fill-opacity': .05}, svg);
+  liq(svg, 0, Y2.surf, 540, Y2.bed - Y2.surf, 'sea', {surface: false});
+  K.el('rect', {x: 0, y: Y2.bed, width: 540, height: 320 - Y2.bed, fill: '#d6b98c'}, svg);
+  [[60, 6], [210, 9], [470, 7]].forEach(([x, r]) => K.el('ellipse', {cx: x, cy: Y2.bed + 2, rx: r * 1.6, ry: r, fill: '#a8a29e'}, svg));
+  const x0 = 120, x1 = 420, yT = yB - Y2.Hs;
+  K.el('rect', {x: 248, y: yT - 24, width: 50, height: 26, rx: 6, fill: '#475569', stroke: '#0f172a', 'stroke-width': 1.2}, svg);
+  sline(svg, P(286, yT - 24), P(286, yT - 40), {stroke: '#475569', 'stroke-width': 3}); sline(svg, P(286, yT - 40), P(296, yT - 40), {stroke: '#475569', 'stroke-width': 3});
+  K.el('rect', {x: x0, y: yT, width: x1 - x0, height: Y2.Hs, rx: 27, fill: '#475569', stroke: '#0f172a', 'stroke-width': 1.5}, svg);
+  K.el('ellipse', {cx: x0 - 6, cy: yT + Y2.Hs / 2, rx: 5, ry: 14, fill: '#94a3b8'}, svg);
+  [x0 + 16, x1 - 86].forEach(tx => { const ty = yT + 9, th = Y2.Hs - 18; K.el('rect', {x: tx, y: ty, width: 70, height: th, rx: 8, fill: '#e2e8f0'}, svg);
+    if (f > 0) K.el('rect', {x: tx, y: ty + th * (1 - f), width: 70, height: th * f, rx: f > .9 ? 8 : 2, fill: '#0284c7'}, svg);
+    K.el('rect', {x: tx, y: ty, width: 70, height: th, rx: 8, fill: 'none', stroke: '#0f172a', 'stroke-width': 1}, svg); });
+  text(svg, P(270, yT + Y2.Hs / 2), 'hull', {class: 'lbl sm', style: 'fill:#e2e8f0;stroke:none'});
+  K.el('rect', {x: 0, y: Y2.surf, width: 540, height: Y2.bed - Y2.surf, fill: 'var(--blue)', 'fill-opacity': .12}, svg);
+  sline(svg, P(0, Y2.surf), P(540, Y2.surf), {stroke: 'var(--blue)', 'stroke-width': 2});
+  text(svg, P(x0 + 51, yT - 10), 'ballast tank', {class: 'lbl sm'}); text(svg, P(x1 - 51, yT - 10), 'ballast tank', {class: 'lbl sm'});
+  /* status */
+  const atBed = yB >= Y2.bed - .01 && net < 0, hov = sf >= 1 && Math.abs(net) < 3, still = Math.abs(s2.v) < .4;
+  const st = atBed ? ['resting on the sea bed: W > F_B', 'red'] : hov ? ['hovering under water: F_B = W', 'green'] : sf < 1 && still ? ['floating at the surface: F_B = W', 'green'] : net < 0 ? ['sinking: W > F_B', 'red'] : ['rising: F_B > W', 'blue'];
+  text(svg, P(270, 24), st[0], {class: 'lbl ' + st[1], 'font-weight': 700});
+  /* force diagram */
+  const cx = 680, cy = 168, k = .05; text(svg, P(cx, 22), 'forces on the submarine now', {class: 'lbl sm', 'font-weight': 700});
+  K.el('rect', {x: cx - 34, y: cy - 12, width: 68, height: 24, rx: 12, fill: '#475569'}, svg);
+  forces(svg, P(cx, cy), M, FB, k, {dx: 0, lw: `W = ${gr(M * 1000)} kgwt`, lb: `F_B = ${gr(FB * 1000)} kgwt`});
+  const dep = Math.max(0, (yB - Y2.Hs - Y2.surf) / Y2.Hs * 7.5);
+  text(svg, P(cx, 312), sf < 1 ? `${fx(sf * 100, 0)} % of the hull under water` : `depth of the top of the hull ≈ ${fx(dep, 0)} m`, {class: 'lbl sm muted'});
+  ro('#o2', `tanks ${fx(f * 100, 0)} % full: mass = ${gr(SUB.m0)} t + ${fx(f * SUB.Vt, 0)} m³ × 1.025 t/m³ = ${gr(M, 1)} t → weight W = ${gr(M * 1000)} kgwt\n`
+    + `buoyant force when fully under = 2000 m³ × 1025 kg/m³ = ${gr(SUB.FB * 1000)} kgwt (the same at every depth)\n`
+    + (M > SUB.FB + 3 ? `W > ${gr(SUB.FB * 1000)} kgwt → it sinks until it rests on the sea bed.` : M < SUB.FB - 3 ? `W < ${gr(SUB.FB * 1000)} kgwt → it rises and floats with ${fx(100 * M / SUB.FB, 0)} % of the hull under water (F_B = W).` : 'W ≈ F_B → it neither rises nor sinks: it hovers at its depth (the crew trims it with small tanks).')); }
+function run2(){ if (s2.stop) s2.stop(); s2.stop = loop(dt => { const M = subMass(+$('#f2').value / 100), net = SUB.FB * subFrac(s2.yB) - M;
+    let v = Math.max(-60, Math.min(60, .5 * net)); if (Math.abs(net) < 3 && subFrac(s2.yB) >= 1) v = 0;
+    s2.yB = Math.min(Y2.bed, s2.yB - v * dt); s2.v = (s2.yB >= Y2.bed && v < 0) ? 0 : v; draw2();
+    return Math.abs(s2.v) < .4; }, 15000); }
+K.slider('#f2', () => { s2.v = 1; run2(); }, 0);
+document.querySelectorAll('[data-set2]').forEach(b => b.addEventListener('click', () => setVal('f2', b.dataset.set2)));
+$('#rs2').addEventListener('click', () => { if (s2.stop) s2.stop(); $('#f2').value = 0; $('#f2').parentElement.querySelector('output').textContent = '0'; s2.yB = subEq(SUB.m0); s2.v = 0; draw2(); });
+
+/* ---------- 3. life jacket ---------- */
+const LJ = {rp: 1.010, rj: .1, j0: .52, j1: .80, mouth: .90, H: 200};      /* kg/L body, kg/L jacket, jacket from 52 % to 80 % of the height, mouth at 90 % */
+function lj(){ const mp = +$('#m3').value, Vj = +$('#v3').value, rw = $('#w3').value === 'sea' ? RHO.sea / 1000 : 1, Vp = mp / LJ.rp, mj = LJ.rj * Vj, M = mp + mj, need = M / rw;
+  const Vs = h => Vp * Math.min(h, 1) + Vj * Math.max(0, Math.min(1, (h - LJ.j0) / (LJ.j1 - LJ.j0)));
+  let h = null; if (Vs(1) >= need){ let a = 0, b = 1; for (let q = 0; q < 50; q++){ const m = (a + b) / 2; if (Vs(m) < need) a = m; else b = m; } h = (a + b) / 2; }
+  return {mp, Vj, rw, Vp, mj, M, h, maxFB: rw * Vs(1), mouthFB: rw * Vs(LJ.mouth)}; }
+function draw3(){ const svg = $('#s3'); K.clear(svg); const s = lj(), yw = 110, H = LJ.H, hd = s.h === null ? 1.07 : s.h, cx = 170, feet = yw + hd * H, Y = u => feet - u * H;
+  K.el('rect', {x: 0, y: 0, width: 530, height: yw, fill: 'var(--blue)', 'fill-opacity': .05}, svg);
+  liq(svg, 0, yw, 530, 330 - yw, s.rw > 1 ? 'sea' : 'water', {surface: false});
+  /* houseboat in the background */
+  K.el('path', {d: `M340,${yw - 4} Q425,${yw + 22} 512,${yw - 4} L506,${yw - 14} L346,${yw - 14} Z`, fill: '#92400e'}, svg);
+  K.el('path', {d: `M356,${yw - 14} Q430,${yw - 62} 500,${yw - 14} Z`, fill: '#ca8a04', stroke: '#a16207'}, svg);
+  for (let q = 0; q < 4; q++) K.el('rect', {x: 386 + q * 22, y: yw - 30, width: 12, height: 10, fill: '#78350f'}, svg);
+  text(svg, P(425, yw - 72), 'houseboat', {class: 'lbl sm muted'});
+  /* the person, floating upright */
+  const skin = '#d19a6a', g = K.group(svg);
+  sline(g, P(cx - 9, Y(0)), P(cx - 8, Y(.46)), {stroke: skin, 'stroke-width': 10}); sline(g, P(cx + 9, Y(0)), P(cx + 8, Y(.46)), {stroke: skin, 'stroke-width': 10});
+  K.el('rect', {x: cx - 19, y: Y(.50), width: 38, height: .1 * H, rx: 4, fill: '#1d4ed8'}, g);
+  K.el('rect', {x: cx - 20, y: Y(.84), width: 40, height: .36 * H, rx: 10, fill: '#16a34a'}, g);
+  sline(g, P(cx - 19, Y(.80)), P(cx - 52, Y(.85)), {stroke: skin, 'stroke-width': 8}); sline(g, P(cx - 52, Y(.85)), P(cx - 66, Y(.92)), {stroke: skin, 'stroke-width': 7});
+  sline(g, P(cx + 19, Y(.80)), P(cx + 52, Y(.85)), {stroke: skin, 'stroke-width': 8}); sline(g, P(cx + 52, Y(.85)), P(cx + 66, Y(.92)), {stroke: skin, 'stroke-width': 7});
+  if (s.Vj > 0){ const hw = 23 + s.Vj * .55; K.el('rect', {x: cx - hw, y: Y(LJ.j1), width: 2 * hw, height: (LJ.j1 - LJ.j0) * H, rx: 9, fill: '#f97316', stroke: '#c2410c', 'stroke-width': 1.5}, g);
+    [.6, .72].forEach(u => sline(g, P(cx - hw, Y(u)), P(cx + hw, Y(u)), {stroke: '#1f2937', 'stroke-width': 2.5})); }
+  sline(g, P(cx, Y(.84)), P(cx, Y(.87)), {stroke: skin, 'stroke-width': 9});
+  K.el('circle', {cx, cy: Y(.93), r: .065 * H, fill: skin, stroke: '#7c4a21', 'stroke-width': 1}, g);
+  K.el('path', {d: `M${cx - 13},${Y(.95)} Q${cx},${Y(1.0)} ${cx + 13},${Y(.95)}`, fill: '#1f2937'}, g);
+  K.el('circle', {cx: cx - 5, cy: Y(.935), r: 1.8, fill: '#1f2937'}, g); K.el('circle', {cx: cx + 5, cy: Y(.935), r: 1.8, fill: '#1f2937'}, g);
+  sline(g, P(cx - 4, Y(.9)), P(cx + 4, Y(.9)), {stroke: '#7f1d1d', 'stroke-width': 2});
+  K.el('rect', {x: 0, y: yw, width: 530, height: 330 - yw, fill: 'var(--blue)', 'fill-opacity': .3}, svg);
+  sline(svg, P(0, yw), P(530, yw), {stroke: 'var(--blue)', 'stroke-width': 2});
+  const out = s.h !== null && s.h <= LJ.mouth;
+  text(svg, P(265, 22), s.h === null ? '✘ sinks – even fully under water F_B < W' : out ? '✔ floats with the mouth and nose above water' : '⚠ floats, but the mouth is under water', {class: 'lbl ' + (out ? 'green' : s.h === null ? 'red' : 'amber'), 'font-weight': 700});
+  /* bars */
+  const bx = [575, 655, 735], base = 270, kb = 1.55, vals = [[s.M, 'red', 'weight', 'you + jacket'], [s.maxFB, 'green', 'F_B if all', 'under water'], [s.mouthFB, 'blue', 'F_B with mouth', 'above water']];
+  vals.forEach(([v, c, l1, l2], q) => { K.el('rect', {x: bx[q] - 24, y: base - v * kb, width: 48, height: v * kb, rx: 4, fill: COL[c], opacity: q === 1 ? .45 : .8}, svg);
+    text(svg, P(bx[q], base - v * kb - 10), fx(v, 1), {class: 'lbl sm', 'font-weight': 700}); text(svg, P(bx[q], base + 14), l1, {class: 'lbl sm'}); text(svg, P(bx[q], base + 29), l2, {class: 'lbl sm'}); });
+  sline(svg, P(548, base), P(770, base), {stroke: 'var(--text)', 'stroke-width': 1.5}); sline(svg, P(548, base - s.M * kb), P(770, base - s.M * kb), {stroke: 'var(--red)', 'stroke-dasharray': '5 4', 'stroke-width': 1.3});
+  text(svg, P(660, 22), 'forces in kgwt', {class: 'lbl sm', 'font-weight': 700});
+  ro('#o3', `you: ${s.mp} kg → body volume ≈ ${fx(s.Vp, 1)} L   ·   jacket: ${s.Vj} L of foam, ${fx(s.mj, 1)} kg   ·   water ${fx(s.rw * 1000, 0)} kg/m³\n`
+    + `total weight W = ${fx(s.M, 1)} kgwt; buoyant force with everything under water = ${fx(s.maxFB, 1)} kgwt; with the mouth above water = ${fx(s.mouthFB, 1)} kgwt\n`
+    + (s.h === null ? '✘ even fully under water the buoyant force is less than the weight – put on a life jacket!'
+      : out ? `✔ ${fx(s.mouthFB, 1)} ≥ ${fx(s.M, 1)}: the buoyant force equals the weight with ${fx(s.h * 100, 0)} % of the height under water – the head is out.`
+      : `⚠ ${fx(s.mouthFB, 1)} < ${fx(s.M, 1)}: to displace enough water, ${fx(s.h * 100, 0)} % of the height must be under – the mouth goes under. More foam is needed.`)); }
+['#m3', '#v3'].forEach(id => K.slider(id, draw3, 0)); $('#w3').addEventListener('change', draw3); presets('set3');
+
+/* ---------- 4. balloons ---------- */
+const BAL = {rub: 3, air: 1.2, gas: {he: .17, co2: 1.84, air: 1.2}, Vh: 2800, T0: 20};      /* g, kg/m³ (= g/L), m³, °C */
+const GASN = {he: 'helium', co2: 'carbon dioxide', air: 'air'};
+let q4 = 0, stop4 = null;
+const toy = () => { const gas = $('#g4').value, V = +$('#v4').value, FB = BAL.air * V, W = BAL.rub + BAL.gas[gas] * V; return {gas, V, FB, W, net: FB - W}; };
+const hot = () => { const T = +$('#T4').value, load = +$('#L4').value, rin = BAL.air * (273 + BAL.T0) / (273 + T), FB = BAL.air * BAL.Vh, W = load + rin * BAL.Vh; return {T, load, rin, FB, W, net: FB - W}; };
+function draw4(){ const svg = $('#s4'); K.clear(svg); const a = toy(), b = hot(), e = ease(q4);
+  K.el('rect', {x: 0, y: 0, width: 800, height: 322, fill: 'var(--blue)', 'fill-opacity': .06}, svg); K.el('rect', {x: 0, y: 322, width: 800, height: 18, fill: '#65a30d', opacity: .7}, svg);
+  sline(svg, P(400, 10), P(400, 322), {stroke: 'var(--border)', 'stroke-width': 2});
+  /* toy balloon */
+  const r = 13 * Math.cbrt(a.V), knot0 = 210, knotEnd = a.net > 0 ? 64 + 2 * r : 322 - 60, ky = knot0 + (knotEnd - knot0) * e, cy = ky - r;
+  sline(svg, P(200, ky), P(200 + 6, ky + 60), {stroke: 'var(--muted)', 'stroke-width': 1.2});
+  K.el('ellipse', {cx: 200, cy, rx: r * .9, ry: r, fill: {he: '#f472b6', co2: '#94a3b8', air: '#facc15'}[a.gas], stroke: '#334155', 'stroke-width': 1.2}, svg);
+  K.polygon(svg, [P(200, ky - 2), P(195, ky + 5), P(205, ky + 5)], {fill: '#334155'});
+  forces(svg, P(200, cy), a.W, a.FB, 2.6, {dx: -r - 18, lw: 'W', lb: 'F_B', anchor: 'middle'});
+  text(svg, P(200, 26), `toy balloon: ${GASN[a.gas]}, ${a.V} L`, {class: 'lbl sm', 'font-weight': 700});
+  text(svg, P(200, 48), q4 > 0 ? (a.net > 0 ? '⬆ rises' : '⬇ sinks to the floor') : (a.net > 0 ? 'F_B > W → will rise' : 'F_B < W → will sink'), {class: 'lbl sm ' + (a.net > 0 ? 'green' : 'red'), 'font-weight': 700});
+  /* hot-air balloon */
+  const yE0 = 186, yEnd = b.net > 0 ? 136 : 186, yE = yE0 + (yEnd - yE0) * e, ex = 600;
+  [[-20, 112], [20, 112]].forEach(([dx]) => sline(svg, P(ex + dx * 1.1, yE + 90), P(ex + dx * .8, yE + 112), {stroke: '#78350f', 'stroke-width': 1.5}));
+  K.el('rect', {x: ex - 18, y: yE + 110, width: 36, height: 22, rx: 3, fill: '#a16207', stroke: '#78350f'}, svg);
+  K.el('path', {d: `M${ex - 72},${yE} A72,72 0 1,1 ${ex + 72},${yE} Q${ex + 62},${yE + 52} ${ex + 22},${yE + 90} L${ex - 22},${yE + 90} Q${ex - 62},${yE + 52} ${ex - 72},${yE} Z`, fill: '#ef4444', 'fill-opacity': .35 + .5 * (b.T - 20) / 100, stroke: '#991b1b', 'stroke-width': 1.5}, svg);
+  [-36, 0, 36].forEach(dx => K.el('path', {d: `M${ex + dx * .4},${yE - 72} Q${ex + dx * 1.15},${yE} ${ex + dx * .55},${yE + 90}`, fill: 'none', stroke: '#fde68a', 'stroke-width': 3, opacity: .7}, svg));
+  if (b.T > 25) K.polygon(svg, [P(ex - 7, yE + 104), P(ex + 7, yE + 104), P(ex, yE + 104 - 6 - 14 * (b.T - 20) / 100)], {fill: '#f59e0b'});
+  forces(svg, P(ex, yE), b.W, b.FB, .03, {dx: -100, lw: 'W', lb: 'F_B'});
+  text(svg, P(600, 26), `hot-air balloon: inside ${b.T} °C, outside 20 °C`, {class: 'lbl sm', 'font-weight': 700});
+  text(svg, P(600, 48), q4 > 0 ? (b.net > 0 ? '⬆ lifts off' : '✘ stays on the ground') : (b.net > 0 ? 'F_B > W → will lift off' : 'F_B < W → cannot lift off'), {class: 'lbl sm ' + (b.net > 0 ? 'green' : 'red'), 'font-weight': 700});
+  ro('#o4', `toy balloon (${GASN[a.gas]}): F_B = ρ_air × V × g = 1.2 kg/m³ × ${fx(a.V / 1000, 3)} m³ × 9.8 = ${fd(a.FB * GR / 1000, 3)} N;  W = (${BAL.rub} g rubber + ${fx(BAL.gas[a.gas] * a.V, 1)} g gas) × 9.8 = ${fd(a.W * GR / 1000, 3)} N → ${a.net > 0 ? 'F_B > W, it rises' : 'F_B < W, it sinks'}\n`
+    + `hot-air balloon: F_B = weight of 2800 m³ of outside air = ${gr(b.FB)} kgwt;  hot air inside: 1.2 × 293 ÷ ${273 + b.T} = ${fd(b.rin, 3)} kg/m³ → ${gr(b.rin * BAL.Vh)} kg\n`
+    + `W = ${gr(b.load)} kg (load) + ${gr(b.rin * BAL.Vh)} kg (hot air) = ${gr(b.W)} kgwt → ${b.net > 0 ? `F_B − W = ${gr(b.net)} kgwt upwards: it rises` : `F_B − W = ${fx(b.net, 0)} kgwt: it cannot rise – heat the air more or carry less`}`); }
+const reset4 = () => { if (stop4){ stop4(); stop4 = null; } q4 = 0; draw4(); };
+['#v4', '#T4', '#L4'].forEach(id => K.slider(id, reset4, 0)); $('#g4').addEventListener('change', reset4);
+$('#go4').addEventListener('click', () => { reset4(); stop4 = anim(3000, q => { q4 = q; draw4(); }, () => { stop4 = null; }); });
+$('#rs4').addEventListener('click', reset4);
+
+/* ---------- 5. fish ---------- */
+const FISH = {m: 500, rt: 1.070, hh: 26};                                     /* g, g/cm³, half-height in px */
+FISH.Vt = FISH.m / FISH.rt;                                                  /* 467.3 cm³ */
+const Y5 = {surf: 46, bed: 282};
+const s5 = {cy: 165, v: 0, stop: null};
+const fishSt = () => { const Vb = +$('#b5').value, rw = $('#w5').value === 'sea' ? RHO.sea / 1000 : 1, V = FISH.Vt + Vb; return {Vb, rw, V, FB: rw * V, net: rw * V - FISH.m, rf: FISH.m / V}; };
+const bounds5 = s => [Y5.surf + FISH.hh - (s.rf < s.rw ? (1 - s.rf / s.rw) * 2 * FISH.hh : 0), Y5.bed - FISH.hh - 3];
+function draw5(){ const svg = $('#s5'); K.clear(svg); const s = fishSt(), cx = 270, cy = s5.cy;
+  K.el('rect', {x: 0, y: 0, width: 540, height: Y5.surf, fill: 'var(--blue)', 'fill-opacity': .05}, svg);
+  liq(svg, 0, Y5.surf, 540, Y5.bed - Y5.surf, s.rw > 1 ? 'sea' : 'water', {surface: false});
+  K.el('rect', {x: 0, y: Y5.bed, width: 540, height: 300 - Y5.bed, fill: '#d6b98c'}, svg);
+  [[50, 60], [80, 44], [470, 70]].forEach(([x, h]) => K.el('path', {d: `M${x},${Y5.bed} Q${x - 12},${Y5.bed - h / 2} ${x + 4},${Y5.bed - h}`, fill: 'none', stroke: '#16a34a', 'stroke-width': 4}, svg));
+  /* fish */
+  K.el('path', {d: `M${cx + 78},${cy} Q${cx + 30},${cy - 2 * FISH.hh} ${cx - 50},${cy - 6} L${cx - 50},${cy + 6} Q${cx + 30},${cy + 2 * FISH.hh} ${cx + 78},${cy} Z`, fill: '#f59e0b', stroke: '#92400e', 'stroke-width': 1.5}, svg);
+  K.polygon(svg, [P(cx - 46, cy), P(cx - 84, cy - 24), P(cx - 76, cy), P(cx - 84, cy + 24)], {fill: '#f59e0b', stroke: '#92400e', 'stroke-width': 1.5});
+  K.el('circle', {cx: cx + 56, cy: cy - 6, r: 3.5, fill: '#1f2937'}, svg);
+  const rx = 3 + 26 * Math.sqrt(s.Vb / 60); if (s.Vb > 0) K.el('ellipse', {cx: cx + 4, cy: cy - 4, rx, ry: rx * .42, fill: '#e0f2fe', stroke: '#0284c7', 'stroke-width': 1.5}, svg);
+  K.el('rect', {x: 0, y: Y5.surf, width: 540, height: Y5.bed - Y5.surf, fill: 'var(--blue)', 'fill-opacity': .1}, svg);
+  sline(svg, P(0, Y5.surf), P(540, Y5.surf), {stroke: 'var(--blue)', 'stroke-width': 2});
+  sline(svg, P(cx + 4, cy - 8), P(cx + 30, cy - 46), {stroke: 'var(--text)', 'stroke-width': 1}); text(svg, P(cx + 34, cy - 52), 'swim bladder (gas)', {class: 'lbl sm', 'text-anchor': 'start'});
+  const [top, bot] = bounds5(s), still = Math.abs(s5.v) < .3;
+  const st = still && Math.abs(s.net) < .6 ? ['hovering: F_B = W', 'green'] : still && cy <= top + .5 ? ['floating at the surface', 'blue'] : still && cy >= bot - .5 ? ['resting on the bottom: W > F_B', 'red'] : s.net > 0 ? ['rising: F_B > W', 'blue'] : ['sinking: W > F_B', 'red'];
+  text(svg, P(270, 20), st[0], {class: 'lbl ' + st[1], 'font-weight': 700});
+  const fc = 680, fcy = 150; text(svg, P(fc, 20), 'forces on the fish', {class: 'lbl sm', 'font-weight': 700});
+  K.el('ellipse', {cx: fc, cy: fcy, rx: 30, ry: 12, fill: '#f59e0b'}, svg);
+  forces(svg, P(fc, fcy), FISH.m, s.FB, .2, {lw: `W = ${fd(FISH.m * GR / 1000, 2)} N`, lb: `F_B = ${fd(s.FB * GR / 1000, 2)} N`});
+  text(svg, P(fc, 286), `average density ${fx(s.rf * 1000, 0)} kg/m³ ${s.rf < s.rw - 1e-3 ? '<' : s.rf > s.rw + 1e-3 ? '>' : '≈'} water ${fx(s.rw * 1000, 0)}`, {class: 'lbl sm muted'});
+  ro('#o5', `volume of fish = ${fx(FISH.Vt, 1)} cm³ (body) + ${fx(s.Vb, 1)} cm³ (bladder) = ${fx(s.V, 1)} cm³;  mass = ${FISH.m} g (unchanged)\n`
+    + `buoyant force = weight of ${fx(s.V, 1)} cm³ of water = ${fx(s.FB, 1)} g × 9.8 = ${fd(s.FB * GR / 1000, 3)} N;  weight = ${fd(FISH.m * GR / 1000, 3)} N\n`
+    + (Math.abs(s.net) < .6 ? '⚖ F_B = W – it hovers at any depth without effort.' : s.net > 0 ? `F_B > W by ${fd(s.net * GR / 1000, 3)} N → it rises. Let some gas out to stop.` : `W > F_B by ${fd(-s.net * GR / 1000, 3)} N → it sinks. Add gas to the bladder to stop.`)
+    + `  (to hover here it needs ${fx(FISH.m / s.rw - FISH.Vt, 1)} cm³ of gas)`); }
+function run5(){ if (s5.stop) s5.stop(); s5.v = 1; s5.stop = loop(dt => { const s = fishSt(), [top, bot] = bounds5(s); let v = Math.max(-80, Math.min(80, 2.2 * s.net)); if (Math.abs(s.net) < .6) v = 0;
+    s5.cy = Math.max(top, Math.min(bot, s5.cy - v * dt)); s5.v = ((s5.cy <= top && v > 0) || (s5.cy >= bot && v < 0)) ? 0 : v;
+    if (s5.cy < top + 1 && s.net > 0) s5.cy = s5.cy + (top - s5.cy) * .2; draw5(); return Math.abs(s5.v) < .3; }, 12000); }
+K.slider('#b5', run5, 1); $('#w5').addEventListener('change', run5);
+$('#up5').addEventListener('click', () => setVal('b5', 55)); $('#dn5').addEventListener('click', () => setVal('b5', 12));
+$('#hv5').addEventListener('click', () => { const rw = $('#w5').value === 'sea' ? RHO.sea / 1000 : 1; setVal('b5', Math.round(2 * (FISH.m / rw - FISH.Vt)) / 2); });
+
+/* ---------- 6. ice and icebergs ---------- */
+const BERG = [[0, 0], [22, 30], [30, 55], [60, 70], [85, 95], [100, 130], [90, 165], [55, 195], [5, 200], [-50, 192], [-90, 170], [-105, 130], [-88, 95], [-60, 72], [-35, 50], [-20, 22]];
+const pArea = pts => Math.abs(pts.reduce((s, p, i) => { const q = pts[(i + 1) % pts.length]; return s + p[0] * q[1] - q[0] * p[1]; }, 0)) / 2;
+function clipBelow(pts, c){ const out = []; for (let i = 0; i < pts.length; i++){ const a = pts[i], b = pts[(i + 1) % pts.length], ia = a[1] >= c, ib = b[1] >= c;
+  if (ia) out.push(a); if (ia !== ib){ const t = (c - a[1]) / (b[1] - a[1]); out.push([a[0] + t * (b[0] - a[0]), c]); } } return out; }
+/* depth (from the top of the shape) of the water line that leaves the share f of the area below it */
+function waterline(f){ const A = pArea(BERG); let lo = 0, hi = 200; for (let q = 0; q < 60; q++){ const m = (lo + hi) / 2; if (pArea(clipBelow(BERG, m)) > f * A) lo = m; else hi = m; } return (lo + hi) / 2; }
+const OBJ = {ice: [917, 'ice', '#e0f2fe', '#0ea5e9'], wax: [900, 'wax', '#fef9c3', '#ca8a04'], teak: [650, 'teak wood', '#b45309', '#78350f']};
+let q6 = 1, stop6 = null;
+function draw6(){ const svg = $('#s6'); K.clear(svg); const o = OBJ[$('#o6s').value], lk = $('#l6').value, rl = RHO[lk], f = o[0] / rl, ys = 130, yb = 345, ox = 270;
+  const c = f < 1 ? waterline(f) : null, oyF = c === null ? yb - 200 : ys - c, oy = -210 + (oyF + 210) * ease(q6);
+  K.el('rect', {x: 0, y: 0, width: 540, height: ys, fill: 'var(--blue)', 'fill-opacity': .05}, svg);
+  liq(svg, 20, ys, 500, yb - ys, lk, {surface: false}); polyline(svg, [P(16, 60), P(20, 60), P(20, yb), P(520, yb), P(520, 60), P(524, 60)], {stroke: 'var(--muted)', 'stroke-width': 2.5});
+  K.polygon(svg, BERG.map(p => P(ox + p[0], oy + p[1])), {fill: o[2], stroke: o[3], 'stroke-width': 2});
+  K.el('rect', {x: 22, y: ys, width: 496, height: yb - ys, fill: LQ[lk][0], 'fill-opacity': .35}, svg);
+  sline(svg, P(20, ys), P(520, ys), {stroke: lk === 'water' || lk === 'sea' ? 'var(--blue)' : 'var(--accent)', 'stroke-width': 2});
+  text(svg, P(500, yb - 14), `${LQ[lk][2]} · ${rl} kg/m³`, {class: 'lbl sm', 'text-anchor': 'end', 'font-weight': 700});
+  /* share bar */
+  const bx = 640, by = 50, bh = 250, sh = Math.min(1, f);
+  text(svg, P(bx + 25, 24), 'share of the volume', {class: 'lbl sm', 'font-weight': 700});
+  K.el('rect', {x: bx, y: by, width: 50, height: bh, fill: o[2], stroke: o[3], 'stroke-width': 1.5}, svg);
+  K.el('rect', {x: bx, y: by + bh * (1 - sh), width: 50, height: bh * sh, fill: LQ[lk][0], 'fill-opacity': .6}, svg);
+  if (f < 1){ text(svg, P(bx + 60, by + bh * (1 - sh) / 2), `above ${fx(100 * (1 - f), 1)} %`, {class: 'lbl sm', 'text-anchor': 'start', 'font-weight': 700});
+    text(svg, P(bx + 60, by + bh * (1 - sh / 2)), `under ${fx(100 * f, 1)} %`, {class: 'lbl sm blue', 'text-anchor': 'start', 'font-weight': 700}); }
+  else text(svg, P(bx + 60, by + bh / 2), 'all under – it sinks', {class: 'lbl sm red', 'text-anchor': 'start', 'font-weight': 700});
+  text(svg, P(bx + 25, 326), `${o[0]} ÷ ${rl} = ${fd(f, 3)}`, {class: 'lbl sm', 'font-weight': 700});
+  ro('#o6', `${o[1]}: ${o[0]} kg/m³ in ${LQ[lk][2]}: ${rl} kg/m³ → ρ_object ÷ ρ_liquid = ${o[0]} ÷ ${rl} = ${fd(f, 3)}\n`
+    + (f < 1 ? `less than 1 → it floats with ${fx(100 * f, 1)} % of its volume under the surface and ${fx(100 * (1 - f), 1)} % above (weight of liquid displaced = its weight).`
+      : `more than 1 → the ${o[1]} is denser than the ${LQ[lk][2]}: even fully under, the buoyant force is less than its weight, so it sinks.`)); }
+const reset6 = () => { if (stop6){ stop6(); stop6 = null; } q6 = 1; draw6(); };
+['#o6s', '#l6'].forEach(id => $(id).addEventListener('change', reset6)); presets('set6');
+$('#go6').addEventListener('click', () => { if (stop6) stop6(); stop6 = anim(1800, q => { q6 = q; draw6(); }, () => { stop6 = null; }); });
+
+/* ---------- 7. lactometer ---------- */
+const LAC = {m: 60, A: .5, low: 1.040};                                      /* g, cm², relative density at the lowest mark */
+LAC.V0 = LAC.m / LAC.low;                                                    /* volume below the 1.040 mark, cm³ */
+const hcm = r => (LAC.m / r - LAC.V0) / LAC.A;                               /* height of the surface above the 1.040 mark (cm) */
+const MILK = {whole: 1.030, skim: 1.035};
+let stop7 = null;
+function draw7(){ const svg = $('#s7'); K.clear(svg); const kind = $('#k7').value, x = +$('#x7').value / 100, rm = MILK[kind], r = (1 - x) * rm + x * 1.000, h = hcm(r), k = 24, ys = 130, cx = 200;
+  vessel(svg, 140, 40, 120, 290, 200, 'milk');
+  const y40 = ys + h * k, yTop = y40 - hcm(1.000) * k - .5 * k;
+  K.el('rect', {x: cx - 5, y: yTop, width: 10, height: y40 + .3 * k - yTop, fill: '#f8fafc', stroke: '#64748b', 'stroke-width': 1.2}, svg);
+  K.el('rect', {x: cx - 17, y: y40 + .3 * k, width: 34, height: 3.2 * k, rx: 12, fill: '#f8fafc', stroke: '#64748b', 'stroke-width': 1.2}, svg);
+  K.el('rect', {x: cx - 11, y: y40 + 3.4 * k, width: 22, height: .8 * k, rx: 6, fill: '#334155'}, svg);
+  [1.000, 1.010, 1.020, 1.030, 1.040].forEach(v => sline(svg, P(cx - 5, y40 - hcm(v) * k), P(cx + 1, y40 - hcm(v) * k), {stroke: '#dc2626', 'stroke-width': 1}));
+  K.el('rect', {x: 142, y: ys, width: 116, height: 328 - ys, fill: '#f3ecd9', 'fill-opacity': .72}, svg); sline(svg, P(142, ys), P(258, ys), {stroke: '#a8a29e', 'stroke-width': 2});
+  text(svg, P(200, 318), 'milk', {class: 'lbl sm muted'}); text(svg, P(cx - 10, yTop + 6), 'lactometer', {class: 'lbl sm', 'text-anchor': 'end'});
+  /* zoom of the stem at the surface */
+  const zx = 300, zy = 40, zw = 210, zh = 260, zc = zy + zh / 2, kz = 72;
+  sline(svg, P(cx + 6, ys - 6), P(zx, zy), {stroke: 'var(--muted)', 'stroke-dasharray': '3 4'}); sline(svg, P(cx + 6, ys + 6), P(zx, zy + zh), {stroke: 'var(--muted)', 'stroke-dasharray': '3 4'});
+  K.el('rect', {x: zx, y: zy, width: zw, height: zh, fill: 'var(--svgbg)', stroke: 'var(--border)', 'stroke-width': 1.5}, svg);
+  K.el('rect', {x: zx + 60, y: zy, width: 50, height: zh, fill: '#f8fafc', stroke: '#64748b', 'stroke-width': 1.2}, svg);
+  for (let v = 1000; v <= 1040; v++){ const rr = v / 1000, yy = zc - (hcm(rr) - h) * kz; if (yy < zy + 4 || yy > zy + zh - 4) continue; const big = v % 5 === 0;
+    sline(svg, P(zx + 60, yy), P(zx + (big ? 82 : 72), yy), {stroke: '#dc2626', 'stroke-width': big ? 1.6 : 1});
+  }
+  K.el('rect', {x: zx + 1, y: zc, width: zw - 2, height: zh / 2 - 1, fill: '#f3ecd9', 'fill-opacity': .78}, svg); sline(svg, P(zx, zc), P(zx + zw, zc), {stroke: '#a8a29e', 'stroke-width': 2.5});
+  for (let v = 1000; v <= 1040; v += 5){ const rr = v / 1000, yy = zc - (hcm(rr) - h) * kz; if (yy < zy + 8 || yy > zy + zh - 8) continue;
+    text(svg, P(zx + 116, yy), fd(rr, 3), {class: 'lbl sm', 'text-anchor': 'start', style: 'fill:#1e293b;stroke:#f8fafc;stroke-width:3px', 'font-weight': 700, opacity: yy > zc + 4 ? .55 : 1}); }
+  arrow(svg, P(zx + 40, zc - 30), P(zx + 58, zc - 2), {c: 'red', w: 2.5});
+  text(svg, P(zx + zw / 2, zy - 12), `reading at the surface: ${fd(r, 3)}`, {class: 'lbl sm red', 'font-weight': 700});
+  text(svg, P(zx + 8, zc + 18), 'milk surface', {class: 'lbl sm', 'text-anchor': 'start', style: 'fill:#78350f;stroke:none'});
+  /* the society's chart (values increase downwards, as on the lactometer) */
+  const tx = 600, ty = 50, th = 240, Yr = v => ty + (v - 1.015) / .025 * th;
+  text(svg, P(670, 24), 'milk society chart', {class: 'lbl sm', 'font-weight': 700});
+  [[1.015, 1.028, 'var(--red)', 'water added?'], [1.028, 1.032, 'var(--green)', 'normal milk'], [1.032, 1.040, 'var(--accent)', 'fat removed?']].forEach(([a, b, c, l]) => {
+    K.el('rect', {x: tx, y: Yr(a), width: 34, height: Yr(b) - Yr(a), fill: c, opacity: .45}, svg); text(svg, P(tx + 56, (Yr(a) + Yr(b)) / 2), l, {class: 'lbl sm', 'text-anchor': 'start'}); });
+  [1.015, 1.020, 1.025, 1.030, 1.035, 1.040].forEach(v => text(svg, P(tx - 6, Yr(v)), fd(v, 3), {class: 'lbl sm muted', 'text-anchor': 'end'}));
+  const yr = Yr(Math.max(1.015, Math.min(1.04, r))); K.polygon(svg, [P(tx + 36, yr), P(tx + 48, yr - 6), P(tx + 48, yr + 6)], {fill: 'var(--text)'}); sline(svg, P(tx - 2, yr), P(tx + 36, yr), {stroke: 'var(--text)', 'stroke-width': 2});
+  const ok = r >= 1.028 - 1e-9 && r <= 1.032 + 1e-9, fooled = ok && kind === 'skim' && x > 0;
+  text(svg, P(670, 318), fooled ? '⚠ looks normal – but it is skimmed + watered!' : ok ? '✔ normal reading' : r < 1.028 ? '✘ too low: water added?' : '⚠ too high: fat removed?', {class: 'lbl sm ' + (fooled ? 'amber' : ok ? 'green' : r < 1.028 ? 'red' : 'amber'), 'font-weight': 700});
+  ro('#o7', `${kind === 'whole' ? 'whole milk (RD ≈ 1.030)' : 'skimmed milk (RD ≈ 1.035)'} with ${fx(x * 100, 0)} % water → RD of the mixture = ${fd(1 - x, 2)} × ${fd(rm, 3)} + ${fd(x, 2)} × 1.000 = ${fd(r, 4)}\n`
+    + `the lactometer sinks until the milk it displaces weighs 60 g: volume under = 60 ÷ ${fd(r, 4)} = ${fd(LAC.m / r, 2)} cm³ → reading ${fd(r, 3)} (society’s chart: “${fx(Math.round((r - 1) * 1000), 0)}”)\n`
+    + (fooled ? '⚠ Fooled! Removing fat makes milk denser and adding water makes it lighter – together they can give a normal reading. That is why milk societies also test the fat content.'
+      : ok ? '✔ within the normal range for pure milk (1.028–1.032, approx.).' : r < 1.028 ? '✘ lower than pure milk: the milk is less dense – water has probably been added (adulteration).' : '⚠ denser than whole milk: fat has probably been removed (skimmed milk).')); }
+K.slider('#x7', () => { draw7(); }, 0); $('#k7').addEventListener('change', draw7); presets('set7');
+$('#go7').addEventListener('click', () => { if (stop7) stop7(); const x0 = +$('#x7').value; stop7 = anim(3500, q => setVal('x7', Math.round(x0 + (30 - x0) * q)), () => { stop7 = null; }); });
+
+draw1(); draw2(); draw3(); draw4(); draw5(); draw6();
+
+/* ---------- check yourself ---------- */
+K.mcq('#q1', {q: 'A ship sails from the Kochi backwaters (fresh water) into the Arabian Sea. It', options: ['sinks a little deeper', 'rises a little', 'stays at the same level', 'feels a smaller buoyant force'], answer: 1, explain: 'Sea water is denser, so a smaller volume of it weighs as much as the ship. The buoyant force stays equal to the ship’s weight.', hint: 'Which is denser – river water or sea water?'});
+K.mcq('#q2', {q: 'A submarine under water dives deeper by', options: ['making its hull bigger', 'letting sea water into its ballast tanks', 'blowing water out with compressed air', 'going faster'], answer: 1, explain: 'Taking in water makes it heavier than the buoyant force, which stays the same once it is fully under water.', hint: 'Which can a submarine change – its volume or its weight?'});
+K.mcq('#q3', {q: 'A life jacket keeps a person’s head above water mainly because it', options: ['makes the person lighter', 'adds a large volume with very little weight, so more water is displaced', 'makes the water denser', 'reduces the person’s mass'], answer: 1, explain: 'More volume under water → more water displaced → bigger buoyant force, with almost no extra weight.', hint: 'Buoyant force = weight of the water displaced.'});
+K.mcq('#q4', {q: 'Densities: ice 917 kg/m³, sea water 1025 kg/m³. About what share of an iceberg is under the sea?', options: ['about 11 %', 'about 50 %', 'about 89 %', 'all of it'], answer: 2, explain: '917 ÷ 1025 ≈ 0.89 – about nine-tenths is hidden.', hint: 'Fraction under = ρ_object ÷ ρ_liquid.'.replace(/_(\w+)/g, '<sub>$1</sub>')});
+K.mcq('#q5', {q: 'A fish rises in water when it', options: ['adds gas to its swim bladder', 'removes gas from its swim bladder', 'becomes heavier', 'swims into denser water only'], answer: 0, explain: 'More gas → more volume → more water displaced → buoyant force greater than its weight.', hint: 'Does the bladder change the fish’s mass or its volume?'});
+K.mcq('#q6', {q: 'A lactometer shows 1.024 in a milk sample (pure milk about 1.028–1.032). The milk', options: ['is pure', 'probably has water added', 'probably has extra fat', 'is skimmed milk'], answer: 1, explain: 'A lower reading means a less dense liquid – water (1.000) has lowered the density.', hint: 'Water has a relative density of 1.000.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mass, Weight, Newton and kgwt – Buoyant Force</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.6rem 0;background:var(--green-soft)}
+.qbox{background:var(--surface);border:1px solid var(--border);border-left:6px solid var(--accent);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+.controls select{padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem}
+svg .body-fill{fill:var(--surface2);stroke:var(--text);stroke-width:1.6}
+svg .spring{fill:none;stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .water{fill:var(--blue-soft)}
+svg .panel{fill:var(--surface2);stroke:var(--border);stroke-width:1.2}
+</style>
+</head>
+<body data-page="01_mass_weight_kgwt">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 5 · Prerequisite 1 of 4</span><span class="chip amber">Basics for textbook pages 95–106</span>
+<h1>Mass, Weight, Newton and Kilogram Weight <span class="ml">മാസ് · ഭാരം</span></h1>
+<p class="lead">The whole chapter is about two forces: the Earth pulling an object <b>down</b>, and a liquid or gas pushing it <b>up</b>. Before you can compare them, you need to be sure what <b>mass</b> and <b>weight</b> are, why the weight of 1 kg is 9.8 newtons, what “kilogram weight” (kgwt) means, how a <b>spring balance</b> shows a force, and how to draw forces as arrows. This page builds all of that from the start.</p>
+
+<div class="callout book"><div class="title">📖 What you need</div>
+<ul style="margin:0"><li>Multiplying and dividing decimals, such as 0.25 × 9.8.</li><li>Nothing else – everything is built here.</li></ul></div>
+
+<h2>1. Mass – how much matter</h2>
+<p>The <b>mass</b> (<span class="ml">മാസ്</span>) of an object is the <b>amount of matter</b> in it. A full sack of rice has more matter than a half-full one, so it has more mass. Mass is measured in <b>kilograms (kg)</b> and <b>grams (g)</b>:</p>
+<div class="eq">1 kg = 1000 g &nbsp;&nbsp;·&nbsp;&nbsp; grams → kilograms: divide by 1000 &nbsp;&nbsp;(250 g = 0.25 kg, 100 g = 0.1 kg, 45 g = 0.045 kg)</div>
+<p>Mass does <b>not</b> depend on where the object is. A coconut taken to the Moon still has exactly the same coconut in it, so its mass is the same. In physics formulas we always use mass in <b>kilograms</b>.</p>
+
+<h2>2. Weight – the Earth's pull</h2>
+<p>Drop a key and it falls: the Earth pulls everything towards its centre. The force with which the Earth pulls an object is its <b>weight</b> (<span class="ml">ഭാരം</span>). Your textbook calls this pull the force of gravity (<span class="ml">ഭൂഗുരുത്വാകർഷണ ബലം</span>), and it always acts <b>downwards</b>. Weight is a <b>force</b>, so it is measured in <b>newtons (N)</b>.</p>
+<p>Near the Earth's surface, the Earth pulls with <b>9.8 N on every kilogram</b>. This number is called <b>g</b>, the acceleration due to gravity, <b>g = 9.8 m/s²</b>. So:</p>
+<div class="eq">weight W = m × g &nbsp;&nbsp;&nbsp; (m in kg, g = 9.8 m/s², W in N)</div>
+<div class="lab">
+  <div class="lab-title">🧪 Mass stays the same, weight can change</div>
+  <svg id="wSvg" viewBox="0 0 800 300" role="img" aria-label="An object with a downward weight arrow; its length depends on the mass and on whether the object is on the Earth or the Moon"></svg>
+  <div class="controls"><label>mass (g) <input id="wM" type="range" min="0" max="2000" step="50" value="500"><output></output></label>
+  <label>place <select id="wPlace"><option value="9.8" selected>on the Earth (g = 9.8 m/s²)</option><option value="1.6">on the Moon (g ≈ 1.6 m/s², approx.)</option><option value="0">far out in space (no pull)</option></select></label></div>
+  <div class="readout" id="wOut"></div>
+  <p class="hint">Change the place but keep the mass: the <b>mass</b> number does not change, but the <b>weight</b> arrow does. On the Moon the pull is only about one-sixth of the Earth's pull. Mass is “how much stuff”; weight is “how hard it is pulled”.</p>
+</div>
+
+<h3>Worked example 1 · A packet of tea</h3>
+<div class="qbox"><p><b>Q.</b> A packet of Munnar tea has a mass of 250 g. Find its weight. (g = 9.8 m/s²)</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>First change 250 g into kilograms (divide by 1000). Then use W = m × g.</p></div></div>
+<div class="lab" id="we1"><div class="lab-title">🎬 Exam layout, step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="A tea packet with its weight arrow and the working"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> W = 0.25 kg × 9.8 m/s² = <b>2.45 N</b>.</div></div>
+
+<h2>3. The newton and the kilogram weight (kgwt)</h2>
+<p>The SI unit of force is the <b>newton (N)</b>. One newton is a small force: a 100 g chocolate bar weighs 0.1 × 9.8 = 0.98 N, so about 1 N. Your textbook also uses an older, everyday unit: the <b>kilogram weight</b> (<span class="ml">കിലോഗ്രാം ഭാരം</span>, kgwt). <b>1 kgwt is the weight of a 1 kg mass</b> – the force with which the Earth pulls 1 kg:</p>
+<div class="eq">1 kgwt = 1 kg × 9.8 m/s² = 9.8 N &nbsp;&nbsp;·&nbsp;&nbsp; kgwt → N: multiply by 9.8 &nbsp;&nbsp;·&nbsp;&nbsp; N → kgwt: divide by 9.8</div>
+<div class="lab">
+  <div class="lab-title">🧪 kgwt ↔ newton converter</div>
+  <svg id="cvSvg" viewBox="0 0 800 250" role="img" aria-label="Two matching scales: kilogram weight on top and newtons below, with a pointer at the chosen value"></svg>
+  <div class="controls"><label>weight (kgwt) <input id="cvK" type="range" min="0" max="10" step="0.01" value="0.45"><output></output></label></div>
+  <div class="readout" id="cvOut"></div>
+  <p class="hint">Both scales show the same force. Every 1 kgwt on the top scale lines up with 9.8 N below. Try 0.45, 0.31 and 0.14 kgwt – you will meet these numbers in the chapter (page 8).</p>
+</div>
+<div class="callout key"><div class="title">⭐ Remember</div>
+<p><b>Mass</b>: amount of matter, in kg; the same everywhere. <b>Weight</b>: the Earth's pull, a force, in N (or kgwt); W = m × g. <b>1 kgwt = 9.8 N.</b> A 1 kg mass has a weight of 1 kgwt = 9.8 N.</p></div>
+<div class="callout real"><div class="title">🌍 At the fish market</div>
+<p>The hanging scale at a Kochi fish market says “kg”. Strictly, a spring scale measures the <b>pull</b> on its hook, so “2 kg of sardines” on that scale really means a weight of <b>2 kgwt = 19.6 N</b>. Because 1 kg always weighs 1 kgwt on Earth, the shopkeeper's number is also the mass in kg – which is why everyday life mixes the two words.</p></div>
+
+<h3>Worked example 2 · From kgwt to newtons</h3>
+<div class="qbox"><p><b>Q.</b> An object weighs 0.45 kgwt in air. Express its weight in newtons.</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>1 kgwt = 9.8 N, so multiply the kgwt value by 9.8.</p></div></div>
+<div class="lab" id="we2"><div class="lab-title">🎬 Exam layout, step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Converting 0.45 kilogram weight to newtons"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> 0.45 kgwt = 0.45 × 9.8 N = <b>4.41 N</b>.</div></div>
+
+<h2>4. The spring balance – a force meter</h2>
+<p>Pull a spring gently and it stretches a little; pull twice as hard and it stretches twice as much. A <b>spring balance</b> (<span class="ml">സ്പ്രിങ് ബാലൻസ്</span>) has a pointer fixed to a spring, moving along a scale marked in newtons (or kgwt). Its reading is the <b>force pulling down on the hook</b>. When an object just hangs from it, the reading is the object's <b>weight</b>.</p>
+<p>Now the important idea for this chapter. Suppose you <b>push the object up from below</b> with your hand while it hangs. Your hand now carries part of the weight, so the spring has to pull less, and the reading <b>drops</b>:</p>
+<div class="eq">reading = weight − upward push &nbsp;&nbsp;(and never less than 0)</div>
+<div class="lab">
+  <div class="lab-title">🧪 Spring balance with a helping hand</div>
+  <svg id="sbSvg" viewBox="0 0 800 430" role="img" aria-label="A spring balance with an object hanging from it and a hand pushing the object up from below; the reading drops as the push grows"></svg>
+  <div class="controls"><label>object <select id="sbObj"><option value="0.1">100 g standard weight</option><option value="0.2">glass slab, 200 g</option><option value="0.3" selected>stone, 300 g</option><option value="0.5">iron block, 500 g</option></select></label>
+  <label>upward push of the hand (N) <input id="sbU" type="range" min="0" max="5" step="0.01" value="0"><output></output></label></div>
+  <div class="readout" id="sbOut"></div>
+  <p class="hint">Choose the stone (W = 0.3 × 9.8 = 2.94 N) and push up with 1.13 N: the reading falls to 1.81 N. Push with 2.94 N or more and the reading becomes 0 – your hand holds all the weight and the spring goes slack. In this chapter, <b>water</b> will play the part of the hand.</p>
+</div>
+<div class="callout think"><div class="title">🤔 Look ahead</div>
+<p>On page 5 you will hang the same stone from a spring balance and lower it into water. The reading drops exactly as if a hand were pushing up. That invisible upward push of the water is the <b>buoyant force</b> (<span class="ml">പ്ലവക്ഷമബലം</span>), and the drop in the reading is the <b>apparent loss of weight</b> (<span class="ml">ഭാരക്കുറവ്</span>).</p></div>
+
+<h3>Worked example 3 · A push from below</h3>
+<div class="qbox"><p><b>Q.</b> A stone of mass 300 g hangs from a spring balance. A friend pushes it gently upwards with a force of 1.13 N. What does the spring balance read now?</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>First find the weight: W = m × g with m = 0.3 kg. The spring only has to pull with whatever the hand does not supply: reading = W − push.</p></div></div>
+<div class="lab" id="we3"><div class="lab-title">🎬 Exam layout, step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Stone on a spring balance with weight and upward push arrows"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> W = 0.3 × 9.8 = 2.94 N; reading = 2.94 N − 1.13 N = <b>1.81 N</b>.</div></div>
+
+<h2>5. Forces as arrows</h2>
+<p>A force has a <b>size</b> and a <b>direction</b>, so we draw it as an <b>arrow</b>. The arrow points the way the force acts, and a longer arrow means a bigger force. When several forces act on one object, we add them up. Forces in the same direction add; forces in opposite directions take away. What is left over is the <b>net force</b>:</p>
+<ul>
+<li>Upward push = weight → net force <b>0</b> → the forces are <b>balanced</b>. An object at rest <b>stays at rest</b>.</li>
+<li>Upward push &gt; weight → net force <b>upwards</b> → the object starts moving <b>up</b>.</li>
+<li>Upward push &lt; weight → net force <b>downwards</b> → the object starts moving <b>down</b>.</li>
+</ul>
+<div class="lab">
+  <div class="lab-title">🧪 Tug of war between two forces</div>
+  <svg id="fSvg" viewBox="0 0 800 320" role="img" aria-label="A ball with a red downward weight arrow and a green upward push arrow; the net force and the resulting motion are shown"></svg>
+  <div class="controls"><label>weight (N) <input id="fW" type="range" min="0" max="10" step="0.5" value="6"><output></output></label>
+  <label>upward push (N) <input id="fU" type="range" min="0" max="10" step="0.5" value="6"><output></output></label>
+  <button class="btn primary" id="fGo">▶ Let go</button></div>
+  <div class="readout" id="fOut"></div>
+  <p class="hint">Make the two arrows equal and press <b>Let go</b>: the ball does not move. Make the push bigger than the weight: up it goes – just like an empty bottle pushed under water (page 5).</p>
+</div>
+
+<h2>6. Balanced forces everywhere</h2>
+<p>Whenever something stays still, the forces on it are balanced: something is pushing or pulling it <b>up</b> with a force <b>exactly equal</b> to its weight. Step through these five pictures. The last two are <b>unbalanced</b>, and they are the two questions this chapter answers.</p>
+<div class="lab" id="balLab"><div class="lab-title">🎬 Who holds it up?</div><svg viewBox="0 0 800 300" role="img" aria-label="Five situations: a book on a table, a mass on a spring balance, a floating country boat, a bottle released under water and an iron nail sinking"></svg></div>
+<div class="callout key"><div class="title">⭐ Balanced forces</div>
+<p>An object that stays still, or floats without rising or sinking, has <b>net force zero</b>: the upward force on it equals its weight. A boat floating on Vembanad lake is held up by the water with a force equal to its weight.</p></div>
+
+<h2>7. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div>
+<p>Next: <a href="02_volume_displacement.html">Volume and measuring by displacement ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Buoyant Force · Class 9 Physics", "icon": "🚢", "key": "physics_ch5_progress", "pages": [["index.html", "Home"], ["01_mass_weight_kgwt.html", "1 · Mass, Weight, Newton & kgwt"], ["02_volume_displacement.html", "2 · Volume & Measuring by Displacement"], ["03_density.html", "3 · Density – Mass per Volume"], ["04_pressure_in_liquids.html", "4 · Pressure in Liquids"], ["05_buoyant_force.html", "5 · Buoyant Force & How to Measure It"], ["06_factors_buoyant_force.html", "6 · What Decides the Buoyant Force?"], ["07_archimedes_principle.html", "7 · Archimedes' Principle"], ["08_floatation.html", "8 · Principle of Floatation – Boats & Ships"], ["09_relative_density_hydrometer.html", "9 · Relative Density, Hydrometer & Lactometer"], ["10_intext_questions_solutions.html", "10 · In-text Questions – Solutions"], ["11_assess_solutions.html", "11 · Let Us Assess & Extended Activities – Solutions"], ["12_applications_explore.html", "12 · Applications & Explore Online"], ["13_summary_revision.html", "13 · Summary & Quick Quiz"], ["14_model_test_paper.html", "14 · Model Test Paper"], ["15_model_test_solutions.html", "15 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+const {P, text} = K;
+const sline = (svg, a, b, attrs={}) => K.el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+const f = (v, d=2) => K.num(K.fmt(v, d));
+const L = (svg, x, y, s, cls='lbl', extra={}) => text(svg, P(x, y), s, {class: cls, 'text-anchor': 'start', ...extra});
+/* arrow from a to b in colour c */
+function arrow(svg, a, b, c='var(--red)', w=3.2){
+  const g = K.group(svg); const len = K.dist(a, b); if (len < 3) return g;
+  const u = K.unit(a, b), n = P(-u.y, u.x), hs = Math.min(9, len * .45), base = P(b.x - u.x * hs * 1.5, b.y - u.y * hs * 1.5);
+  sline(g, a, base, {stroke: c, 'stroke-width': w});
+  K.el('polygon', {points: `${b.x},${b.y} ${base.x + n.x * hs * .8},${base.y + n.y * hs * .8} ${base.x - n.x * hs * .8},${base.y - n.y * hs * .8}`, fill: c}, g);
+  return g; }
+function examStepper(sel, rows, fig, x0=380, dy=62){
+  new K.Stepper(sel, {steps: rows.map(r => r.html), draw(svg, i, t){
+    fig(svg, i, t);
+    rows.forEach((r, k) => { if (k > i) return; const o = k === i ? t : 1, y = 30 + k * dy;
+      L(svg, x0, y, r.h, 'lbl sm muted', {opacity: o});
+      L(svg, x0, y + 22, r.s, k === rows.length - 1 ? 'lbl big green' : 'lbl', {opacity: o}); });
+  }});
+}
+function spring(svg, x, y1, y2, coils=10, w=12){
+  const pts = [P(x, y1), P(x, y1 + 6)]; const h = (y2 - y1 - 12) / (coils * 2);
+  for (let c = 0; c < coils * 2; c++) pts.push(P(x + (c % 2 ? -w : w), y1 + 6 + h * (c + .5)));
+  pts.push(P(x, y2 - 6), P(x, y2)); return K.polyline(svg, pts, {class: 'spring'}); }
+
+/* ---- 1. mass vs weight ---- */
+(function(){ const svg = document.getElementById('wSvg'), out = document.getElementById('wOut'), sel = document.getElementById('wPlace'); let M = 500;
+  const draw = () => { K.clear(svg); const gv = +sel.value, m = M / 1000, W = m * gv, S = 7.5;
+    const place = gv === 9.8 ? 'Earth' : gv === 1.6 ? 'Moon' : 'space';
+    if (place !== 'space'){ K.el('path', {d: 'M20,280 Q200,250 380,280 Z', class: place === 'Earth' ? 'fill-green' : 'fill-surface', stroke: 'var(--muted)'}, svg);
+      text(svg, P(200, 290), place === 'Earth' ? 'the Earth' : 'the Moon', {class: 'lbl sm muted'}); }
+    else { for (let k = 0; k < 18; k++) K.el('circle', {cx: 30 + (k * 97) % 340, cy: 30 + (k * 53) % 240, r: 1.6, fill: 'var(--muted)'}, svg); }
+    const s = 22 + 34 * Math.cbrt(m / 2), C = P(200, 90);
+    if (m > 0){ K.el('rect', {x: C.x - s / 2, y: C.y - s / 2, width: s, height: s, rx: 4, class: 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, svg);
+      text(svg, P(C.x, C.y), `${M} g`, {class: 'lbl sm'}); }
+    if (W > 0){ arrow(svg, P(C.x, C.y + s / 2), P(C.x, C.y + s / 2 + W * S), 'var(--red)'); text(svg, P(C.x + 14, C.y + s / 2 + W * S / 2), `W = ${f(W, 2)} N`, {class: 'lbl red', 'text-anchor': 'start'}); }
+    L(svg, 430, 50, `mass m = ${M} g = ${f(m, 3)} kg`, 'lbl');
+    L(svg, 430, 80, '(same everywhere)', 'lbl sm muted');
+    L(svg, 430, 125, `g = ${gv === 0 ? '0' : f(gv, 1)} m/s²` + (gv === 1.6 ? ' (approx.)' : ''), 'lbl');
+    L(svg, 430, 165, `W = m × g = ${f(m, 3)} × ${f(gv, 1)}`, 'lbl');
+    L(svg, 430, 200, `W = ${f(W, 3)} N`, 'lbl big red');
+    if (gv === 0) L(svg, 430, 240, 'no pull: weightless, but the mass is still there', 'lbl sm muted');
+    out.textContent = `Mass = ${f(m, 3)} kg (unchanged).  Weight on the ${place === 'space' ? 'spaceship far from everything' : place} = ${f(m, 3)} × ${f(gv, 1)} = ${f(W, 3)} N` + (gv === 9.8 && m > 0 ? `  (= ${f(m, 3)} kgwt)` : '') + '.'; };
+  sel.addEventListener('change', draw); K.slider('#wM', v => { M = v; draw(); }, 0); })();
+
+examStepper('#we1', [
+  {h: 'Given', s: 'm = 250 g = 0.25 kg,  g = 9.8 m/s²', html: '<b>Given:</b> mass m = 250 g = 250 ÷ 1000 = 0.25 kg; g = 9.8 m/s². To find: weight W.'},
+  {h: 'Formula', s: 'W = m × g', html: '<b>Formula:</b> W = m × g.'},
+  {h: 'Substitution', s: 'W = 0.25 × 9.8', html: '<b>Substitution:</b> W = 0.25 kg × 9.8 m/s².'},
+  {h: 'Answer', s: 'W = 2.45 N', html: '<b>Answer:</b> W = <b>2.45 N</b> (which is 0.25 kgwt).'}
+], (svg, i, t) => { const C = P(170, 110);
+  K.el('rect', {x: C.x - 45, y: C.y - 60, width: 90, height: 110, rx: 8, class: 'fill-green', stroke: 'var(--text)', 'stroke-width': 1.5}, svg);
+  text(svg, P(C.x, C.y - 20), 'TEA', {class: 'lbl big'}); text(svg, P(C.x, C.y + 8), '250 g', {class: 'lbl sm'});
+  if (i >= 1){ const e = i === 1 ? t : 1; arrow(svg, P(C.x, C.y + 50), P(C.x, C.y + 50 + 70 * e), 'var(--red)'); text(svg, P(C.x + 16, C.y + 90), i >= 3 ? 'W = 2.45 N' : 'W = ?', {class: 'lbl red', 'text-anchor': 'start', opacity: e}); }
+});
+
+/* ---- 2. kgwt <-> N ---- */
+(function(){ const svg = document.getElementById('cvSvg'), out = document.getElementById('cvOut'); let Kw = 0.45;
+  const draw = () => { K.clear(svg); const X0 = 50, X1 = 750, T = v => X0 + (X1 - X0) * v / 10, Y1 = 80, Y2 = 160;
+    L(svg, X0, 30, 'kilogram weight (kgwt)', 'lbl sm purple'); L(svg, X0, 222, 'newton (N)', 'lbl sm blue');
+    sline(svg, P(X0, Y1), P(X1, Y1), {stroke: 'var(--purple)', 'stroke-width': 2}); sline(svg, P(X0, Y2), P(X1, Y2), {stroke: 'var(--blue)', 'stroke-width': 2});
+    for (let k = 0; k <= 100; k++){ const x = T(k / 10), big = k % 10 === 0; sline(svg, P(x, Y1), P(x, Y1 - (big ? 12 : 5)), {stroke: 'var(--purple)', 'stroke-width': big ? 1.6 : .8}); if (big) text(svg, P(x, Y1 - 24), String(k / 10), {class: 'lbl sm purple'}); }
+    for (let n = 0; n <= 98; n += 2){ const x = X0 + (X1 - X0) * n / 98, big = n % 10 === 0; sline(svg, P(x, Y2), P(x, Y2 + (big ? 12 : 5)), {stroke: 'var(--blue)', 'stroke-width': big ? 1.6 : .8}); if (big) text(svg, P(x, Y2 + 26), String(n), {class: 'lbl sm blue'}); }
+    const x = T(Kw); sline(svg, P(x, Y1 + 2), P(x, Y2 - 2), {stroke: 'var(--red)', 'stroke-width': 3});
+    K.el('circle', {cx: x, cy: Y1, r: 5, fill: 'var(--red)'}, svg); K.el('circle', {cx: x, cy: Y2, r: 5, fill: 'var(--red)'}, svg);
+    const tx = Math.max(130, Math.min(670, x));
+    text(svg, P(tx, (Y1 + Y2) / 2), `${f(Kw, 2)} kgwt = ${f(Kw * 9.8, 3)} N`, {class: 'lbl big red'});
+    out.textContent = `${f(Kw, 2)} kgwt × 9.8 = ${f(Kw * 9.8, 3)} N      ·      back again: ${f(Kw * 9.8, 3)} N ÷ 9.8 = ${f(Kw, 2)} kgwt`; };
+  K.slider('#cvK', v => { Kw = v; draw(); }, 2); })();
+
+examStepper('#we2', [
+  {h: 'Given', s: 'weight = 0.45 kgwt', html: '<b>Given:</b> weight = 0.45 kgwt. To find: the weight in newtons.'},
+  {h: 'Formula (unit fact)', s: '1 kgwt = 9.8 N', html: '<b>Formula:</b> 1 kgwt = 9.8 N, so N = kgwt × 9.8.'},
+  {h: 'Substitution', s: '0.45 kgwt = 0.45 × 9.8 N', html: '<b>Substitution:</b> 0.45 × 9.8.'},
+  {h: 'Answer', s: '= 4.41 N', html: '<b>Answer:</b> 0.45 kgwt = <b>4.41 N</b>.'}
+], (svg, i, t) => { const X0 = 30, X1 = 340, Y = 140; const T = v => X0 + (X1 - X0) * v;
+  sline(svg, P(X0, Y), P(X1, Y), {stroke: 'var(--purple)', 'stroke-width': 2}); sline(svg, P(X0, Y + 60), P(X1, Y + 60), {stroke: 'var(--blue)', 'stroke-width': 2});
+  [0, .5, 1].forEach(v => { text(svg, P(T(v), Y - 16), K.fmt(v, 1), {class: 'lbl sm purple'}); text(svg, P(T(v), Y + 80), f(v * 9.8, 1), {class: 'lbl sm blue'}); sline(svg, P(T(v), Y), P(T(v), Y - 6), {stroke: 'var(--purple)'}); sline(svg, P(T(v), Y + 60), P(T(v), Y + 66), {stroke: 'var(--blue)'}); });
+  text(svg, P(185, 90), 'kgwt', {class: 'lbl sm purple'}); text(svg, P(185, 245), 'N', {class: 'lbl sm blue'});
+  const e = i >= 2 ? (i === 2 ? t : 1) : 0; const x = T(.45);
+  K.el('circle', {cx: x, cy: Y, r: 6, fill: 'var(--red)'}, svg); sline(svg, P(x, Y), P(x, Y + 60 * e), {stroke: 'var(--red)', 'stroke-width': 3});
+  if (i >= 3) text(svg, P(x, Y + 30), '4.41 N', {class: 'lbl red', 'font-weight': 700, opacity: t});
+});
+
+/* ---- 3. spring balance with a hand ---- */
+(function(){ const svg = document.getElementById('sbSvg'), out = document.getElementById('sbOut'), sel = document.getElementById('sbObj'); let U = 0;
+  const NAMES = {0.1: '100 g standard weight', 0.2: 'glass slab', 0.3: 'stone', 0.5: 'iron block'};
+  const draw = () => { K.clear(svg); const m = +sel.value, W = m * 9.8, R = Math.max(0, W - U), held = Math.min(U, W);
+    const X = 180, Z = 70, PXN = 30, py = Z + R * PXN;
+    K.el('rect', {x: X - 70, y: 10, width: 140, height: 10, class: 'fill-surface', stroke: 'var(--text)'}, svg);
+    sline(svg, P(X, 20), P(X, 32), {stroke: 'var(--text)', 'stroke-width': 2});
+    K.el('rect', {x: X - 40, y: 32, width: 80, height: 196, rx: 8, class: 'fill-surface', stroke: 'var(--text)', 'stroke-width': 1.5}, svg);
+    for (let k = 0; k <= 50; k++){ const y = Z + k * .1 * PXN, big = k % 10 === 0, half = k % 5 === 0; sline(svg, P(X + 40 - (big ? 16 : half ? 11 : 6), y), P(X + 40, y), {stroke: 'var(--muted)', 'stroke-width': 1}); if (big) text(svg, P(X + 52, y), String(k / 10), {class: 'lbl sm', 'text-anchor': 'start'}); }
+    text(svg, P(X + 52, Z - 22), 'N', {class: 'lbl sm muted', 'text-anchor': 'start'});
+    spring(svg, X - 8, 38, py, 9, 10);
+    sline(svg, P(X - 8, py), P(X + 34, py), {stroke: 'var(--red)', 'stroke-width': 3.2});
+    const rodEnd = py + 100; sline(svg, P(X - 8, py), P(X - 8, rodEnd), {stroke: 'var(--text)', 'stroke-width': 2});
+    const s = 26 + 22 * Math.cbrt(m / 0.5), top = rodEnd, C = P(X - 8, top + s / 2);
+    K.el('rect', {x: C.x - s / 2, y: top, width: s, height: s, rx: 4, class: m === 0.3 ? 'fill-surface' : m === 0.5 ? 'fill-red' : m === 0.2 ? 'fill-green' : 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, svg);
+    /* hand */
+    if (U > 0){ K.el('rect', {x: C.x - 40, y: top + s, width: 80, height: 16, rx: 8, fill: 'var(--accent-soft)', stroke: 'var(--accent)', 'stroke-width': 1.5}, svg);
+      text(svg, P(C.x, top + s + 30), 'hand', {class: 'lbl sm amber'});
+      arrow(svg, P(C.x + 52, C.y + held * 15), P(C.x + 52, C.y), 'var(--green)'); text(svg, P(C.x + 60, C.y + held * 7.5), 'push', {class: 'lbl sm green', 'text-anchor': 'start'}); }
+    arrow(svg, P(C.x - 52, C.y), P(C.x - 52, C.y + W * 15), 'var(--red)');
+    text(svg, P(C.x - 60, C.y + W * 7.5), 'W', {class: 'lbl sm red', 'text-anchor': 'end'});
+    L(svg, 400, 50, `${NAMES[m]}: m = ${f(m, 1)} kg`, 'lbl');
+    L(svg, 400, 85, `weight W = ${f(m, 1)} × 9.8 = ${f(W, 2)} N`, 'lbl red');
+    L(svg, 400, 120, `upward push of hand = ${f(held, 2)} N`, 'lbl green');
+    L(svg, 400, 165, `reading = ${f(W, 2)} − ${f(held, 2)} = ${f(R, 2)} N`, 'lbl big');
+    if (U >= W) L(svg, 400, 205, 'reading 0: the hand holds all the weight;', 'lbl sm muted');
+    if (U >= W) L(svg, 400, 225, 'the spring is slack (a bigger push would lift it)', 'lbl sm muted');
+    if (U > 0 && U < W) L(svg, 400, 205, `loss of reading = ${f(held, 2)} N = the push`, 'lbl sm purple');
+    out.textContent = `Weight W = ${f(m, 1)} kg × 9.8 = ${f(W, 2)} N.  Hand pushes up ${f(held, 2)} N.\nSpring balance reading = W − push = ${f(R, 2)} N` + (U > W ? '  (the hand cannot "lift" more than the whole weight – the reading cannot go below 0)' : '') + '.'; };
+  sel.addEventListener('change', draw); K.slider('#sbU', v => { U = v; draw(); }, 2); })();
+
+examStepper('#we3', [
+  {h: 'Given', s: 'm = 300 g = 0.3 kg,  push = 1.13 N', html: '<b>Given:</b> m = 300 g = 0.3 kg; g = 9.8 m/s²; upward push = 1.13 N. To find: the reading.'},
+  {h: 'Formula', s: 'W = m × g;  reading = W − push', html: '<b>Formula:</b> W = m × g, and reading = W − upward push.'},
+  {h: 'Substitution', s: 'W = 0.3 × 9.8 = 2.94 N;  2.94 − 1.13', html: '<b>Substitution:</b> W = 0.3 × 9.8 = 2.94 N; reading = 2.94 N − 1.13 N.'},
+  {h: 'Answer', s: 'reading = 1.81 N', html: '<b>Answer:</b> the spring balance reads <b>1.81 N</b>.'}
+], (svg, i, t) => { const C = P(170, 170);
+  sline(svg, P(C.x, 20), P(C.x, C.y - 30), {stroke: 'var(--blue)', 'stroke-width': 2, 'stroke-dasharray': '5 4'}); text(svg, P(C.x + 10, 40), 'to spring balance', {class: 'lbl sm blue', 'text-anchor': 'start'});
+  K.el('path', {d: `M${C.x - 40},${C.y + 10} Q${C.x - 34},${C.y - 34} ${C.x},${C.y - 30} Q${C.x + 44},${C.y - 26} ${C.x + 38},${C.y + 14} Q${C.x + 10},${C.y + 34} ${C.x - 40},${C.y + 10} Z`, class: 'fill-surface', stroke: 'var(--text)', 'stroke-width': 1.5}, svg);
+  text(svg, P(C.x, C.y), 'stone', {class: 'lbl sm'});
+  arrow(svg, P(C.x - 70, C.y), P(C.x - 70, C.y + 2.94 * 25), 'var(--red)'); text(svg, P(C.x - 78, C.y + 80), '2.94 N', {class: 'lbl sm red', 'text-anchor': 'end'});
+  if (i >= 1){ const e = i === 1 ? t : 1; arrow(svg, P(C.x + 70, C.y + 1.13 * 25 * e), P(C.x + 70, C.y), 'var(--green)'); text(svg, P(C.x + 80, C.y + 30), '1.13 N', {class: 'lbl sm green', 'text-anchor': 'start', opacity: e}); }
+  if (i >= 3) text(svg, P(C.x, 270), 'spring pulls only 1.81 N', {class: 'lbl blue', 'font-weight': 700, opacity: t});
+});
+
+/* ---- 4. forces as arrows ---- */
+(function(){ const svg = document.getElementById('fSvg'), out = document.getElementById('fOut'); let W = 6, U = 6, off = 0, stop = null;
+  const draw = () => { K.clear(svg); const S = 11, C = P(200, 160 + off), net = U - W;
+    sline(svg, P(60, 160), P(340, 160), {stroke: 'var(--grid)', 'stroke-width': 1, 'stroke-dasharray': '4 4'});
+    text(svg, P(70, 150), 'start', {class: 'lbl sm muted', 'text-anchor': 'start'});
+    K.el('circle', {cx: C.x, cy: C.y, r: 24, class: 'fill-blue', stroke: 'var(--blue)', 'stroke-width': 2}, svg);
+    if (W > 0){ arrow(svg, P(C.x - 10, C.y + 24), P(C.x - 10, C.y + 24 + W * S), 'var(--red)'); text(svg, P(C.x - 18, C.y + 34 + W * S), `W ${f(W, 1)} N`, {class: 'lbl sm red', 'text-anchor': 'end'}); }
+    if (U > 0){ arrow(svg, P(C.x + 10, C.y - 24), P(C.x + 10, C.y - 24 - U * S), 'var(--green)'); text(svg, P(C.x + 18, C.y - 34 - U * S), `push ${f(U, 1)} N`, {class: 'lbl sm green', 'text-anchor': 'start'}); }
+    /* net */
+    if (Math.abs(net) > 1e-9) arrow(svg, P(300, 160), P(300, 160 - net * S), 'var(--purple)');
+    text(svg, P(300, net >= 0 ? 180 : 140), Math.abs(net) < 1e-9 ? 'net = 0' : 'net', {class: 'lbl sm purple'});
+    const msg = Math.abs(net) < 1e-9 ? 'balanced: net force = 0 → stays still' : net > 0 ? `net ${f(net, 1)} N upwards → moves up` : `net ${f(-net, 1)} N downwards → moves down`;
+    L(svg, 420, 90, `upward push = ${f(U, 1)} N`, 'lbl green'); L(svg, 420, 125, `weight = ${f(W, 1)} N`, 'lbl red');
+    L(svg, 420, 160, `net force = ${f(U, 1)} − ${f(W, 1)} = ${f(net, 1)} N`, 'lbl purple');
+    L(svg, 420, 205, msg, 'lbl ' + (Math.abs(net) < 1e-9 ? 'green' : 'amber'), {'font-weight': 700});
+    out.textContent = `Net force = upward push − weight = ${f(U, 1)} − ${f(W, 1)} = ${f(net, 1)} N.  ${msg}.`; };
+  K.slider('#fW', v => { W = v; off = 0; draw(); }, 1); K.slider('#fU', v => { U = v; off = 0; draw(); }, 1);
+  document.getElementById('fGo').addEventListener('click', () => { if (stop) stop(); const net = U - W; const target = Math.abs(net) < 1e-9 ? 0 : (net > 0 ? -90 : 90);
+    stop = K.animate(1200, e => { off = target * e; draw(); }, () => { setTimeout(() => { off = 0; draw(); }, 900); }); });
+})();
+
+/* ---- 5. balanced forces stepper ---- */
+new K.Stepper('#balLab', {steps: [
+  '<b>A book on a table.</b> The Earth pulls the book down (its weight). The table pushes it up with an equal force. Balanced → it stays still.',
+  '<b>A mass on a spring balance.</b> Weight down, spring pull up. They are equal, so the mass hangs still, and the spring pull is the reading.',
+  '<b>A country boat on Vembanad lake.</b> Weight down, and the <b>water</b> pushes it up with an equal force. Balanced → it floats, neither rising nor sinking.',
+  '<b>An empty bottle pushed under water and released.</b> The water\'s upward push is <b>bigger</b> than the bottle\'s weight. Unbalanced → it shoots up (page 5).',
+  '<b>An iron nail dropped in water.</b> The water still pushes up, but much less than the nail\'s weight. Unbalanced → it sinks. Why does an iron <b>ship</b> float then? Page 8 answers it.'
+], draw(svg, i, t){
+  const C = P(190, 150), S = 14;
+  /* free-body style: both arrows start at the object's centre (cy) */
+  const pair = (cy, len, upLbl, downLbl) => { arrow(svg, P(C.x + 10, cy), P(C.x + 10, cy - len * t), 'var(--green)'); text(svg, P(C.x + 20, cy - len + 8), upLbl, {class: 'lbl sm green', 'text-anchor': 'start'});
+    arrow(svg, P(C.x - 10, cy), P(C.x - 10, cy + len * t), 'var(--red)'); text(svg, P(C.x - 20, cy + len - 8), downLbl, {class: 'lbl sm red', 'text-anchor': 'end'}); K.el('circle', {cx: C.x, cy, r: 3.5, fill: 'var(--text)'}, svg); };
+  if (i === 0){ K.el('rect', {x: 60, y: 190, width: 260, height: 14, class: 'fill-amber', stroke: 'var(--text)'}, svg); sline(svg, P(80, 204), P(80, 280), {stroke: 'var(--text)', 'stroke-width': 4}); sline(svg, P(300, 204), P(300, 280), {stroke: 'var(--text)', 'stroke-width': 4});
+    K.el('rect', {x: C.x - 40, y: 168, width: 80, height: 22, rx: 3, class: 'fill-blue', stroke: 'var(--text)'}, svg); text(svg, P(C.x, 179), 'book', {class: 'lbl sm'});
+    pair(179, 5 * S, 'table push', 'weight'); }
+  if (i === 1){ K.el('rect', {x: 120, y: 10, width: 140, height: 8, class: 'fill-surface', stroke: 'var(--text)'}, svg); spring(svg, C.x, 18, 130, 7, 10);
+    sline(svg, P(C.x, 130), P(C.x, 150), {stroke: 'var(--text)', 'stroke-width': 2}); K.el('rect', {x: C.x - 22, y: 150, width: 44, height: 44, class: 'fill-amber', stroke: 'var(--text)'}, svg);
+    pair(172, 5 * S, 'spring pull', 'weight'); }
+  if (i >= 2){ K.el('rect', {x: 30, y: 170, width: 320, height: 120, class: 'water'}, svg); sline(svg, P(30, 170), P(350, 170), {stroke: 'var(--blue)', 'stroke-width': 2}); }
+  if (i === 2){ K.el('path', {d: `M${C.x - 90},150 L${C.x + 90},150 Q${C.x + 70},192 ${C.x + 40},192 L${C.x - 40},192 Q${C.x - 70},192 ${C.x - 90},150 Z`, class: 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, svg);
+    text(svg, P(C.x, 160), 'boat', {class: 'lbl sm'}); pair(170, 5 * S, 'water push', 'weight'); }
+  if (i === 3){ const y = 248 - 36 * K.ease(t); K.el('rect', {x: C.x - 16, y: y - 36, width: 32, height: 72, rx: 10, class: 'fill-green', stroke: 'var(--green)', 'stroke-width': 2}, svg);
+    arrow(svg, P(C.x + 40, y + 30), P(C.x + 40, y - 60), 'var(--green)'); text(svg, P(C.x + 50, y - 50), 'water push (big)', {class: 'lbl sm green', 'text-anchor': 'start'});
+    arrow(svg, P(C.x - 40, y - 6), P(C.x - 40, y + 22), 'var(--red)'); text(svg, P(C.x - 48, y + 8), 'weight', {class: 'lbl sm red', 'text-anchor': 'end'}); }
+  if (i === 4){ const y = 185 + 85 * t; K.el('rect', {x: C.x - 3, y: y - 24, width: 6, height: 48, fill: 'var(--muted)'}, svg); K.el('rect', {x: C.x - 9, y: y - 27, width: 18, height: 4, fill: 'var(--muted)'}, svg);
+    arrow(svg, P(C.x - 30, y - 20), P(C.x - 30, y + 30), 'var(--red)'); text(svg, P(C.x - 38, y + 10), 'weight', {class: 'lbl sm red', 'text-anchor': 'end'});
+    arrow(svg, P(C.x + 30, y), P(C.x + 30, y - 8), 'var(--green)'); text(svg, P(C.x + 40, y - 6), 'small push', {class: 'lbl sm green', 'text-anchor': 'start'}); }
+  const res = ['balanced → stays still', 'balanced → hangs still', 'balanced → floats', 'unbalanced → rises', 'unbalanced → sinks'][i];
+  K.el('rect', {x: 420, y: 110, width: 340, height: 80, rx: 12, class: 'panel'}, svg);
+  text(svg, P(590, 150), res, {class: 'lbl big ' + (i < 3 ? 'green' : 'amber')});
+}});
+
+/* ---- quiz ---- */
+K.numq('#q1', {q: 'What is the weight of a 2 kg bag of rice on the Earth? (g = 9.8 m/s²)', answer: 19.6, tol: 0.01, unit: 'N', explain: 'W = m × g = 2 × 9.8 = 19.6 N.', hint: 'W = m × g.'});
+K.mcq('#q2', {q: 'An astronaut has a mass of 60 kg on the Earth. On the Moon her mass is', options: ['about 10 kg', '60 kg', '0 kg', '588 kg'], answer: 1, explain: 'Mass is the amount of matter – it does not change from place to place. Her <i>weight</i> changes (588 N on Earth, about 96 N on the Moon).', hint: 'Does the amount of matter in her body change?'});
+K.numq('#q3', {q: 'Express 3 kgwt in newtons.', answer: 29.4, tol: 0.01, unit: 'N', explain: '3 × 9.8 = 29.4 N.', hint: '1 kgwt = 9.8 N.'});
+K.mcq('#q4', {q: 'A 500 g iron block hangs from a spring balance marked in newtons. The reading is', options: ['500 N', '0.5 N', '4.9 N', '49 N'], answer: 2, explain: '0.5 kg × 9.8 = 4.9 N.', hint: 'Change 500 g to kg, then multiply by 9.8.'});
+K.mcq('#q5', {q: 'A stone weighing 3 N hangs from a spring balance. You push it up gently with 1 N. The balance now reads', options: ['4 N', '3 N', '2 N', '1 N'], answer: 2, explain: 'Reading = weight − upward push = 3 − 1 = 2 N.', hint: 'Your hand takes part of the weight.'});
+K.mcq('#q6', {q: 'A boat floats still on a lake. Which is true?', options: ['The boat has no weight', 'The upward push of the water is greater than its weight', 'The upward push of the water equals its weight', 'There is no upward force on it'], answer: 2, explain: 'It neither rises nor sinks, so the forces are balanced: upward push = weight.', hint: 'Still means net force zero.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

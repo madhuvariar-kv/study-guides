@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Model Test – Solved – Buoyant Force</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.sec{margin:1.4rem 0 .4rem;font-weight:800;color:var(--primary-ink);background:var(--primary-soft);padding:.3rem .7rem;border-radius:6px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.3rem}
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.qcard .qh{display:flex;gap:.6rem;align-items:flex-start;padding-bottom:.5rem;border-bottom:1px dashed var(--border);margin-bottom:.6rem}
+.qcard .qn{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.qcard .qt{flex:1;min-width:0}
+.qcard .marks{white-space:nowrap;color:var(--muted);font-weight:600}
+.qcard .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.2rem .8rem;margin-top:.3rem}
+.qcard .reveal{margin:.2rem 0 .5rem}
+.hintp{background:var(--blue-soft);border-radius:8px;padding:.4rem .8rem;margin:.4rem 0}
+.ans{border-left:5px solid var(--green);background:var(--green-soft);padding:.6rem .9rem;border-radius:8px;margin:.6rem 0}
+.ans .t{font-weight:700;color:var(--green);margin-bottom:.2rem}
+.ans p{margin:.3em 0}
+.ans table{background:var(--surface)}
+.mark{font-size:.9rem;color:var(--accent-ink);background:var(--accent-soft);padding:.4rem .8rem;border-radius:8px;margin:.5rem 0 0}
+.mark b{color:var(--accent-ink)}
+.rev{font-size:.88rem;color:var(--muted);margin-top:.4rem}
+.qcard .lab{margin:.7rem 0}
+.blank{display:inline-block;min-width:3rem;border-bottom:1.5px solid var(--text)}
+table.vt{width:auto;margin:.5rem 0}
+table.vt td,table.vt th{text-align:center;padding:.3rem .6rem}
+table.vt th{text-align:left}
+@media(max-width:600px){.qcard{padding:.8rem .7rem}.qcard .qh{flex-wrap:wrap}table.vt{font-size:.85rem}table.vt td,table.vt th{padding:.25rem .35rem}}
+</style>
+</head>
+<body data-page="15_model_test_solutions">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 5 · Solved paper</span><span class="chip amber">40 marks</span>
+<h1>Model Test – Solved <span class="ml">ഉത്തരങ്ങൾ</span></h1>
+<p class="lead">Every question of the <a href="14_model_test_paper.html">model paper</a>, in the same order, with the full answer, the marking scheme, an animated figure or working for every numerical and explanation question, and a link to the page where the idea is taught. Try each one again before you open the answer, and mark your own paper honestly.</p>
+<div class="callout"><div class="title">📐 How the figures are drawn</div><p style="margin:0">The <b>weight</b> (<span class="ml">ഭാരം</span>) is a red arrow pointing down, the <b>buoyant force</b> (<span class="ml">പ്ലവക്ഷമബലം</span>) a green arrow pointing up; equal forces have equal arrows. Water is blue. Every number in the animations is worked out with F<sub>B</sub> = W₁ − W₂ = ρ × V × g, g = 9.8 m/s² and 1 kgwt = 9.8 N.</p></div>
+
+<div class="sec"><span>SECTION A</span><span>Answer all · 8 × 1 = 8 marks</span></div>
+<div class="qcard" id="qA1"><div class="qh"><span class="qn">1.</span><div class="qt">Liquids and gases together are called <span class="blank"></span>.</div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Water and air both flow. What name covers both?</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: fluids (<span class="ml">ദ്രവങ്ങൾ</span>)</div><p>Liquids (<span class="ml">ദ്രാവകങ്ങൾ</span>) and gases (<span class="ml">വാതകങ്ങൾ</span>) can flow, so together they are called <b>fluids</b>. Every fluid – water, oil, even air – exerts a buoyant force on objects in it.</p></div><p class="mark"><b>Marking:</b> 1 mark.</p></div><p class="rev">📖 Review this on <a href="05_buoyant_force.html">Page 5 · Fluids and key box 1</a></p></div>
+<div class="qcard" id="qA2"><div class="qh"><span class="qn">2.</span><div class="qt">An object weighs 12 N in air and 9 N when it is fully immersed in water. The buoyant force on it is<div class="opts"><span>(a) 21 N</span><span>(b) 12 N</span><span>(c) 9 N</span><span>(d) 3 N</span></div></div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Buoyant force = weight in air − weight in water.</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (d) 3 N</div><p>Buoyant force = apparent loss of weight (<span class="ml">ഭാരനഷ്ടം</span>) = W₁ − W₂ = 12 N − 9 N = <b>3 N</b>.</p></div><p class="mark"><b>Marking:</b> 1 mark for (d).</p></div><p class="rev">📖 Review this on <a href="05_buoyant_force.html">Page 5 · Key box 2: F<sub>B</sub> = W₁ − W₂</a></p></div>
+<div class="qcard" id="qA3"><div class="qh"><span class="qn">3.</span><div class="qt">The unit of relative density is<div class="opts"><span>(a) kg/m<sup>3</sup></span><span>(b) g/cm<sup>3</sup></span><span>(c) N</span><span>(d) it has no unit</span></div></div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 What is (kg/m³) ÷ (kg/m³)?</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (d) no unit</div><p>Relative density (<span class="ml">ആപേക്ഷികസാന്ദ്രത</span>) = density of the substance ÷ density of water. Both are in kg/m<sup>3</sup>, so the units cancel – it is a pure number.</p></div><p class="mark"><b>Marking:</b> 1 mark for (d).</p></div><p class="rev">📖 Review this on <a href="09_relative_density_hydrometer.html">Page 9 · Key box 7</a></p></div>
+<div class="qcard" id="qA4"><div class="qh"><span class="qn">4.</span><div class="qt">Find the relation and fill in: &nbsp; hydrometer : relative density of liquids &nbsp;::&nbsp; lactometer : <span class="blank"></span></div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 A lactometer is a hydrometer for which liquid?</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: relative density (purity) of milk</div><p>A lactometer (<span class="ml">ലാക്ടോമീറ്റർ</span>) is a hydrometer (<span class="ml">ഹൈഡ്രോമീറ്റർ</span>) made for milk: it measures the <b>relative density of milk</b> and so shows whether water has been added.</p></div><p class="mark"><b>Marking:</b> 1 mark (“purity of milk” also accepted).</p></div><p class="rev">📖 Review this on <a href="09_relative_density_hydrometer.html">Page 9 · Lactometer</a></p></div>
+<div class="qcard" id="qA5"><div class="qh"><span class="qn">5.</span><div class="qt">A wooden block floats in water. The buoyant force on it is<div class="opts"><span>(a) greater than its weight</span><span>(b) less than its weight</span><span>(c) equal to its weight</span><span>(d) zero</span></div></div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 The block is at rest – the forces are balanced.</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (c) equal to its weight</div><p>Principle of floatation (<span class="ml">പ്ലവനതത്വം</span>): a floating object displaces its own weight of fluid, so the buoyant force <b>equals</b> its weight. If it were greater, the block would rise further out of the water until they became equal.</p></div><p class="mark"><b>Marking:</b> 1 mark for (c).</p></div><p class="rev">📖 Review this on <a href="08_floatation.html">Page 8 · Key box 6</a></p></div>
+<div class="qcard" id="qA6"><div class="qh"><span class="qn">6.</span><div class="qt">A 100 g brass weight is fully immersed in turn in each liquid below. In which is the buoyant force on it the greatest?<div class="opts"><span>(a) kerosene</span><span>(b) water</span><span>(c) saturated salt solution</span><span>(d) glycerine</span></div></div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Same volume – which liquid is densest?</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (d) glycerine</div><p>The volume immersed is the same each time, so the densest liquid gives the greatest buoyant force. Glycerine (<span class="ml">ഗ്ലിസറിൻ</span>, 1260 kg/m<sup>3</sup>) is denser than salt solution (1025), water (1000) and kerosene (810).</p></div><p class="mark"><b>Marking:</b> 1 mark for (d).</p></div><p class="rev">📖 Review this on <a href="06_factors_buoyant_force.html">Page 6 · Table 5.3, key box 3</a></p></div>
+<div class="qcard" id="qA7"><div class="qh"><span class="qn">7.</span><div class="qt">The density of mercury is 13&#8239;600 kg/m<sup>3</sup>. Its relative density is <span class="blank"></span>.</div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Divide by the density of water, 1000 kg/m³.</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: 13.6</div><p>Relative density = 13&#8239;600 ÷ 1000 = <b>13.6</b> (no unit): mercury is 13.6 times as dense as water.</p></div><p class="mark"><b>Marking:</b> 1 mark (writing a unit: ½ mark).</p></div><p class="rev">📖 Review this on <a href="09_relative_density_hydrometer.html">Page 9 · Mercury question</a></p></div>
+<div class="qcard" id="qA8"><div class="qh"><span class="qn">8.</span><div class="qt">The scientist of Syracuse who found the volume of the king’s crown from the water that overflowed when he got into a full bathtub was <span class="blank"></span>.</div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 “Eureka!”</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: Archimedes</div><p><b>Archimedes</b> (born 287 BC) realised that the volume of water an object pushes out equals the volume of the object. Knowing the crown’s volume, he found its density and showed that it was not pure gold.</p></div><p class="mark"><b>Marking:</b> 1 mark.</p></div><p class="rev">📖 Review this on <a href="07_archimedes_principle.html">Page 7 · Archimedes box</a></p></div>
+<div class="sec"><span>SECTION B</span><span>Answer all · 5 × 2 = 10 marks</span></div>
+<div class="qcard" id="qB9"><div class="qh"><span class="qn">9.</span><div class="qt">An object weighs 0.6 kgwt in air and 0.45 kgwt when it is fully immersed in water. (a) Find the buoyant force on it in kgwt. (b) Express it in newton. (1 kgwt = 9.8 N)</div><span class="marks">(2 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Loss of weight = buoyant force; then multiply by 9.8.</p></div><div class="lab" id="labB9"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Animated solution of question 9"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (a) 0.15 kgwt &nbsp; (b) 1.47 N</div><p><b>Given:</b> W₁ = 0.6 kgwt (in air); W₂ = 0.45 kgwt (in water); 1 kgwt = 9.8 N</p><p><b>Formula:</b> F<sub>B</sub> = W₁ − W₂</p><p><b>Substitution:</b> (a) F<sub>B</sub> = 0.6 − 0.45 = 0.15 kgwt; (b) 0.15 × 9.8</p><p><b>Answer:</b> (a) <b>0.15 kgwt</b> &nbsp; (b) <b>1.47 N</b></p><p>The apparent loss of weight is the buoyant force; it is also the weight of the water displaced (Archimedes’ principle).</p></div><p class="mark"><b>Marking:</b> (a) 1 mark (formula ½, answer ½); (b) 1 mark (answer with unit).</p></div><p class="rev">📖 Review this on <a href="05_buoyant_force.html">Page 5 · Measuring buoyant force</a> · <a href="01_mass_weight_kgwt.html">Page 1 · kgwt and newton</a></p></div>
+<div class="qcard" id="qB10"><div class="qh"><span class="qn">10.</span><div class="qt">A ship rises a little out of the water when it sails from a river into the sea. Why?</div><span class="marks">(2 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Which is denser – river water or sea water? What stays the same?</p></div><div class="lab" id="labB10"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Animated solution of question 10"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: sea water is denser, so less of it needs to be displaced</div><p>The ship floats in both, so the buoyant force always equals its weight (principle of floatation). Sea water is <b>denser</b> than river water, so a <b>smaller volume</b> of sea water already weighs as much as the ship. Less of the hull needs to be under water – the ship rises.</p></div><p class="mark"><b>Marking:</b> 1 mark for “sea water is denser”, 1 mark for “a smaller volume is displaced for the same weight (F<sub>B</sub> = W)”.</p></div><p class="rev">📖 Review this on <a href="06_factors_buoyant_force.html">Page 6 · Science diary: ship, egg, Dead Sea</a> · <a href="12_applications_explore.html">Page 12 · Ship lab</a></p></div>
+<div class="qcard" id="qB11"><div class="qh"><span class="qn">11.</span><div class="qt">A small iron nail sinks in water, but a huge ship made of iron floats. Explain.</div><span class="marks">(2 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Compare the volume of water each one can push aside.</p></div><div class="lab" id="labB11"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Animated solution of question 11"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: the hollow ship displaces water equal to its weight; the nail cannot</div><p>The solid nail displaces only its own small volume of water. The weight of that water is far less than the nail’s weight (iron is 7.8 times as dense as water), so the buoyant force is less than its weight – it <b>sinks</b>.</p><p>The ship is <b>hollow</b>: its shape pushes aside a huge volume of water. It settles until the weight of the water displaced equals its own weight – it <b>floats</b>. (Like the aluminium foil boat and the crumpled ball, Fig 5.7.)</p></div><p class="mark"><b>Marking:</b> 1 mark for the nail (F<sub>B</sub> &lt; W), 1 mark for the ship (hollow shape, displaces its own weight of water).</p></div><p class="rev">📖 Review this on <a href="08_floatation.html">Page 8 · Foil boat and the ship</a></p></div>
+<div class="qcard" id="qB12"><div class="qh"><span class="qn">12.</span><div class="qt">The density of coconut oil is 920 kg/m<sup>3</sup>. (a) Find its relative density. (b) Will coconut oil float on water? Why?</div><span class="marks">(2 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Divide by 1000; compare the answer with 1.</p></div><div class="lab" id="labB12"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Animated solution of question 12"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (a) 0.92 &nbsp; (b) yes – it is less dense than water</div><p><b>Given:</b> density of coconut oil = 920 kg/m<sup>3</sup>; density of water = 1000 kg/m<sup>3</sup></p><p><b>Formula:</b> relative density = density of the substance ÷ density of water</p><p><b>Substitution:</b> 920 ÷ 1000</p><p><b>Answer:</b> (a) <b>0.92</b> (no unit)</p><p>(b) <b>Yes.</b> Its relative density is less than 1 – it is less dense than water – so it floats as a layer on top (<span class="ml">വെളിച്ചെണ്ണ</span> on water).</p></div><p class="mark"><b>Marking:</b> (a) 1 mark; (b) ½ for “yes”, ½ for the reason.</p></div><p class="rev">📖 Review this on <a href="09_relative_density_hydrometer.html">Page 9 · Relative density</a> · <a href="03_density.html">Page 3 · Oil floats on water</a></p></div>
+<div class="qcard" id="qB13"><div class="qh"><span class="qn">13.</span><div class="qt">A lactometer is placed first in pure milk and then in milk to which water has been added. (a) In which does it sink deeper? (b) Why?</div><span class="marks">(2 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Less dense liquid → more volume needed to balance the same weight.</p></div><div class="lab" id="labB13"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Animated solution of question 13"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (a) in the watered milk &nbsp; (b) it is less dense</div><p>(a) In the <b>milk with water added</b>.</p><p>(b) Water (relative density 1.000) makes the milk <b>less dense</b>. The lactometer floats where the weight of the milk it displaces equals its own weight, so in less dense milk it must displace a <b>bigger volume</b> – it sinks deeper and shows a lower reading.</p></div><p class="mark"><b>Marking:</b> 1 mark for (a); 1 mark for the reason in (b).</p></div><p class="rev">📖 Review this on <a href="09_relative_density_hydrometer.html">Page 9 · Lactometer lab</a> · <a href="12_applications_explore.html">Page 12 · Milk society lab</a></p></div>
+<div class="sec"><span>SECTION C</span><span>Answer all · 4 × 3 = 12 marks</span></div>
+<div class="qcard" id="qC14"><div class="qh"><span class="qn">14.</span><div class="qt">A stone of mass 0.5 kg weighs 4.9 N in air. When fully immersed in water, the spring balance reads 3.9 N (figure). (a) Find the buoyant force. (b) Find the volume of the stone. (c) What will the balance read if the stone is fully immersed in saturated salt solution (density 1025 kg/m<sup>3</sup>)? (g = 9.8 m/s<sup>2</sup>, density of water 1000 kg/m<sup>3</sup>)</div><span class="marks">(3 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 The loss of weight is the weight of the water displaced; weight of water = ρVg.</p></div><div class="lab" id="labC14"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Animated solution of question 14"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (a) 1.0 N &nbsp; (b) 1.02 × 10<sup>−4</sup> m<sup>3</sup> ≈ 102 cm<sup>3</sup> &nbsp; (c) about 3.88 N</div><p><b>Given:</b> W₁ = 4.9 N, W₂ = 3.9 N</p><p><b>Formula:</b> F<sub>B</sub> = W₁ − W₂</p><p><b>Substitution:</b> 4.9 − 3.9</p><p><b>Answer:</b> (a) <b>F<sub>B</sub> = 1.0 N</b></p><p><b>Given:</b> F<sub>B</sub> = 1.0 N = weight of the water displaced; ρ<sub>water</sub> = 1000 kg/m<sup>3</sup>, g = 9.8 m/s<sup>2</sup></p><p><b>Formula:</b> F<sub>B</sub> = ρ × V × g, so V = F<sub>B</sub> ÷ (ρ × g)</p><p><b>Substitution:</b> V = 1.0 ÷ (1000 × 9.8)</p><p><b>Answer:</b> (b) <b>V ≈ 1.02 × 10<sup>−4</sup> m<sup>3</sup> ≈ 102 cm<sup>3</sup></b> – the stone is fully under, so this is its volume</p><p>(c) In salt solution: F<sub>B</sub> = 1025 × 1.02 × 10<sup>−4</sup> × 9.8 ≈ 1.025 N, so the reading = 4.9 − 1.025 ≈ <b>3.88 N</b> – a little less than in water, because the solution is denser.</p></div><p class="mark"><b>Marking:</b> (a) 1 mark; (b) 1 mark (formula ½, answer with unit ½); (c) 1 mark.</p></div><p class="rev">📖 Review this on <a href="05_buoyant_force.html">Page 5 · Spring-balance lab</a> · <a href="07_archimedes_principle.html">Page 7 · Archimedes’ principle</a> · <a href="06_factors_buoyant_force.html">Page 6 · Density of the liquid</a></p></div>
+<div class="qcard" id="qC15"><div class="qh"><span class="qn">15.</span><div class="qt">A 100 g brass weight (weight in air 0.98 N) is fully immersed in three liquids P, Q and R. The spring balance readings are shown below.<table class="vt"><tr><th>Liquid</th><td>P</td><td>Q</td><td>R</td></tr><tr><th>Reading (N)</th><td>0.881</td><td>0.826</td><td>0.858</td></tr></table>(a) Find the buoyant force in each liquid. (b) Which liquid is the densest? Why? (c) Q is glycerine and R is water. Is P kerosene or saturated salt solution? Give a reason.</div><span class="marks">(3 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Subtract each reading from 0.98 N; more buoyant force = denser liquid.</p></div><div class="lab" id="labC15"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Animated solution of question 15"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (a) 0.099 N, 0.154 N, 0.122 N &nbsp; (b) Q &nbsp; (c) kerosene</div><p>(a) F<sub>B</sub> = W₁ − W₂: P: 0.98 − 0.881 = <b>0.099 N</b>; Q: 0.98 − 0.826 = <b>0.154 N</b>; R: 0.98 − 0.858 = <b>0.122 N</b>.</p><p>(b) <b>Q</b>. The same weight is fully immersed each time (same volume), so the liquid giving the greatest buoyant force is the densest.</p><p>(c) <b>Kerosene.</b> The buoyant force in P (0.099 N) is less than in water (0.122 N), so P is less dense than water. Kerosene (810 kg/m<sup>3</sup>) is less dense than water; saturated salt solution (1025 kg/m<sup>3</sup>) is denser and would give more than 0.122 N.</p></div><p class="mark"><b>Marking:</b> (a) 1 mark (all three); (b) ½ answer + ½ reason; (c) ½ answer + ½ reason.</p></div><p class="rev">📖 Review this on <a href="06_factors_buoyant_force.html">Page 6 · Table 5.2 lab</a> · <a href="05_buoyant_force.html">Page 5 · Key box 2</a></p></div>
+<div class="qcard" id="qC16"><div class="qh"><span class="qn">16.</span><div class="qt">A wooden block of mass 0.6 kg floats in water. (a) What is its weight in newton? (b) What is the buoyant force on it? (c) Find the volume of water it displaces. (g = 9.8 m/s<sup>2</sup>, density of water 1000 kg/m<sup>3</sup>)</div><span class="marks">(3 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Floating: weight of water displaced = weight of the block.</p></div><div class="lab" id="labC16"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Animated solution of question 16"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (a) 5.88 N &nbsp; (b) 5.88 N &nbsp; (c) 6 × 10<sup>−4</sup> m<sup>3</sup> = 600 cm<sup>3</sup></div><p><b>Given:</b> m = 0.6 kg; g = 9.8 m/s<sup>2</sup></p><p><b>Formula:</b> W = m × g</p><p><b>Substitution:</b> 0.6 × 9.8</p><p><b>Answer:</b> (a) <b>W = 5.88 N</b> (= 0.6 kgwt)</p><p>(b) The block floats, so by the principle of floatation F<sub>B</sub> = W = <b>5.88 N</b>.</p><p><b>Given:</b> weight of water displaced = 5.88 N, so its mass = 0.6 kg; ρ = 1000 kg/m<sup>3</sup></p><p><b>Formula:</b> volume = mass ÷ density</p><p><b>Substitution:</b> 0.6 ÷ 1000</p><p><b>Answer:</b> (c) <b>V = 6 × 10<sup>−4</sup> m<sup>3</sup> = 600 cm<sup>3</sup></b></p></div><p class="mark"><b>Marking:</b> 1 mark for each part.</p></div><p class="rev">📖 Review this on <a href="08_floatation.html">Page 8 · Principle of floatation</a> · <a href="01_mass_weight_kgwt.html">Page 1 · W = mg</a> · <a href="03_density.html">Page 3 · Density = mass ÷ volume</a></p></div>
+<div class="qcard" id="qC17"><div class="qh"><span class="qn">17.</span><div class="qt">A crown said to be made of pure gold has a mass of 1 kg. When it is lowered into a jar full of water, 60 cm<sup>3</sup> of water overflows. (Density of pure gold = 19&#8239;300 kg/m<sup>3</sup>.) (a) What is the volume of the crown? Why? (b) Find the density of the crown. (c) Is the crown pure gold? Explain.</div><span class="marks">(3 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Overflowing water volume = volume of the crown; then density = m ÷ V.</p></div><div class="lab" id="labC17"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Animated solution of question 17"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (a) 60 cm<sup>3</sup> &nbsp; (b) about 16&#8239;700 kg/m<sup>3</sup> &nbsp; (c) no – it is adulterated</div><p>(a) <b>60 cm<sup>3</sup></b> = 6 × 10<sup>−5</sup> m<sup>3</sup>. A fully immersed object pushes out a volume of water equal to its own volume (Archimedes’ discovery).</p><p><b>Given:</b> m = 1 kg; V = 6 × 10<sup>−5</sup> m<sup>3</sup></p><p><b>Formula:</b> density = mass ÷ volume</p><p><b>Substitution:</b> 1 ÷ (6 × 10<sup>−5</sup>)</p><p><b>Answer:</b> (b) <b>≈ 16&#8239;700 kg/m<sup>3</sup></b> (16&#8239;667)</p><p>(c) <b>No.</b> Its density is less than that of pure gold (19&#8239;300 kg/m<sup>3</sup>), so a lighter metal such as silver has been mixed in. A pure-gold crown of 1 kg would push out only 1 ÷ 19&#8239;300 m<sup>3</sup> ≈ 51.8 cm<sup>3</sup> of water.</p></div><p class="mark"><b>Marking:</b> 1 mark for each part (½ answer, ½ reason / unit).</p></div><p class="rev">📖 Review this on <a href="07_archimedes_principle.html">Page 7 · Archimedes and the crown</a> · <a href="03_density.html">Page 3 · Density</a></p></div>
+<div class="sec"><span>SECTION D</span><span>Answer all · 2 × 5 = 10 marks</span></div>
+<div class="qcard" id="qD18"><div class="qh"><span class="qn">18.</span><div class="qt">A hydrometer floats in water and in a liquid X as shown in the figure. (a) What is a hydrometer? On what principle does it work? (b) What does it read in pure water? (c) In X it floats higher than in water. Is the relative density of X more or less than 1? (d) The density of kerosene is 810 kg/m<sup>3</sup>. Find its relative density, and say whether the hydrometer will float higher or sink deeper in kerosene than in water. (e) Why do the values on a hydrometer scale increase downwards?</div><span class="marks">(5 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Denser liquid → less volume needed → floats higher.</p></div><div class="lab" id="labD18"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Animated solution of question 18"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (a) measures RD of liquids; floatation &nbsp; (b) 1.00 &nbsp; (c) more than 1 &nbsp; (d) 0.81; sinks deeper &nbsp; (e) it floats higher in denser liquids</div><p>(a) A hydrometer (<span class="ml">ഹൈഡ്രോമീറ്റർ</span>) is an instrument to measure the <b>relative density of liquids</b>. It works on the <b>principle of floatation</b>: it sinks until the weight of the liquid it displaces equals its own weight.</p><p>(b) <b>1.00</b> (the relative density of water).</p><p>(c) <b>More than 1.</b> It floats higher, so it displaces a smaller volume of X to balance the same weight – X is denser than water.</p><p><b>Given:</b> density of kerosene = 810 kg/m<sup>3</sup>; density of water = 1000 kg/m<sup>3</sup></p><p><b>Formula:</b> relative density = density of kerosene ÷ density of water</p><p><b>Substitution:</b> 810 ÷ 1000</p><p><b>Answer:</b> (d) <b>0.81</b>; kerosene is less dense than water, so the hydrometer <b>sinks deeper</b> in it</p><p>(e) In a denser liquid the hydrometer floats higher, so a point lower down on its stem comes to the liquid surface. The marks for larger relative densities are therefore lower on the stem: the values <b>increase downwards</b>.</p></div><p class="mark"><b>Marking:</b> 1 mark for each part ((a): ½ use, ½ principle; (d): ½ value, ½ deeper).</p></div><p class="rev">📖 Review this on <a href="09_relative_density_hydrometer.html">Page 9 · Hydrometer, Fig 5.8</a> · <a href="11_assess_solutions.html">Page 11 · Build a hydrometer</a></p></div>
+<div class="qcard" id="qD19"><div class="qh"><span class="qn">19.</span><div class="qt">A house boat on Vembanad lake displaces 3000 kg of water. (a) Find the buoyant force on it in kgwt and in newton. (b) What is the weight of the boat? Which principle tells you this? (c) Four tourists of total mass 240 kg get on. How much more water does the boat displace? Give the mass and the volume. (d) Life jackets are compulsory on such boats. Explain why, using the idea of buoyant force.</div><span class="marks">(5 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Floating: buoyant force = weight = weight of the water displaced.</p></div><div class="lab" id="labD19"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Animated solution of question 19"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (a) 3000 kgwt = 29&#8239;400 N &nbsp; (b) 3000 kgwt – floatation &nbsp; (c) 240 kg, 0.24 m<sup>3</sup> &nbsp; (d) more volume, little weight</div><p><b>Given:</b> mass of water displaced = 3000 kg; 1 kgwt = 9.8 N</p><p><b>Formula:</b> F<sub>B</sub> = weight of the water displaced (Archimedes’ principle)</p><p><b>Substitution:</b> 3000 kgwt = 3000 × 9.8 N</p><p><b>Answer:</b> (a) <b>F<sub>B</sub> = 3000 kgwt = 29&#8239;400 N</b></p><p>(b) <b>3000 kgwt</b> (29&#8239;400 N). By the <b>principle of floatation</b>, a floating object’s weight equals the weight of the fluid it displaces.</p><p><b>Given:</b> extra weight = 240 kgwt; density of water = 1000 kg/m<sup>3</sup></p><p><b>Formula:</b> extra water displaced has the same weight; volume = mass ÷ density</p><p><b>Substitution:</b> 240 ÷ 1000</p><p><b>Answer:</b> (c) <b>240 kg more water, 0.24 m<sup>3</sup></b> – the boat sinks a little deeper</p><p>(d) A life jacket (<span class="ml">ലൈഫ് ജാക്കറ്റ്</span>) is filled with very light foam or air: it adds a large <b>volume</b> but very little <b>weight</b>. A person wearing it displaces more water, so the buoyant force can equal the total weight while the head stays above the water – the person floats and can breathe until help comes.</p></div><p class="mark"><b>Marking:</b> (a) 1 (½ kgwt, ½ N); (b) 1 (½ value, ½ principle); (c) 1 (½ mass, ½ volume); (d) 2 (large volume, little weight 1; more water displaced, F<sub>B</sub> = weight with head out 1).</p></div><p class="rev">📖 Review this on <a href="08_floatation.html">Page 8 · Boat 6000 kg question</a> · <a href="11_assess_solutions.html">Page 11 · Let us assess Q4</a> · <a href="12_applications_explore.html">Page 12 · Life-jacket lab</a></p></div>
+
+<h2 id="marks">Marks summary</h2>
+<div class="tablewrap" style="overflow-x:auto"><table>
+<tr><th>Section</th><th>Questions</th><th>Marks each</th><th>Total</th><th>Topics</th></tr>
+<tr><td>A</td><td>1–8</td><td>1</td><td>8</td><td>fluids, F<sub>B</sub> = W₁ − W₂, unit of relative density, lactometer, floating, density of liquids, mercury, Archimedes</td></tr>
+<tr><td>B</td><td>9–13</td><td>2</td><td>10</td><td>kgwt → N numerical, ship from river to sea, nail and ship, relative density of coconut oil, lactometer in watered milk</td></tr>
+<tr><td>C</td><td>14–17</td><td>3</td><td>12</td><td>spring balance and volume, three liquids, floating block, Archimedes’ crown</td></tr>
+<tr><td>D</td><td>18–19</td><td>5</td><td>10</td><td>hydrometer and relative density, house boat and life jackets</td></tr>
+<tr><th colspan="3">Total</th><th>40</th><th></th></tr>
+</table></div>
+
+<div class="callout think"><div class="title">⏱️ Time management (15 min cool-off + 90 minutes)</div>
+<ul style="margin:0">
+<li><b>Cool-off (15 min)</b> – read the whole paper. Mark every numerical and note what is given in kgwt and what in newton.</li>
+<li><b>Section A</b> – about 10 minutes. Short answers; no unit for relative density.</li>
+<li><b>Section B</b> – about 20 minutes. For Q9 and Q12 write Given, Formula, Substitution, Answer. In explanations name the principle (Archimedes / floatation).</li>
+<li><b>Section C</b> – about 25 minutes. Show every subtraction W₁ − W₂ and every unit (N, m<sup>3</sup>, cm<sup>3</sup>, kg/m<sup>3</sup>).</li>
+<li><b>Section D</b> – about 25 minutes. Answer every part; for “why” parts use the words density, volume displaced, weight of water displaced.</li>
+<li><b>Checking</b> – keep 10 minutes: kgwt ↔ N (× 9.8)? grams changed to kilograms? floating means F<sub>B</sub> = W, not greater?</li>
+</ul></div>
+
+<div class="callout"><div class="title">🎉 Finished the chapter?</div>
+<p style="margin:0">Count your marks: 32 or more – excellent; 24–31 – good, revise the pages linked under the questions you missed; below 24 – go back through pages 5, 6, 7, 8 and 9 with their labs and do the <a href="13_summary_revision.html">scored quiz</a> again. Then return to the <a href="index.html">chapter home</a> and tick off what you have learned.</p></div>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Buoyant Force · Class 9 Physics", "icon": "🚢", "key": "physics_ch5_progress", "pages": [["index.html", "Home"], ["01_mass_weight_kgwt.html", "1 · Mass, Weight, Newton & kgwt"], ["02_volume_displacement.html", "2 · Volume & Measuring by Displacement"], ["03_density.html", "3 · Density – Mass per Volume"], ["04_pressure_in_liquids.html", "4 · Pressure in Liquids"], ["05_buoyant_force.html", "5 · Buoyant Force & How to Measure It"], ["06_factors_buoyant_force.html", "6 · What Decides the Buoyant Force?"], ["07_archimedes_principle.html", "7 · Archimedes' Principle"], ["08_floatation.html", "8 · Principle of Floatation – Boats & Ships"], ["09_relative_density_hydrometer.html", "9 · Relative Density, Hydrometer & Lactometer"], ["10_intext_questions_solutions.html", "10 · In-text Questions – Solutions"], ["11_assess_solutions.html", "11 · Let Us Assess & Extended Activities – Solutions"], ["12_applications_explore.html", "12 · Applications & Explore Online"], ["13_summary_revision.html", "13 · Summary & Quick Quiz"], ["14_model_test_paper.html", "14 · Model Test Paper"], ["15_model_test_solutions.html", "15 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ---- buoyancy helpers shared by pages 12–15 of Chapter 5 (inlined by _gen/gen.py) ---- */
+const {P, polyline} = K;
+const COL = {red:'var(--red)', blue:'var(--blue)', green:'var(--green)', amber:'var(--accent)', purple:'var(--purple)', text:'var(--text)', muted:'var(--muted)'};
+/* a line with its own stroke attributes (seg() carries class 'ln', whose CSS would override them) */
+const sline = (svg, a, b, attrs={}) => K.el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+/* true minus for negative numbers only (hyphens inside words stay hyphens) */
+const minus = s => String(s).replace(/(^|[\s(=:,/])-(?=[\d.])/g, '$1−');
+/* number with at most d decimals, true minus sign: fx(-2.85, 1) → "−2.9" */
+const fx = (v, d=2) => minus(K.fmt(v, d));
+/* fixed decimals: f3(1.0294, 3) → "1.029" */
+const fd = (v, d=2) => minus((+v).toFixed(d));
+/* thousands grouped with a narrow space for numbers of five or more digits: gr(58800) → "58 800", gr(6000) → "6000" */
+const gr = (v, d=0) => { const s = Math.abs(+v).toFixed(d), [a, b] = s.split('.'); return (v < 0 ? '−' : '') + (a.length > 4 ? a.replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : a) + (b ? '.' + b : ''); };
+/* SVG text that understands subscripts: "F_B" → F with a lowered small B, "ρ_l" → ρ with a lowered l */
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+function text(svg, p, str, attrs={}){ const s = String(str);
+  if (!/_/.test(s)) return K.text(svg, p, s, attrs);
+  return K.el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs,
+    html: esc(s).replace(/_(\w+)/g, '<tspan baseline-shift="sub" font-size="72%">$1</tspan>')}, svg); }
+/* working lines: rows = [[step, text, cls], …]; rows whose step ≤ i are shown, the newest fades in. o.x, o.y, o.lh, o.anchor */
+function lines(svg, rows, i, t, o={}){ const x = o.x ?? 400, y0 = o.y ?? 36, lh = o.lh ?? 34, an = o.anchor ?? 'middle'; let k = 0;
+  rows.forEach(r => { if (r[0] > i) return; text(svg, P(x, y0 + k * lh), minus(r[1]), {class: 'lbl ' + (r[2] || ''), 'text-anchor': an, opacity: r[0] === i ? t : 1}); k++; }); }
+/* force arrow from a to b with a filled head; o.c colour name, o.w width, o.label, o.lo label offset {x,y}, o.op opacity */
+function arrow(svg, a, b, o={}){ const c = COL[o.c || 'red'], w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const L = K.dist(a, b); if (L < 1){ return g; } const u = K.unit(a, b), hs = Math.min(o.head ?? 11, L * .6); const base = P(b.x - u.x * hs, b.y - u.y * hs);
+  K.el('line', {x1: a.x, y1: a.y, x2: base.x, y2: base.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round'}, g);
+  K.el('polygon', {points: `${b.x},${b.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g);
+  if (o.label) text(g, P(b.x + (o.lo ? o.lo.x : 0), b.y + (o.lo ? o.lo.y : -12)), minus(o.label), {class: 'lbl sm ' + (o.lc || o.c || 'red'), 'text-anchor': o.anchor || 'middle', 'font-weight': 700});
+  return g; }
+/* weight (red, down) and buoyant force (green, up) drawn from the centre c; k = px per unit of force; labels lw, lb */
+function forces(svg, c, W, FB, k, o={}){ const dx = o.dx ?? 0;
+  if (W > 0) arrow(svg, P(c.x + dx, c.y), P(c.x + dx, c.y + W * k), {c: 'red', label: o.lw, lo: o.low || {x: 0, y: 14}, anchor: o.anchor, op: o.op});
+  if (FB > 0) arrow(svg, P(c.x - dx, c.y), P(c.x - dx, c.y - FB * k), {c: 'green', label: o.lb, lo: o.lob || {x: 0, y: -12}, anchor: o.anchor, op: o.op}); }
+
+/* ---------- physics ---------- */
+const GR = 9.8;                                        /* g in m/s² (textbook value) */
+/* densities in kg/m³ – textbook Table 5.3 and the content plan; "approx." values are marked so on the pages */
+const RHO = {water: 1000, sea: 1025, salt: 1025, kerosene: 810, glycerine: 1260, coconut: 920, iron: 7800, copper: 8900, aluminium: 2700,
+  brass: 8500, teak: 650, wax: 900, ice: 917, mercury: 13600, stone: 2600, glass: 2500};
+/* share of the volume under the liquid for a floating object (1 = fully immersed or sunk) */
+const under = (ro, rl) => Math.min(1, ro / rl);
+/* liquids: [fill colour, fill opacity, English name, Malayalam name] */
+const LQ = {water: ['var(--blue)', .22, 'water', 'ജലം'], sea: ['var(--blue)', .4, 'sea water', 'കടൽജലം'], salt: ['var(--blue)', .32, 'saturated salt solution', 'പൂരിത ഉപ്പുലായനി'],
+  kerosene: ['var(--accent)', .16, 'kerosene', 'മണ്ണെണ്ണ'], glycerine: ['var(--purple)', .28, 'glycerine', 'ഗ്ലിസറിൻ'], coconut: ['var(--accent)', .38, 'coconut oil', 'വെളിച്ചെണ്ണ'],
+  milk: ['#f3ecd9', .95, 'milk', 'പാൽ'], air: ['var(--surface2)', 0, 'air', 'വായു']};
+/* a body of liquid: rectangle + surface line */
+function liq(svg, x, y, w, h, kind='water', o={}){ const L = LQ[kind] || LQ.water;
+  K.el('rect', {x, y, width: w, height: Math.max(0, h), fill: L[0], 'fill-opacity': o.op ?? L[1]}, svg);
+  if (o.surface !== false) sline(svg, P(x, y), P(x + w, y), {stroke: kind === 'milk' ? '#a8a29e' : 'var(--blue)', 'stroke-width': o.sw ?? 2});
+  if (o.label) text(svg, P(o.lx ?? x + 8, o.ly ?? y + h - 10), o.label, {class: 'lbl sm ' + (o.lc || 'blue'), 'text-anchor': o.la || 'start'}); }
+/* an open glass vessel (beaker / trough) with its liquid: top-left (x, y), size w × h, liquid level at height lev from the bottom */
+function vessel(svg, x, y, w, h, lev, kind='water', o={}){
+  if (lev > 0) liq(svg, x + 2, y + h - lev, w - 4, lev - 2, kind, o);
+  polyline(svg, [P(x - 4, y), P(x, y), P(x, y + h), P(x + w, y + h), P(x + w, y), P(x + w + 4, y)], {stroke: 'var(--muted)', 'stroke-width': 2.5, 'stroke-linejoin': 'round'}); }
+/* spring balance hanging from the hook point top; reading in N on a scale 0…max; returns the bottom hook point */
+function balance(svg, top, reading, max, o={}){ const bw = 26, bh = o.h ?? 92, x = top.x - bw / 2, y = top.y + 10;
+  sline(svg, P(top.x, top.y - 12), P(top.x, y), {stroke: 'var(--text)', 'stroke-width': 2});
+  K.el('rect', {x, y, width: bw, height: bh, rx: 5, fill: 'var(--accent-soft)', stroke: 'var(--accent)', 'stroke-width': 1.8}, svg);
+  const y0 = y + 10, y1 = y + bh - 12;
+  for (let q = 0; q <= 10; q++){ const yy = y0 + (y1 - y0) * q / 10; sline(svg, P(x + 4, yy), P(x + (q % 5 ? 10 : 14), yy), {stroke: 'var(--muted)', 'stroke-width': 1}); }
+  const r = Math.max(0, Math.min(max, reading)), yp = y0 + (y1 - y0) * r / max;
+  K.polygon(svg, [P(x + bw - 3, yp - 4), P(x + bw - 3, yp + 4), P(x + 8, yp)], {fill: 'var(--red)'});
+  if (o.label !== false) text(svg, P(o.lx ?? x - 6, o.ly ?? y + bh / 2), o.label ?? `${fx(reading, o.d ?? 2)} N`, {class: 'lbl sm', 'text-anchor': 'end', 'font-weight': 700});
+  const hook = P(top.x, y + bh + 14); sline(svg, P(top.x, y + bh), hook, {stroke: 'var(--text)', 'stroke-width': 2}); return hook; }
+/* a little eye-catching tick/cross badge */
+const verdict = (ok, warn=false) => ok ? '✔' : warn ? '⚠' : '✘';
+/* scientific notation for plain text: sci(117600000, 2) → "1.18 × 10⁸"; sciH(…) gives HTML with <sup> */
+const sciParts = (v, d=2) => { if (v === 0) return ['0', 0]; let e = Math.floor(Math.log10(Math.abs(v))), m = v / 10 ** e; if (+Math.abs(m).toFixed(d) >= 10){ m /= 10; e += 1; } return [fx(m, d), e]; };
+const sci = (v, d=2) => { const [m, e] = sciParts(v, d); return e === 0 ? m : `${m} × 10${(e < 0 ? '⁻' : '') + K.supStr(Math.abs(e))}`; };
+const sciH = (v, d=2) => { const [m, e] = sciParts(v, d); return e === 0 ? m : `${m} × 10<sup>${e < 0 ? '−' : ''}${Math.abs(e)}</sup>`; };
+
+const hm = s => minus(s).replace(/_(\w+)/g, '<sub>$1</sub>');
+/* S(id, steps, rows, fig, o): stepper whose working lines (rows: [step, text, cls]) build up on the right; fig(svg, i, t) draws the picture on the left */
+function S(id, steps, rows, fig, o={}){ if (!document.getElementById('lab' + id)) return; new K.Stepper('#lab' + id, {steps: steps.map(hm), draw(svg, i, t){ fig(svg, i, t); lines(svg, rows, i, t, {x: o.x ?? 600, y: o.y ?? 36, lh: o.lh ?? 32}); }}); }
+const op = (i, t, k) => i === k ? t : (i > k ? 1 : 0);
+const bar = (svg, x, y, w, h, c, lab) => { K.el('rect', {x, y, width: Math.max(0, w), height: h, rx: 4, fill: COL[c], opacity: .8}, svg); if (lab) text(svg, P(x + w + 6, y + h / 2), lab, {class: 'lbl sm', 'text-anchor': 'start'}); };
+const rock = (s, c, k=1) => K.polygon(s, [[-16, -8], [-6, -15], [12, -12], [17, 0], [10, 12], [-8, 13], [-17, 4]].map(([x, y]) => P(c.x + x * k, c.y + y * k)), {fill: '#78716c', stroke: '#44403c', 'stroke-width': 1.2});
+const sep = svg => sline(svg, P(410, 10), P(410, 290), {stroke: 'var(--border)', 'stroke-width': 1.5});
+
+/* B9: 0.6 kgwt and 0.45 kgwt */
+S('B9', ['<b>Given:</b> in air the spring balance reads W₁ = 0.6 kgwt.', 'Lowered fully into water it reads W₂ = 0.45 kgwt – the water pushes up on it.', '<b>(a)</b> Buoyant force = apparent loss of weight: F_B = W₁ − W₂ = 0.6 − 0.45 = <b>0.15 kgwt</b>.', '<b>(b)</b> 1 kgwt = 9.8 N, so F_B = 0.15 × 9.8 = <b>1.47 N</b>.'], [
+  [0, 'W₁ = 0.6 kgwt (in air)', ''], [1, 'W₂ = 0.45 kgwt (in water)', ''], [2, 'F_B = W₁ − W₂', 'big'], [2, '= 0.6 − 0.45 = 0.15 kgwt', 'blue'], [3, '0.15 × 9.8 = 1.47 N', 'big green']],
+  (svg, i, t) => { sep(svg); sline(svg, P(40, 14), P(360, 14), {stroke: 'var(--muted)', 'stroke-width': 4}); const dy = i === 0 ? 0 : i === 1 ? 70 * t : 70, r = i === 0 ? .6 : i === 1 ? .6 - .15 * t : .45;
+    vessel(svg, 130, 170, 140, 110, 90, 'water'); const h = balance(svg, P(200, 24), r, .6, {label: `${fd(r, 2)} kgwt`}); sline(svg, h, P(200, 140 + dy), {stroke: 'var(--text)', 'stroke-width': 1.5}); rock(svg, P(200, 152 + dy));
+    if (i >= 2) arrow(svg, P(228, 240), P(228, 240 - 50 * (i === 2 ? t : 1)), {c: 'green', label: i >= 3 ? 'F_B = 1.47 N' : 'F_B = 0.15 kgwt', anchor: 'start', lo: {x: 50, y: 4}}); });
+
+/* B10: river → sea */
+(function(){ const d0 = 110, d1 = d0 - 5 * (d0 - d0 * 1000 / 1025);
+S('B10', ['In the river (fresh water, 1000 kg/m³) the ship floats with its draft at the dashed line.', 'It sails into the sea (about 1025 kg/m³ – denser). The ship <b>rises</b> (the rise is drawn 5 times bigger).', 'In both it floats, so <b>F_B = W</b>: it always displaces its own weight of water.', 'Sea water is denser, so a <b>smaller volume</b> of it already weighs as much as the ship – less of the hull needs to be under water.'], [
+  [0, 'river: ρ = 1000 kg/m³', ''], [1, 'sea: ρ ≈ 1025 kg/m³ (denser)', 'blue'], [2, 'floating: F_B = W in both', ''], [3, 'same weight, smaller volume', 'green'], [3, 'less hull under: it rises', 'big green']],
+  (svg, i, t) => { sep(svg); const d = i === 0 ? d0 : i === 1 ? d0 + (d1 - d0) * t : d1, yw = 120, yb = yw + d, yt = yb - 150;
+    liq(svg, 0, yw, 400, 180, i === 0 ? 'water' : 'sea', {surface: false});
+    K.polygon(svg, [P(70, yt), P(350, yt - 6), P(320, yb), P(70, yb)], {fill: '#334155', stroke: '#0f172a', 'stroke-width': 1.5});
+    K.el('rect', {x: 0, y: yw, width: 400, height: 180, fill: 'var(--blue)', 'fill-opacity': .2}, svg); sline(svg, P(0, yw), P(400, yw), {stroke: 'var(--blue)', 'stroke-width': 2});
+    sline(svg, P(70, yb - d0), P(330, yb - d0), {stroke: '#fde68a', 'stroke-dasharray': '6 4', 'stroke-width': 2});
+    text(svg, P(200, 20), i === 0 ? 'river' : 'sea', {class: 'lbl blue', 'font-weight': 700});
+    if (i >= 2) forces(svg, P(200, yb - 70), 60, 60, 1, {dx: -14, lw: 'W', lb: 'F_B', op: op(i, t, 2)}); });
+})();
+
+/* B11: nail and ship */
+S('B11', ['A solid iron nail displaces only its own small volume of water. The weight of that water is much less than the nail’s weight: <b>F_B &lt; W</b>.', 'So the nail <b>sinks</b> (iron is 7.8 times as dense as water).', 'The same iron made into a <b>hollow hull</b> pushes aside a huge volume of water.', 'It settles until the water it displaces weighs as much as the ship: <b>F_B = W</b> – it <b>floats</b>.'], [
+  [0, 'nail: small volume → F_B < W', 'red'], [1, 'nail sinks', ''], [2, 'hollow ship: huge volume displaced', 'blue'], [3, 'F_B = W → ship floats', 'big green']],
+  (svg, i, t) => { sep(svg); const yw = 90; liq(svg, 0, yw, 400, 210, 'water');
+    const ny = i === 0 ? 70 : i === 1 ? 70 + 190 * t : 260; K.el('rect', {x: 92, y: ny, width: 6, height: 34, fill: '#475569'}, svg); K.el('rect', {x: 86, y: ny, width: 18, height: 5, fill: '#475569'}, svg);
+    if (i <= 1) forces(svg, P(95, ny + 17), 50, 7, 1, {dx: -14, lw: 'W', lb: 'F_B'}); text(svg, P(95, 30), 'iron nail', {class: 'lbl sm', 'font-weight': 700});
+    if (i >= 2){ const o = op(i, t, 2), d = 50; K.el('path', {d: `M210,${yw - 20} L380,${yw - 20} L360,${yw + d} L230,${yw + d} Z`, fill: '#475569', opacity: o, stroke: '#0f172a'}, svg);
+      K.el('path', {d: `M222,${yw} L368,${yw} L360,${yw + d} L230,${yw + d} Z`, fill: 'var(--blue)', 'fill-opacity': .45 * o, stroke: 'var(--blue)', 'stroke-dasharray': '4 3'}, svg);
+      text(svg, P(295, 30), 'iron ship (hollow)', {class: 'lbl sm', 'font-weight': 700, opacity: o}); text(svg, P(295, yw + d + 18), 'water displaced', {class: 'lbl sm blue', opacity: o}); }
+    if (i >= 3) forces(svg, P(295, yw + 10), 55, 55, 1, {dx: -14, lw: 'W', lb: 'F_B', op: t}); });
+
+/* B12: coconut oil */
+S('B12', ['<b>Given:</b> density of coconut oil = 920 kg/m³; density of water = 1000 kg/m³.', '<b>Formula and substitution:</b> relative density = 920 ÷ 1000 = <b>0.92</b> (no unit).', '<b>(b)</b> 0.92 is less than 1: coconut oil is less dense than water, so it <b>floats</b> as a layer on top.'], [
+  [0, 'ρ(oil) = 920,  ρ(water) = 1000 kg/m³', ''], [1, 'RD = 920 ÷ 1000 = 0.92', 'big green'], [2, '0.92 < 1 → floats on water', 'big blue']],
+  (svg, i, t) => { sep(svg); text(svg, P(200, 22), 'density (kg/m³)', {class: 'lbl sm', 'font-weight': 700}); bar(svg, 30, 40, 1000 * .3, 26, 'blue', '1000 water'); bar(svg, 30, 80, 920 * .3 * (i === 0 ? t : 1), 26, 'amber', '920 oil');
+    if (i >= 2){ const oil = 28 * t; vessel(svg, 140, 130, 120, 150, 110, 'water'); K.el('rect', {x: 142, y: 170 - oil, width: 116, height: oil, fill: 'var(--accent)', 'fill-opacity': .55}, svg); text(svg, P(300, 162 - oil / 2), 'coconut oil', {class: 'lbl sm amber', 'text-anchor': 'start'}); text(svg, P(300, 220), 'water', {class: 'lbl sm blue', 'text-anchor': 'start'}); } });
+
+/* B13: lactometer in pure and watered milk */
+(function(){ const L = {m: 60, A: .5, V0: 60 / 1.040}, hc = r => (L.m / r - L.V0) / L.A, k = 40;
+  const lac = (svg, x, r, lab) => { const ys = 110; vessel(svg, x - 55, 60, 110, 220, 170, 'milk'); const y40 = ys + hc(r) * k, top = ys - 44;
+    K.el('rect', {x: x - 5, y: top, width: 10, height: y40 + 10 - top, fill: '#f8fafc', stroke: '#64748b'}, svg); K.el('rect', {x: x - 16, y: y40 + 10, width: 32, height: 80, rx: 10, fill: '#f8fafc', stroke: '#64748b'}, svg); K.el('rect', {x: x - 10, y: y40 + 76, width: 20, height: 14, rx: 5, fill: '#334155'}, svg);
+    K.el('rect', {x: x - 53, y: ys, width: 106, height: 168, fill: '#f3ecd9', 'fill-opacity': .65}, svg); sline(svg, P(x - 53, ys), P(x + 53, ys), {stroke: '#a8a29e', 'stroke-width': 2});
+    text(svg, P(x, 40), lab, {class: 'lbl sm', 'font-weight': 700}); text(svg, P(x, 296), `reads ${fd(r, 3)}`, {class: 'lbl sm red', 'font-weight': 700}); };
+S('B13', ['In pure milk (relative density about 1.030) the lactometer floats with the 1.030 mark at the surface.', 'Add water (1.000): the milk becomes <b>less dense</b> (here 1.024). The lactometer <b>sinks deeper</b> and reads lower.', 'Why: it floats where the milk it displaces weighs as much as it does (60 g). In less dense milk it must displace a <b>bigger volume</b>: 60 ÷ 1.024 = 58.59 cm³ instead of 60 ÷ 1.030 = 58.25 cm³.'], [
+  [0, 'pure milk: RD ≈ 1.030', ''], [1, 'watered milk: RD ≈ 1.024', 'blue'], [1, '(a) sinks deeper in watered milk', 'big red'], [2, '(b) less dense → more volume', 'green'], [2, '58.25 → 58.59 cm³ displaced', '']],
+  (svg, i, t) => { sep(svg); const yr = 110 + hc(1.030) * k + 10; lac(svg, 105, 1.030, 'pure milk'); lac(svg, 295, i === 0 ? 1.030 : 1.030 - .006 * (i === 1 ? t : 1), i === 0 ? 'pure milk' : 'milk + water');
+    sline(svg, P(40, yr), P(370, yr), {stroke: 'var(--red)', 'stroke-dasharray': '5 4', 'stroke-width': 1.3}); text(svg, P(200, yr - 10), 'bulb top', {class: 'lbl sm red'}); text(svg, P(200, yr + 10), 'in pure milk', {class: 'lbl sm red'}); });
+})();
+
+/* C14: stone 4.9 N / 3.9 N, volume, salt solution */
+(function(){ const V = 1.0 / (1000 * GR), FBs = RHO.salt * V * GR;
+S('C14', ['In air the balance reads W₁ = 4.9 N (0.5 kg × 9.8).', 'Fully in water it reads W₂ = 3.9 N. <b>(a)</b> F_B = W₁ − W₂ = <b>1.0 N</b>.', '<b>(b)</b> F_B = weight of the water displaced = ρ × V × g, so V = 1.0 ÷ (1000 × 9.8) ≈ <b>1.02 × 10<sup>−4</sup> m³ ≈ 102 cm³</b>. The stone is fully under, so this is its volume.', '<b>(c)</b> In salt solution: F_B = 1025 × 1.02 × 10<sup>−4</sup> × 9.8 ≈ 1.025 N → reading = 4.9 − 1.025 ≈ <b>3.88 N</b>.'], [
+  [0, 'W₁ = 4.9 N', ''], [1, '(a) F_B = 4.9 − 3.9 = 1.0 N', 'big green'], [2, 'V = F_B ÷ (ρ × g) = 1.0 ÷ 9800', ''], [2, '(b) V ≈ 1.02 × 10⁻⁴ m³ ≈ 102 cm³', 'big blue'], [3, 'F_B = 1025 × V × 9.8 ≈ 1.025 N', ''], [3, '(c) reading ≈ 4.9 − 1.025 = 3.88 N', 'big green']],
+  (svg, i, t) => { sep(svg); sline(svg, P(40, 14), P(360, 14), {stroke: 'var(--muted)', 'stroke-width': 4}); const dy = i === 0 ? 0 : i === 1 ? 70 * t : 70;
+    const r = i === 0 ? 4.9 : i === 1 ? 4.9 - t : i === 2 ? 3.9 : 3.9 - (FBs - 1) * t;
+    vessel(svg, 130, 170, 140, 110, 90, i >= 3 ? 'salt' : 'water'); text(svg, P(330, 270), i >= 3 ? 'salt solution' : 'water', {class: 'lbl sm blue'});
+    const h = balance(svg, P(200, 24), r, 5, {label: `${fd(r, 2)} N`}); sline(svg, h, P(200, 140 + dy), {stroke: 'var(--text)', 'stroke-width': 1.5}); rock(svg, P(200, 152 + dy));
+    if (i >= 2) text(svg, P(200, 290), 'V of stone = V of water displaced ≈ 102 cm³', {class: 'lbl sm', opacity: op(i, t, 2)}); });
+})();
+
+/* C15: three liquids */
+(function(){ const R = [['P', .881, 'amber'], ['Q', .826, 'purple'], ['R', .858, 'blue']];
+S('C15', ['Readings (weight in the liquid) for the 100 g weight, W₁ = 0.98 N: P 0.881 N, Q 0.826 N, R 0.858 N.', '<b>(a)</b> F_B = 0.98 − reading: P <b>0.099 N</b>, Q <b>0.154 N</b>, R <b>0.122 N</b>.', '<b>(b)</b> Same volume each time, so the biggest buoyant force means the densest liquid: <b>Q</b>.', '<b>(c)</b> R is water (0.122 N). P gives less (0.099 N), so P is less dense than water – <b>kerosene</b> (810 kg/m³). Salt solution would give more than water.'], [
+  [0, 'W₁ = 0.98 N in air', ''], [1, '(a) P 0.099,  Q 0.154,  R 0.122 N', 'big'], [2, '(b) Q (glycerine) is densest', 'purple'], [3, '(c) P < water → kerosene', 'big amber']],
+  (svg, i, t) => { sep(svg); text(svg, P(200, 22), i === 0 ? 'reading in the liquid (N)' : 'buoyant force F_B (N)', {class: 'lbl sm', 'font-weight': 700});
+    R.forEach(([n, r, c], q) => { const y = 50 + q * 60, v = i === 0 ? r : .98 - r; text(svg, P(30, y + 14), n, {class: 'lbl big'}); bar(svg, 50, y, (i === 0 ? r * 280 : v * 1600) * (i === 1 ? t : 1), 28, c, `${fd(v, 3)} N`); });
+    if (i >= 2) text(svg, P(200, 250), 'longest bar = densest liquid', {class: 'lbl sm purple', opacity: op(i, t, 2)});
+    if (i >= 3) text(svg, P(200, 275), 'P shorter than water (R) → less dense', {class: 'lbl sm amber', opacity: t}); });
+})();
+
+/* C16: floating wooden block */
+S('C16', ['<b>(a)</b> W = m × g = 0.6 × 9.8 = <b>5.88 N</b>.', '<b>(b)</b> The block floats, so F_B = W = <b>5.88 N</b> (principle of floatation). A spring balance would read 0.', 'The water displaced weighs 5.88 N, so its mass is 0.6 kg.', '<b>(c)</b> volume = mass ÷ density = 0.6 ÷ 1000 = <b>6 × 10<sup>−4</sup> m³ = 600 cm³</b> (the shaded part of the block under water).'], [
+  [0, '(a) W = 0.6 × 9.8 = 5.88 N', 'big'], [1, '(b) floating: F_B = W = 5.88 N', 'big green'], [2, 'water displaced: 0.6 kg', ''], [3, '(c) V = 0.6 ÷ 1000 = 6 × 10⁻⁴ m³', 'big blue'], [3, '= 600 cm³', 'blue']],
+  (svg, i, t) => { sep(svg); const yw = 130; vessel(svg, 60, 60, 280, 230, 160, 'water'); K.el('rect', {x: 140, y: yw - 40, width: 120, height: 100, fill: '#b45309', stroke: '#78350f', 'stroke-width': 1.5}, svg);
+    if (i >= 3) K.el('rect', {x: 140, y: yw, width: 120, height: 60, fill: 'var(--blue)', 'fill-opacity': .5 * t, stroke: 'var(--blue)', 'stroke-dasharray': '4 3'}, svg);
+    K.el('rect', {x: 62, y: yw, width: 276, height: 158, fill: 'var(--blue)', 'fill-opacity': .15}, svg);
+    arrow(svg, P(185, yw + 10), P(185, yw + 10 + 70 * (i === 0 ? t : 1)), {c: 'red', label: 'W = 5.88 N', lo: {x: 0, y: 14}});
+    if (i >= 1) arrow(svg, P(215, yw + 10), P(215, yw + 10 - 70 * (i === 1 ? t : 1)), {c: 'green', label: 'F_B = 5.88 N', lo: {x: 26, y: -10}}); });
+
+/* C17: crown */
+(function(){ const Vg = 1 / 19300 * 1e6;
+S('C17', ['The crown is lowered into a jar filled to the spout. The water it pushes out overflows into a measuring jar.', '<b>(a)</b> 60 cm³ overflows, so the crown’s volume is <b>60 cm³ = 6 × 10<sup>−5</sup> m³</b> – a fully immersed object displaces its own volume.', '<b>(b)</b> density = mass ÷ volume = 1 ÷ (6 × 10<sup>−5</sup>) ≈ <b>16 700 kg/m³</b>.', `<b>(c)</b> Pure gold is 19 300 kg/m³: a 1 kg pure-gold crown would push out only ${fx(Vg, 1)} cm³. The crown is less dense – <b>not pure gold</b> (adulterated).`], [
+  [0, 'overflow = volume of the crown', ''], [1, '(a) V = 60 cm³ = 6 × 10⁻⁵ m³', 'big blue'], [2, '(b) ρ = 1 ÷ (6 × 10⁻⁵) ≈ 16 700 kg/m³', 'big'], [3, '16 700 < 19 300 → not pure', 'big red'], [3, `pure gold: ${fx(Vg, 1)} cm³ only`, 'amber']],
+  (svg, i, t) => { sep(svg); polyline(svg, [P(40, 60), P(40, 250), P(200, 250), P(200, 60)], {stroke: 'var(--muted)', 'stroke-width': 2.5}); liq(svg, 42, 92, 156, 156, 'water');
+    sline(svg, P(200, 94), P(244, 116), {stroke: 'var(--muted)', 'stroke-width': 5}); polyline(svg, [P(230, 150), P(230, 270), P(290, 270), P(290, 150)], {stroke: 'var(--muted)', 'stroke-width': 2});
+    for (let q = 0; q <= 6; q++) sline(svg, P(283, 268 - q * 15), P(290, 268 - q * 15), {stroke: 'var(--muted)', 'stroke-width': 1});
+    const f = i === 0 ? t : 1, cy = 30 + 150 * (i === 0 ? Math.min(1, t * 1.5) : 1); liq(svg, 232, 268 - 90 * f, 56, 90 * f, 'water'); text(svg, P(300, 268 - 90 * f), `${fx(60 * f, 0)} cm³`, {class: 'lbl sm', 'text-anchor': 'start', 'font-weight': 700});
+    sline(svg, P(120, 10), P(120, cy - 30), {stroke: 'var(--text)', 'stroke-width': 1.3});
+    K.polygon(svg, [P(96, cy), P(96, cy - 26), P(106, cy - 14), P(114, cy - 32), P(120, cy - 16), P(126, cy - 32), P(134, cy - 14), P(144, cy - 26), P(144, cy)], {fill: '#facc15', stroke: '#a16207', 'stroke-width': 1.5});
+    if (i >= 3){ liq(svg, 330, 268 - 90 * Vg / 60, 50, 90 * Vg / 60, 'water'); polyline(svg, [P(328, 160), P(328, 270), P(382, 270), P(382, 160)], {stroke: 'var(--accent)', 'stroke-width': 2}); text(svg, P(355, 150), 'pure gold', {class: 'lbl sm amber', opacity: t}); } });
+})();
+
+/* D18: hydrometer */
+(function(){ const hy = (svg, x, r, kind, lab) => { const ys = 110, k = 200, y12 = ys + (1 / r - 1 / 1.2) * k, top = y12 - (1 / .8 - 1 / 1.2) * k - 6;
+    vessel(svg, x - 60, 50, 120, 230, 170, kind); K.el('rect', {x: x - 5, y: top, width: 10, height: y12 + 8 - top, fill: '#f8fafc', stroke: '#64748b'}, svg);
+    K.el('rect', {x: x - 16, y: y12 + 8, width: 32, height: 50, rx: 10, fill: '#f8fafc', stroke: '#64748b'}, svg); K.el('rect', {x: x - 10, y: y12 + 44, width: 20, height: 14, rx: 5, fill: '#334155'}, svg);
+    [.8, .9, 1.0, 1.1, 1.2].forEach(v => { const yy = y12 - (1 / v - 1 / 1.2) * k; sline(svg, P(x - 5, yy), P(x + 2, yy), {stroke: '#dc2626', 'stroke-width': 1.2}); text(svg, P(x + 8, yy), fd(v, 1), {class: 'lbl sm', 'text-anchor': 'start'}); });
+    K.el('rect', {x: x - 58, y: ys, width: 116, height: 168, fill: LQ[kind][0], 'fill-opacity': .25}, svg); sline(svg, P(x - 58, ys), P(x + 58, ys), {stroke: 'var(--blue)', 'stroke-width': 2});
+    text(svg, P(x - 40, 22), lab, {class: 'lbl sm', 'font-weight': 700}); text(svg, P(x, 298), `reads ${fd(r, 2)}`, {class: 'lbl sm red', 'font-weight': 700}); };
+S('D18', ['<b>(a)</b> A hydrometer measures the <b>relative density of liquids</b>. It works on the <b>principle of floatation</b>: it sinks until the liquid it displaces weighs as much as it does. <b>(b)</b> In pure water it reads <b>1.00</b>.', '<b>(c)</b> In X it floats <b>higher</b>: it needs less volume of X to balance its weight, so X is denser – relative density <b>more than 1</b> (here 1.10).', '<b>(d)</b> Kerosene: 810 ÷ 1000 = <b>0.81</b>. It is less dense than water, so the hydrometer <b>sinks deeper</b>.', '<b>(e)</b> In denser liquids it floats higher, so a point lower on the stem comes to the surface: the marks for larger values are lower – the values <b>increase downwards</b>.'], [
+  [0, '(a) measures RD; floatation', ''], [0, '(b) water: 1.00', 'blue'], [1, '(c) floats higher → RD > 1', 'big green'], [2, '(d) RD = 810 ÷ 1000 = 0.81', 'big'], [2, 'kerosene: sinks deeper', 'amber'], [3, '(e) values increase downwards', 'big purple']],
+  (svg, i, t) => { sep(svg); hy(svg, 105, 1.0, 'water', 'water'); const r = i === 0 ? 1.0 : i === 1 ? 1 + .1 * t : i === 2 ? 1.1 - (1.1 - .81) * t : .81;
+    hy(svg, 295, r, i >= 2 ? 'kerosene' : i >= 1 ? 'glycerine' : 'water', i >= 2 ? 'kerosene' : i >= 1 ? 'liquid X' : 'water'); });
+})();
+
+/* D19: house boat */
+S('D19', ['<b>(a)</b> The boat displaces 3000 kg of water: F_B = weight of the water displaced = <b>3000 kgwt = 3000 × 9.8 = 29 400 N</b>.', '<b>(b)</b> It floats, so by the principle of floatation its weight = <b>3000 kgwt</b> (29 400 N).', '<b>(c)</b> Four tourists (240 kg) get on: the boat sinks deeper until it displaces <b>240 kg more water</b> – volume 240 ÷ 1000 = <b>0.24 m³</b>.', '<b>(d)</b> A life jacket adds a large volume with very little weight: the person displaces more water, and the buoyant force equals the total weight with the head above water.'], [
+  [0, '(a) F_B = 3000 kgwt = 29 400 N', 'big green'], [1, '(b) floating: W = 3000 kgwt', 'big'], [2, '(c) +240 kg of water displaced', 'blue'], [2, 'V = 240 ÷ 1000 = 0.24 m³', 'big blue'], [3, '(d) big volume, little weight', 'amber'], [3, 'F_B = W with the head out', 'green']],
+  (svg, i, t) => { sep(svg); const yw = 120, d = i < 2 ? 40 : i === 2 ? 40 + 10 * t : 50;
+    liq(svg, 0, yw, 400, 180, 'water', {surface: false});
+    if (i <= 2){ K.el('path', {d: `M60,${yw + d - 40} Q200,${yw + d + 6} 340,${yw + d - 40} L330,${yw + d - 54} L70,${yw + d - 54} Z`, fill: '#92400e'}, svg);
+      K.el('path', {d: `M90,${yw + d - 54} Q200,${yw + d - 130} 310,${yw + d - 54} Z`, fill: '#ca8a04', stroke: '#a16207'}, svg);
+      if (i === 2) [150, 180, 210, 240].forEach((x, q) => { K.el('circle', {cx: x, cy: yw + d - 92, r: 6, fill: '#d19a6a', opacity: t}, svg); K.el('rect', {x: x - 5, y: yw + d - 86, width: 10, height: 18, fill: ['#2563eb', '#dc2626', '#16a34a', '#7c3aed'][q], opacity: t}, svg); });
+      K.el('rect', {x: 0, y: yw, width: 400, height: 180, fill: 'var(--blue)', 'fill-opacity': .22}, svg); sline(svg, P(0, yw), P(400, yw), {stroke: 'var(--blue)', 'stroke-width': 2});
+      const W = i < 2 ? 3000 : 3000 + 240 * (i === 2 ? t : 1); forces(svg, P(200, yw + 10), W, W, .025, {dx: -16, lw: 'W', lb: 'F_B', low: {x: 18, y: 0}, lob: {x: -20, y: 6}});
+      if (i === 2) text(svg, P(200, 280), 'sinks a little deeper: +0.24 m³ under water', {class: 'lbl sm blue', opacity: t}); }
+    else { const skin = '#d19a6a', cx = 200, feet = yw + 125; sline(svg, P(cx - 8, feet), P(cx - 7, feet - 70), {stroke: skin, 'stroke-width': 9}); sline(svg, P(cx + 8, feet), P(cx + 7, feet - 70), {stroke: skin, 'stroke-width': 9});
+      K.el('rect', {x: cx - 18, y: feet - 130, width: 36, height: 62, rx: 8, fill: '#16a34a'}, svg); K.el('rect', {x: cx - 30, y: feet - 128, width: 60, height: 44, rx: 9, fill: '#f97316', stroke: '#c2410c', opacity: t}, svg);
+      K.el('circle', {cx, cy: feet - 148, r: 14, fill: skin}, svg); K.el('rect', {x: 0, y: yw, width: 400, height: 180, fill: 'var(--blue)', 'fill-opacity': .25}, svg); sline(svg, P(0, yw), P(400, yw), {stroke: 'var(--blue)', 'stroke-width': 2});
+      text(svg, P(200, 40), 'life jacket: head above water', {class: 'lbl sm green', 'font-weight': 700}); arrow(svg, P(270, 200), P(270, 140), {c: 'green', label: 'F_B = W', anchor: 'start', lo: {x: 8, y: 4}}); } });
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>
