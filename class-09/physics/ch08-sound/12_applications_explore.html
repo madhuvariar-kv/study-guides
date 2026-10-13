@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Applications &amp; Explore Online – Sound</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.exam{font-size:.92rem;background:var(--purple-soft);border-left:4px solid var(--purple);border-radius:8px;padding:.45rem .8rem;margin:.5rem 0 0}
+.exam b{color:var(--purple)}
+.lab select{padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;max-width:100%}
+.btnrow{display:flex;flex-wrap:wrap;gap:.4rem;margin:.3rem 0}
+.lab .controls label{flex-wrap:wrap;max-width:100%;min-width:0}
+.lab .controls select{min-width:0;width:auto;max-width:100%}
+.readout{white-space:pre-line}
+.gf{display:inline-block;font-size:.78rem;font-weight:700;color:var(--accent-ink);background:var(--accent-soft);border:1px solid var(--accent);border-radius:999px;padding:.05rem .55rem;vertical-align:middle;margin-left:.3rem}
+</style>
+</head>
+<body data-page="12_applications_explore">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 8 · Applications</span><span class="chip green">Sound at work</span><span class="chip blue">Explore online</span>
+<h1>Applications &amp; Explore Online <span class="ml">ശബ്ദം</span></h1>
+<p class="lead">A doctor listens to your heart through a stethoscope, a ship finds the depth of the Arabian Sea with echoes, a scanner shows a baby before it is born, a wall and a row of trees keep a hospital quiet, soft curtains make an auditorium clear, and counting the seconds after a flash tells you how far away the storm is. Every lab below uses only the ideas of this chapter – and the computer works out every number from distance = speed × time. All labs are silent: you see the sound, you do not hear it.</p>
+
+<div class="callout book"><div class="title">📖 The ideas behind every lab</div>
+<ul style="margin:0">
+<li>Sound is produced by <b>vibration</b> (<span class="ml">കമ്പനം</span>) and travels as compressions and rarefactions – <a href="05_how_sound_is_produced.html">page 5</a>, <a href="03_waves_compressions.html">page 3</a>.</li>
+<li>Sound needs a <b>medium</b> (<span class="ml">മാധ്യമം</span>) – a solid, a liquid or a gas; it cannot travel through vacuum (<span class="ml">ശൂന്യത</span>) – <a href="06_propagation_of_sound.html">page 6</a>.</li>
+<li>The <b>speed of sound</b> (<span class="ml">ശബ്ദവേഗം</span>) depends on the medium (Table 8.3: air 347 m/s, sea water 1525 m/s, steel 5944 m/s at 25 °C); distance = speed × time – <a href="07_speed_of_sound.html">page 7</a>.</li>
+<li>To hear we need a <b>source</b>, a <b>medium</b> and an <b>organ of hearing</b>; loud sound and <b>noise pollution</b> (<span class="ml">ശബ്ദമലിനീകരണം</span>) harm us – <a href="08_ear_and_hearing.html">page 8</a>, <a href="09_music_noise_pollution.html">page 9</a>.</li>
+</ul>
+<p style="margin:.4rem 0 0">Labs marked <span class="gf">go further</span> are beyond the textbook – enjoy them, but your exam stays with the textbook ideas. Values marked “approx.” (decibels, sound in body tissue) are typical values, not from the textbook.</p></div>
+
+<h2 id="stethoscope">1. The doctor’s stethoscope</h2>
+<p>A <b>stethoscope</b> (<span class="ml">സ്റ്റെതസ്കോപ്പ്</span>) has a chest piece with a thin <b>diaphragm</b>, a rubber tube and two earpieces. Each beat of the heart (“lub … dub”) makes the chest wall and the diaphragm <b>vibrate</b>. The vibrations travel as compressions and rarefactions through the <b>air inside the tube</b> straight to the doctor’s ears. In open air the same faint sound would spread out in every direction and become too weak to hear; the tube keeps it together, so it reaches the ear strong and clear. Nothing is made louder by electricity – it is only the medium guiding the sound.</p>
+<div class="lab"><div class="lab-title">🩺 Stethoscope lab: follow the heartbeat to the doctor’s ears</div>
+  <svg id="s1" viewBox="0 0 800 320" role="img" aria-label="A patient's chest with the heart, the chest piece of a stethoscope, the tube and the doctor's ears; sound pulses travel along the tube"></svg>
+  <div class="controls"><label>heart rate (beats per minute) <input id="h1" type="range" min="60" max="120" step="1" value="72"><output></output></label>
+    <label>how the doctor listens <select id="m1"><option value="steth" selected>with the stethoscope</option><option value="air">ear 30 cm away, no tube (open air)</option><option value="pinch">stethoscope, tube pinched shut</option></select></label></div>
+  <div class="btnrow"><button class="btn primary" id="go1">▶ Listen to four beats</button></div>
+  <div class="readout" id="o1"></div>
+  <p class="hint">The pulses are drawn slowed down. In reality the sound crosses the 60 cm tube in about 0.0017 s (0.6 m ÷ 347 m/s). The loudness bar is only a comparison, not a measurement.</p>
+  <p class="exam"><b>📝 In the exam this looks like:</b> “Through which medium does the sound of the heartbeat reach the doctor’s ears in a stethoscope?” → mainly through the <b>air in the tube</b> (after making the diaphragm vibrate). “Why can the doctor hear the heartbeat clearly?” → the sound is guided along the tube instead of spreading out in all directions, so it reaches the ear without becoming weak. Sound needs a medium – here the medium is the air in the tube.</p></div>
+
+<h2 id="sonar">2. SONAR and echoes – how deep is the sea? <span class="gf">go further</span></h2>
+<p>When sound meets a hard surface it bounces back – an <b>echo</b>. Ships use this in <b>SONAR</b> (SOund Navigation And Ranging): a device under the hull sends a short pulse of sound down into the sea and times how long the echo from the sea bed takes to come back. The sound goes <b>down and back up</b>, so it travels twice the depth: <b>depth = speed × time ÷ 2</b>, using the speed of sound in sea water, 1525 m/s (Table 8.3). Dolphins do the same with clicks to find fish in murky water – this is called <b>echolocation</b>; bats do it in air.</p>
+<div class="lab"><div class="lab-title">📡 SONAR lab: send a ping, time the echo</div>
+  <svg id="s2" viewBox="0 0 800 340" role="img" aria-label="A ship on the sea sending a sound pulse down to the sea bed and receiving the echo, or a dolphin sending clicks to a fish"></svg>
+  <div class="controls"><label>who is listening? <select id="k2"><option value="ship" selected>ship – depth of the sea</option><option value="dolphin">dolphin – distance to a fish</option></select></label>
+    <label>ship’s position from the coast (km) <input id="x2" type="range" min="0" max="100" step="1" value="20"><output></output></label>
+    <label>fish’s distance from the dolphin (m) <input id="f2" type="range" min="5" max="150" step="1" value="60"><output></output></label></div>
+  <div class="btnrow"><button class="btn primary" id="go2">📡 Send a ping</button><button class="btn" id="map2">🗺️ Sail and map the sea bed</button><button class="btn ghost" id="clr2">⟲ Clear the map</button></div>
+  <div class="readout" id="o2"></div>
+  <p class="hint">The ship’s ping is shown in real time; the dolphin’s clicks are shown 20 times slower. The sea bed is an example shape: a shallow shelf near the coast, a steep slope and an undersea hill. Speed of sound in sea water: 1525 m/s (Table 8.3).</p>
+  <p class="exam"><b>📝 In the exam this looks like:</b> “A ship sends a sound pulse and receives the echo from the sea bed 2 s later. The speed of sound in sea water is 1525 m/s. Find the depth.” → the sound goes down and comes back, so depth = 1525 × 2 ÷ 2 = <b>1525 m</b>. “Why can dolphins and whales talk to each other far apart?” → sound travels well through water (a liquid medium), faster than in air (1525 m/s against 347 m/s) – textbook Fig 8.11.</p></div>
+
+<h2 id="ultrasound">3. Ultrasound scanning <span class="gf">go further</span></h2>
+<p>We can hear sounds whose vibrations are between about 20 and 20&#8239;000 per second (20 Hz – 20 kHz). Faster vibrations are <b>ultrasound</b> – too high-pitched for us to hear (dogs and bats hear some of it). A scanning machine’s probe sends very short ultrasound pulses into the body. Each time a pulse meets the boundary of an organ, a little of it comes back as an echo. From the echo times (sound travels about 1540 m/s in soft body tissue, approx.) the computer works out the depth of each boundary and builds a picture. Ultrasound scans are safe – no X-rays – so doctors use them to check a baby before birth, the kidneys, the liver and the heart. A jelly is spread on the skin first, because a layer of air would reflect almost all the ultrasound before it entered the body.</p>
+<div class="lab"><div class="lab-title">🩻 Scanner lab: slide the probe and build the picture</div>
+  <svg id="s3" viewBox="0 0 800 340" role="img" aria-label="Left: a cross-section of the body with a probe on the skin, a fat layer, an organ with a small stone and the backbone. Right: the scan picture built from the echoes and the echo-time graph"></svg>
+  <div class="controls"><label>probe position (cm) <input id="p3" type="range" min="1" max="17" step="0.25" value="9"><output></output></label></div>
+  <div class="btnrow"><button class="btn primary" id="go3">▶ Sweep the probe across</button><button class="btn ghost" id="clr3">⟲ Clear the picture</button></div>
+  <div class="readout" id="o3"></div>
+  <p class="hint">A simplified model: every boundary sends back an echo, and its depth = speed × echo time ÷ 2 with 1540 m/s (approx.). Real scanners send thousands of pulses every second and use far more probe positions.</p>
+  <p class="exam"><b>📝 In the exam this looks like:</b> “Name a use of sound in medicine.” → a doctor’s stethoscope; ultrasound scanning to see organs or a baby before birth. “Sound is a form of energy – give a use of sound in daily life” (textbook p157) → talking, music, alarms and bells, horns, a doctor’s stethoscope, scanning.</p></div>
+
+<h2 id="noise">4. Noise barriers and silence zones</h2>
+<p>Sound gets weaker as it spreads out: for a single source in open air, every time you <b>double the distance</b> the sound level drops by about <b>6 dB</b> (decibel, the unit of sound level – approx. values). A solid <b>wall</b> between the road and a building blocks the direct path and cuts about 10 dB (approx.); a thick belt of <b>trees</b> helps a little more. That is why the textbook says to plant trees, use box-type loudspeakers instead of horn-type ones, ban air horns, and keep the areas around <b>hospitals, schools and courts</b> as <b>silence zones</b>. In India, the noise rules (2000) set a silence zone of at least 100 m around them, with limits of about 50 dB by day and 40 dB at night; loudspeakers are not allowed in public places between 10 pm and 6 am.</p>
+<div class="lab"><div class="lab-title">🏥 Noise lab: keep the hospital quiet</div>
+  <svg id="s4" viewBox="0 0 800 300" role="img" aria-label="A noise source on the left, a building at a chosen distance with an optional wall and trees in between, and a decibel meter with the permitted limit"></svg>
+  <div class="controls"><label>noise source <select id="src4"><option value="horn" selected>horn-type loudspeaker at a festival (≈ 95 dB at 10 m)</option><option value="box">box-type speakers, sound kept low (≈ 80 dB at 10 m)</option><option value="air">vehicle air horn (≈ 100 dB at 10 m)</option><option value="talk">people talking (≈ 60 dB at 1 m → 40 dB at 10 m)</option></select></label>
+    <label>distance to the building (m) <input id="r4" type="range" min="10" max="500" step="5" value="100"><output></output></label>
+    <label>between them <select id="b4"><option value="none" selected>open ground</option><option value="wall">a solid wall (≈ −10 dB)</option><option value="trees">a thick belt of trees (≈ −5 dB)</option><option value="both">wall + trees (≈ −15 dB)</option></select></label>
+    <label>building <select id="z4"><option value="hosp" selected>hospital (silence zone)</option><option value="home">home (residential area)</option></select></label>
+    <label>time <select id="t4"><option value="day" selected>day (6 am – 10 pm)</option><option value="night">night (10 pm – 6 am)</option></select></label></div>
+  <div class="btnrow"><button class="btn" data-set4="src4:horn,r4:100,b4:none,z4:hosp,t4:day">📢 Festival speaker near a hospital</button><button class="btn primary" data-set4="src4:box,r4:300,b4:both,z4:hosp,t4:day">✔ Box speakers, far away, wall + trees</button></div>
+  <div class="readout" id="o4"></div>
+  <p class="hint">Model: level at the building = level at 10 m − 20 × log₁₀(distance ÷ 10 m) − barrier. This “−6 dB for each doubling” rule is for a single source in open air; real streets, buildings and wind change it (approx.). Limits: silence zone 50 dB by day / 40 dB at night; residential area 55 / 45 dB.</p>
+  <div class="safety">⚠ Sound above about 85 dB for a long time damages hearing. Stay far from loudspeakers and firecrackers at festivals (Thrissur Pooram, Vishu), and never put anything into your ears to “block” the sound – use proper ear plugs or ear muffs.</div>
+  <p class="exam"><b>📝 In the exam this looks like:</b> Let us assess Q8 – “Write two ways to reduce noise pollution.” → avoid air horns and keep silencers working; use box-type loudspeakers instead of horn-type; no loudspeakers before 6 am and after 10 pm; plant trees; keep silence near hospitals, schools and courts; ear plugs and ear muffs for workers near loud machines. “Who are affected most by noise?” → traffic police, factory and construction workers, patients in hospitals, babies, old people, students.</p></div>
+
+<h2 id="hall">5. Auditoriums and concert halls</h2>
+<p>In a hall, the sound from the stage reaches you <b>directly</b> and also after bouncing off the walls, the ceiling and the floor. Hard, smooth surfaces – concrete, plaster, marble, glass – reflect almost all the sound, so it keeps bouncing and <b>lingers</b>: words overlap and become hard to follow, like in a big empty hall. Soft, porous materials – curtains, carpets, cushioned seats, soft boards, acoustic ceiling tiles, and even the clothes of the audience – <b>absorb</b> sound: their fibres take up the energy of the vibrations. Good halls mix both, so that speech is clear and music still sounds full. (Sound engineers like Resul Pookutty control this in film studios.)</p>
+<div class="lab"><div class="lab-title">🎭 Hall lab: clap on the stage and watch the reflections</div>
+  <svg id="s5" viewBox="0 0 800 340" role="img" aria-label="Left: the cross-section of a hall with sound rays from the stage bouncing off the walls, ceiling and floor and fading. Right: a graph of how the sound level dies away with time"></svg>
+  <div class="controls"><label>walls <select id="w5"><option value="0.03" selected>bare plaster / concrete</option><option value="0.1">wooden panels</option><option value="0.5">curtains and soft boards</option></select></label>
+    <label>ceiling <select id="c5"><option value="0.03" selected>plain concrete</option><option value="0.7">acoustic ceiling tiles</option></select></label>
+    <label>floor and seats <select id="f5"><option value="0.03" selected>marble floor, empty hall</option><option value="0.3">carpet, empty seats</option><option value="0.8">full audience on cushioned seats</option></select></label></div>
+  <div class="btnrow"><button class="btn primary" id="go5">👏 Clap on the stage</button><button class="btn" data-set5="w5:0.03,c5:0.03,f5:0.03">🏚️ Empty concrete hall</button><button class="btn" data-set5="w5:0.5,c5:0.7,f5:0.8">🎤 Lecture hall, full</button><button class="btn" data-set5="w5:0.1,c5:0.7,f5:0.3">🎻 Concert hall</button></div>
+  <div class="readout" id="o5"></div>
+  <p class="hint">Example hall: 30 m long, 20 m wide, 10 m high (volume 6000 m³; walls 1000 m², ceiling 600 m², floor 600 m²). Each surface absorbs a share of the sound that hits it (absorption values approx.). The time for the sound to die away to one-millionth of its energy (−60 dB) is found with Sabine’s formula T = 0.161 × volume ÷ total absorption – a go-further idea. The cross-section is drawn with heights 1.5 times taller.</p>
+  <p class="exam"><b>📝 In the exam this looks like:</b> “Why are the walls of an auditorium covered with curtains or soft boards?” → soft, porous materials <b>absorb</b> sound, so less of it is reflected; the sound does not keep bouncing around (no confusing echoes) and speech is heard clearly. “Why does your voice sound different in an empty room than in a furnished one?” → in the empty room the hard walls and floor reflect the sound many times.</p></div>
+
+<h2 id="thunder">6. How far is the thunderstorm? Lightning safety in the monsoon</h2>
+<p>Lightning and thunder happen at the same moment. The flash reaches you almost at once (light: 3 × 10<sup>8</sup> m/s), but the thunder travels at only about 350 m/s. So <b>count the seconds</b> from the flash to the thunder: distance = 350 × seconds. Every 3 seconds is about 1 km. In Kerala, thunderstorms are common on pre-monsoon afternoons (April–May) and in the <i>thulavarsham</i> season (October–November). If you can hear thunder, lightning can reach you – go indoors.</p>
+<div class="lab"><div class="lab-title">⚡ Storm lab: flash, count, find the distance</div>
+  <svg id="s6" viewBox="0 0 800 300" role="img" aria-label="A storm cloud with lightning at a distance from Anu, who stands next to a house; the light of the flash reaches her at once and the sound of the thunder travels slowly"></svg>
+  <div class="controls"><label>seconds from flash to thunder <input id="t6" type="range" min="1" max="30" step="1" value="6"><output></output></label></div>
+  <div class="btnrow"><button class="btn primary" id="go6">⚡ Flash!</button><button class="btn" data-set6="3">⛈️ 3 s</button><button class="btn" data-set6="15">🌧️ 15 s</button></div>
+  <div class="readout" id="o6"></div>
+  <p class="hint">Sound at 350 m/s, as in the textbook’s examples (347 m/s in Table 8.3 at 25 °C). The animation runs in real time up to 8 s; for longer gaps it is speeded up, but the timer still shows the real seconds.</p>
+  <div class="safety">⚠ <b>When thunder roars, go indoors</b> – into a building or a closed car or bus – and stay in for 30 minutes after the last thunder. Keep away from tall trees, open grounds, terraces, ponds, rivers and the sea, and metal fences. Do not use wired phones or touch electrical appliances; unplug the TV. If you are caught in the open, crouch low on your feet with your feet together – do not lie flat and do not shelter under a lone tree.</div>
+  <p class="exam"><b>📝 In the exam this looks like:</b> “A flash of lightning is seen and the thunder is heard 5 s later. How far away is the lightning? (speed of sound 350 m/s)” → distance = speed × time = 350 × 5 = <b>1750 m</b>. “Why do we see the lightning before we hear the thunder?” → light (3 × 10<sup>8</sup> m/s) is far faster than sound (about 350 m/s). Same as the textbook’s firecracker example: 350 × 3 = 1050 m.</p></div>
+
+<h2 id="check">✅ Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div>
+
+<h2 id="explore">🌐 Explore online – resources hub</h2>
+<p>Everything in this guide works offline. The links below are extras – websites and simulations from trusted sources (PhET, physics and science sites, health and government sites), grouped by topic. They <b>need internet</b> and open in a <b>new tab</b>, so you will not lose your place here. <b>Ask a parent or teacher before you go online.</b> The PhET simulation <i>Sound Waves</i> named in the textbook (p163) runs directly in your browser – nothing to install – and it is also on the KITE Ubuntu school laptops.</p>
+<h3>Vibrations – how sound is made</h3><div class="explore"><div class="title">🌐 Vibrations – how sound is made <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.physicsclassroom.com/tutorial/sound-waves/nature-of-sound-waves/sound-is-a-mechanical-wave" target="_blank" rel="noopener noreferrer">📄 Sound is a Mechanical Wave</a> <span class="src">The Physics Classroom</span><br><span class="note">Every sound starts with something vibrating, and the vibration is passed on particle to particle.</span></li><li><a href="https://phet.colorado.edu/en/simulations/waves-intro" target="_blank" rel="noopener noreferrer">🧪 Waves Intro (PhET simulation)</a> <span class="src">PhET, University of Colorado Boulder</span><br><span class="note">Switch to the Sound tab, change frequency and amplitude, and watch the speaker cone vibrate.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/sound-waves/properties-of-sound/pitch-and-frequency" target="_blank" rel="noopener noreferrer">📄 Pitch and Frequency</a> <span class="src">The Physics Classroom</span><br><span class="note">Faster vibrations mean higher frequency and a higher pitch; also explains the 20 Hz to 20,000 Hz hearing range.</span></li><li><a href="https://en.wikipedia.org/wiki/Tuning_fork" target="_blank" rel="noopener noreferrer">📄 Tuning fork</a> <span class="src">Wikipedia</span><br><span class="note">How a tuning fork vibrates at one fixed frequency, and why musicians and doctors use it.</span></li></ul></div><h3>Musical instruments and the voice</h3><div class="explore"><div class="title">🌐 Musical instruments and the voice <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.physicsclassroom.com/tutorial/sound-waves/physics-of-musical-instruments/guitar-strings" target="_blank" rel="noopener noreferrer">📄 Guitar Strings</a> <span class="src">The Physics Classroom</span><br><span class="note">How the length, tension and thickness of a string decide the note it plays.</span></li><li><a href="https://www.exploratorium.edu/snacks/pipes-of-pan" target="_blank" rel="noopener noreferrer">📄 Pipes of Pan</a> <span class="src">Exploratorium</span><br><span class="note">Make a set of pipes from tubes and hear how a longer air column gives a lower note.</span></li><li><a href="https://en.wikipedia.org/wiki/Chenda" target="_blank" rel="noopener noreferrer">📄 Chenda</a> <span class="src">Wikipedia</span><br><span class="note">Kerala&#x27;s famous temple drum: how its stretched skins vibrate to make that loud sound.</span></li><li><a href="https://en.wikipedia.org/wiki/Panchavadyam" target="_blank" rel="noopener noreferrer">📄 Panchavadyam</a> <span class="src">Wikipedia</span><br><span class="note">Kerala&#x27;s five-instrument temple orchestra, with drums, cymbals and a wind instrument playing together.</span></li></ul></div><h3>How sound travels – the need for a medium</h3><div class="explore"><div class="title">🌐 How sound travels – the need for a medium <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://phet.colorado.edu/en/simulations/sound-waves" target="_blank" rel="noopener noreferrer">🧪 Sound Waves (PhET simulation)</a> <span class="src">PhET, University of Colorado Boulder</span><br><span class="note">The simulation named in the textbook: see the air particles carry sound, then pump the air out and watch the sound fade.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/sound-waves/nature-of-sound-waves/sound-as-a-longitudinal-wave" target="_blank" rel="noopener noreferrer">📄 Sound as a Longitudinal Wave</a> <span class="src">The Physics Classroom</span><br><span class="note">Animations of compressions and rarefactions moving through air, in the same direction as the sound travels.</span></li><li><a href="https://science.nasa.gov/ems/02_anatomy/" target="_blank" rel="noopener noreferrer">📄 Anatomy of an Electromagnetic Wave</a> <span class="src">NASA Science</span><br><span class="note">NASA explains why sound cannot cross the vacuum of space, while light and radio waves can.</span></li><li><a href="https://oceanservice.noaa.gov/facts/sonar.html" target="_blank" rel="noopener noreferrer">📄 What is sonar?</a> <span class="src">NOAA Ocean Service</span><br><span class="note">Ships send sound through water and time the echo to find the depth of the sea and hidden objects.</span></li></ul></div><h3>Speed of sound, thunder and lightning</h3><div class="explore"><div class="title">🌐 Speed of sound, thunder and lightning <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.physicsclassroom.com/tutorial/sound-waves/properties-of-sound/speed-of-sound" target="_blank" rel="noopener noreferrer">📄 The Speed of Sound</a> <span class="src">The Physics Classroom</span><br><span class="note">Why sound is faster in solids than in liquids and gases, and faster in warm air than in cold air.</span></li><li><a href="https://www.sciencelearn.org.nz/resources/2819-measuring-the-speed-of-sound" target="_blank" rel="noopener noreferrer">📄 Measuring the speed of sound</a> <span class="src">Science Learning Hub (NZ)</span><br><span class="note">Time an echo from a distant building and use distance and time to calculate the speed of sound.</span></li><li><a href="https://www.noaa.gov/jetstream/lightning/sound-of-thunder/learning-lesson-determining-distance-to-thunderstorm" target="_blank" rel="noopener noreferrer">📄 Learning Lesson: Determining distance to a Thunderstorm</a> <span class="src">NOAA JetStream</span><br><span class="note">Count the seconds between the flash and the thunder, then use the speed of sound to find how far away the storm is.</span></li><li><a href="https://www.weather.gov/safety/lightning-science-thunder" target="_blank" rel="noopener noreferrer">📄 Understanding Lightning: Thunder</a> <span class="src">US National Weather Service</span><br><span class="note">Why we see lightning before we hear thunder, and why light is so much faster than sound.</span></li></ul></div><h3>The ear and hearing</h3><div class="explore"><div class="title">🌐 The ear and hearing <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.nidcd.nih.gov/health/how-do-we-hear" target="_blank" rel="noopener noreferrer">📄 How Do We Hear?</a> <span class="src">NIDCD, US National Institutes of Health</span><br><span class="note">Step by step from the eardrum to the three tiny bones to the cochlea and the hearing nerve, with a labelled diagram.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/sound-waves/properties-of-sound/human-ear" target="_blank" rel="noopener noreferrer">📄 The Human Ear</a> <span class="src">The Physics Classroom</span><br><span class="note">The outer, middle and inner ear, and how each part changes the sound wave on its way to the brain.</span></li><li><a href="https://www.sciencelearn.org.nz/resources/2870-can-you-hear-that" target="_blank" rel="noopener noreferrer">📄 Can you hear that?</a> <span class="src">Science Learning Hub (NZ)</span><br><span class="note">A short overview of sound waves, how the ear works and how we hear.</span></li><li><a href="https://www.exploratorium.edu/snacks/sound-bite" target="_blank" rel="noopener noreferrer">📄 Sound Bite</a> <span class="src">Exploratorium</span><br><span class="note">Bite on a vibrating object and hear it through your skull bones: sound can reach the inner ear without the air.</span></li></ul></div><h3>Hearing loss, hearing aids and ear care</h3><div class="explore"><div class="title">🌐 Hearing loss, hearing aids and ear care <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.who.int/news-room/fact-sheets/detail/deafness-and-hearing-loss" target="_blank" rel="noopener noreferrer">📄 Deafness and hearing loss (fact sheet)</a> <span class="src">World Health Organization</span><br><span class="note">Key facts on how many people have hearing loss, what causes it and how much of it can be prevented.</span></li><li><a href="https://www.who.int/activities/making-listening-safe" target="_blank" rel="noopener noreferrer">📄 Making listening safe</a> <span class="src">World Health Organization</span><br><span class="note">How loud music through earphones and at events can harm young people&#x27;s hearing, and how to listen safely.</span></li><li><a href="https://www.nidcd.nih.gov/health/noise-induced-hearing-loss" target="_blank" rel="noopener noreferrer">📄 Noise-Induced Hearing Loss</a> <span class="src">NIDCD, US National Institutes of Health</span><br><span class="note">How very loud sounds damage the tiny hair cells in the inner ear, and simple ways to protect your hearing.</span></li><li><a href="https://www.nidcd.nih.gov/health/hearing-aids" target="_blank" rel="noopener noreferrer">📄 Hearing Aids</a> <span class="src">NIDCD, US National Institutes of Health</span><br><span class="note">How a hearing aid&#x27;s microphone, amplifier and speaker make sounds louder for a person with hearing loss.</span></li></ul></div><h3>Music, noise and noise pollution</h3><div class="explore"><div class="title">🌐 Music, noise and noise pollution <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://cpcb.gov.in/noise-pollution/" target="_blank" rel="noopener noreferrer">📄 Noise Pollution (Regulation and Control) Rules, 2000</a> <span class="src">Central Pollution Control Board, Govt. of India</span><br><span class="note">India&#x27;s noise rules: industrial, commercial, residential and silence zones, with a 100 m silence zone around hospitals, schools and courts.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/sound-waves/properties-of-sound/intensity-and-the-decibel-scale" target="_blank" rel="noopener noreferrer">📄 Intensity and the Decibel Scale</a> <span class="src">The Physics Classroom</span><br><span class="note">What a decibel is, with a table of everyday sounds from a whisper to a jet engine.</span></li><li><a href="https://www.explainthatstuff.com/soundlevelmeters.html" target="_blank" rel="noopener noreferrer">📄 How decibel sound level meters work</a> <span class="src">Explain that Stuff</span><br><span class="note">How a sound level meter measures loudness in decibels, and how loud common noises are.</span></li><li><a href="https://www.explainthatstuff.com/noisecancellingheadphones.html" target="_blank" rel="noopener noreferrer">📄 How noise-cancelling headphones work</a> <span class="src">Explain that Stuff</span><br><span class="note">Headphones that make an &#x27;opposite&#x27; sound wave to cancel out unwanted noise.</span></li></ul></div><h3>Helen Keller and Resul Pookutty</h3><div class="explore"><div class="title">🌐 Helen Keller and Resul Pookutty <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://en.wikipedia.org/wiki/Helen_Keller" target="_blank" rel="noopener noreferrer">📄 Helen Keller</a> <span class="src">Wikipedia</span><br><span class="note">The deafblind American writer who learned to communicate through touch and became a world-famous campaigner.</span></li><li><a href="https://www.afb.org/about-afb/history/helen-keller/biography-and-chronology/biography" target="_blank" rel="noopener noreferrer">📄 Helen Keller: Biography</a> <span class="src">American Foundation for the Blind</span><br><span class="note">Helen Keller&#x27;s life story from the organisation she worked with for over 40 years.</span></li><li><a href="https://en.wikipedia.org/wiki/Resul_Pookutty" target="_blank" rel="noopener noreferrer">📄 Resul Pookutty</a> <span class="src">Wikipedia</span><br><span class="note">The sound designer from Kollam, Kerala, who won an Oscar for sound mixing on Slumdog Millionaire.</span></li><li><a href="https://en.wikipedia.org/wiki/81st_Academy_Awards" target="_blank" rel="noopener noreferrer">📄 81st Academy Awards</a> <span class="src">Wikipedia</span><br><span class="note">The 2009 Oscars, where Slumdog Millionaire won eight awards, including Best Sound Mixing.</span></li></ul></div><h3>More to explore</h3><div class="explore"><div class="title">🌐 More to explore <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.physicsclassroom.com/tutorial/sound-waves" target="_blank" rel="noopener noreferrer">📄 Physics Tutorial: Sound Waves</a> <span class="src">The Physics Classroom</span><br><span class="note">The full set of sound lessons: nature of sound, its properties, resonance and musical instruments.</span></li><li><a href="https://www.sciencelearn.org.nz/topics/sound" target="_blank" rel="noopener noreferrer">📄 Sound (topic page)</a> <span class="src">Science Learning Hub (NZ)</span><br><span class="note">A collection of short articles and activities on sound, hearing and music.</span></li><li><a href="https://www.explainthatstuff.com/sound.html" target="_blank" rel="noopener noreferrer">📄 Sound: the science of waves</a> <span class="src">Explain that Stuff</span><br><span class="note">A friendly introduction to what sound is, how it travels and how we use it.</span></li></ul></div>
+
+<div class="callout"><div class="title">🧭 Next</div>
+<p style="margin:0">Now pull the whole chapter together: <a href="13_summary_revision.html">Summary &amp; Quick Quiz ▶</a></p></div>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Sound · Class 9 Physics", "icon": "🔔", "key": "physics_ch8_progress", "pages": [["index.html", "Home"], ["01_vibrations_oscillations.html", "1 · Vibrations & To-and-fro Motion"], ["02_particles_states_of_matter.html", "2 · Particles, Solids, Liquids & Gases"], ["03_waves_compressions.html", "3 · Waves, Compressions & Rarefactions"], ["04_speed_distance_time.html", "4 · Speed, Distance & Time; Light vs Sound"], ["05_how_sound_is_produced.html", "5 · How Sound Is Produced"], ["06_propagation_of_sound.html", "6 · Propagation of Sound"], ["07_speed_of_sound.html", "7 · Speed of Sound, Thunder & Lightning"], ["08_ear_and_hearing.html", "8 · The Ear, Hearing & Ear Care"], ["09_music_noise_pollution.html", "9 · Music, Noise & Noise Pollution"], ["10_intext_questions_solutions.html", "10 · In-text Questions – Solutions"], ["11_assess_solutions.html", "11 · Let Us Assess & Extended Activities – Solutions"], ["12_applications_explore.html", "12 · Applications & Explore Online"], ["13_summary_revision.html", "13 · Summary & Quick Quiz"], ["14_model_test_paper.html", "14 · Model Test Paper"], ["15_model_test_solutions.html", "15 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ---- sound helpers shared by pages 12–15 of Chapter 8 (inlined by _gen/gen.py) ---- */
+const {P, polyline} = K;
+const COL = {red:'var(--red)', blue:'var(--blue)', green:'var(--green)', amber:'var(--accent)', purple:'var(--purple)', text:'var(--text)', muted:'var(--muted)'};
+/* a line with its own stroke attributes (seg() carries class 'ln', whose CSS would override them) */
+const sline = (svg, a, b, attrs={}) => K.el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+/* true minus for negative numbers only (hyphens inside words stay hyphens) */
+const minus = s => String(s).replace(/(^|[\s(=:,/])-(?=[\d.])/g, '$1−');
+/* number with at most d decimals, true minus sign: fx(-2.85, 1) → "−2.9" */
+const fx = (v, d=2) => minus(K.fmt(v, d));
+/* fixed decimals: fd(1.0294, 3) → "1.029" */
+const fd = (v, d=2) => minus((+v).toFixed(d));
+/* thousands grouped with a narrow space for numbers of five or more digits: gr(10500) → "10 500", gr(6423) → "6423" */
+const gr = (v, d=0) => { const s = Math.abs(+v).toFixed(d), [a, b] = s.split('.'); return (v < 0 ? '−' : '') + (a.length > 4 ? a.replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : a) + (b ? '.' + b : ''); };
+/* SVG text that understands subscripts: "t_echo" → t with a lowered small "echo" */
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+function text(svg, p, str, attrs={}){ const s = String(str);
+  if (!/_/.test(s)) return K.text(svg, p, s, attrs);
+  return K.el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs,
+    html: esc(s).replace(/_(\w+)/g, '<tspan baseline-shift="sub" font-size="72%">$1</tspan>')}, svg); }
+/* working lines: rows = [[step, text, cls], …]; rows whose step ≤ i are shown, the newest fades in. o.x, o.y, o.lh, o.anchor */
+function lines(svg, rows, i, t, o={}){ const x = o.x ?? 400, y0 = o.y ?? 36, lh = o.lh ?? 34, an = o.anchor ?? 'middle'; let k = 0;
+  rows.forEach(r => { if (r[0] > i) return; text(svg, P(x, y0 + k * lh), minus(r[1]), {class: 'lbl ' + (r[2] || ''), 'text-anchor': an, opacity: r[0] === i ? t : 1}); k++; }); }
+/* arrow from a to b with a filled head; o.c colour name (or any CSS colour), o.w width, o.label, o.lo label offset {x,y}, o.op opacity, o.dash */
+function arrow(svg, a, b, o={}){ const c = COL[o.c || 'red'] || o.c, w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const L = K.dist(a, b); if (L < 1){ return g; } const u = K.unit(a, b), hs = Math.min(o.head ?? 11, L * .6); const base = P(b.x - u.x * hs, b.y - u.y * hs);
+  K.el('line', {x1: a.x, y1: a.y, x2: base.x, y2: base.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round', ...(o.dash ? {'stroke-dasharray': o.dash} : {})}, g);
+  K.el('polygon', {points: `${b.x},${b.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g);
+  if (o.label) text(g, P(b.x + (o.lo ? o.lo.x : 0), b.y + (o.lo ? o.lo.y : -12)), minus(o.label), {class: 'lbl sm ' + (o.lc || o.c || 'red'), 'text-anchor': o.anchor || 'middle', 'font-weight': 700});
+  return g; }
+/* scientific notation: sci(7e-6, 1) → "7 × 10⁻⁶"; sciH(…) gives HTML with <sup> */
+const sciParts = (v, d=2) => { if (v === 0) return ['0', 0]; let e = Math.floor(Math.log10(Math.abs(v))), m = v / 10 ** e; if (+Math.abs(m).toFixed(d) >= 10){ m /= 10; e += 1; } return [fx(m, d), e]; };
+const sci = (v, d=2) => { const [m, e] = sciParts(v, d); return e === 0 ? m : `${m} × 10${(e < 0 ? '⁻' : '') + K.supStr(Math.abs(e))}`; };
+const sciH = (v, d=2) => { const [m, e] = sciParts(v, d); return e === 0 ? m : `${m} × 10<sup>${e < 0 ? '−' : ''}${Math.abs(e)}</sup>`; };
+/* points along a polyline: total length and a function giving the point and direction at distance d */
+function pathOf(pts){ const segs = []; let L = 0; for (let k = 0; k < pts.length - 1; k++){ const l = K.dist(pts[k], pts[k + 1]); segs.push([pts[k], pts[k + 1], L, l]); L += l; }
+  return {L, at(d){ d = Math.max(0, Math.min(L, d)); for (const [a, b, s, l] of segs){ if (d <= s + l + 1e-9){ const f = l ? (d - s) / l : 0; return {p: K.lerpPt(a, b, f), u: K.unit(a, b)}; } } const z = segs[segs.length - 1]; return {p: z[1], u: K.unit(z[0], z[1])}; }}; }
+
+/* ---------- physics ---------- */
+/* speed of sound in m/s at 25 °C – textbook Table 8.3 */
+const V = {aluminium: 6423, steel: 5944, sea: 1525, water: 1485, helium: 968, air: 347};
+const VS = 350;                 /* speed of sound in air used in the textbook's worked examples (m/s) */
+const C_LIGHT = 3e8;            /* speed of light (m/s) */
+const V_TISSUE = 1540;          /* ultrasound in soft body tissue, approx. (go further) */
+/* sound level (dB, approx.) of a single source that gives L10 at 10 m, at distance r m in open air: −6 dB for every doubling */
+const dbAt = (L10, r) => L10 - 20 * Math.log10(r / 10);
+
+/* ---------- drawing ---------- */
+/* a block of air particles carrying a push–pull (longitudinal) wave travelling to the right from x0.
+   Each particle only shifts to and fro along the row about its own resting place: s = amp × sin(2π(x − x0)/λ − φ).
+   o: rows, gap, lam, amp, phase (φ, radians), front (px from x0 reached by the wave; particles beyond it are at rest),
+      r (dot radius), fill, labels (true → C / R letters above the block, only where the wave has arrived), ly (label y) */
+function particles(svg, x0, x1, y0, y1, o={}){ const rows = o.rows ?? 5, gap = o.gap ?? 12, lam = o.lam ?? 120, amp = o.amp ?? 5, ph = o.phase ?? 0, front = o.front ?? 1e9;
+  const g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {}), k = 2 * Math.PI / lam;
+  for (let r = 0; r < rows; r++){ const y = rows === 1 ? (y0 + y1) / 2 : y0 + (y1 - y0) * r / (rows - 1), off = (r % 2) * gap / 2;
+    for (let x = x0 + off; x <= x1; x += gap){ const d = x - x0, s = d <= front ? amp * Math.sin(k * d - ph) : 0;
+      K.el('circle', {cx: x + s, cy: y, r: o.r ?? 2.6, fill: o.fill || 'var(--blue)'}, g); } }
+  if (o.labels){ /* compressions where the particles crowd together: k·d − φ = π + 2πn; rarefactions at k·d − φ = 2πn */
+    for (let n = -3; n < 40; n++){ [[Math.PI, 'C', 'red'], [0, 'R', 'blue']].forEach(([b, l, c]) => { const d = (b + 2 * Math.PI * n + ph) / k;
+      if (d > 4 && d < Math.min(front, x1 - x0) - 4) text(g, P(x0 + d, o.ly ?? y0 - 12), l, {class: 'lbl sm ' + c, 'font-weight': 800}); }); } }
+  return g; }
+/* expanding sound wavefront arcs from centre c (radius r, older arcs further out); o.a1/a2 limit the angle (degrees, screen) */
+function wavefronts(svg, c, r, o={}){ const n = o.n ?? 3, gapR = o.gap ?? 26, a1 = o.a1 ?? -60, a2 = o.a2 ?? 60, g = K.group(svg);
+  for (let q = 0; q < n; q++){ const rr = r - q * gapR; if (rr <= 4) continue; const op = (o.op ?? 1) * (1 - q / n) * (o.fade ? Math.max(0, 1 - rr / o.fade) : 1);
+    K.arc(g, c, rr, a1, a2, {class: '', stroke: COL[o.c || 'blue'] || o.c, 'stroke-width': o.w ?? 2.5, opacity: op}); }
+  return g; }
+/* a tuning fork standing on its stem at (x, y = bottom of the stem); prongs spread by ±amp px */
+function fork(svg, x, y, amp=0, o={}){ const h = o.h ?? 90, w = o.w ?? 18, col = o.c || '#94a3b8', g = K.group(svg);
+  sline(g, P(x, y), P(x, y - h * .35), {stroke: col, 'stroke-width': 5});
+  K.el('path', {d: `M${x - w / 2 - amp},${y - h} L${x - w / 2},${y - h * .4} Q${x},${y - h * .28} ${x + w / 2},${y - h * .4} L${x + w / 2 + amp},${y - h}`, fill: 'none', stroke: col, 'stroke-width': 5, 'stroke-linejoin': 'round'}, g);
+  return g; }
+/* the ear seen from the front in cross-section, sound arriving from the left. (x, y) = entrance of the ear canal; s = scale.
+   Returns the key points: pinna, canal (middle), drum, inner. o.drum = eardrum shift (px) for vibration, o.labels */
+function ear(svg, x, y, s=1, o={}){ const g = K.group(svg), skin = o.skin || '#e8b48a', ink = o.ink || '#9a5b34', L = 78 * s;
+  /* outer ear (pinna) – a curved flap opening to the left */
+  K.el('path', {d: `M${x},${y - 12 * s} C${x - 38 * s},${y - 22 * s} ${x - 44 * s},${y - 78 * s} ${x - 6 * s},${y - 86 * s} C${x + 18 * s},${y - 90 * s} ${x + 26 * s},${y - 60 * s} ${x + 10 * s},${y - 40 * s}`
+    + ` M${x},${y + 12 * s} C${x - 30 * s},${y + 20 * s} ${x - 30 * s},${y + 58 * s} ${x - 4 * s},${y + 62 * s}`, fill: 'none', stroke: ink, 'stroke-width': 4 * s, 'stroke-linecap': 'round'}, g);
+  /* head tissue around the canal */
+  K.el('rect', {x: x, y: y - 40 * s, width: L + 70 * s, height: 80 * s, rx: 10 * s, fill: skin, opacity: .35}, g);
+  /* ear canal */
+  K.el('rect', {x: x, y: y - 12 * s, width: L, height: 24 * s, fill: 'var(--svgbg)'}, g);
+  sline(g, P(x, y - 12 * s), P(x + L, y - 12 * s), {stroke: ink, 'stroke-width': 2.5 * s}); sline(g, P(x, y + 12 * s), P(x + L, y + 12 * s), {stroke: ink, 'stroke-width': 2.5 * s});
+  /* eardrum – a thin membrane closing the canal */
+  const dx = o.drum ?? 0; K.el('path', {d: `M${x + L},${y - 16 * s} Q${x + L + 8 * s + dx},${y} ${x + L},${y + 16 * s}`, fill: 'none', stroke: 'var(--red)', 'stroke-width': 3 * s}, g);
+  /* inner ear – a small snail-shaped spiral (cochlea) and the nerve to the brain */
+  const ci = P(x + L + 42 * s, y + 4 * s); K.el('path', {d: `M${ci.x - 18 * s},${ci.y} a18,18 0 1,1 18,18 a13,13 0 1,1 -13,-13 a8,8 0 1,1 8,8`.replace(/a(\d+),(\d+) 0 1,1 (-?\d+),(-?\d+)/g, (m, r1, r2, ex, ey) => `a${r1 * s},${r2 * s} 0 1,1 ${ex * s},${ey * s}`),
+    fill: 'none', stroke: 'var(--purple)', 'stroke-width': 3 * s}, g);
+  if (o.nerve !== false) K.el('path', {d: `M${ci.x + 18 * s},${ci.y - 4 * s} q${20 * s},${-10 * s} ${34 * s},${-34 * s}`, fill: 'none', stroke: 'var(--accent)', 'stroke-width': 2.5 * s, 'stroke-dasharray': `${5 * s} ${3 * s}`}, g);
+  return {g, pinna: P(x - 22 * s, y - 56 * s), canal: P(x + L / 2, y), drum: P(x + L + 4 * s, y), inner: ci, brain: P(ci.x + 52 * s, ci.y - 38 * s)}; }
+/* a lightning bolt from (x, y) downwards, height h */
+function bolt(svg, x, y, h, o={}){ const k = h / 100;
+  return K.polygon(svg, [[0, 0], [14, 0], [6, 38], [18, 38], [-4, 100], [2, 52], [-10, 52]].map(([a, b]) => P(x + a * k * 1.4, y + b * k)), {fill: o.fill || '#facc15', stroke: '#a16207', 'stroke-width': 1.2, opacity: o.op ?? 1}); }
+/* a grey storm cloud centred at (x, y) */
+function cloud(svg, x, y, s=1, o={}){ const g = K.group(svg, {opacity: o.op ?? 1}); [[-34, 6, 22], [-12, -8, 28], [16, -4, 26], [38, 8, 20], [0, 10, 26]].forEach(([a, b, r]) => K.el('circle', {cx: x + a * s, cy: y + b * s, r: r * s, fill: o.fill || '#64748b'}, g)); return g; }
+/* a simple standing person: feet at (x, y), height h, shirt colour */
+function person(svg, x, y, h=60, shirt='#2563eb', o={}){ const g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {}), k = h / 60, skin = o.skin || '#c68642';
+  sline(g, P(x - 5 * k, y), P(x - 4 * k, y - 22 * k), {stroke: '#334155', 'stroke-width': 5 * k}); sline(g, P(x + 5 * k, y), P(x + 4 * k, y - 22 * k), {stroke: '#334155', 'stroke-width': 5 * k});
+  K.el('rect', {x: x - 9 * k, y: y - 44 * k, width: 18 * k, height: 24 * k, rx: 4 * k, fill: shirt}, g);
+  K.el('circle', {cx: x, cy: y - 51 * k, r: 8 * k, fill: skin}, g); K.el('path', {d: `M${x - 8 * k},${y - 53 * k} q${8 * k},${-12 * k} ${16 * k},0`, fill: '#1f2937'}, g);
+  return g; }
+/* a horn-type loudspeaker pointing right, mouth centred at (x, y) */
+function horn(svg, x, y, s=1, o={}){ const g = K.group(svg); K.el('rect', {x: x - 34 * s, y: y - 5 * s, width: 12 * s, height: 10 * s, fill: '#475569'}, g);
+  K.polygon(g, [P(x - 22 * s, y - 5 * s), P(x, y - 16 * s), P(x, y + 16 * s), P(x - 22 * s, y + 5 * s)], {fill: o.fill || '#94a3b8', stroke: '#334155', 'stroke-width': 1.2}); return g; }
+/* a box-type speaker centred at (x, y) */
+function boxSpeaker(svg, x, y, s=1){ const g = K.group(svg); K.el('rect', {x: x - 14 * s, y: y - 22 * s, width: 28 * s, height: 44 * s, rx: 3 * s, fill: '#334155'}, g);
+  K.el('circle', {cx: x, cy: y - 10 * s, r: 6 * s, fill: '#94a3b8'}, g); K.el('circle', {cx: x, cy: y + 8 * s, r: 9 * s, fill: '#94a3b8'}, g); return g; }
+/* a sound-level bar (dB, approx.) from 0 to 130 dB with coloured zones; value v; o.limit draws a dashed limit line */
+function dbBar(svg, x, y, w, h, v, o={}){ const g = K.group(svg), Y = d => y + h - h * Math.max(0, Math.min(130, d)) / 130;
+  [[0, 50, 'var(--green)'], [50, 70, '#84cc16'], [70, 85, 'var(--accent)'], [85, 110, '#f97316'], [110, 130, 'var(--red)']].forEach(([a, b, c]) => K.el('rect', {x, y: Y(b), width: w, height: Y(a) - Y(b), fill: c, opacity: .3}, g));
+  K.el('rect', {x, y: Y(v), width: w, height: y + h - Y(v), fill: v >= 85 ? 'var(--red)' : v >= 70 ? 'var(--accent)' : 'var(--green)', opacity: .85}, g);
+  K.el('rect', {x, y, width: w, height: h, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 1.2}, g);
+  [0, 20, 40, 60, 80, 100, 120].forEach(d => { sline(g, P(x - 4, Y(d)), P(x, Y(d)), {stroke: 'var(--muted)', 'stroke-width': 1}); text(g, P(x - 7, Y(d)), String(d), {class: 'lbl sm muted', 'text-anchor': 'end'}); });
+  if (o.limit !== undefined){ sline(g, P(x - 6, Y(o.limit)), P(x + w + 6, Y(o.limit)), {stroke: 'var(--purple)', 'stroke-width': 2, 'stroke-dasharray': '5 3'});
+    if (o.limitLabel) text(g, P(x + w + 8, Y(o.limit)), o.limitLabel, {class: 'lbl sm purple', 'text-anchor': 'start', 'font-weight': 700}); }
+  text(g, P(x + w / 2, y - 12), o.title ?? 'dB (approx.)', {class: 'lbl sm', 'font-weight': 700});
+  return g; }
+/* glass bell jar on a vacuum-pump plate with an electric bell inside; air = 0…1 share of air left; hit = hammer swing 0…1 */
+function bellJar(svg, x, y, air=1, hit=0, o={}){ const g = K.group(svg), w = o.w ?? 150, h = o.h ?? 150;
+  K.el('rect', {x: x - w / 2 - 20, y: y, width: w + 40, height: 12, rx: 3, fill: '#475569'}, g);
+  K.el('rect', {x: x - 10, y: y + 12, width: 20, height: 26, fill: '#64748b'}, g); sline(g, P(x + 10, y + 30), P(x + w / 2 + 50, y + 30), {stroke: '#64748b', 'stroke-width': 6});
+  K.el('rect', {x: x + w / 2 + 40, y: y + 8, width: 46, height: 40, rx: 5, fill: '#334155'}, g); text(g, P(x + w / 2 + 63, y + 58), 'vacuum pump', {class: 'lbl sm muted'});
+  /* air inside: dots, fewer as air is removed */
+  const n = Math.round(46 * air); for (let q = 0; q < n; q++){ const a = (q * 137.5) % 360, rr = ((q * 53) % 97) / 97; const px = x + Math.cos(a * Math.PI / 180) * (w / 2 - 14) * rr, py = y - h * .45 + Math.sin(a * Math.PI / 180) * (h * .4) * rr;
+    K.el('circle', {cx: px, cy: py, r: 2.2, fill: 'var(--blue)', opacity: .7}, g); }
+  K.el('path', {d: `M${x - w / 2},${y} L${x - w / 2},${y - h + 40} Q${x - w / 2},${y - h} ${x},${y - h} Q${x + w / 2},${y - h} ${x + w / 2},${y - h + 40} L${x + w / 2},${y}`, fill: 'var(--blue)', 'fill-opacity': .06, stroke: '#7dd3fc', 'stroke-width': 3}, g);
+  K.el('rect', {x: x - 6, y: y - h - 10, width: 12, height: 12, rx: 3, fill: '#7dd3fc'}, g);
+  /* the bell: gong, hammer, stand */
+  sline(g, P(x, y), P(x, y - 50), {stroke: '#475569', 'stroke-width': 4}); K.el('path', {d: `M${x - 26},${y - 58} a26,26 0 0,1 52,0 Z`, fill: '#facc15', stroke: '#a16207', 'stroke-width': 1.5}, g);
+  const hb = P(x + 30, y - 40);
+  sline(g, P(x + 42, y), hb, {stroke: '#475569', 'stroke-width': 3}); sline(g, hb, P(hb.x - 6 - 10 * hit, hb.y - 20 + 4 * hit), {stroke: '#334155', 'stroke-width': 2.5}); K.el('circle', {cx: hb.x - 6 - 10 * hit, cy: hb.y - 22 + 4 * hit, r: 5, fill: '#334155'}, g);
+  return g; }
+
+const $ = s => document.querySelector(s);
+function anim(ms, fn, done){ let raf = null; const t0 = performance.now(); const step = now => { const f = Math.min(1, (now - t0) / ms); fn(f); if (f < 1) raf = requestAnimationFrame(step); else { raf = null; if (done) done(); } }; raf = requestAnimationFrame(step); return () => { if (raf) cancelAnimationFrame(raf); raf = null; }; }
+const setVal = (id, v) => { const el = $('#' + id); el.value = v; el.dispatchEvent(new Event(el.tagName === 'SELECT' ? 'change' : 'input', {bubbles: true})); };
+const presets = attr => document.querySelectorAll(`[data-${attr}]`).forEach(b => b.addEventListener('click', () => { b.dataset[attr.replace(/-(\w)/g, (m, c) => c.toUpperCase())].split(',').forEach(p => { const [id, v] = p.split(':'); setVal(id, v); }); }));
+const ro = (id, str) => { $(id).innerHTML = esc(str).replace(/_(\w+)/g, '<sub>$1</sub>'); };
+
+/* ---------- 1. stethoscope ---------- */
+const ST = {L: 0.6, lub: 0.3, travel: 0.55};                                  /* tube 0.6 m; "dub" 0.3 s after "lub"; drawn travel time (s) */
+const tubeMain = (() => { const pts = []; for (let q = 0; q <= 30; q++){ const u = q / 30; pts.push(P((1 - u) ** 3 * 172 + 3 * (1 - u) ** 2 * u * 260 + 3 * (1 - u) * u * u * 380 + u ** 3 * 520, (1 - u) ** 3 * 160 + 3 * (1 - u) ** 2 * u * 300 + 3 * (1 - u) * u * u * 300 + u ** 3 * 220)); } return pts; })();
+const branchL = [P(520, 220), P(566, 170), P(600, 116)], branchR = [P(520, 220), P(610, 190), P(660, 150), P(680, 116)];
+const pM = pathOf(tubeMain), pL = pathOf(branchL), pR = pathOf(branchR);
+let stop1 = null;
+function draw1(T = -1){ const svg = $('#s1'); K.clear(svg); const bpm = +$('#h1').value, per = 60 / bpm, mode = $('#m1').value;
+  /* beat times in the 4-beat animation */
+  const em = []; for (let k = 0; k < 4; k++){ em.push([k * per, 'lub']); em.push([k * per + ST.lub, 'dub']); }
+  const kick = T < 0 ? 0 : em.reduce((m, [te]) => Math.max(m, T >= te ? Math.exp(-(((T - te) / .07) ** 2)) : 0), 0);
+  /* patient's chest */
+  K.el('path', {d: 'M30,300 L30,110 Q30,70 80,62 L200,62 Q230,66 236,110 L240,300 Z', fill: '#e8b48a', opacity: .55, stroke: '#9a5b34', 'stroke-width': 1.5}, svg);
+  text(svg, P(120, 40), 'patient’s chest', {class: 'lbl sm', 'font-weight': 700});
+  const hs = 1 + .18 * kick, hc = P(135, 190);
+  K.el('path', {d: `M${hc.x},${hc.y + 26 * hs} C${hc.x - 40 * hs},${hc.y} ${hc.x - 26 * hs},${hc.y - 30 * hs} ${hc.x},${hc.y - 14 * hs} C${hc.x + 26 * hs},${hc.y - 30 * hs} ${hc.x + 40 * hs},${hc.y} ${hc.x},${hc.y + 26 * hs} Z`, fill: '#dc2626', opacity: .85}, svg);
+  text(svg, P(135, 236), 'heart', {class: 'lbl sm red'});
+  if (kick > .05) wavefronts(svg, hc, 30 + 30 * (1 - kick), {n: 2, gap: 10, a1: -90, a2: 90, c: 'red', op: kick});
+  /* doctor */
+  K.el('circle', {cx: 640, cy: 104, r: 34, fill: '#c68642'}, svg); K.el('path', {d: 'M606,96 Q640,52 674,96 Q660,74 640,74 Q620,74 606,96 Z', fill: '#1f2937'}, svg);
+  K.el('path', {d: 'M590,300 L596,160 Q640,140 684,160 L690,300 Z', fill: '#f8fafc', stroke: '#94a3b8'}, svg); text(svg, P(640, 250), 'doctor', {class: 'lbl sm', 'font-weight': 700});
+  let loud;
+  if (mode === 'air'){ /* ear 30 cm from the chest, no tube: the sound spreads out */
+    loud = .12; text(svg, P(400, 120), 'no tube: the sound spreads in all directions', {class: 'lbl sm amber', 'font-weight': 700});
+    em.forEach(([te]) => { if (T >= te && T - te < 1.2){ const f = (T - te) / 1.2; wavefronts(svg, P(240, 170), 20 + 380 * f, {n: 1, a1: -80, a2: 80, c: 'blue', op: (1 - f) * .9}); } });
+    text(svg, P(440, 296), 'the waves fade as they spread – very faint at the ear', {class: 'lbl sm muted'});
+  } else {
+    loud = mode === 'pinch' ? .02 : .9;
+    /* tube, chest piece and earpieces */
+    [tubeMain, branchL, branchR].forEach(pts => polyline(svg, pts, {stroke: '#334155', 'stroke-width': 12, 'stroke-linecap': 'round', 'stroke-linejoin': 'round'}));
+    [tubeMain, branchL, branchR].forEach(pts => polyline(svg, pts, {stroke: '#93c5fd', 'stroke-width': 6, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', opacity: .8}));
+    K.el('circle', {cx: 196, cy: 150, r: 26, fill: '#cbd5e1', stroke: '#475569', 'stroke-width': 2}, svg);
+    K.el('path', {d: `M178,150 Q${178 + 6 * kick},150 178,150 M172,128 Q${162 - 6 * kick},150 172,172`, fill: 'none', stroke: 'var(--red)', 'stroke-width': 3}, svg);
+    text(svg, P(196, 106), 'chest piece', {class: 'lbl sm'}); text(svg, P(196, 120), '(diaphragm)', {class: 'lbl sm muted'});
+    [P(600, 116), P(680, 116)].forEach(p => K.el('circle', {cx: p.x, cy: p.y, r: 7, fill: '#0f172a'}, svg));
+    text(svg, P(400, 250), 'air inside the tube carries the compressions', {class: 'lbl sm blue'});
+    if (mode === 'pinch'){ K.el('rect', {x: 360, y: 280, width: 26, height: 36, rx: 4, fill: 'var(--red)', opacity: .85}, svg); text(svg, P(373, 262), 'pinched', {class: 'lbl sm red', 'font-weight': 700}); }
+    /* pulses */
+    const stopAt = mode === 'pinch' ? .52 : 1;
+    em.forEach(([te, w]) => { if (T < te) return; const f = (T - te) / ST.travel; if (f > 1.6) return;
+      const g = K.group(svg, {opacity: f > 1 ? Math.max(0, 1 - (f - 1) / .6) : 1});
+      const draw = p => { K.el('circle', {cx: p.x, cy: p.y, r: 9, fill: 'var(--red)', opacity: .35}, g); K.el('circle', {cx: p.x, cy: p.y, r: 4.5, fill: 'var(--red)'}, g); };
+      const fm = Math.min(f * 1.6, stopAt); if (f * 1.6 <= 1) draw(pM.at(fm * pM.L).p); else if (mode === 'pinch') draw(pM.at(stopAt * pM.L).p);
+      else { const fb = Math.min(1, (f * 1.6 - 1) / .6); draw(pL.at(fb * pL.L).p); draw(pR.at(fb * pR.L).p); if (fb >= 1) text(g, P(640, 30), w + '!', {class: 'lbl big red'}); } });
+  }
+  text(svg, P(752, 52), 'loudness', {class: 'lbl sm', 'font-weight': 700}); text(svg, P(752, 66), 'at the ear', {class: 'lbl sm', 'font-weight': 700});
+  K.el('rect', {x: 740, y: 80, width: 24, height: 190, fill: 'var(--surface2)', stroke: 'var(--muted)', 'stroke-width': 1.2}, svg); K.el('rect', {x: 740, y: 270 - 190 * loud, width: 24, height: 190 * loud, fill: loud > .5 ? 'var(--green)' : 'var(--accent)', opacity: .85}, svg);
+  text(svg, P(752, 290), loud > .5 ? 'strong' : loud > .05 ? 'faint' : 'none', {class: 'lbl sm', 'font-weight': 700});
+  const verdict = mode === 'steth' ? 'clear and strong' : mode === 'air' ? 'very faint' : 'almost nothing';
+  ro('#o1', `heart rate ${bpm} beats per minute → one beat every 60 ÷ ${bpm} = ${fd(per, 2)} s (“lub” and “dub” 0.3 s apart)\n`
+    + (mode === 'steth' ? `the diaphragm vibrates → compressions travel through the air in the tube: 0.6 m ÷ 347 m/s ≈ ${fd(ST.L / V.air, 4)} s → heard ${verdict}`
+      : mode === 'air' ? `without the tube the sound spreads out in every direction from the chest, and only a tiny share reaches an ear 30 cm away → ${verdict}`
+      : `the pinched tube blocks the air path – the compressions cannot pass → ${verdict}. A medium must connect the source to the ear.`)); }
+K.slider('#h1', () => { if (stop1){ stop1(); stop1 = null; } draw1(); }, 0);
+$('#m1').addEventListener('change', () => { if (stop1){ stop1(); stop1 = null; } draw1(); });
+$('#go1').addEventListener('click', () => { if (stop1) stop1(); const per = 60 / +$('#h1').value, dur = 3 * per + ST.lub + 1.2; stop1 = anim(dur * 1000, f => draw1(f * dur), () => { stop1 = null; draw1(dur); }); });
+
+/* ---------- 2. SONAR ---------- */
+const sig = z => 1 / (1 + Math.exp(-z));
+const depth2 = km => 150 + 3300 * sig((km - 40) / 7) - 1200 * Math.exp(-(((km - 75) / 6) ** 2));   /* sea-bed depth (m), example shape */
+const Y2 = d => 70 + d * .065, X2 = km => 40 + km * 7.2;
+let stop2 = null, marks2 = [], ping2 = null;                                   /* ping2 = {T: seconds since the ping, km} */
+function draw2(){ const svg = $('#s2'); K.clear(svg); const kind = $('#k2').value;
+  K.el('rect', {x: 0, y: 0, width: 800, height: 70, fill: 'var(--blue)', 'fill-opacity': .05}, svg);
+  K.el('rect', {x: 0, y: 70, width: 800, height: 270, fill: 'var(--blue)', 'fill-opacity': .22}, svg); sline(svg, P(0, 70), P(800, 70), {stroke: 'var(--blue)', 'stroke-width': 2});
+  if (kind === 'ship'){ const km = +$('#x2').value, d = depth2(km), x = X2(km);
+    const bed = [P(0, 340)]; for (let k = -6; k <= 106; k += 1) bed.push(P(X2(k), Y2(depth2(k)))); bed.push(P(800, 340));
+    K.polygon(svg, bed, {fill: '#a16207', opacity: .35}); polyline(svg, bed.slice(1, -1), {stroke: '#a16207', 'stroke-width': 2, 'stroke-dasharray': '6 4', opacity: .7});
+    K.el('rect', {x: 0, y: 30, width: 34, height: 40, fill: '#65a30d', opacity: .6}, svg); text(svg, P(18, 20), 'coast', {class: 'lbl sm green'});
+    /* depth scale */
+    [0, 1000, 2000, 3000, 4000].forEach(m => { sline(svg, P(790, Y2(m)), P(798, Y2(m)), {stroke: 'var(--muted)', 'stroke-width': 1}); text(svg, P(786, Y2(m)), `${m} m`, {class: 'lbl sm muted', 'text-anchor': 'end'}); });
+    /* mapped points */
+    marks2.forEach(([k, dm]) => K.el('circle', {cx: X2(k), cy: Y2(dm), r: 3.5, fill: 'var(--red)'}, svg));
+    /* ship */
+    K.polygon(svg, [P(x - 34, 56), P(x + 34, 56), P(x + 26, 74), P(x - 26, 74)], {fill: '#334155'}); K.el('rect', {x: x - 12, y: 40, width: 22, height: 16, fill: '#e2e8f0', stroke: '#64748b'}, svg); K.el('rect', {x: x - 4, y: 76, width: 8, height: 6, fill: 'var(--accent)'}, svg);
+    if (ping2 && ping2.km === km){ const tt = 2 * d / V.sea, down = Math.min(ping2.T, tt / 2), up = Math.max(0, ping2.T - tt / 2);
+      if (ping2.T < tt / 2) K.arc(svg, P(x, 82), Math.max(2, (Y2(d) - 82) * down / (tt / 2)), 30, 150, {class: '', stroke: 'var(--accent)', 'stroke-width': 3});
+      else if (ping2.T < tt){ const yy = Y2(d) - (Y2(d) - 82) * up / (tt / 2); K.arc(svg, P(x, Y2(d)), Math.max(2, Y2(d) - yy), 220, 320, {class: '', stroke: 'var(--red)', 'stroke-width': 3}); }
+      sline(svg, P(x + 46, 82), P(x + 46, Y2(d)), {stroke: 'var(--text)', 'stroke-width': 1, 'stroke-dasharray': '3 3', opacity: .5});
+      text(svg, P(x < 640 ? x + 52 : x - 52, 100), `⏱ ${fd(Math.min(ping2.T, tt), 2)} s`, {class: 'lbl', 'font-weight': 700, 'text-anchor': x < 640 ? 'start' : 'end'}); }
+    const tt = 2 * d / V.sea, tr = Math.round(tt * 1000) / 1000, done = ping2 && ping2.km === km && ping2.T >= tt;
+    ro('#o2', `ship ${km} km from the coast. ` + (done ? `echo heard after t = ${fd(tr, 3)} s\n` : 'press “Send a ping” and wait for the echo\n')
+      + (done ? `the sound went down and came back: depth = speed × time ÷ 2 = 1525 × ${fd(tr, 3)} ÷ 2 = ${gr(V.sea * tr / 2)} m` : `(the time of the echo will tell us how deep the sea is here)`)
+      + (marks2.length ? `\nmapped so far: ${marks2.length} soundings, deepest ${gr(Math.max(...marks2.map(m => m[1])))} m` : ''));
+  } else { const dm = +$('#f2').value, xd = 110, xf = xd + 40 + dm * 4;
+    K.el('rect', {x: 0, y: 300, width: 800, height: 40, fill: '#a16207', opacity: .3}, svg);
+    /* dolphin */
+    K.el('path', {d: `M${xd - 70},190 Q${xd - 30},150 ${xd + 30},170 Q${xd + 50},178 ${xd + 62},190 Q${xd + 40},196 ${xd + 20},200 Q${xd - 30},214 ${xd - 70},190 Z`, fill: '#64748b'}, svg);
+    K.polygon(svg, [P(xd - 66, 190), P(xd - 92, 172), P(xd - 86, 192), P(xd - 92, 210)], {fill: '#64748b'}); K.polygon(svg, [P(xd - 10, 166), P(xd - 2, 146), P(xd + 10, 166)], {fill: '#64748b'});
+    K.el('circle', {cx: xd + 34, cy: 180, r: 2.5, fill: '#0f172a'}, svg); text(svg, P(xd - 10, 236), 'dolphin', {class: 'lbl sm', 'font-weight': 700});
+    /* fish */
+    K.el('ellipse', {cx: xf, cy: 190, rx: 16, ry: 8, fill: 'var(--accent)'}, svg); K.polygon(svg, [P(xf + 14, 190), P(xf + 26, 182), P(xf + 26, 198)], {fill: 'var(--accent)'}); text(svg, P(xf, 214), 'fish', {class: 'lbl sm amber'});
+    K.dim(svg, P(xd + 62, 260), P(xf - 16, 260), `${dm} m`, 0);
+    const tt = 2 * dm / V.sea, slow = 20;
+    if (ping2 && ping2.km === -1){ const Tr = ping2.T / slow, L = xf - 16 - (xd + 62);
+      if (Tr < tt / 2) wavefronts(svg, P(xd + 62, 190), Math.max(3, L * Tr / (tt / 2)), {n: 3, gap: 10, a1: -35, a2: 35, c: 'amber'});
+      else if (Tr < tt) wavefronts(svg, P(xf - 16, 190), Math.max(3, L * (Tr - tt / 2) / (tt / 2)), {n: 3, gap: 10, a1: 145, a2: 215, c: 'red'});
+      text(svg, P(400, 40), `⏱ ${fd(Math.min(Tr, tt) * 1000, 1)} ms (shown 20 × slower)`, {class: 'lbl', 'font-weight': 700}); }
+    const done = ping2 && ping2.km === -1 && ping2.T / slow >= tt;
+    ro('#o2', (done ? `echo of the click heard after t = ${fd(tt * 1000, 1)} ms = ${fd(tt, 4)} s\n` : 'press “Send a ping” – the dolphin clicks and listens\n')
+      + `distance = speed × time ÷ 2 = 1525 × ${fd(tt, 4)} ÷ 2 = ${fx(V.sea * tt / 2, 1)} m` + (done ? ' ✔ the dolphin knows where the fish is' : ''));
+  } }
+function ping(){ if (stop2) stop2(); const kind = $('#k2').value;
+  if (kind === 'ship'){ const km = +$('#x2').value, tt = 2 * depth2(km) / V.sea; ping2 = {T: 0, km}; stop2 = anim(tt * 1000, f => { ping2.T = f * tt; draw2(); }, () => { stop2 = null; ping2.T = tt; if (!marks2.some(m => m[0] === km)) marks2.push([km, depth2(km)]); draw2(); }); }
+  else { const tt = 2 * +$('#f2').value / V.sea * 20; ping2 = {T: 0, km: -1}; stop2 = anim(tt * 1000, f => { ping2.T = f * tt; draw2(); }, () => { stop2 = null; ping2.T = tt; draw2(); }); } }
+K.slider('#x2', () => { if (stop2){ stop2(); stop2 = null; } draw2(); }, 0); K.slider('#f2', () => { if (stop2){ stop2(); stop2 = null; } draw2(); }, 0);
+$('#k2').addEventListener('change', () => { if (stop2){ stop2(); stop2 = null; } ping2 = null; draw2(); });
+$('#go2').addEventListener('click', ping);
+$('#map2').addEventListener('click', () => { if (stop2) stop2(); setVal('k2', 'ship'); let last = -1; stop2 = anim(4000, f => { const km = Math.round(f * 100); if (km !== last){ last = km; if (km % 4 === 0 && !marks2.some(m => m[0] === km)) marks2.push([km, depth2(km)]); $('#x2').value = km; $('#x2').dispatchEvent(new Event('input')); } }, () => { stop2 = null; }); });
+$('#clr2').addEventListener('click', () => { marks2 = []; ping2 = null; draw2(); });
+
+/* ---------- 3. ultrasound scanner ---------- */
+const US = {x0: 40, x1: 400, y0: 60, k: 20, cmW: 18};                         /* body section 18 cm wide, 20 px per cm */
+const usX = cm => US.x0 + cm * 20, usD = y => (y - US.y0) / US.k;             /* cm → px; px → depth in cm */
+/* boundaries met by a vertical pulse at probe position x (px): [depth in px from the skin, name, strength] */
+function bounds3(x){ const b = [[90, 'fat / muscle', .5]];
+  const ox = 230, oy = 200, rx = 100, ry = 58; if (Math.abs(x - ox) < rx){ const h = ry * Math.sqrt(1 - ((x - ox) / rx) ** 2); b.push([oy - h, 'organ (top)', .8], [oy + h, 'organ (bottom)', .8]); }
+  const sx = 254, sy = 196, sr = 11; if (Math.abs(x - sx) < sr){ const h = Math.sqrt(sr * sr - (x - sx) ** 2); b.push([sy - h, 'stone', 1]); }
+  b.push([300, 'backbone', 1]); return b.sort((a, c) => a[0] - c[0]); }
+let cols3 = new Map(), stop3 = null;
+function draw3(){ const svg = $('#s3'); K.clear(svg); const cm = +$('#p3').value, x = usX(cm), b = bounds3(x);
+  /* body section */
+  K.el('rect', {x: US.x0, y: US.y0, width: 360, height: 270, fill: '#e8b48a', opacity: .35}, svg); K.el('rect', {x: US.x0, y: US.y0, width: 360, height: 30, fill: '#fde68a', opacity: .5}, svg);
+  K.el('ellipse', {cx: 230, cy: 200, rx: 100, ry: 58, fill: '#be123c', opacity: .35, stroke: '#9f1239', 'stroke-width': 2}, svg); K.el('circle', {cx: 254, cy: 196, r: 11, fill: '#f8fafc', stroke: '#64748b', 'stroke-width': 1.5}, svg);
+  K.el('rect', {x: US.x0, y: 300, width: 360, height: 30, fill: '#e5e7eb', stroke: '#9ca3af'}, svg);
+  text(svg, P(48, 75), 'fat', {class: 'lbl sm', 'text-anchor': 'start'}); text(svg, P(160, 200), 'organ', {class: 'lbl sm'}); text(svg, P(254, 222), 'stone', {class: 'lbl sm'}); text(svg, P(220, 316), 'backbone', {class: 'lbl sm muted'});
+  /* probe, gel, beam */
+  K.el('rect', {x: x - 16, y: US.y0 - 8, width: 32, height: 6, fill: 'var(--blue)', opacity: .4}, svg); K.el('rect', {x: x - 12, y: US.y0 - 40, width: 24, height: 34, rx: 5, fill: '#334155'}, svg);
+  text(svg, P(x, US.y0 - 50), 'probe', {class: 'lbl sm', 'font-weight': 700});
+  sline(svg, P(x, US.y0), P(x, 300), {stroke: 'var(--accent)', 'stroke-width': 2, 'stroke-dasharray': '5 4'});
+  b.forEach(([y]) => K.el('circle', {cx: x, cy: y, r: 5, fill: 'var(--red)'}, svg));
+  [0, 4, 8, 12].forEach(c => text(svg, P(US.x0 - 6, US.y0 + c * 20), `${c} cm`, {class: 'lbl sm muted', 'text-anchor': 'end'}));
+  /* scan picture */
+  const ix = cmX => 440 + (cmX - US.x0) * 340 / 360, iy = y => 40 + (y - US.y0) * 210 / 270;
+  K.el('rect', {x: 440, y: 40, width: 340, height: 210, fill: '#0b0f19', stroke: 'var(--border)'}, svg); text(svg, P(610, 24), 'scan picture (built from the echoes)', {class: 'lbl sm', 'font-weight': 700});
+  cols3.forEach((bb, px) => bb.forEach(([y, , s]) => K.el('rect', {x: ix(px) - 3, y: iy(y) - 2, width: 6, height: 4, fill: '#e5e7eb', opacity: .35 + .65 * s}, svg)));
+  sline(svg, P(ix(x), 40), P(ix(x), 250), {stroke: 'var(--accent)', 'stroke-width': 1.5, opacity: .7});
+  /* echo-time graph (A-scan) */
+  const tx = us => 440 + us * 340 / 160; K.el('rect', {x: 440, y: 268, width: 340, height: 50, fill: 'var(--surface2)', stroke: 'var(--border)'}, svg);
+  [0, 40, 80, 120, 160].forEach(us => text(svg, P(tx(us), 330), `${us} µs`, {class: 'lbl sm muted'}));
+  b.forEach(([y, , s]) => { const us = 2 * usD(y) / 100 / V_TISSUE * 1e6; sline(svg, P(tx(us), 314), P(tx(us), 314 - 40 * s), {stroke: 'var(--red)', 'stroke-width': 3}); });
+  ro('#o3', `probe at ${fx(cm, 2)} cm: ${b.length} echoes\n` + b.map(([y, n]) => { const dcm = usD(y), us = 2 * dcm / 100 / V_TISSUE * 1e6; return `${n}: echo after ${fx(us, 1)} µs → depth = 1540 × ${fx(us, 1)} µs ÷ 2 = ${fx(dcm, 1)} cm`; }).join('\n')); }
+K.slider('#p3', () => { const x = usX(+$('#p3').value); cols3.set(Math.round(x), bounds3(Math.round(x))); draw3(); }, 2);
+$('#go3').addEventListener('click', () => { if (stop3) stop3(); stop3 = anim(4000, f => setVal('p3', fd(1 + 16 * f, 2)), () => { stop3 = null; }); });
+$('#clr3').addEventListener('click', () => { cols3 = new Map(); draw3(); });
+
+/* ---------- 4. noise barriers and silence zones ---------- */
+const SRC4 = {horn: [95, 'horn-type loudspeaker'], box: [80, 'box-type speakers'], air: [100, 'air horn'], talk: [40, 'people talking']};
+const BAR4 = {none: [0, 'open ground'], wall: [10, 'a wall'], trees: [5, 'a tree belt'], both: [15, 'wall + trees']};
+const LIM4 = {hosp: {day: 50, night: 40, name: 'silence zone'}, home: {day: 55, night: 45, name: 'residential area'}};
+function draw4(){ const svg = $('#s4'); K.clear(svg); const s = $('#src4').value, r = +$('#r4').value, bk = $('#b4').value, z = $('#z4').value, tm = $('#t4').value;
+  const L10 = SRC4[s][0], B = BAR4[bk][0], L = dbAt(L10, r) - B, lim = LIM4[z][tm], xs = 70, xb = xs + 30 + r * 1.1;
+  K.el('rect', {x: 0, y: 240, width: 700, height: 60, fill: '#65a30d', opacity: .25}, svg); sline(svg, P(0, 240), P(700, 240), {stroke: '#65a30d', 'stroke-width': 2});
+  /* source */
+  if (s === 'horn'){ sline(svg, P(xs - 16, 240), P(xs - 16, 120), {stroke: '#475569', 'stroke-width': 3}); horn(svg, xs + 6, 120, 1.1); }
+  else if (s === 'box') boxSpeaker(svg, xs, 216, 1); else if (s === 'air'){ K.el('rect', {x: xs - 40, y: 196, width: 70, height: 30, rx: 5, fill: '#b91c1c'}, svg); K.el('circle', {cx: xs - 26, cy: 228, r: 8, fill: '#111827'}, svg); K.el('circle', {cx: xs + 16, cy: 228, r: 8, fill: '#111827'}, svg); }
+  else { person(svg, xs - 14, 240, 48, '#0ea5e9'); person(svg, xs + 10, 240, 46, '#db2777'); }
+  const sy = s === 'horn' ? 120 : 200;
+  const xStop = bk === 'trees' || bk === 'both' ? xb - 140 : bk === 'wall' ? xb - 56 : xb - 6;
+  for (let q = 0; q < 6; q++){ const rr = 30 + q * 40; if (xs + 10 + rr > xStop) break; const a2 = Math.min(50, Math.asin(Math.min(1, (236 - sy) / rr)) * 180 / Math.PI), a1 = -Math.min(50, Math.asin(Math.min(1, (sy - 20) / rr)) * 180 / Math.PI);
+    K.arc(svg, P(xs + 10, sy), rr, a1, a2, {class: '', stroke: 'var(--red)', 'stroke-width': 2.5, opacity: Math.max(.08, 1 - q / 6)}); }
+  /* barrier */
+  if (bk === 'wall' || bk === 'both') K.el('rect', {x: xb - 52, y: 150, width: 14, height: 90, fill: '#9ca3af', stroke: '#4b5563'}, svg);
+  if (bk === 'trees' || bk === 'both') for (let q = 0; q < 3; q++){ const tx = xb - 120 + q * 22; K.el('rect', {x: tx - 3, y: 196, width: 6, height: 44, fill: '#78350f'}, svg); K.el('circle', {cx: tx, cy: 182, r: 18, fill: '#15803d', opacity: .85}, svg); }
+  /* building */
+  K.el('rect', {x: xb, y: 150, width: 70, height: 90, fill: z === 'hosp' ? '#f8fafc' : '#fde68a', stroke: '#64748b', 'stroke-width': 1.5}, svg);
+  if (z === 'hosp'){ K.el('rect', {x: xb + 29, y: 160, width: 12, height: 30, fill: 'var(--red)'}, svg); K.el('rect', {x: xb + 20, y: 169, width: 30, height: 12, fill: 'var(--red)'}, svg); }
+  else K.polygon(svg, [P(xb - 6, 152), P(xb + 35, 120), P(xb + 76, 152)], {fill: '#b91c1c'});
+  K.dim(svg, P(xs + 10, 262), P(xb, 262), `${r} m`, 0);
+  text(svg, P(xb + 35, z === 'hosp' ? 138 : 108), z === 'hosp' ? 'hospital' : 'home', {class: 'lbl sm', 'font-weight': 700});
+  const ok = L <= lim + 1e-9, banned = tm === 'night' && (s === 'horn' || s === 'box'), airBan = s === 'air';
+  dbBar(svg, 740, 50, 24, 200, Math.max(0, L), {limit: lim, title: 'dB here'});
+  text(svg, P(360, 30), banned ? '✘ loudspeakers are not allowed 10 pm – 6 am' : airBan ? '✘ air horns are banned' : ok ? `✔ within the ${LIM4[z].name} limit` : `✘ too loud for a ${LIM4[z].name}`, {class: 'lbl ' + (ok && !banned && !airBan ? 'green' : 'red'), 'font-weight': 700});
+  ro('#o4', `${SRC4[s][1]}: about ${L10} dB at 10 m (approx.)\n`
+    + `at ${r} m: ${L10} − 20 × log₁₀(${r} ÷ 10) = ${fx(dbAt(L10, r), 0)} dB` + (B ? `; ${BAR4[bk][1]} takes off ≈ ${B} dB → ${fx(L, 0)} dB` : '') + '\n'
+    + `limit for a ${LIM4[z].name} by ${tm}: ${lim} dB → ` + (ok ? '✔ within the limit' : `✘ ${fx(L - lim, 0)} dB too loud`)
+    + (banned ? '\nand at night loudspeakers in public places are not allowed at all.' : airBan ? '\nair horns should not be used at all (textbook: no air horns in vehicles).' : '')); }
+['#src4', '#b4', '#z4', '#t4'].forEach(id => $(id).addEventListener('change', draw4)); K.slider('#r4', draw4, 0); presets('set4');
+
+/* ---------- 5. auditorium ---------- */
+const H5 = {x0: 30, x1: 430, y0: 60, y1: 300, Vol: 6000, Aw: 1000, Ac: 600, Af: 600};
+/* trace one ray: start s, direction angle a (deg); returns [[from, to, energy], …] */
+function trace5(s, a, al){ const segs = []; let p = {...s}, u = {x: Math.cos(a * Math.PI / 180), y: Math.sin(a * Math.PI / 180)}, E = 1;
+  for (let n = 0; n < 7 && E > .03; n++){ const ts = [];
+    if (u.x > 1e-9) ts.push([(H5.x1 - p.x) / u.x, 'w', 'x']); if (u.x < -1e-9) ts.push([(H5.x0 - p.x) / u.x, 'w', 'x']);
+    if (u.y > 1e-9) ts.push([(H5.y1 - p.y) / u.y, 'f', 'y']); if (u.y < -1e-9) ts.push([(H5.y0 - p.y) / u.y, 'c', 'y']);
+    const [tm, surf, ax] = ts.reduce((m, c) => c[0] < m[0] ? c : m); const q = {x: p.x + u.x * tm, y: p.y + u.y * tm};
+    segs.push([p, q, E]); E *= 1 - al[surf]; p = q; u = ax === 'x' ? {x: -u.x, y: u.y} : {x: u.x, y: -u.y}; }
+  return segs; }
+let stop5 = null;
+function draw5(prog = 1){ const svg = $('#s5'); K.clear(svg); const al = {w: +$('#w5').value, c: +$('#c5').value, f: +$('#f5').value};
+  const A = al.w * H5.Aw + al.c * H5.Ac + al.f * H5.Af, T = .161 * H5.Vol / A;
+  /* hall */
+  const sc = {w: al.w > .3 ? '#7c3aed' : al.w > .05 ? '#b45309' : '#94a3b8', c: al.c > .3 ? '#a78bfa' : '#94a3b8', f: al.f > .5 ? '#dc2626' : al.f > .1 ? '#b91c1c' : '#cbd5e1'};
+  K.el('rect', {x: H5.x0, y: H5.y0, width: 400, height: 240, fill: 'var(--surface2)'}, svg);
+  sline(svg, P(H5.x0, H5.y0), P(H5.x1, H5.y0), {stroke: sc.c, 'stroke-width': al.c > .3 ? 10 : 5}); sline(svg, P(H5.x0, H5.y1), P(H5.x1, H5.y1), {stroke: sc.f, 'stroke-width': al.f > .1 ? 10 : 5});
+  sline(svg, P(H5.x0, H5.y0), P(H5.x0, H5.y1), {stroke: sc.w, 'stroke-width': al.w > .05 ? 10 : 5}); sline(svg, P(H5.x1, H5.y0), P(H5.x1, H5.y1), {stroke: sc.w, 'stroke-width': al.w > .05 ? 10 : 5});
+  K.el('rect', {x: H5.x0, y: 262, width: 90, height: 38, fill: '#92400e', opacity: .6}, svg); text(svg, P(75, 282), 'stage', {class: 'lbl sm', style: 'fill:#fff;stroke:none'});
+  if (al.f > .5) for (let q = 0; q < 9; q++) K.el('circle', {cx: 150 + q * 30, cy: 286, r: 7, fill: '#c68642'}, svg);
+  const spk = P(80, 246);
+  /* rays */
+  const Lmax = 1500; for (let a = -165; a < 180; a += 30){ let used = 0;
+    for (const [p, q, E] of trace5(spk, a + 7, al).slice(0, 5)){ const l = K.dist(p, q), lim = prog * Lmax - used; if (lim <= 0) break; const f = Math.min(1, lim / l), e = K.lerpPt(p, q, f);
+      sline(svg, p, e, {stroke: 'var(--accent)', 'stroke-width': 2, opacity: Math.max(.05, .85 * E)}); if (f < 1 && prog < 1) K.el('circle', {cx: e.x, cy: e.y, r: 3, fill: 'var(--accent)', opacity: Math.max(.15, E)}, svg); used += l; } }
+  person(svg, spk.x, 262, 34, '#7c3aed'); K.el('circle', {cx: 360, cy: 284, r: 8, fill: 'var(--green)'}, svg); text(svg, P(360, 316), 'you', {class: 'lbl sm green', 'font-weight': 700});
+  text(svg, P(230, 40), 'sound rays from the stage (fainter after each bounce)', {class: 'lbl sm', 'font-weight': 700});
+  /* decay graph */
+  const gx = 480, gy = 60, gw = 290, gh = 220, Tx = s => gx + gw * Math.min(4, s) / 4, Ly = l => gy + gh * l / 60;
+  K.el('rect', {x: gx, y: gy, width: gw, height: gh, fill: 'var(--surface2)', stroke: 'var(--border)'}, svg);
+  [0, 1, 2, 3, 4].forEach(s => text(svg, P(Tx(s), gy + gh + 14), `${s} s`, {class: 'lbl sm muted'})); [0, 20, 40, 60].forEach(l => text(svg, P(gx - 6, Ly(l)), `−${l}`.replace('−0', '0'), {class: 'lbl sm muted', 'text-anchor': 'end'}));
+  text(svg, P(gx + gw / 2, 40), 'how the sound dies away (dB)', {class: 'lbl sm', 'font-weight': 700});
+  [[.6, 1.2, 'var(--green)', 'speech'], [1.4, 2.2, 'var(--purple)', 'music']].forEach(([a, b, c, n]) => { K.el('rect', {x: Tx(a), y: Ly(60) - 18, width: Tx(b) - Tx(a), height: 18, fill: c, opacity: .25}, svg); text(svg, P((Tx(a) + Tx(b)) / 2, Ly(60) - 9), n, {class: 'lbl sm'}); });
+  const tEnd = Math.min(T, 4); sline(svg, P(Tx(0), Ly(0)), P(Tx(tEnd), Ly(60 * tEnd / T)), {stroke: 'var(--red)', 'stroke-width': 3});
+  if (T > 4) text(svg, P(Tx(4) - 4, Ly(60 * 4 / T) - 14), `→ ${fx(T, 1)} s`, {class: 'lbl sm red', 'text-anchor': 'end', 'font-weight': 700});
+  else { K.el('circle', {cx: Tx(T), cy: Ly(60), r: 5, fill: 'var(--red)'}, svg); text(svg, P(Tx(T), Ly(60) + 30), `T = ${fx(T, 1)} s`, {class: 'lbl sm red', 'font-weight': 700}); }
+  const v = T < .5 ? '“dead” – too much absorbed, music sounds dull' : T <= 1.2 ? '✔ clear speech – good for lectures and plays' : T <= 2.2 ? '✔ full and rich – good for music concerts' : T <= 4 ? '⚠ echoey – words begin to blur' : '✘ very echoey – like a big empty hall; speech is hard to follow';
+  ro('#o5', `absorption: walls ${al.w} × 1000 + ceiling ${al.c} × 600 + floor ${al.f} × 600 = ${fx(A, 0)} m²\n`
+    + `sound dies away (−60 dB) in T = 0.161 × 6000 ÷ ${fx(A, 0)} ≈ ${fx(T, 1)} s → ${v}`); }
+['#w5', '#c5', '#f5'].forEach(id => $(id).addEventListener('change', () => { if (stop5){ stop5(); stop5 = null; } draw5(); })); presets('set5');
+$('#go5').addEventListener('click', () => { if (stop5) stop5(); stop5 = anim(3500, f => draw5(f), () => { stop5 = null; draw5(1); }); });
+
+/* ---------- 6. thunderstorm ---------- */
+let stop6 = null;
+function draw6(T = null){ const svg = $('#s6'); K.clear(svg); const t = +$('#t6').value, d = VS * t, xa = 740, xs = xa - 30 - d * 620 / (VS * 30);
+  K.el('rect', {x: 0, y: 0, width: 800, height: 240, fill: '#334155', opacity: T !== null && T < .25 ? .05 : .22}, svg);
+  K.el('rect', {x: 0, y: 240, width: 800, height: 60, fill: '#65a30d', opacity: .3}, svg); sline(svg, P(0, 240), P(800, 240), {stroke: '#65a30d', 'stroke-width': 2});
+  cloud(svg, xs, 50, 1.1); bolt(svg, xs - 12, 72, 166, {op: T === null ? .9 : T < .6 ? 1 : .5});
+  K.el('rect', {x: 676, y: 196, width: 44, height: 44, fill: '#fde68a', stroke: '#a16207'}, svg); K.polygon(svg, [P(670, 198), P(698, 172), P(726, 198)], {fill: '#b91c1c'});
+  person(svg, xa + 18, 240, 52, '#db2777'); text(svg, P(xa + 18, 166), 'Anu', {class: 'lbl sm', 'font-weight': 700});
+  K.dim(svg, P(xs, 266), P(xa + 18, 266), `${gr(d)} m`, 0);
+  if (T !== null){ const sp = Math.max(1, t / 8), real = Math.min(t, T * sp);
+    if (T < .6) sline(svg, P(xs, 150), P(xa + 10, 196), {stroke: '#facc15', 'stroke-width': 4, 'stroke-dasharray': '10 5'});
+    const R = (xa + 18 - xs) * real / t; if (real < t) wavefronts(svg, P(xs, 220), Math.max(6, R), {n: 3, gap: 16, a1: -40, a2: 10});
+    else text(svg, P(xa - 20, 120), 'BOOM!', {class: 'lbl big', 'font-weight': 800});
+    text(svg, P(400, 30), `⏱ ${fd(real, 1)} s` + (sp > 1 ? ` (shown ${fx(sp, 1)} × faster)` : ''), {class: 'lbl', 'font-weight': 700, style: 'fill:#fef9c3;stroke:#0f172a'}); }
+  const tl = d / C_LIGHT, near = t <= 10;
+  text(svg, P(240, 290), near ? '⚠ very close – go indoors NOW' : '⚠ you can hear thunder – go indoors', {class: 'lbl sm ' + (near ? 'red' : 'amber'), 'font-weight': 700});
+  ro('#o6', `gap between flash and thunder: ${t} s → distance = 350 × ${t} = ${gr(d)} m ≈ ${fx(d / 1000, 1)} km (quick rule: ${t} ÷ 3 ≈ ${fx(t / 3, 1)} km)\n`
+    + `the light took only ${gr(d)} ÷ (3 × 10⁸) = ${sci(tl, 1)} s – that is why the flash seems instant\n`
+    + (near ? 'the storm is within about 3.5 km: lightning can strike here at any moment.' : 'even 10 km away, a thunderstorm can send lightning to you – if you hear thunder, go indoors.')); }
+K.slider('#t6', () => { if (stop6){ stop6(); stop6 = null; } draw6(); }, 0);
+document.querySelectorAll('[data-set6]').forEach(b => b.addEventListener('click', () => setVal('t6', b.dataset.set6)));
+$('#go6').addEventListener('click', () => { if (stop6) stop6(); const t = +$('#t6').value, dur = Math.min(t, 8) + 1; stop6 = anim(dur * 1000, f => draw6(f * dur), () => { stop6 = null; }); });
+
+draw1(); draw2(); draw3(); draw4(); draw5(); draw6();
+
+/* ---------- check yourself ---------- */
+K.mcq('#q1', {q: 'In a stethoscope, the sound of the heartbeat reaches the doctor’s ears mainly through', options: ['vacuum inside the tube', 'the air inside the tube', 'electric wires', 'light'], answer: 1, explain: 'The diaphragm vibrates and the compressions travel through the air in the tube – sound needs a medium.', hint: 'Sound needs a medium. What fills the tube?'});
+K.numq('#q2', {q: 'A ship’s SONAR pulse comes back from the sea bed after 4 s. The speed of sound in sea water is 1525 m/s. How deep is the sea there?', unit: 'm', answer: 3050, tol: 1, explain: 'depth = 1525 × 4 ÷ 2 = 3050 m (the sound goes down and back).', hint: 'The sound travels down AND back up – divide by 2.'});
+K.mcq('#q3', {q: 'Ultrasound is', options: ['sound too low for us to hear', 'sound too high (too many vibrations per second) for us to hear', 'a kind of light', 'sound that travels through vacuum'], answer: 1, explain: 'Ultrasound vibrates more than about 20 000 times per second – above our hearing range. It still needs a medium.', hint: 'Humans hear roughly 20 Hz to 20 000 Hz.'});
+K.mcq('#q4', {q: 'Which of these does NOT help to reduce noise near a hospital?', options: ['planting a belt of trees', 'a solid wall between the road and the hospital', 'using horn-type loudspeakers instead of box-type', 'banning air horns'], answer: 2, explain: 'The textbook asks for box-type loudspeakers instead of horn-type ones; horn-type speakers spread loud sound far.', hint: 'Look again at the textbook’s list of ways to reduce noise pollution.'});
+K.mcq('#q5', {q: 'The walls of an auditorium are covered with curtains and soft boards because they', options: ['reflect sound more', 'absorb sound and reduce confusing reflections', 'make sound travel faster', 'stop light'], answer: 1, explain: 'Soft, porous materials absorb sound, so it does not keep bouncing around – speech stays clear.', hint: 'Hard surfaces reflect; soft surfaces …?'});
+K.numq('#q6', {q: 'The thunder is heard 5 s after the flash. How far away is the lightning? (speed of sound 350 m/s)', unit: 'm', answer: 1750, tol: 1, explain: 'distance = 350 × 5 = 1750 m ≈ 1.75 km.', hint: 'distance = speed × time.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

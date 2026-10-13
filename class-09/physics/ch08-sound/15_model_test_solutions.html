@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Model Test – Solved – Sound</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.sec{margin:1.4rem 0 .4rem;font-weight:800;color:var(--primary-ink);background:var(--primary-soft);padding:.3rem .7rem;border-radius:6px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.3rem}
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.qcard .qh{display:flex;gap:.6rem;align-items:flex-start;padding-bottom:.5rem;border-bottom:1px dashed var(--border);margin-bottom:.6rem}
+.qcard .qn{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.qcard .qt{flex:1;min-width:0}
+.qcard .marks{white-space:nowrap;color:var(--muted);font-weight:600}
+.qcard .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.2rem .8rem;margin-top:.3rem}
+.qcard .reveal{margin:.2rem 0 .5rem}
+.hintp{background:var(--blue-soft);border-radius:8px;padding:.4rem .8rem;margin:.4rem 0}
+.ans{border-left:5px solid var(--green);background:var(--green-soft);padding:.6rem .9rem;border-radius:8px;margin:.6rem 0}
+.ans .t{font-weight:700;color:var(--green);margin-bottom:.2rem}
+.ans p{margin:.3em 0}
+.ans table{background:var(--surface)}
+.mark{font-size:.9rem;color:var(--accent-ink);background:var(--accent-soft);padding:.4rem .8rem;border-radius:8px;margin:.5rem 0 0}
+.mark b{color:var(--accent-ink)}
+.rev{font-size:.88rem;color:var(--muted);margin-top:.4rem}
+.qcard .lab{margin:.7rem 0}
+.blank{display:inline-block;min-width:3rem;border-bottom:1.5px solid var(--text)}
+.qt table.vt,.ans table.vt{display:block;overflow-x:auto;width:max-content;max-width:100%}
+table.vt{width:auto;margin:.5rem 0}
+table.vt td,table.vt th{text-align:left;padding:.3rem .6rem}
+@media(max-width:600px){.qcard{padding:.8rem .7rem}.qcard .qh{flex-wrap:wrap}table.vt{font-size:.85rem}table.vt td,table.vt th{padding:.25rem .35rem}}
+</style>
+</head>
+<body data-page="15_model_test_solutions">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 8 · Solved paper</span><span class="chip amber">40 marks</span>
+<h1>Model Test – Solved <span class="ml">ഉത്തരങ്ങൾ</span></h1>
+<p class="lead">Every question of the <a href="14_model_test_paper.html">model paper</a>, in the same order, with the full answer, the marking scheme, an animated figure or working for the numericals and explanation questions, and a link to the page where the idea is taught. Try each one again before you open the answer, and mark your own paper honestly.</p>
+<div class="callout"><div class="title">📐 How the figures are drawn</div><p style="margin:0">Air particles are small blue dots; where they crowd together is a <b>compression</b> (C, <span class="ml">മർദം കൂടിയ മേഖല</span>), where they spread out a <b>rarefaction</b> (R, <span class="ml">മർദം കുറഞ്ഞ മേഖല</span>). Each particle only moves to and fro about its own place – the disturbance travels. Blue arcs are sound spreading out, yellow lines are light. Every number in the animations is worked out with distance = speed × time, the speeds of Table 8.3, 350 m/s for air in the textbook’s examples, and 3 × 10<sup>8</sup> m/s for light.</p></div>
+
+<div class="sec"><span>SECTION A</span><span>Answer all · 8 × 1 = 8 marks</span></div>
+<div class="qcard" id="qA1"><div class="qh"><span class="qn">1.</span><div class="qt">Sound is produced by the <span class="blank"></span> of objects.</div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Touch a ringing bell or a struck tuning fork – what do you feel?</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: vibration (<span class="ml">കമ്പനം</span>)</div><p>Every source of sound (<span class="ml">ശബ്ദസ്രോതസ്സ്</span>) – a bell, a tuning fork, a veena string, our vocal cords – makes sound only while it <b>vibrates</b>, moving rapidly to and fro. Hold the prongs of a ringing tuning fork tightly: the vibration stops and so does the sound.</p></div><p class="mark"><b>Marking:</b> 1 mark.</p></div><p class="rev">📖 Review this on <a href="05_how_sound_is_produced.html">Page 5 · Key box 2</a></p></div>
+<div class="qcard" id="qA2"><div class="qh"><span class="qn">2.</span><div class="qt">Sound <b>cannot</b> travel through<div class="opts"><span>(a) steel</span><span>(b) water</span><span>(c) air</span><span>(d) vacuum</span></div></div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Which one has no particles at all?</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (d) vacuum (<span class="ml">ശൂന്യത</span>)</div><p>Sound needs a medium (<span class="ml">മാധ്യമം</span>) – a solid, a liquid or a gas – to travel. A vacuum has no particles to pass the vibrations on, so sound cannot travel through it. (Steel, water and air all carry sound.)</p></div><p class="mark"><b>Marking:</b> 1 mark for (d).</p></div><p class="rev">📖 Review this on <a href="06_propagation_of_sound.html">Page 6 · Key box 4</a></p></div>
+<div class="qcard" id="qA3"><div class="qh"><span class="qn">3.</span><div class="qt">From Table 8.3, sound travels fastest in<div class="opts"><span>(a) air</span><span>(b) sea water</span><span>(c) helium</span><span>(d) aluminium</span></div></div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Solid, liquid or gas – which is fastest?</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (d) aluminium</div><p>Table 8.3 (25 °C): aluminium <b>6423 m/s</b>, sea water 1525 m/s, helium 968 m/s, air 347 m/s. Sound travels fastest in solids and slowest in gases.</p></div><p class="mark"><b>Marking:</b> 1 mark for (d).</p></div><p class="rev">📖 Review this on <a href="07_speed_of_sound.html">Page 7 · Table 8.3</a></p></div>
+<div class="qcard" id="qA4"><div class="qh"><span class="qn">4.</span><div class="qt">Find the relation and fill in: &nbsp; tabla : stretched skin (membrane) &nbsp;::&nbsp; odakkuzhal (flute) : <span class="blank"></span></div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 What is inside a flute that can vibrate?</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: the air column inside it</div><p>In the tabla the stretched skin vibrates; in the odakkuzhal (<span class="ml">ഓടക്കുഴൽ</span>) nothing solid vibrates – the <b>air column inside the flute</b> is the main vibrating part.</p></div><p class="mark"><b>Marking:</b> 1 mark (“air” also accepted).</p></div><p class="rev">📖 Review this on <a href="05_how_sound_is_produced.html">Page 5 · Main vibrating parts</a></p></div>
+<div class="qcard" id="qA5"><div class="qh"><span class="qn">5.</span><div class="qt">When we speak, the <span class="blank"></span> in the larynx (voice box) vibrate.</div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Touch your throat while you speak.</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: vocal cords (<span class="ml">സ്വനതന്തുക്കൾ</span>)</div><p>Our voice is produced when the <b>vocal cords</b> in the larynx (<span class="ml">സ്വനപേടകം</span>) at the top of the windpipe vibrate. Touch your throat while speaking loudly – you can feel it.</p></div><p class="mark"><b>Marking:</b> 1 mark.</p></div><p class="rev">📖 Review this on <a href="05_how_sound_is_produced.html">Page 5 · Our voice</a></p></div>
+<div class="qcard" id="qA6"><div class="qh"><span class="qn">6.</span><div class="qt">The thin membrane in our ear that vibrates when sound reaches it is the<div class="opts"><span>(a) outer ear (pinna)</span><span>(b) ear canal</span><span>(c) eardrum</span><span>(d) inner ear</span></div></div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Which part works like the balloon diaphragm in the bottle activity?</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (c) eardrum (<span class="ml">കർണ്ണപുടം</span>)</div><p>The pressure variations of sound travel down the ear canal (<span class="ml">കർണ്ണനാളം</span>) and make the <b>eardrum</b> (tympanum) vibrate, like the balloon diaphragm with the mustard seeds. It passes the vibrations on to the inner ear.</p></div><p class="mark"><b>Marking:</b> 1 mark for (c).</p></div><p class="rev">📖 Review this on <a href="08_ear_and_hearing.html">Page 8 · The eardrum, key box 7</a></p></div>
+<div class="qcard" id="qA7"><div class="qh"><span class="qn">7.</span><div class="qt">Pick the odd one out and give the reason: chenda, mridangam, veena, tabla.</div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 In three of them you strike a stretched skin.</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: veena – its strings vibrate</div><p><b>Veena.</b> Its main vibrating part is its <b>strings</b>. In the chenda, the mridangam and the tabla, a <b>stretched skin (membrane)</b> vibrates.</p></div><p class="mark"><b>Marking:</b> ½ mark for “veena”, ½ mark for the reason.</p></div><p class="rev">📖 Review this on <a href="05_how_sound_is_produced.html">Page 5 · Table 8.1</a> · <a href="11_assess_solutions.html">Page 11 · Let us assess Q5</a></p></div>
+<div class="qcard" id="qA8"><div class="qh"><span class="qn">8.</span><div class="qt">The sound engineer from Anchal, Kollam, who won the Oscar for sound mixing for the film <i>Slumdog Millionaire</i> is <span class="blank"></span>.</div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 He is from Kollam district.</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: Resul Pookutty</div><p><b>Resul Pookutty</b> (born 1971, Vilakkupara, Anchal) won the Oscar for sound mixing (<span class="ml">ശബ്ദമിശ്രണം</span>), and also a BAFTA and the Padma Shri.</p></div><p class="mark"><b>Marking:</b> 1 mark.</p></div><p class="rev">📖 Review this on <a href="09_music_noise_pollution.html">Page 9 · Resul Pookutty box</a></p></div>
+<div class="sec"><span>SECTION B</span><span>Answer all · 5 × 2 = 10 marks</span></div>
+<div class="qcard" id="qB9"><div class="qh"><span class="qn">9.</span><div class="qt">At night Arun sees the flash of a firecracker and hears its sound 4 s later. How far away did it burst? (Take the speed of sound in air as 350 m/s.)</div><span class="marks">(2 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 distance = speed × time; the light arrives almost instantly.</p></div><div class="lab" id="labB9"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Animated solution of question 9"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: 1400 m (1.4 km)</div><p><b>Given:</b> speed of sound v = 350 m/s; time t = 4 s</p><p><b>Formula:</b> distance = speed × time</p><p><b>Substitution:</b> 350 m/s × 4 s</p><p><b>Answer:</b> <b>distance = 1400 m = 1.4 km</b></p><p>The light of the flash (3 × 10<sup>8</sup> m/s) reaches Arun almost at once, so the 4 s is the time the <b>sound</b> took.</p></div><p class="mark"><b>Marking:</b> Formula ½, substitution ½, answer with unit 1.</p></div><p class="rev">📖 Review this on <a href="07_speed_of_sound.html">Page 7 · Firecracker, 1050 m</a> · <a href="04_speed_distance_time.html">Page 4 · Speed, distance and time</a></p></div>
+<div class="qcard" id="qB10"><div class="qh"><span class="qn">10.</span><div class="qt">Astronauts standing on the Moon cannot hear each other speak directly, even when they stand close together. (a) Why? (b) How do they talk to each other?</div><span class="marks">(2 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 What is there between two astronauts on the Moon?</p></div><div class="lab" id="labB10"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Animated solution of question 10"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (a) no air – no medium on the Moon &nbsp; (b) by radio</div><p>(a) The Moon has <b>no atmosphere – no air</b>. Sound needs a medium to travel, so the vibrations of one astronaut’s voice cannot reach the other (it is a vacuum).</p><p>(b) They use <b>radio sets</b> in their helmets. Radio waves are electromagnetic waves, like light, and can travel through vacuum.</p></div><p class="mark"><b>Marking:</b> (a) 1 mark (no air / vacuum, sound needs a medium); (b) 1 mark.</p></div><p class="rev">📖 Review this on <a href="06_propagation_of_sound.html">Page 6 · Astronauts, Fig 8.12</a> · <a href="11_assess_solutions.html">Page 11 · Let us assess Q6</a></p></div>
+<div class="qcard" id="qB11"><div class="qh"><span class="qn">11.</span><div class="qt">Music and noise are both sounds. (a) What is the difference between them? (b) Give one example of each.</div><span class="marks">(2 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Think of the shape of the vibration – orderly or jumbled?</p></div><div class="lab" id="labB11"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Animated solution of question 11"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (a) regular vs irregular vibrations &nbsp; (b) e.g. veena / traffic horns</div><p>(a) <b>Music</b> (<span class="ml">സംഗീതം</span>) is produced by <b>regular (orderly) vibrations</b> and is pleasant to hear. <b>Noise</b> (<span class="ml">ഒച്ച</span>) is produced by <b>irregular vibrations</b> and is unpleasant.</p><p>(b) Music: a veena, a flute, a song in the music class. Noise: horns at a traffic junction, a construction drill, rubbing a coconut shell on a stone.</p></div><p class="mark"><b>Marking:</b> (a) 1 mark; (b) ½ + ½.</p></div><p class="rev">📖 Review this on <a href="09_music_noise_pollution.html">Page 9 · Key box 8</a></p></div>
+<div class="qcard" id="qB12"><div class="qh"><span class="qn">12.</span><div class="qt">Lightning and thunder happen at the same moment, but we usually see the lightning first and hear the thunder later. Why?</div><span class="marks">(2 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Compare 3 × 10⁸ m/s with 350 m/s.</p></div><div class="lab" id="labB12"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Animated solution of question 12"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: light is far faster than sound</div><p>Light travels at about <b>3 × 10<sup>8</sup> m/s</b>, so the flash reaches us almost instantly. Sound travels in air at only about <b>350 m/s</b>, so the thunder takes several seconds to cover the same distance (about 3 s for every kilometre).</p></div><p class="mark"><b>Marking:</b> 1 mark for comparing the two speeds, 1 mark for the conclusion.</p></div><p class="rev">📖 Review this on <a href="07_speed_of_sound.html">Page 7 · Thunder question</a> · <a href="04_speed_distance_time.html">Page 4 · Light vs sound</a></p></div>
+<div class="qcard" id="qB13"><div class="qh"><span class="qn">13.</span><div class="qt">Write two difficulties faced by people with hearing loss, and two ways in which we can support them.</div><span class="marks">(2 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Think of the classroom, the road and the playground.</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: any two difficulties + any two ways</div><p><b>Difficulties:</b> problems in communicating with others; risk of accidents (they may not hear horns or alarms); difficulty in learning in class; loneliness.</p><p><b>Support:</b> treat them with sympathy and kindness; include them in every activity; speak facing them, clearly and a little slowly; learn some sign language; use written notes.</p></div><p class="mark"><b>Marking:</b> ½ mark for each of the four points.</p></div><p class="rev">📖 Review this on <a href="08_ear_and_hearing.html">Page 8 · Hearing impairment, World Hearing Day</a></p></div>
+<div class="sec"><span>SECTION C</span><span>Answer all · 4 × 3 = 12 marks</span></div>
+<div class="qcard" id="qC14"><div class="qh"><span class="qn">14.</span><div class="qt">An electric bell is ringing inside a glass bell jar placed on a vacuum pump (figure). The pump slowly removes the air from the jar. (a) What happens to the sound we hear? (b) When almost all the air has been removed, can we still see the hammer striking the gong? Can we hear it? (c) What do you conclude?</div><span class="marks">(3 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 What carries the sound from the bell to the glass and to us?</p></div><div class="lab" id="labC14"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Animated solution of question 14"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (a) it becomes fainter &nbsp; (b) seen, but almost not heard &nbsp; (c) sound needs a medium</div><p>(a) The sound becomes <b>fainter and fainter</b> as the air is removed.</p><p>(b) We can still <b>see</b> the hammer striking (light travels through vacuum), but we can <b>hardly hear anything</b>. Let the air back in and the sound returns.</p><p>(c) Sound needs a <b>medium</b> (<span class="ml">മാധ്യമം</span>) to travel; it <b>cannot travel through vacuum</b> (<span class="ml">ശൂന്യത</span>).</p></div><p class="mark"><b>Marking:</b> 1 mark for each part.</p></div><p class="rev">📖 Review this on <a href="06_propagation_of_sound.html">Page 6 · Buzzer in a jar, key box 4</a> · <a href="11_assess_solutions.html">Page 11 · Let us assess Q10</a></p></div>
+<div class="qcard" id="qC15"><div class="qh"><span class="qn">15.</span><div class="qt">Complete the table.<table class="vt"><tr><th>Instrument</th><th>Main vibrating part</th><th>One associated part that vibrates</th></tr><tr><td>Violin</td><td>(i) …………</td><td>(ii) …………</td></tr><tr><td>Elathalam</td><td>(iii) …………</td><td>(iv) …………</td></tr><tr><td>Tabla</td><td>(v) …………</td><td>(vi) …………</td></tr></table></div><span class="marks">(3 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 What do you pluck, clash or strike? What else vibrates with it?</p></div><div class="lab" id="labC15"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Animated solution of question 15"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: violin: strings / body; elathalam: metal plates / air; tabla: skin / body</div><table class="vt"><tr><th>Instrument</th><th>Main vibrating part</th><th>Associated part</th></tr><tr><td>Violin</td><td>(i) the <b>strings</b></td><td>(ii) the wooden body (or the bridge, or the air inside)</td></tr><tr><td>Elathalam</td><td>(iii) the <b>metal plates</b></td><td>(iv) the air around them</td></tr><tr><td>Tabla</td><td>(v) the <b>stretched skin (membrane)</b></td><td>(vi) the wooden body or the air inside</td></tr></table><p>The main part makes the vibration; the associated parts vibrate with it and make the sound sweeter and louder (key box 3).</p></div><p class="mark"><b>Marking:</b> ½ mark for each blank.</p></div><p class="rev">📖 Review this on <a href="05_how_sound_is_produced.html">Page 5 · Table 8.1, key box 3</a></p></div>
+<div class="qcard" id="qC16"><div class="qh"><span class="qn">16.</span><div class="qt">A worker strikes one end of a long, empty steel pipeline with a hammer. Meera, 2972 m away at the other end, has her ear against the pipe. (Speed of sound: steel 5944 m/s, air 347 m/s – Table 8.3.) (a) How long does the sound take to reach her through the steel? (b) How long does it take through the air? (c) How many sounds does she hear? Which one comes first?</div><span class="marks">(3 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 time = distance ÷ speed, once for each medium.</p></div><div class="lab" id="labC16"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Animated solution of question 16"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (a) 0.5 s &nbsp; (b) about 8.6 s &nbsp; (c) two; the one through steel, about 8.1 s earlier</div><p><b>Given:</b> distance d = 2972 m; speed in steel = 5944 m/s</p><p><b>Formula:</b> time = distance ÷ speed</p><p><b>Substitution:</b> 2972 ÷ 5944</p><p><b>Answer:</b> (a) <b>t = 0.5 s</b></p><p><b>Given:</b> d = 2972 m; speed in air = 347 m/s</p><p><b>Formula:</b> time = distance ÷ speed</p><p><b>Substitution:</b> 2972 ÷ 347</p><p><b>Answer:</b> (b) <b>t ≈ 8.6 s</b></p><p>(c) She hears <b>two sounds</b>: first the one through the <b>steel</b> (solids carry sound fastest), and about 8.6 − 0.5 ≈ <b>8.1 s</b> later the one through the air.</p></div><p class="mark"><b>Marking:</b> (a) 1 mark; (b) 1 mark; (c) ½ for “two”, ½ for “through steel first”.</p></div><p class="rev">📖 Review this on <a href="07_speed_of_sound.html">Page 7 · Table 8.3, medium race</a> · <a href="04_speed_distance_time.html">Page 4 · time = distance ÷ speed</a></p></div>
+<div class="qcard" id="qC17"><div class="qh"><span class="qn">17.</span><div class="qt">The figure shows how the sound of a tuning fork reaches our ear. (a) What do the letters C and R stand for? (b) Name the parts labelled 1, 2 and 3. (c) Name the three things needed for us to experience sound.</div><span class="marks">(3 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Where are the air particles crowded, and where are they spread out?</p></div><div class="lab" id="labC17"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Animated solution of question 17"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (a) compression, rarefaction &nbsp; (b) outer ear, ear canal, eardrum &nbsp; (c) source, medium, organ of hearing</div><p>(a) <b>C – compression</b>, a region of higher pressure (<span class="ml">മർദം കൂടിയ മേഖല</span>) where the air particles are crowded; <b>R – rarefaction</b>, a region of lower pressure (<span class="ml">മർദം കുറഞ്ഞ മേഖല</span>) where they are spread out.</p><p>(b) 1 – <b>outer ear</b> (pinna, <span class="ml">ചെവിക്കുട</span>); 2 – <b>ear canal</b> (<span class="ml">കർണ്ണനാളം</span>); 3 – <b>eardrum</b> (<span class="ml">കർണ്ണപുടം</span>).</p><p>(c) A <b>source</b> of sound, a <b>medium</b> and an <b>organ of hearing</b> (the ear).</p></div><p class="mark"><b>Marking:</b> (a) ½ + ½; (b) 1 mark for all three (two correct: ½); (c) 1 mark.</p></div><p class="rev">📖 Review this on <a href="08_ear_and_hearing.html">Page 8 · Fig 8.15, key box 7</a> · <a href="03_waves_compressions.html">Page 3 · Compressions and rarefactions</a></p></div>
+<div class="sec"><span>SECTION D</span><span>Answer all · 2 × 5 = 10 marks</span></div>
+<div class="qcard" id="qD18"><div class="qh"><span class="qn">18.</span><div class="qt">During a monsoon storm Anu sees a flash of lightning and hears the thunder 6 s later. (Speed of sound in air 350 m/s; speed of light 3 × 10<sup>8</sup> m/s.) (a) Why does she hear the thunder after seeing the flash? (b) How far away did the lightning strike? (c) How long did the light of the flash take to reach her? (d) A few minutes later the gap is only 3 s. Is the storm coming nearer or moving away? Find its new distance. (e) Write two safety steps to take when thunder is heard.</div><span class="marks">(5 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 distance = speed × time for the sound; time = distance ÷ speed for the light.</p></div><div class="lab" id="labD18"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Animated solution of question 18"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (a) light is much faster &nbsp; (b) 2100 m &nbsp; (c) 7 × 10<sup>−6</sup> s &nbsp; (d) nearer, 1050 m &nbsp; (e) e.g. go indoors; keep away from trees and water</div><p>(a) Both happen together, but light (3 × 10<sup>8</sup> m/s) reaches her almost at once while sound (350 m/s) takes 6 s.</p><p><b>Given:</b> v = 350 m/s; t = 6 s</p><p><b>Formula:</b> distance = speed × time</p><p><b>Substitution:</b> 350 × 6</p><p><b>Answer:</b> (b) <b>2100 m = 2.1 km</b></p><p><b>Given:</b> d = 2100 m; speed of light = 3 × 10<sup>8</sup> m/s</p><p><b>Formula:</b> time = distance ÷ speed</p><p><b>Substitution:</b> 2100 ÷ (3 × 10<sup>8</sup>)</p><p><b>Answer:</b> (c) <b>7 × 10<sup>−6</sup> s</b> (7 millionths of a second – “at once”)</p><p>(d) A shorter gap means a shorter distance: the storm is coming <b>nearer</b>. New distance = 350 × 3 = <b>1050 m</b>.</p><p>(e) Go indoors at once (a building or a closed vehicle); keep away from tall trees, open grounds, terraces and water; do not use wired phones or touch electrical appliances; stay inside for 30 minutes after the last thunder (any two).</p></div><p class="mark"><b>Marking:</b> 1 mark for each part ((b), (c): formula ½, answer with unit ½; (d): ½ + ½; (e): ½ + ½).</p></div><p class="rev">📖 Review this on <a href="07_speed_of_sound.html">Page 7 · Thunder timer</a> · <a href="04_speed_distance_time.html">Page 4 · Light vs sound</a> · <a href="12_applications_explore.html">Page 12 · Thunderstorm lab</a></p></div>
+<div class="qcard" id="qD19"><div class="qh"><span class="qn">19.</span><div class="qt">“Noise pollution is a serious public-health problem.” (a) What is noise pollution? (b) Write two causes of noise pollution in our towns. (c) Write two harmful effects of noise on our health. (d) Name two groups of people who are affected the most. (e) Suggest two ways to reduce noise pollution.</div><span class="marks">(5 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Think of a busy junction, a festival loudspeaker and a hospital next to a road.</p></div><div class="lab" id="labD19"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Animated solution of question 19"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (a) unwanted, harmful sound &nbsp; (b)–(e) any two each</div><p>(a) <b>Noise pollution</b> (<span class="ml">ശബ്ദമലിനീകരണം</span>) is unnecessary sound that is unbearable and uncomfortable and that harms humans and other living things.</p><p>(b) The growing number of vehicles and their horns; loudspeakers and public-address systems; construction machines; factories; firecrackers; aircraft and trains.</p><p>(c) Headache, sleeplessness, stress and anger, high blood pressure, hearing loss, poor concentration in studies.</p><p>(d) Traffic police; workers in factories, mines and construction sites; people living near airports, highways and railway lines; patients in hospitals; babies, old people and students.</p><p>(e) No air horns, and silencers kept in good order; box-type loudspeakers instead of horn-type; no loudspeakers in public places before 6 am and after 10 pm; silence near hospitals, schools and courts; plant trees; ear plugs or ear muffs for workers near loud machines.</p></div><p class="mark"><b>Marking:</b> 1 mark for each part (½ for each point in (b)–(e)).</p></div><p class="rev">📖 Review this on <a href="09_music_noise_pollution.html">Page 9 · Noise pollution, key box 9</a> · <a href="12_applications_explore.html">Page 12 · Noise-barrier lab</a></p></div>
+
+<h2 id="marks">Marks summary</h2>
+<div class="tablewrap" style="overflow-x:auto"><table>
+<tr><th>Section</th><th>Questions</th><th>Marks each</th><th>Total</th><th>Topics</th></tr>
+<tr><td>A</td><td>1–8</td><td>1</td><td>8</td><td>vibration, vacuum, Table 8.3, flute’s air column, vocal cords, eardrum, membrane instruments, Resul Pookutty</td></tr>
+<tr><td>B</td><td>9–13</td><td>2</td><td>10</td><td>firecracker distance, astronauts on the Moon, music and noise, lightning before thunder, hearing loss</td></tr>
+<tr><td>C</td><td>14–17</td><td>3</td><td>12</td><td>bell jar and vacuum pump, Table 8.1 (main and associated parts), steel vs air timing, compressions and the ear</td></tr>
+<tr><td>D</td><td>18–19</td><td>5</td><td>10</td><td>thunderstorm distance and lightning safety, noise pollution</td></tr>
+<tr><th colspan="3">Total</th><th>40</th><th></th></tr>
+</table></div>
+
+<div class="callout think"><div class="title">⏱️ Time management (15 min cool-off + 90 minutes)</div>
+<ul style="margin:0">
+<li><b>Cool-off (15 min)</b> – read the whole paper. Mark the three numericals (Q9, Q16, Q18) and note which speed each one gives you.</li>
+<li><b>Section A</b> – about 10 minutes. One word or one letter; give the reason in Q7.</li>
+<li><b>Section B</b> – about 20 minutes. For Q9 write Given, Formula, Substitution, Answer. In Q10 and Q12 use the words <i>medium</i>, <i>vacuum</i> and the two speeds.</li>
+<li><b>Section C</b> – about 25 minutes. Fill every blank of the table in Q15; in Q16 show both divisions with units.</li>
+<li><b>Section D</b> – about 25 minutes. Answer every part (a)–(e); two points each where two are asked.</li>
+<li><b>Checking</b> – keep 10 minutes: units (m, s, m/s)? time = distance ÷ speed, not speed ÷ distance? “cannot travel through vacuum”?</li>
+</ul></div>
+
+<div class="callout"><div class="title">🎉 Finished the chapter?</div>
+<p style="margin:0">Count your marks: 32 or more – excellent; 24–31 – good, revise the pages linked under the questions you missed; below 24 – go back through pages 5, 6, 7, 8 and 9 with their labs and do the <a href="13_summary_revision.html">scored quiz</a> again. Then return to the <a href="index.html">chapter home</a> and tick off what you have learned.</p></div>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Sound · Class 9 Physics", "icon": "🔔", "key": "physics_ch8_progress", "pages": [["index.html", "Home"], ["01_vibrations_oscillations.html", "1 · Vibrations & To-and-fro Motion"], ["02_particles_states_of_matter.html", "2 · Particles, Solids, Liquids & Gases"], ["03_waves_compressions.html", "3 · Waves, Compressions & Rarefactions"], ["04_speed_distance_time.html", "4 · Speed, Distance & Time; Light vs Sound"], ["05_how_sound_is_produced.html", "5 · How Sound Is Produced"], ["06_propagation_of_sound.html", "6 · Propagation of Sound"], ["07_speed_of_sound.html", "7 · Speed of Sound, Thunder & Lightning"], ["08_ear_and_hearing.html", "8 · The Ear, Hearing & Ear Care"], ["09_music_noise_pollution.html", "9 · Music, Noise & Noise Pollution"], ["10_intext_questions_solutions.html", "10 · In-text Questions – Solutions"], ["11_assess_solutions.html", "11 · Let Us Assess & Extended Activities – Solutions"], ["12_applications_explore.html", "12 · Applications & Explore Online"], ["13_summary_revision.html", "13 · Summary & Quick Quiz"], ["14_model_test_paper.html", "14 · Model Test Paper"], ["15_model_test_solutions.html", "15 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ---- sound helpers shared by pages 12–15 of Chapter 8 (inlined by _gen/gen.py) ---- */
+const {P, polyline} = K;
+const COL = {red:'var(--red)', blue:'var(--blue)', green:'var(--green)', amber:'var(--accent)', purple:'var(--purple)', text:'var(--text)', muted:'var(--muted)'};
+/* a line with its own stroke attributes (seg() carries class 'ln', whose CSS would override them) */
+const sline = (svg, a, b, attrs={}) => K.el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+/* true minus for negative numbers only (hyphens inside words stay hyphens) */
+const minus = s => String(s).replace(/(^|[\s(=:,/])-(?=[\d.])/g, '$1−');
+/* number with at most d decimals, true minus sign: fx(-2.85, 1) → "−2.9" */
+const fx = (v, d=2) => minus(K.fmt(v, d));
+/* fixed decimals: fd(1.0294, 3) → "1.029" */
+const fd = (v, d=2) => minus((+v).toFixed(d));
+/* thousands grouped with a narrow space for numbers of five or more digits: gr(10500) → "10 500", gr(6423) → "6423" */
+const gr = (v, d=0) => { const s = Math.abs(+v).toFixed(d), [a, b] = s.split('.'); return (v < 0 ? '−' : '') + (a.length > 4 ? a.replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : a) + (b ? '.' + b : ''); };
+/* SVG text that understands subscripts: "t_echo" → t with a lowered small "echo" */
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+function text(svg, p, str, attrs={}){ const s = String(str);
+  if (!/_/.test(s)) return K.text(svg, p, s, attrs);
+  return K.el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs,
+    html: esc(s).replace(/_(\w+)/g, '<tspan baseline-shift="sub" font-size="72%">$1</tspan>')}, svg); }
+/* working lines: rows = [[step, text, cls], …]; rows whose step ≤ i are shown, the newest fades in. o.x, o.y, o.lh, o.anchor */
+function lines(svg, rows, i, t, o={}){ const x = o.x ?? 400, y0 = o.y ?? 36, lh = o.lh ?? 34, an = o.anchor ?? 'middle'; let k = 0;
+  rows.forEach(r => { if (r[0] > i) return; text(svg, P(x, y0 + k * lh), minus(r[1]), {class: 'lbl ' + (r[2] || ''), 'text-anchor': an, opacity: r[0] === i ? t : 1}); k++; }); }
+/* arrow from a to b with a filled head; o.c colour name (or any CSS colour), o.w width, o.label, o.lo label offset {x,y}, o.op opacity, o.dash */
+function arrow(svg, a, b, o={}){ const c = COL[o.c || 'red'] || o.c, w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const L = K.dist(a, b); if (L < 1){ return g; } const u = K.unit(a, b), hs = Math.min(o.head ?? 11, L * .6); const base = P(b.x - u.x * hs, b.y - u.y * hs);
+  K.el('line', {x1: a.x, y1: a.y, x2: base.x, y2: base.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round', ...(o.dash ? {'stroke-dasharray': o.dash} : {})}, g);
+  K.el('polygon', {points: `${b.x},${b.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g);
+  if (o.label) text(g, P(b.x + (o.lo ? o.lo.x : 0), b.y + (o.lo ? o.lo.y : -12)), minus(o.label), {class: 'lbl sm ' + (o.lc || o.c || 'red'), 'text-anchor': o.anchor || 'middle', 'font-weight': 700});
+  return g; }
+/* scientific notation: sci(7e-6, 1) → "7 × 10⁻⁶"; sciH(…) gives HTML with <sup> */
+const sciParts = (v, d=2) => { if (v === 0) return ['0', 0]; let e = Math.floor(Math.log10(Math.abs(v))), m = v / 10 ** e; if (+Math.abs(m).toFixed(d) >= 10){ m /= 10; e += 1; } return [fx(m, d), e]; };
+const sci = (v, d=2) => { const [m, e] = sciParts(v, d); return e === 0 ? m : `${m} × 10${(e < 0 ? '⁻' : '') + K.supStr(Math.abs(e))}`; };
+const sciH = (v, d=2) => { const [m, e] = sciParts(v, d); return e === 0 ? m : `${m} × 10<sup>${e < 0 ? '−' : ''}${Math.abs(e)}</sup>`; };
+/* points along a polyline: total length and a function giving the point and direction at distance d */
+function pathOf(pts){ const segs = []; let L = 0; for (let k = 0; k < pts.length - 1; k++){ const l = K.dist(pts[k], pts[k + 1]); segs.push([pts[k], pts[k + 1], L, l]); L += l; }
+  return {L, at(d){ d = Math.max(0, Math.min(L, d)); for (const [a, b, s, l] of segs){ if (d <= s + l + 1e-9){ const f = l ? (d - s) / l : 0; return {p: K.lerpPt(a, b, f), u: K.unit(a, b)}; } } const z = segs[segs.length - 1]; return {p: z[1], u: K.unit(z[0], z[1])}; }}; }
+
+/* ---------- physics ---------- */
+/* speed of sound in m/s at 25 °C – textbook Table 8.3 */
+const V = {aluminium: 6423, steel: 5944, sea: 1525, water: 1485, helium: 968, air: 347};
+const VS = 350;                 /* speed of sound in air used in the textbook's worked examples (m/s) */
+const C_LIGHT = 3e8;            /* speed of light (m/s) */
+const V_TISSUE = 1540;          /* ultrasound in soft body tissue, approx. (go further) */
+/* sound level (dB, approx.) of a single source that gives L10 at 10 m, at distance r m in open air: −6 dB for every doubling */
+const dbAt = (L10, r) => L10 - 20 * Math.log10(r / 10);
+
+/* ---------- drawing ---------- */
+/* a block of air particles carrying a push–pull (longitudinal) wave travelling to the right from x0.
+   Each particle only shifts to and fro along the row about its own resting place: s = amp × sin(2π(x − x0)/λ − φ).
+   o: rows, gap, lam, amp, phase (φ, radians), front (px from x0 reached by the wave; particles beyond it are at rest),
+      r (dot radius), fill, labels (true → C / R letters above the block, only where the wave has arrived), ly (label y) */
+function particles(svg, x0, x1, y0, y1, o={}){ const rows = o.rows ?? 5, gap = o.gap ?? 12, lam = o.lam ?? 120, amp = o.amp ?? 5, ph = o.phase ?? 0, front = o.front ?? 1e9;
+  const g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {}), k = 2 * Math.PI / lam;
+  for (let r = 0; r < rows; r++){ const y = rows === 1 ? (y0 + y1) / 2 : y0 + (y1 - y0) * r / (rows - 1), off = (r % 2) * gap / 2;
+    for (let x = x0 + off; x <= x1; x += gap){ const d = x - x0, s = d <= front ? amp * Math.sin(k * d - ph) : 0;
+      K.el('circle', {cx: x + s, cy: y, r: o.r ?? 2.6, fill: o.fill || 'var(--blue)'}, g); } }
+  if (o.labels){ /* compressions where the particles crowd together: k·d − φ = π + 2πn; rarefactions at k·d − φ = 2πn */
+    for (let n = -3; n < 40; n++){ [[Math.PI, 'C', 'red'], [0, 'R', 'blue']].forEach(([b, l, c]) => { const d = (b + 2 * Math.PI * n + ph) / k;
+      if (d > 4 && d < Math.min(front, x1 - x0) - 4) text(g, P(x0 + d, o.ly ?? y0 - 12), l, {class: 'lbl sm ' + c, 'font-weight': 800}); }); } }
+  return g; }
+/* expanding sound wavefront arcs from centre c (radius r, older arcs further out); o.a1/a2 limit the angle (degrees, screen) */
+function wavefronts(svg, c, r, o={}){ const n = o.n ?? 3, gapR = o.gap ?? 26, a1 = o.a1 ?? -60, a2 = o.a2 ?? 60, g = K.group(svg);
+  for (let q = 0; q < n; q++){ const rr = r - q * gapR; if (rr <= 4) continue; const op = (o.op ?? 1) * (1 - q / n) * (o.fade ? Math.max(0, 1 - rr / o.fade) : 1);
+    K.arc(g, c, rr, a1, a2, {class: '', stroke: COL[o.c || 'blue'] || o.c, 'stroke-width': o.w ?? 2.5, opacity: op}); }
+  return g; }
+/* a tuning fork standing on its stem at (x, y = bottom of the stem); prongs spread by ±amp px */
+function fork(svg, x, y, amp=0, o={}){ const h = o.h ?? 90, w = o.w ?? 18, col = o.c || '#94a3b8', g = K.group(svg);
+  sline(g, P(x, y), P(x, y - h * .35), {stroke: col, 'stroke-width': 5});
+  K.el('path', {d: `M${x - w / 2 - amp},${y - h} L${x - w / 2},${y - h * .4} Q${x},${y - h * .28} ${x + w / 2},${y - h * .4} L${x + w / 2 + amp},${y - h}`, fill: 'none', stroke: col, 'stroke-width': 5, 'stroke-linejoin': 'round'}, g);
+  return g; }
+/* the ear seen from the front in cross-section, sound arriving from the left. (x, y) = entrance of the ear canal; s = scale.
+   Returns the key points: pinna, canal (middle), drum, inner. o.drum = eardrum shift (px) for vibration, o.labels */
+function ear(svg, x, y, s=1, o={}){ const g = K.group(svg), skin = o.skin || '#e8b48a', ink = o.ink || '#9a5b34', L = 78 * s;
+  /* outer ear (pinna) – a curved flap opening to the left */
+  K.el('path', {d: `M${x},${y - 12 * s} C${x - 38 * s},${y - 22 * s} ${x - 44 * s},${y - 78 * s} ${x - 6 * s},${y - 86 * s} C${x + 18 * s},${y - 90 * s} ${x + 26 * s},${y - 60 * s} ${x + 10 * s},${y - 40 * s}`
+    + ` M${x},${y + 12 * s} C${x - 30 * s},${y + 20 * s} ${x - 30 * s},${y + 58 * s} ${x - 4 * s},${y + 62 * s}`, fill: 'none', stroke: ink, 'stroke-width': 4 * s, 'stroke-linecap': 'round'}, g);
+  /* head tissue around the canal */
+  K.el('rect', {x: x, y: y - 40 * s, width: L + 70 * s, height: 80 * s, rx: 10 * s, fill: skin, opacity: .35}, g);
+  /* ear canal */
+  K.el('rect', {x: x, y: y - 12 * s, width: L, height: 24 * s, fill: 'var(--svgbg)'}, g);
+  sline(g, P(x, y - 12 * s), P(x + L, y - 12 * s), {stroke: ink, 'stroke-width': 2.5 * s}); sline(g, P(x, y + 12 * s), P(x + L, y + 12 * s), {stroke: ink, 'stroke-width': 2.5 * s});
+  /* eardrum – a thin membrane closing the canal */
+  const dx = o.drum ?? 0; K.el('path', {d: `M${x + L},${y - 16 * s} Q${x + L + 8 * s + dx},${y} ${x + L},${y + 16 * s}`, fill: 'none', stroke: 'var(--red)', 'stroke-width': 3 * s}, g);
+  /* inner ear – a small snail-shaped spiral (cochlea) and the nerve to the brain */
+  const ci = P(x + L + 42 * s, y + 4 * s); K.el('path', {d: `M${ci.x - 18 * s},${ci.y} a18,18 0 1,1 18,18 a13,13 0 1,1 -13,-13 a8,8 0 1,1 8,8`.replace(/a(\d+),(\d+) 0 1,1 (-?\d+),(-?\d+)/g, (m, r1, r2, ex, ey) => `a${r1 * s},${r2 * s} 0 1,1 ${ex * s},${ey * s}`),
+    fill: 'none', stroke: 'var(--purple)', 'stroke-width': 3 * s}, g);
+  if (o.nerve !== false) K.el('path', {d: `M${ci.x + 18 * s},${ci.y - 4 * s} q${20 * s},${-10 * s} ${34 * s},${-34 * s}`, fill: 'none', stroke: 'var(--accent)', 'stroke-width': 2.5 * s, 'stroke-dasharray': `${5 * s} ${3 * s}`}, g);
+  return {g, pinna: P(x - 22 * s, y - 56 * s), canal: P(x + L / 2, y), drum: P(x + L + 4 * s, y), inner: ci, brain: P(ci.x + 52 * s, ci.y - 38 * s)}; }
+/* a lightning bolt from (x, y) downwards, height h */
+function bolt(svg, x, y, h, o={}){ const k = h / 100;
+  return K.polygon(svg, [[0, 0], [14, 0], [6, 38], [18, 38], [-4, 100], [2, 52], [-10, 52]].map(([a, b]) => P(x + a * k * 1.4, y + b * k)), {fill: o.fill || '#facc15', stroke: '#a16207', 'stroke-width': 1.2, opacity: o.op ?? 1}); }
+/* a grey storm cloud centred at (x, y) */
+function cloud(svg, x, y, s=1, o={}){ const g = K.group(svg, {opacity: o.op ?? 1}); [[-34, 6, 22], [-12, -8, 28], [16, -4, 26], [38, 8, 20], [0, 10, 26]].forEach(([a, b, r]) => K.el('circle', {cx: x + a * s, cy: y + b * s, r: r * s, fill: o.fill || '#64748b'}, g)); return g; }
+/* a simple standing person: feet at (x, y), height h, shirt colour */
+function person(svg, x, y, h=60, shirt='#2563eb', o={}){ const g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {}), k = h / 60, skin = o.skin || '#c68642';
+  sline(g, P(x - 5 * k, y), P(x - 4 * k, y - 22 * k), {stroke: '#334155', 'stroke-width': 5 * k}); sline(g, P(x + 5 * k, y), P(x + 4 * k, y - 22 * k), {stroke: '#334155', 'stroke-width': 5 * k});
+  K.el('rect', {x: x - 9 * k, y: y - 44 * k, width: 18 * k, height: 24 * k, rx: 4 * k, fill: shirt}, g);
+  K.el('circle', {cx: x, cy: y - 51 * k, r: 8 * k, fill: skin}, g); K.el('path', {d: `M${x - 8 * k},${y - 53 * k} q${8 * k},${-12 * k} ${16 * k},0`, fill: '#1f2937'}, g);
+  return g; }
+/* a horn-type loudspeaker pointing right, mouth centred at (x, y) */
+function horn(svg, x, y, s=1, o={}){ const g = K.group(svg); K.el('rect', {x: x - 34 * s, y: y - 5 * s, width: 12 * s, height: 10 * s, fill: '#475569'}, g);
+  K.polygon(g, [P(x - 22 * s, y - 5 * s), P(x, y - 16 * s), P(x, y + 16 * s), P(x - 22 * s, y + 5 * s)], {fill: o.fill || '#94a3b8', stroke: '#334155', 'stroke-width': 1.2}); return g; }
+/* a box-type speaker centred at (x, y) */
+function boxSpeaker(svg, x, y, s=1){ const g = K.group(svg); K.el('rect', {x: x - 14 * s, y: y - 22 * s, width: 28 * s, height: 44 * s, rx: 3 * s, fill: '#334155'}, g);
+  K.el('circle', {cx: x, cy: y - 10 * s, r: 6 * s, fill: '#94a3b8'}, g); K.el('circle', {cx: x, cy: y + 8 * s, r: 9 * s, fill: '#94a3b8'}, g); return g; }
+/* a sound-level bar (dB, approx.) from 0 to 130 dB with coloured zones; value v; o.limit draws a dashed limit line */
+function dbBar(svg, x, y, w, h, v, o={}){ const g = K.group(svg), Y = d => y + h - h * Math.max(0, Math.min(130, d)) / 130;
+  [[0, 50, 'var(--green)'], [50, 70, '#84cc16'], [70, 85, 'var(--accent)'], [85, 110, '#f97316'], [110, 130, 'var(--red)']].forEach(([a, b, c]) => K.el('rect', {x, y: Y(b), width: w, height: Y(a) - Y(b), fill: c, opacity: .3}, g));
+  K.el('rect', {x, y: Y(v), width: w, height: y + h - Y(v), fill: v >= 85 ? 'var(--red)' : v >= 70 ? 'var(--accent)' : 'var(--green)', opacity: .85}, g);
+  K.el('rect', {x, y, width: w, height: h, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 1.2}, g);
+  [0, 20, 40, 60, 80, 100, 120].forEach(d => { sline(g, P(x - 4, Y(d)), P(x, Y(d)), {stroke: 'var(--muted)', 'stroke-width': 1}); text(g, P(x - 7, Y(d)), String(d), {class: 'lbl sm muted', 'text-anchor': 'end'}); });
+  if (o.limit !== undefined){ sline(g, P(x - 6, Y(o.limit)), P(x + w + 6, Y(o.limit)), {stroke: 'var(--purple)', 'stroke-width': 2, 'stroke-dasharray': '5 3'});
+    if (o.limitLabel) text(g, P(x + w + 8, Y(o.limit)), o.limitLabel, {class: 'lbl sm purple', 'text-anchor': 'start', 'font-weight': 700}); }
+  text(g, P(x + w / 2, y - 12), o.title ?? 'dB (approx.)', {class: 'lbl sm', 'font-weight': 700});
+  return g; }
+/* glass bell jar on a vacuum-pump plate with an electric bell inside; air = 0…1 share of air left; hit = hammer swing 0…1 */
+function bellJar(svg, x, y, air=1, hit=0, o={}){ const g = K.group(svg), w = o.w ?? 150, h = o.h ?? 150;
+  K.el('rect', {x: x - w / 2 - 20, y: y, width: w + 40, height: 12, rx: 3, fill: '#475569'}, g);
+  K.el('rect', {x: x - 10, y: y + 12, width: 20, height: 26, fill: '#64748b'}, g); sline(g, P(x + 10, y + 30), P(x + w / 2 + 50, y + 30), {stroke: '#64748b', 'stroke-width': 6});
+  K.el('rect', {x: x + w / 2 + 40, y: y + 8, width: 46, height: 40, rx: 5, fill: '#334155'}, g); text(g, P(x + w / 2 + 63, y + 58), 'vacuum pump', {class: 'lbl sm muted'});
+  /* air inside: dots, fewer as air is removed */
+  const n = Math.round(46 * air); for (let q = 0; q < n; q++){ const a = (q * 137.5) % 360, rr = ((q * 53) % 97) / 97; const px = x + Math.cos(a * Math.PI / 180) * (w / 2 - 14) * rr, py = y - h * .45 + Math.sin(a * Math.PI / 180) * (h * .4) * rr;
+    K.el('circle', {cx: px, cy: py, r: 2.2, fill: 'var(--blue)', opacity: .7}, g); }
+  K.el('path', {d: `M${x - w / 2},${y} L${x - w / 2},${y - h + 40} Q${x - w / 2},${y - h} ${x},${y - h} Q${x + w / 2},${y - h} ${x + w / 2},${y - h + 40} L${x + w / 2},${y}`, fill: 'var(--blue)', 'fill-opacity': .06, stroke: '#7dd3fc', 'stroke-width': 3}, g);
+  K.el('rect', {x: x - 6, y: y - h - 10, width: 12, height: 12, rx: 3, fill: '#7dd3fc'}, g);
+  /* the bell: gong, hammer, stand */
+  sline(g, P(x, y), P(x, y - 50), {stroke: '#475569', 'stroke-width': 4}); K.el('path', {d: `M${x - 26},${y - 58} a26,26 0 0,1 52,0 Z`, fill: '#facc15', stroke: '#a16207', 'stroke-width': 1.5}, g);
+  const hb = P(x + 30, y - 40);
+  sline(g, P(x + 42, y), hb, {stroke: '#475569', 'stroke-width': 3}); sline(g, hb, P(hb.x - 6 - 10 * hit, hb.y - 20 + 4 * hit), {stroke: '#334155', 'stroke-width': 2.5}); K.el('circle', {cx: hb.x - 6 - 10 * hit, cy: hb.y - 22 + 4 * hit, r: 5, fill: '#334155'}, g);
+  return g; }
+
+const hm = s => minus(s).replace(/_(\w+)/g, '<sub>$1</sub>');
+/* S(id, steps, rows, fig, o): stepper whose working lines (rows: [step, text, cls]) build up on the right; fig(svg, i, t) draws the picture on the left */
+function S(id, steps, rows, fig, o={}){ if (!document.getElementById('lab' + id)) return; new K.Stepper('#lab' + id, {steps: steps.map(hm), draw(svg, i, t){ fig(svg, i, t); lines(svg, rows, i, t, {x: o.x ?? 600, y: o.y ?? 36, lh: o.lh ?? 32}); }}); }
+const op = (i, t, k) => i === k ? t : (i > k ? 1 : 0);
+const sep = svg => sline(svg, P(410, 10), P(410, 290), {stroke: 'var(--border)', 'stroke-width': 1.5});
+const ground = (svg, y, c='#65a30d') => { K.el('rect', {x: 0, y, width: 405, height: 300 - y, fill: c, opacity: .25}, svg); sline(svg, P(0, y), P(405, y), {stroke: c, 'stroke-width': 2}); };
+const timer = (svg, p, s, lab='') => { K.el('rect', {x: p.x - 52, y: p.y - 15, width: 104, height: 30, rx: 8, fill: 'var(--surface2)', stroke: 'var(--border)'}, svg); text(svg, p, `⏱ ${fd(s, 1)} s${lab}`, {class: 'lbl', 'font-weight': 700}); };
+const burst = (svg, c, r, col='#f97316', o=1) => { for (let q = 0; q < 10; q++){ const a = q * 36 * Math.PI / 180; sline(svg, P(c.x + Math.cos(a) * r * .3, c.y + Math.sin(a) * r * .3), P(c.x + Math.cos(a) * r, c.y + Math.sin(a) * r), {stroke: col, 'stroke-width': 3, opacity: o}); } };
+const lightRay = (svg, a, b, o=1) => sline(svg, a, b, {stroke: '#facc15', 'stroke-width': 4, opacity: o, 'stroke-dasharray': '10 5'});
+
+/* B9: firecracker 4 s → 1400 m */
+S('B9', ['The firecracker bursts far away. Its <b>light</b> (3 × 10<sup>8</sup> m/s) reaches Arun almost at once.', 'The <b>sound</b> travels at 350 m/s and reaches him 4 s later.', '<b>Formula:</b> distance = speed × time.', '<b>Substitution:</b> 350 m/s × 4 s = <b>1400 m = 1.4 km</b>.'], [
+  [0, 'v = 350 m/s', ''], [1, 't = 4 s', ''], [2, 'distance = speed × time', 'big'], [3, '= 350 × 4 = 1400 m', 'big green'], [3, '= 1.4 km', 'green']],
+  (svg, i, t) => { sep(svg); ground(svg, 230, '#334155'); K.el('rect', {x: 0, y: 0, width: 405, height: 230, fill: '#1e293b', opacity: .25}, svg);
+    const src = P(60, 90), me = P(360, 228); burst(svg, src, 30, '#f97316', i === 0 ? 1 - .5 * t : .5); sline(svg, P(60, 228), P(60, 120), {stroke: '#a8a29e', 'stroke-width': 1.5, 'stroke-dasharray': '3 4'});
+    person(svg, me.x, me.y, 54, '#0ea5e9'); text(svg, P(me.x, 156), 'Arun', {class: 'lbl sm', 'font-weight': 700});
+    lightRay(svg, src, P(me.x - 4, me.y - 50), i === 0 ? t : 1);
+    const f = i === 0 ? 0 : i === 1 ? t : 1, R = 30 + f * (K.dist(src, P(me.x, me.y - 40)) - 30); if (i >= 1) wavefronts(svg, src, R, {n: 3, gap: 18, a1: -40, a2: 70});
+    timer(svg, P(200, 30), 4 * f); K.dim(svg, P(60, 262), P(360, 262), '? m', 0); });
+
+/* B10: astronauts on the Moon */
+S('B10', ['Two astronauts stand close together on the Moon. One speaks – her vocal cords vibrate.', 'There is <b>no air</b> on the Moon (a vacuum): no particles to pass on the vibrations, so <b>no sound reaches</b> the other.', 'They talk by <b>radio</b>: radio waves are electromagnetic waves and travel through vacuum.'], [
+  [0, 'voice: vocal cords vibrate', ''], [1, 'no air → no medium', 'big red'], [1, 'sound cannot travel', 'red'], [2, 'radio waves travel', 'big green'], [2, 'through vacuum', 'green']],
+  (svg, i, t) => { sep(svg); K.el('rect', {x: 0, y: 0, width: 405, height: 300, fill: '#020617', opacity: .55}, svg);
+    for (let q = 0; q < 25; q++) K.el('circle', {cx: (q * 97) % 400, cy: (q * 61) % 150, r: 1.2, fill: '#e2e8f0'}, svg);
+    K.el('path', {d: 'M0,240 Q120,226 220,238 T405,232 L405,300 L0,300 Z', fill: '#9ca3af'}, svg);
+    const suit = (x) => { K.el('rect', {x: x - 16, y: 172, width: 32, height: 44, rx: 8, fill: '#f8fafc', stroke: '#64748b'}, svg); K.el('circle', {cx: x, cy: 158, r: 16, fill: '#f8fafc', stroke: '#64748b'}, svg);
+      K.el('rect', {x: x - 10, y: 151, width: 20, height: 12, rx: 5, fill: '#f59e0b', opacity: .8}, svg); sline(svg, P(x - 8, 216), P(x - 8, 238), {stroke: '#e5e7eb', 'stroke-width': 9}); sline(svg, P(x + 8, 216), P(x + 8, 238), {stroke: '#e5e7eb', 'stroke-width': 9});
+      sline(svg, P(x + 10, 144), P(x + 16, 120), {stroke: '#64748b', 'stroke-width': 2}); };
+    suit(110); suit(290);
+    if (i <= 1) for (let q = 0; q < 2; q++) K.arc(svg, P(112, 158), 5 + q * 5 + 3 * Math.sin(t * 30), -50, 50, {class: '', stroke: 'var(--blue)', 'stroke-width': 2});
+    if (i === 0) text(svg, P(110, 120), 'sound only inside her helmet', {class: 'lbl sm blue', opacity: t});
+    if (i >= 1){ const o = op(i, t, 1); text(svg, P(200, 104), '✘ no air – vacuum', {class: 'lbl red', 'font-weight': 700, opacity: o}); text(svg, P(200, 166), '✘', {class: 'lbl big red', opacity: o}); }
+    if (i >= 2){ for (let q = 0; q < 3; q++) K.arc(svg, P(126, 120), 14 + q * 14 + 40 * t, -60, 20, {class: '', stroke: 'var(--green)', 'stroke-width': 2.5}); text(svg, P(200, 70), '📻 radio waves ✔', {class: 'lbl green', 'font-weight': 700, opacity: t}); } });
+
+/* B11: music and noise */
+(function(){ const reg = x => Math.sin(x / 9) * 26 + Math.sin(x / 4.5) * 8, rnd = k => { const v = Math.sin(k * 12.9898) * 43758.5453; return v - Math.floor(v); }, irr = x => (rnd(Math.floor(x / 5)) - .5) * 70 + (rnd(Math.floor(x / 13) + 99) - .5) * 30;
+  const trace = (svg, y, f, frac, c) => { const pts = []; for (let x = 0; x <= 330 * frac; x += 2) pts.push(P(40 + x, y + f(x))); if (pts.length > 1) polyline(svg, pts, {stroke: c, 'stroke-width': 2.5, 'stroke-linejoin': 'round'}); sline(svg, P(40, y), P(370, y), {stroke: 'var(--border)', 'stroke-width': 1}); };
+S('B11', ['<b>Music</b>: a veena string vibrates in a <b>regular</b>, repeating pattern – pleasant to hear.', '<b>Noise</b>: horns at a traffic junction give <b>irregular</b>, jumbled vibrations – unpleasant.', 'Examples – music: veena, flute, a song in the music class; noise: traffic horns, a drill, a coconut shell rubbed on a stone.'], [
+  [0, '(a) music: regular vibrations', 'big green'], [0, 'pleasant', 'green'], [1, 'noise: irregular vibrations', 'big red'], [1, 'unpleasant', 'red'], [2, '(b) veena 🎵 / traffic horn 📢', 'big']],
+  (svg, i, t) => { sep(svg); text(svg, P(200, 22), 'how the vibration looks', {class: 'lbl sm muted'});
+    text(svg, P(30, 90), '🎵', {class: 'lbl big'}); trace(svg, 90, reg, i === 0 ? t : 1, 'var(--green)');
+    if (i >= 1){ text(svg, P(30, 210), '📢', {class: 'lbl big'}); trace(svg, 210, irr, i === 1 ? t : 1, 'var(--red)'); }
+    text(svg, P(200, 140), 'regular – the pattern repeats', {class: 'lbl sm green'}); if (i >= 1) text(svg, P(200, 270), 'irregular – no pattern', {class: 'lbl sm red', opacity: op(i, t, 1)}); });
+})();
+
+/* B12: lightning before thunder */
+S('B12', ['Lightning and thunder happen together, 2 km away.', '<b>Light</b> at 3 × 10<sup>8</sup> m/s covers 2 km in about 7 millionths of a second – we see the flash <b>at once</b>.', '<b>Sound</b> at about 350 m/s needs about 5.7 s for the same 2 km – the thunder comes <b>later</b>.', 'Light is about 860 000 times faster than sound in air – roughly 3 s of delay for every kilometre.'], [
+  [0, 'flash + thunder: same moment', ''], [1, 'light: 3 × 10⁸ m/s → at once', 'big amber'], [2, 'sound: ≈ 350 m/s → seconds', 'big blue'], [3, 'we see first, hear later', 'big green'], [3, '≈ 3 s per km', 'green']],
+  (svg, i, t) => { sep(svg); ground(svg, 240); cloud(svg, 70, 50, 1.1); const strike = P(70, 238), me = P(360, 238); bolt(svg, 58, 70, 168, {op: i === 0 ? t : 1});
+    person(svg, me.x, me.y, 54, '#16a34a');
+    if (i >= 1) lightRay(svg, P(80, 140), P(352, 196), op(i, t, 1));
+    const f = i < 2 ? 0 : i === 2 ? t : 1; if (i >= 2) wavefronts(svg, P(70, 200), 20 + f * 270, {n: 3, gap: 18, a1: -30, a2: 30});
+    timer(svg, P(260, 30), 2000 / 350 * f); K.dim(svg, P(70, 270), P(360, 270), '2 km', 0); });
+
+/* C14: bell jar */
+S('C14', ['The bell rings inside the jar full of air: sound reaches the glass and then our ears.', '<b>(a)</b> The pump removes the air: the sound becomes <b>fainter and fainter</b>.', '<b>(b)</b> Almost no air left: we still <b>see</b> the hammer striking, but hear <b>almost nothing</b>.', 'Let the air back in – the sound returns.', '<b>(c)</b> Sound needs a <b>medium</b>; it cannot travel through vacuum.'], [
+  [0, 'air in the jar: bell heard', ''], [1, '(a) air removed → fainter', 'big blue'], [2, '(b) seen ✔  heard ✘', 'big red'], [3, 'air back → sound returns', 'green'], [4, '(c) sound needs a medium', 'big green'], [4, 'no sound through vacuum', 'green']],
+  (svg, i, t) => { sep(svg); const air = i === 0 ? 1 : i === 1 ? 1 - .97 * t : i === 2 ? .03 : i === 3 ? .03 + .97 * t : 1, hit = (Math.sin(t * 40) + 1) / 2;
+    bellJar(svg, 140, 222, air, hit, {w: 160, h: 172}); dbBar(svg, 345, 60, 26, 180, 70 * air, {title: 'sound heard'});
+    if (air > .1) wavefronts(svg, P(140, 120), 112, {n: 3, gap: 16, a1: -50, a2: 50, op: air}); });
+
+/* C15: Table 8.1 instruments */
+(function(){ const shake = t => Math.sin(t * 60) * 3;
+  const violin = (svg, x, y, on, t) => { K.el('path', {d: `M${x},${y - 60} C${x + 40},${y - 60} ${x + 30},${y - 15} ${x + 22},${y} C${x + 32},${y + 15} ${x + 46},${y + 60} ${x},${y + 62} C${x - 46},${y + 60} ${x - 32},${y + 15} ${x - 22},${y} C${x - 30},${y - 15} ${x - 40},${y - 60} ${x},${y - 60} Z`, fill: '#b45309', stroke: on ? 'var(--blue)' : '#78350f', 'stroke-width': on ? 4 : 1.5}, svg);
+    K.el('rect', {x: x - 5, y: y - 120, width: 10, height: 70, fill: '#1f2937'}, svg); for (let q = -1.5; q <= 1.5; q++) sline(svg, P(x + q * 4, y - 118), P(x + q * 4 + (on ? shake(t + q) : 0) * .4, y + 40), {stroke: on ? 'var(--red)' : '#e5e7eb', 'stroke-width': on ? 2 : 1}); };
+  const thalam = (svg, x, y, on, t) => { const d = on ? 4 + shake(t) : 10; [[-1, d], [1, -d]].forEach(([s]) => K.el('ellipse', {cx: x + s * (18 + (on ? d : 10)), cy: y, rx: 10, ry: 36, fill: '#d4a017', stroke: on ? 'var(--red)' : '#a16207', 'stroke-width': on ? 3.5 : 1.5}, svg));
+    if (on) wavefronts(svg, P(x, y), 70, {n: 3, gap: 14, a1: -60, a2: 60, c: 'blue'}); };
+  const tabla = (svg, x, y, on, t) => { K.el('path', {d: `M${x - 36},${y - 30} L${x + 36},${y - 30} L${x + 28},${y + 40} L${x - 28},${y + 40} Z`, fill: '#92400e', stroke: on ? 'var(--blue)' : '#78350f', 'stroke-width': on ? 4 : 1.5}, svg);
+    K.el('ellipse', {cx: x, cy: y - 30 + (on ? shake(t) : 0), rx: 36, ry: 9, fill: '#f5deb3', stroke: on ? 'var(--red)' : '#a16207', 'stroke-width': on ? 3.5 : 1.5}, svg); K.el('ellipse', {cx: x, cy: y - 30, rx: 12, ry: 3.5, fill: '#1f2937'}, svg); };
+S('C15', ['<b>Violin</b>: the bow makes the <b>strings</b> vibrate (main part, red); the wooden body, the bridge and the air inside vibrate with them (associated, blue).', '<b>Elathalam</b>: the two <b>metal plates</b> vibrate when clashed; the air around them vibrates too.', '<b>Tabla</b>: the <b>stretched skin</b> vibrates when struck; the wooden body and the air inside vibrate with it.'], [
+  [0, 'violin: strings | wooden body', 'big'], [1, 'elathalam: metal plates | air', 'big'], [2, 'tabla: skin | body, air inside', 'big'], [2, 'red = main, blue = associated', 'muted']],
+  (svg, i, t) => { sep(svg); violin(svg, 70, 160, i === 0, t); thalam(svg, 200, 150, i === 1, t); tabla(svg, 330, 160, i === 2, t);
+    [['violin', 70], ['elathalam', 200], ['tabla', 330]].forEach(([n, x], q) => text(svg, P(x, 262), n, {class: 'lbl sm' + (q === i ? ' red' : ' muted'), 'font-weight': 700})); });
+})();
+
+/* C16: steel pipeline 2972 m */
+(function(){ const D = 2972, ts = D / V.steel, ta = D / V.air;
+S('C16', ['The hammer strikes: sound sets off along the steel and through the air at the same moment.', '<b>(a)</b> Through steel: t = 2972 ÷ 5944 = <b>0.5 s</b> – Meera hears the first sound.', '<b>(b)</b> Through air: t = 2972 ÷ 347 ≈ <b>8.6 s</b>.', '<b>(c)</b> She hears <b>two sounds</b>: the steel one first, the air one about 8.6 − 0.5 ≈ <b>8.1 s</b> later.'], [
+  [0, 'time = distance ÷ speed', 'big'], [1, '(a) steel: 2972 ÷ 5944 = 0.5 s', 'big red'], [2, '(b) air: 2972 ÷ 347 ≈ 8.6 s', 'big blue'], [3, '(c) two sounds, steel first', 'big green'], [3, 'gap ≈ 8.1 s', 'green']],
+  (svg, i, t) => { sep(svg); const tau = i === 0 ? 0 : i === 1 ? ts * t : i === 2 ? ts + (ta - ts) * t : ta, X = d => 40 + 320 * d / D;
+    K.el('rect', {x: 40, y: 152, width: 320, height: 14, rx: 7, fill: '#94a3b8', stroke: '#475569'}, svg);
+    person(svg, 24, 200, 50, '#ea580c'); person(svg, 380, 200, 50, '#7c3aed'); text(svg, P(380, 216), 'Meera', {class: 'lbl sm purple', 'font-weight': 700});
+    text(svg, P(44, 136), 'through the steel →', {class: 'lbl sm red', 'text-anchor': 'start'}); text(svg, P(44, 48), 'through the air →', {class: 'lbl sm blue', 'text-anchor': 'start'});
+    sline(svg, P(40, 84), P(360, 84), {stroke: 'var(--blue)', 'stroke-width': 1, 'stroke-dasharray': '3 5', opacity: .6});
+    const xs = X(Math.min(D, V.steel * tau)), xa = X(Math.min(D, V.air * tau));
+    K.el('circle', {cx: xs, cy: 159, r: 9, fill: 'var(--red)'}, svg);
+    wavefronts(svg, P(xa - 24, 84), 24, {n: 2, gap: 10, a1: -50, a2: 50});
+    timer(svg, P(200, 266), tau); if (i >= 1) text(svg, P(300, 232), '1st sound ✔', {class: 'lbl sm red', opacity: op(i, t, 1)}); if (i >= 2 && (i > 2 || t > .98)) text(svg, P(300, 252), '2nd sound ✔', {class: 'lbl sm blue'}); });
+})();
+
+/* C17: fork → C, R → ear */
+S('C17', ['The vibrating prongs push and pull the air. <b>C</b> = compression (particles crowded, higher pressure); <b>R</b> = rarefaction (spread out, lower pressure).', 'The pressure variations enter <b>1 – the outer ear</b> (pinna) and travel along <b>2 – the ear canal</b>.', 'They make <b>3 – the eardrum</b> vibrate; the inner ear turns the vibrations into signals for the brain.', '<b>(c)</b> To experience sound we need a <b>source</b> (fork), a <b>medium</b> (air) and an <b>organ of hearing</b> (ear).'], [
+  [0, '(a) C = compression', 'big red'], [0, 'R = rarefaction', 'big blue'], [1, '1 outer ear,  2 ear canal', 'big'], [2, '3 eardrum', 'big'], [3, '(c) source + medium + ear', 'big green']],
+  (svg, i, t) => { sep(svg); const ph = t * Math.PI * 4 + i * 2; fork(svg, 34, 230, 3 * Math.cos(ph), {h: 130});
+    particles(svg, 60, 200, 108, 172, {rows: 5, gap: 10, lam: 70, amp: 4.5, phase: ph, labels: true, ly: 94});
+    const e = ear(svg, 250, 140, .82, {drum: i >= 2 ? 3 * Math.sin(ph * 2) : 0});
+    if (i >= 1) [[e.pinna, '1', P(-18, -24)], [e.canal, '2', P(0, -56)], [e.drum, '3', P(14, 56)]].forEach(([p, l, d], q) => { if (q === 2 && i < 2) return;
+      K.el('circle', {cx: p.x + d.x, cy: p.y + d.y, r: 11, fill: 'var(--surface2)', stroke: 'var(--text)'}, svg); text(svg, P(p.x + d.x, p.y + d.y), l, {class: 'lbl sm', 'font-weight': 800}); });
+    if (i >= 2) text(svg, P(e.brain.x - 10, e.brain.y - 14), 'brain', {class: 'lbl sm amber', 'font-weight': 700, opacity: op(i, t, 2)});
+    if (i >= 3) [['source', 34], ['medium', 130], ['ear', 300]].forEach(([n, x]) => text(svg, P(x, 272), n, {class: 'lbl sm green', 'font-weight': 700, opacity: t})); });
+
+/* D18: thunderstorm 6 s → 2100 m; light 7 × 10⁻⁶ s; 3 s → 1050 m */
+(function(){ const d1 = VS * 6, d2 = VS * 3, tl = d1 / C_LIGHT, X = d => 360 - 300 * d / d1;
+S('D18', ['<b>(a)</b> The flash reaches Anu at once (light 3 × 10<sup>8</sup> m/s); the thunder (350 m/s) takes 6 s.', '<b>(b)</b> distance = 350 × 6 = <b>2100 m</b> (2.1 km).', `<b>(c)</b> time for light = 2100 ÷ (3 × 10<sup>8</sup>) = <b>${sciH(tl, 0)} s</b> – 7 millionths of a second.`, '<b>(d)</b> Now the gap is 3 s: 350 × 3 = <b>1050 m</b> – the storm is coming <b>nearer</b>.', '<b>(e)</b> Go indoors at once; keep away from trees, open grounds, terraces and water; no wired phones; wait 30 minutes after the last thunder.'], [
+  [0, '(a) light far faster than sound', ''], [1, '(b) 350 × 6 = 2100 m', 'big blue'], [2, `(c) 2100 ÷ 3 × 10⁸ = ${sci(tl, 0)} s`, 'big amber'], [3, '(d) 350 × 3 = 1050 m: nearer', 'big red'], [4, '(e) go indoors, away from', 'green'], [4, 'trees, open ground, water', 'green']],
+  (svg, i, t) => { sep(svg); ground(svg, 240); const d = i < 3 ? d1 : i === 3 ? d1 + (d2 - d1) * t : d2, x = X(d);
+    cloud(svg, x, 50, 1); bolt(svg, x - 12, 70, 168, {op: i === 0 ? t : .9});
+    K.el('rect', {x: 296, y: 196, width: 46, height: 44, fill: '#fde68a', stroke: '#a16207'}, svg); K.polygon(svg, [P(290, 198), P(319, 172), P(348, 198)], {fill: '#b91c1c'}, svg);
+    person(svg, i === 4 ? 372 - 52 * t : 372, 240, 50, '#db2777', {op: i === 4 ? 1 - .6 * t : 1});
+    if (i === 0 || i === 2) lightRay(svg, P(x, 150), P(366, 200), i === 0 ? t : 1);
+    if (i === 0 || i === 1) wavefronts(svg, P(x, 200), 10 + (360 - x) * (i === 0 ? t : 1), {n: 3, gap: 16, a1: -30, a2: 30});
+    K.dim(svg, P(x, 270), P(360, 270), `${gr(d)} m`, 0); timer(svg, P(320, 130), i === 0 ? 6 * t : i >= 3 ? 3 : 6); });
+})();
+
+/* D19: noise pollution */
+S('D19', ['<b>(a)</b> Noise pollution: unnecessary sound that is unbearable and uncomfortable and harms people and other living things.', '<b>(b)</b> Causes: vehicles and horns, loudspeakers, construction machines, factories, firecrackers.', '<b>(c)</b> Effects: headache, sleeplessness, stress, high blood pressure, hearing loss, poor concentration.', '<b>(d)</b> Most affected: traffic police, factory and construction workers, patients, babies, students.', '<b>(e)</b> Reduce it: no air horns, working silencers, box-type speakers, no loudspeakers 10 pm – 6 am, trees, ear plugs and muffs.'], [
+  [0, '(a) unwanted, harmful sound', 'big'], [1, '(b) horns, loudspeakers', 'red'], [2, '(c) headache, stress, deafness', 'red'], [3, '(d) traffic police, patients', 'amber'], [4, '(e) silencers, box speakers,', 'green'], [4, 'trees, ear plugs, time limits', 'green']],
+  (svg, i, t) => { sep(svg); const lv = i < 4 ? 95 : 95 - 35 * t; ground(svg, 230, '#475569');
+    K.el('rect', {x: 30, y: 196, width: 70, height: 26, rx: 6, fill: '#dc2626'}, svg); K.el('circle', {cx: 46, cy: 224, r: 7, fill: '#111827'}, svg); K.el('circle', {cx: 86, cy: 224, r: 7, fill: '#111827'}, svg);
+    horn(svg, 150, 110, 1.2); sline(svg, P(116, 116), P(116, 228), {stroke: '#475569', 'stroke-width': 3});
+    if (i < 4) { wavefronts(svg, P(104, 205), 60 + 20 * Math.sin(t * 10), {n: 3, gap: 14, a1: -50, a2: 30, c: 'red'}); wavefronts(svg, P(152, 110), 70, {n: 3, gap: 14, a1: -40, a2: 40, c: 'red'}); }
+    if (i >= 4){ for (let q = 0; q < 3; q++){ K.el('circle', {cx: 230 + q * 26, cy: 182, r: 18, fill: '#16a34a', opacity: .8 * t}, svg); K.el('rect', {x: 227 + q * 26, y: 196, width: 6, height: 34, fill: '#78350f', opacity: t}, svg); } boxSpeaker(svg, 150, 140, .9); }
+    if (i === 2) text(svg, P(200, 40), '🤕 😫 💓 🙉', {class: 'lbl big', opacity: t});
+    if (i === 3) text(svg, P(200, 40), '👮 🏥 👶 🧑‍🎓', {class: 'lbl big', opacity: t});
+    dbBar(svg, 345, 60, 26, 170, lv, {limit: 85, title: 'dB (approx.)'}); });
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

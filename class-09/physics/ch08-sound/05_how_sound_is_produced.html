@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How Sound Is Produced</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.qa{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.6rem 1rem;margin:.7rem 0;box-shadow:var(--shadow)}
+.qa p{margin:.25em 0}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.bubbles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.7rem;margin:.8rem 0}
+.bubble{background:var(--surface);border:2px solid var(--purple);border-radius:18px;padding:.6rem .9rem;font-size:.95rem}
+.bubble .ml{display:block;font-weight:600;margin-bottom:.2rem}
+.obs td,.obs th{vertical-align:middle}
+.tw{overflow-x:auto}
+.diary{background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:1rem 0}
+.diary h3{margin:.1rem 0 .4rem;color:var(--accent-ink)}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;padding:.05rem .45rem;border-radius:6px;background:var(--surface2);color:var(--muted);margin-left:.3rem}
+.yn{display:inline-flex;gap:.3rem;flex-wrap:wrap}
+.yn .btn{padding:.25rem .6rem;font-size:.88rem}
+.btn.ok{background:var(--green-soft);border-color:var(--green);color:var(--text)}
+.btn.bad{background:var(--red-soft);border-color:var(--red);color:var(--text)}
+.why{font-size:.9rem;margin-top:.25rem}
+.sorter .item{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .6rem;padding:.45rem .6rem;border:1px solid var(--border);border-radius:8px;margin:.35rem 0;background:var(--surface2)}
+.sorter .item .t{flex:1 1 220px}
+.sorter .why{flex-basis:100%;margin:0}
+.score{font-weight:700;color:var(--primary-ink);margin:.4rem 0 0}
+.filled{font-weight:600;color:var(--green)}
+.pending{color:var(--muted);font-style:italic}
+.btn.primary .ml{color:#fff}
+</style>
+</head>
+<body data-page="05_how_sound_is_produced">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 8 · Section 1</span><span class="chip amber">Textbook pages 157–161</span>
+<h1>How Sound Is Produced <span class="ml">ശബ്ദം എങ്ങനെ ഉണ്ടാകുന്നു?</span></h1>
+<p class="lead">A school bell, a koel singing in the mango tree, thunder in the monsoon, the chenda at a temple festival – our world is full of sound. On this page you find out what every one of these sounds has in common: <b>something is vibrating</b>. You pluck a rubber band, strike a tuning fork, splash water with it, take six musical instruments apart and look inside your own throat.</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 1–3 of this guide)</div>
+<ul style="margin:0">
+<li><b>Vibration</b> (<span class="ml">കമ്പനം</span>) = a rapid to-and-fro motion about one rest position – a plucked string, a swing, a ruler twanged on a desk.</li>
+<li><b>Straight-line motion</b> (<span class="ml">നേർരേഖാചലനം</span>) = moving along a line to new places – a ball rolling along the floor.</li>
+<li>Air is made of tiny particles that bump into their neighbours (page 2). A vibrating object pushes and pulls these particles (page 3).</li>
+</ul></div>
+
+<h2 id="open">1. The bell that made no sound</h2>
+<p>The chapter opens in a physics lab. A bell is fixed inside a glass <b>bell jar</b> (<span class="ml">ബെൽജാർ</span>) that stands on the plate of a <b>vacuum pump</b> (<span class="ml">വാക്വം പമ്പ്</span>). The teacher presses the switch…</p>
+<div class="bubbles">
+<div class="bubble"><span class="ml">ബെൽ പ്രവർത്തിച്ചിട്ടും ശബ്ദം കേൾക്കാൻ കഴിയുന്നില്ലല്ലോ!</span>The bell is working, but I can't hear any sound!</div>
+</div>
+<div class="lab">
+  <div class="lab-title">🎬 The opening picture – a bell inside a bell jar</div>
+  <svg id="bjSvg" viewBox="0 0 800 320" role="img" aria-label="An electric bell inside a glass bell jar on a vacuum pump; as the air is pumped out the sound outside fades although the hammer keeps striking"></svg>
+  <div class="controls"><button class="btn primary" id="bjSwitch">🔔 Press the bell switch</button><button class="btn" id="bjPump">⬇ Pump the air out</button><button class="btn" id="bjAir">⬆ Let the air back in</button></div>
+  <div class="readout" id="bjOut"></div>
+  <p class="hint">Blue dots = air particles (a sketch – real air has far more). The loudness bar is a simple model: the less air, the fainter the sound outside. A real pump can never remove <i>all</i> the air, so a very faint sound may remain. The bell-jar experiment is a <b>teacher's demonstration</b>.</p>
+</div>
+<div class="qa"><p><b>Q (page 157).</b> <span class="ml">ബെൽജാറിനുള്ളിലെ അലാം പ്രവർത്തിച്ചിട്ടും കുട്ടിക്ക് ശബ്ദം കേൾക്കാൻ കഴിയാത്തതിനു കാരണം എന്തായിരിക്കും?</span> – The alarm inside the bell jar is working, yet she cannot hear it. What could be the reason?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">The vacuum pump has <b>removed the air</b> from the bell jar. Sound needs a medium (like air) to travel; with (almost) no air between the bell and the glass, the sound cannot get out to her ear – even though she can <i>see</i> the hammer striking. <i>Why we can still see it:</i> light does not need air. You will prove this step by step on <a href="06_propagation_of_sound.html">page 6 ▶</a>.</div></div></div>
+
+<h2 id="what">2. What is sound?</h2>
+<p><span class="ml">പ്രകൃതിയിൽ ഉണ്ടാകുന്നതും മനുഷ്യനിർമ്മിതവുമായ നിരവധി ശബ്ദങ്ങൾ നാം ശ്രവിക്കാറുണ്ടല്ലോ. ശബ്ദമില്ലാത്ത ലോകത്തെക്കുറിച്ച് ചിന്തിക്കാനാകുമോ? എന്താണ് ശബ്ദം?</span> – We hear many sounds, some made by nature and some made by people. Can you imagine a world without sound? What is sound?</p>
+<div class="diary"><h3>📒 Science diary – sounds you know (<span class="ml">നിങ്ങൾക്ക് പരിചിതമായ ശബ്ദങ്ങൾ</span>)</h3>
+<ul style="margin:0"><li><span class="ml">സ്കൂൾബെൽ മുഴങ്ങുമ്പോഴുണ്ടാകുന്ന ശബ്ദം</span> – the sound of the school bell</li><li><span class="ml">കുയിലിന്റെ നാദം</span> – the song of the koel</li><li><span class="ml">ഇടിനാദം</span> – thunder</li></ul>
+<div class="reveal" data-btn="Show more examples"><p style="margin:.3rem 0 0">Rain on a tiled or tin roof · waves at the beach · the chenda and nadaswaram at the temple · a vehicle horn · a pressure-cooker whistle · a crow cawing · the mixie in the kitchen · a mobile ringtone · leaves rustling in the wind.</p></div></div>
+<div class="lab">
+  <div class="lab-title">🧪 Sort the sounds: made by nature or made by people?</div>
+  <div id="srcSort"></div>
+</div>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 157)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">ശ്രവണബോധം ഉളവാക്കുന്ന ഊർജരൂപമാണ് ശബ്ദം.</p>
+<p>Sound is a <b>form of energy</b> (<span class="ml">ഊർജരൂപം</span>) that produces the <b>sensation of hearing</b> (<span class="ml">ശ്രവണബോധം</span>).</p></div>
+<div class="qa"><p><b>Q (page 158).</b> <span class="ml">നിത്യജീവിതത്തിൽ ശബ്ദം പ്രയോജനപ്പെടുന്ന സന്ദർഭങ്ങൾ ലിസ്റ്റ് ചെയ്യൂ.</span> – List situations in daily life where sound is useful. The textbook gives the first: <span class="ml">സംഗീതാസ്വാദനത്തിന്</span> – for enjoying music.</p>
+<div class="reveal" data-btn="Show more uses"><div class="answer">
+<b>Talking</b> to each other and learning in class · <b>alarms and bells</b> (school bell, alarm clock, fire alarm) · <b>horns</b> that warn people on the road · <b>announcements</b> at bus stands and railway stations · a doctor listening to the heart with a <b>stethoscope</b> · a mechanic finding a fault by the sound of an engine · <b>animals communicating</b> (a mother hen calling her chicks, a dog barking a warning) · going further: <b>ultrasound scanning</b> in hospitals and SONAR on ships (page 12). <i>Why it matters:</i> sound carries information and warnings to us without our having to look.</div></div></div>
+
+<h2 id="produce">3. How is sound produced? (Fig 8.1, 8.2)</h2>
+<p>Fig 8.1 shows a man striking the hanging iron school bell with a hammer. A boy wonders: <span class="ml">ഈ ബെല്ലിൽനിന്ന് ശബ്ദമുണ്ടാകുന്നതിന് കാരണമെന്തായിരിക്കും?</span> – <em>What makes the sound come from this bell?</em></p>
+<div class="reveal" data-btn="Show answer"><div class="answer">When the hammer strikes it, the metal bell <b>vibrates</b> – it moves to and fro very fast. Touch a bell just after it is struck and you can feel it tingle; hold it tightly and the sound stops. <i>Why:</i> the vibrating metal pushes and pulls the air around it, and this disturbance reaches our ears. The next two activities prove it.</div></div>
+
+<h3>Activity – a rubber-band "instrument" (Fig 8.2)</h3>
+<p><span class="ml">പെൻസിൽ ബോക്സ്, റബ്ബർ ബാൻഡ്, പെൻസിലുകൾ ഇവ ഉപയോഗിച്ച് ശബ്ദം ഉണ്ടാക്കുന്ന ഒരു ഉപകരണം നിർമ്മിക്കൂ. റബ്ബർ ബാൻഡിന്റെ മധ്യഭാഗം അല്പം വലിച്ചു വിടൂ.</span> – Stretch a rubber band lengthwise round a pencil box, slip two pencils under it near the ends, then pull the middle of the band a little and let go.</p>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: pull the band and let go (Fig 8.2)</div>
+  <svg id="rbSvg" viewBox="0 0 800 330" role="img" aria-label="Side view of a rubber band stretched over two pencils on a pencil box; when plucked its middle moves up and down, shown on a position–time graph"></svg>
+  <div class="controls"><label>pull the middle up <input id="rbPull" type="range" min="0" max="10" step="1" value="6"><output></output> mm</label>
+  <button class="btn primary" id="rbGo">✋ Let go</button><button class="btn" id="rbStop">🤏 Touch the band to stop it</button></div>
+  <div class="readout" id="rbOut"></div>
+  <div class="tw"><table class="obs"><thead><tr><th>Textbook question (page 158)</th><th>Your observation</th></tr></thead><tbody>
+  <tr><td><span class="ml">ശബ്ദം കേൾക്കുന്നുണ്ടോ?</span> Do you hear a sound?</td><td><span class="yn" data-ans="0" data-why="Yes – a twang is heard while the band is moving."><button class="btn">Yes</button><button class="btn">No</button></span><div class="why"></div></td></tr>
+  <tr><td><span class="ml">റബ്ബർ ബാൻഡ് അങ്ങോട്ടുമിങ്ങോട്ടും ദ്രുതഗതിയിൽ ചലിക്കുന്നതായി അനുഭവപ്പെടുന്നുണ്ടോ?</span> Does the band move to and fro rapidly?</td><td><span class="yn" data-ans="0" data-why="Yes – it looks blurred because it moves up and down very fast (the lab shows it in slow motion)."><button class="btn">Yes</button><button class="btn">No</button></span><div class="why"></div></td></tr>
+  <tr><td><span class="ml">റബ്ബർ ബാൻഡ് ഏതുതരം ചലനത്തിലാണ്? (കമ്പനം/നേർരേഖാചലനം)</span> What kind of motion is it?</td><td><span class="yn" data-ans="0" data-why="Vibration (കമ്പനം) – it moves to and fro about its rest position and never goes anywhere new. The graph goes up and down around the middle line."><button class="btn">vibration (കമ്പനം)</button><button class="btn">straight-line motion (നേർരേഖാചലനം)</button></span><div class="why"></div></td></tr>
+  </tbody></table></div>
+  <p class="hint">Shown in <b>slow motion</b>: a real rubber band vibrates far too fast to follow with the eye – many times every second. Notice that the sound lasts exactly as long as the vibration does.</p>
+</div>
+
+<h3>Toys that make sound (Fig 8.3)</h3>
+<p><span class="ml">ശബ്ദം ഉണ്ടാക്കാൻ കഴിയുന്ന കളിപ്പാട്ടങ്ങൾ നിങ്ങൾക്ക് പരിചിതമാണല്ലോ.</span> – You know many toys that make sound. The textbook shows three Kerala favourites.</p>
+<div class="lab">
+  <div class="lab-title">🎬 What vibrates in each toy?</div>
+  <div class="controls"><button class="btn primary" id="toyA">(a) <span class="ml">ഓലപ്പീപ്പി</span> palm-leaf whistle</button><button class="btn" id="toyB">(b) <span class="ml">പേപ്പർവിസിൽ</span> paper whistle</button><button class="btn" id="toyC">(c) <span class="ml">ചിരട്ടവീണ</span> coconut-shell veena</button></div>
+  <svg id="toySvg" viewBox="0 0 800 300" role="img" aria-label="The chosen sound toy; its vibrating parts are marked in red and amber"></svg>
+  <div class="controls"><button class="btn primary" id="toyPlay">▶ Blow / play (silent animation)</button></div>
+  <div class="readout" id="toyOut"></div>
+</div>
+<div class="diary"><h3>📒 Make a toy and write it up (<span class="ml">സയൻസ് ഡയറി</span>)</h3>
+<p style="margin-top:0"><span class="ml">ഇഷ്ടമുള്ള ഒരു കളിപ്പാട്ടം നിർമ്മിച്ച് അതിന്റെ ശബ്ദം ശ്രവിക്കൂ. അതിൽ എങ്ങനെയാണ് ശബ്ദം ഉണ്ടാകുന്നത് എന്ന് ചർച്ച ചെയ്തു കണ്ടെത്തി സയൻസ് ഡയറിയിൽ എഴുതൂ.</span> – Make a toy you like, listen to its sound, find out how it makes the sound and write it in your science diary.</p>
+<ol style="margin:.2rem 0"><li><b>Name and materials</b> (e.g. straw whistle: a drinking straw and scissors).</li><li><b>How to make it</b> in 3–4 steps with a sketch (flatten one end of the straw and cut it into a V).</li><li><b>What vibrates?</b> (the two flaps of the V and the air inside the straw).</li><li><b>Test:</b> what happens if you pinch the vibrating part? (the sound stops). How can you change the sound? (cut the straw shorter – the note becomes higher).</li></ol>
+<div class="reveal" data-btn="Show more toy ideas"><p style="margin:.3rem 0 0">Balloon drum (a balloon skin stretched over a tin – the skin vibrates) · rubber-band guitar on a box (the bands) · a bottle whistle (blow across the mouth – the air inside vibrates) · a comb-and-paper kazoo (the paper) · a "phone" of two paper cups and a string (page 11 – the string carries the vibrations) · a spinning button on a string (the button cuts the air).</p></div></div>
+
+<h3>Activity – the tuning fork (Fig 8.4, 8.5)</h3>
+<p>A <b>tuning fork</b> (<span class="ml">ട്യൂണിങ് ഫോർക്ക്</span>) is a U-shaped steel fork with a stem. <span class="ml">ട്യൂണിങ് ഫോർക്കിന്റെ ഒരു ഭുജത്തിൽ റബ്ബർ ചുറ്റിക കൊണ്ട് അടിച്ച് ഉത്തേജിപ്പിക്കൂ. ഉത്തേജിപ്പിച്ച ഫോർക്കിനെ ചെവിയുടെ സമീപത്തേക്ക് കൊണ്ടുവരൂ.</span> – Strike one prong with a rubber hammer and bring the fork near your ear. Then touch the prongs gently, dip them into water, and finally grip both prongs tightly.</p>
+<div class="safety">⚠ Strike the fork only with a rubber hammer or on a rubber pad – never on a desk, a glass or a stone. Use a plastic or steel bowl of water (no glassware), and do not push the fork into your ear: hold it a few centimetres away.</div>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: strike, listen, touch, dip and grip (Fig 8.4, 8.5)</div>
+  <div class="controls"><button class="btn primary" id="tfStrike">🔨 Strike with the rubber hammer</button><button class="btn" id="tfEar">👂 Bring it near the ear</button><button class="btn" id="tfTouch">☝ Touch the prongs gently</button><button class="btn" id="tfWater">💧 Touch the prongs to water</button><button class="btn" id="tfGrip">✊ Strike again, then grip both prongs</button></div>
+  <svg id="tfSvg" viewBox="0 0 800 380" role="img" aria-label="A tuning fork; its prongs vibrate after being struck, make water splash, and stop when gripped"></svg>
+  <div class="tw"><table class="obs"><thead><tr><th>What you do</th><th>Textbook question</th><th>Observation (fills in as you do it)</th></tr></thead><tbody>
+  <tr><td>Struck fork near the ear</td><td><span class="ml">ശബ്ദം കേൾക്കാൻ കഴിയുന്നുണ്ടോ?</span> Can you hear a sound?</td><td id="tfO1" class="pending">not done yet</td></tr>
+  <tr><td>Touch the prongs gently</td><td><span class="ml">ട്യൂണിങ് ഫോർക്കിന്റെ ഭുജങ്ങൾ കമ്പനം ചെയ്യുന്നതായി അനുഭവപ്പെടുന്നില്ലേ?</span> Don't you feel the prongs vibrating?</td><td id="tfO2" class="pending">not done yet</td></tr>
+  <tr><td>Touch the prongs to the water surface (Fig 8.5)</td><td><span class="ml">ജലകണികകൾ തെറിച്ചു പോകുന്നതിനു കാരണം ട്യൂണിങ് ഫോർക്കിന്റെ കമ്പനമല്ലേ?</span> Isn't the splashing caused by the fork's vibration?</td><td id="tfO3" class="pending">not done yet</td></tr>
+  <tr><td>Strike again and grip both prongs tightly</td><td><span class="ml">ശബ്ദം കേൾക്കാൻ കഴിയുന്നുണ്ടോ?</span> Can you hear a sound?</td><td id="tfO4" class="pending">not done yet</td></tr>
+  <tr><td>… still gripped</td><td><span class="ml">ഇപ്പോൾ ട്യൂണിങ് ഫോർക്ക് കമ്പനം ചെയ്യുന്നുണ്ടോ?</span> Is the fork vibrating now?</td><td id="tfO5" class="pending">not done yet</td></tr>
+  </tbody></table></div>
+  <div class="readout" id="tfOut"></div>
+  <p class="hint">Shown in slow motion with the prong movement exaggerated. A school tuning fork really vibrates hundreds of times every second (forks marked 256 or 512 are common – going further, that number is its frequency in hertz).</p>
+</div>
+<div class="qa"><p><b>Q.</b> <span class="ml">നിരീക്ഷണങ്ങളിൽ നിന്ന് എന്ത് നിഗമനത്തിലാണ് എത്തിച്ചേർന്നത്?</span> – What conclusion do you reach from these observations?</p>
+<div class="reveal" data-btn="Show the conclusion"><div class="answer">While the fork <b>vibrates</b>, we hear a sound (and the water splashes). When the vibration is stopped by gripping, the sound <b>stops at once</b>. So <b>sound is produced by the vibration of objects</b>. <i>Why the gripping test matters:</i> it shows the link both ways – no vibration, no sound.</div></div></div>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 159)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">വസ്തുക്കളുടെ കമ്പനം മൂലമാണ് ശബ്ദം ഉണ്ടാകുന്നത്. ശബ്ദം ഉണ്ടാക്കുന്ന വസ്തുക്കളാണ് ശബ്ദസ്രോതസ്സുകൾ.</p>
+<p>Sound is produced by the <b>vibration</b> (<span class="ml">കമ്പനം</span>) of objects. Objects that produce sound are called <b>sources of sound</b> (<span class="ml">ശബ്ദസ്രോതസ്സുകൾ</span>).</p></div>
+<div class="diary"><h3>📒 Examples of sources of sound (<span class="ml">ശബ്ദസ്രോതസ്സുകൾ</span>)</h3>
+<p style="margin:0">Textbook: <span class="ml">ട്യൂണിങ് ഫോർക്ക്</span> tuning fork · <span class="ml">സംഗീതോപകരണങ്ങൾ</span> musical instruments.</p>
+<div class="reveal" data-btn="Show more sources"><p style="margin:.3rem 0 0">Bells · our vocal cords · loudspeakers and earphones (a vibrating cone or diaphragm) · a buzzing bee or mosquito (wings) · a vehicle engine · a pressure-cooker whistle (air) · thunder (air heated suddenly by lightning) · a rubber band · a ruler twanged on a desk.</p></div>
+<p style="margin:.6rem 0 0">Musical instruments you know (<span class="ml">സംഗീതോപകരണങ്ങൾ</span>) – textbook: <span class="ml">ഓടക്കുഴൽ</span> flute (odakkuzhal), <span class="ml">മൃദംഗം</span> mridangam.</p>
+<div class="reveal" data-btn="Show more instruments"><p style="margin:.3rem 0 0">Veena, violin, chenda, tabla, harmonium, <span class="ml">ഇലത്താളം</span> (elathalam, cymbals), idakka, maddalam, timila, nadaswaram, kombu, shankhu (conch), guitar, keyboard, ghatam.</p></div></div>
+
+<h2 id="instr">4. Musical instruments – main and associated parts (Fig 8.6, Table 8.1)</h2>
+<p><span class="ml">സംഗീതോപകരണങ്ങൾ പ്രവർത്തിപ്പിക്കുമ്പോൾ ഏതൊക്കെ ഭാഗങ്ങളാണ് കമ്പനം ചെയ്യുന്നതെന്ന് ശ്രദ്ധിച്ചിട്ടുണ്ടോ?</span> – Have you noticed which parts vibrate when an instrument is played? Every instrument has one <b>main part</b> (<span class="ml">പ്രധാന ഭാഗം</span>) that is set vibrating first, and <b>associated parts</b> (<span class="ml">അനുബന്ധ ഭാഗങ്ങൾ</span>) that vibrate along with it.</p>
+<div class="lab">
+  <div class="lab-title">🧪 Instrument explorer – find every part that vibrates (Fig 8.6)</div>
+  <div class="controls" id="insPick"></div>
+  <svg id="insSvg" viewBox="0 0 800 330" role="img" aria-label="The chosen musical instrument; its main vibrating part shows in red, associated vibrating parts in amber, and parts that do not make the sound in grey"></svg>
+  <div class="controls"><span class="small muted">Click each part:</span><span id="insParts" class="yn"></span><button class="btn primary" id="insPlay">▶ Play (silent animation)</button></div>
+  <div class="readout" id="insOut"></div>
+  <div class="tw"><table class="obs"><caption class="small muted">Table 8.1 – fills in when you have found every part of an instrument (or press “Fill this row”)</caption>
+  <thead><tr><th>Instrument <span class="ml">സംഗീതോപകരണം</span></th><th>Main part that vibrates and makes the sound <span class="ml">കമ്പനം ചെയ്ത് ശബ്ദം പുറപ്പെടുവിക്കുന്ന പ്രധാന ഭാഗം</span></th><th>Associated parts that vibrate <span class="ml">അനുബന്ധമായി കമ്പനം ചെയ്യുന്ന ഭാഗങ്ങൾ</span></th></tr></thead>
+  <tbody id="insBody"></tbody></table></div>
+  <div class="controls"><button class="btn" id="insFill">📝 Fill this row</button></div>
+</div>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 160)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">ഓരോ ശബ്ദസ്രോതസ്സിലും കമ്പനം ചെയ്യുന്ന ഒരു പ്രധാന ഭാഗം ഉണ്ടായിരിക്കും. ഒരു ശബ്ദസ്രോതസ്സിൽ നിന്നു പുറപ്പെടുന്ന ശബ്ദം സ്രോതസ്സിന്റെ പല ഭാഗങ്ങളുടെയും ചുറ്റുമുള്ള വായുവിന്റെ കമ്പനങ്ങളുടെയും പരിണത ഫലമായിട്ടാണ് നമുക്ക് ശ്രവിക്കാൻ കഴിയുന്നത്. സംഗീതോപകരണങ്ങളിൽ നിന്നുള്ള ശബ്ദം കൂടുതൽ ഇമ്പമുള്ളതാക്കാനും ശബ്ദത്തിന്റെ തീവ്രത വർധിപ്പിക്കാനും പ്രധാന ഭാഗത്തിന്റെയും അനുബന്ധഭാഗങ്ങളുടെയും കമ്പനം സഹായിക്കും.</p>
+<ul style="margin:0"><li>Every source of sound has a <b>main part that vibrates</b>.</li>
+<li>The sound we hear is the <b>combined effect</b> of the vibrations of several parts of the source and of the <b>surrounding air</b>.</li>
+<li>In musical instruments, the vibrations of the main part and the associated parts make the sound <b>sweeter</b> and <b>louder</b>.</li></ul></div>
+<div class="callout think"><div class="title">💡 Why does a veena need its big round kudam?</div>
+<p>A string on its own is thin – it pushes very little air, so its sound is weak. Fixed to a hollow wooden body, its vibrations make the whole body and the air inside vibrate too. This large vibrating surface pushes much more air, so the sound becomes <b>louder</b>, and the body adds its own rich tone, so it becomes <b>sweeter</b>. Try it: pluck a rubber band held between two fingers, then the same band stretched over an open box.</p></div>
+<div class="callout real"><div class="title">🌴 Kerala connection – chenda melam and panchavadyam</div>
+<p>At <b>Thrissur Pooram</b> and other temple festivals, rows of <b>chenda</b> players perform the chenda melam. Each stick-stroke sets the stretched skin vibrating; the wooden frame and the air inside the long body join in, which is why a single chenda can be heard far across the temple ground. In <b>panchavadyam</b> the five instruments are timila, maddalam and idakka (skin), elathalam (metal plates) and kombu (a horn – the air column inside vibrates). The <b>mridangam</b> of a Carnatic concert works like the tabla: a skin at each end, a hollow wooden body.</p></div>
+
+<h2 id="voice">5. Our voice (Fig 8.7)</h2>
+<div class="bubbles"><div class="bubble"><span class="ml">ഞാൻ സംസാരിക്കുമ്പോൾ പ്രധാനമായും കമ്പനം ചെയ്യുന്നത് ഏത് ഭാഗമായിരിക്കും?</span>When I speak, which part mainly vibrates?</div></div>
+<p><span class="ml">ഉച്ചത്തിൽ സംസാരിച്ചുകൊണ്ട് തൊണ്ടയിൽ സ്പർശിച്ചുനോക്കൂ കമ്പനം അനുഭവപ്പെടുന്നില്ലേ?</span> – Touch your throat while you speak loudly. Don't you feel a vibration? <span class="ml">ശ്വാസനാളത്തിന്റെ മുകൾഭാഗത്തുള്ള സ്വനപേടകത്തിലെ (Larynx/voice box) സ്വനതന്തുക്കൾ (vocal cords) കമ്പനം ചെയ്യുമ്പോഴാണ് ശബ്ദം ഉണ്ടാകുന്നത്.</span> – Our voice is produced when the <b>vocal cords</b> (<span class="ml">സ്വനതന്തുക്കൾ</span>) in the <b>larynx or voice box</b> (<span class="ml">സ്വനപേടകം</span>), at the top of the windpipe, vibrate.</p>
+<div class="lab">
+  <div class="lab-title">🧪 Inside the throat – the voice box (Fig 8.7)</div>
+  <div class="controls"><button class="btn" id="vbBreathe">🌬 Breathe quietly</button><button class="btn primary" id="vbSpeak">🗣 Speak loudly</button><button class="btn" id="vbTouch">☝ Touch the throat</button></div>
+  <svg id="vbSvg" viewBox="0 0 800 340" role="img" aria-label="Side view of the head and throat showing the windpipe and voice box, and a view from above of the two vocal cords, open while breathing and vibrating while speaking"></svg>
+  <div class="readout" id="vbOut"></div>
+  <p class="hint">A simple sketch, not to scale. The vocal cords are two folds of tissue across the top of the windpipe. Air pushed up from the lungs makes them vibrate when they are held close together.</p>
+</div>
+<div class="qa"><p><b>Q (page 161).</b> <span class="ml">നമ്മൾ സംസാരിക്കുമ്പോൾ സ്വനതന്തുക്കൾ മാത്രമായിരിക്കുമോ കമ്പനം ചെയ്യുന്നത്? കമ്പനം ചെയ്യാൻ സാധ്യതയുള്ള അനുബന്ധ ഭാഗങ്ങൾ ലിസ്റ്റ് ചെയ്യൂ.</span> – When we speak, do only the vocal cords vibrate? List the associated parts that may vibrate. (Textbook: <span class="ml">പേശികൾ</span> – muscles.)</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>No.</b> The vocal cords are the main vibrating part, but many associated parts vibrate with them: the <b>muscles</b> of the throat (given), the <b>air</b> in the windpipe, throat, mouth and nose, the walls of the throat and the <b>chest</b>, and the <b>lips, tongue, teeth and cheeks</b>, which also shape the sound into words. <i>Why we think so:</i> you can feel vibration on your chest and nose while humming; and when you have a cold (blocked nose) your voice changes even though your vocal cords are the same.</div></div></div>
+
+<h2 id="qs">6. Three textbook questions (page 161, Table 8.2)</h2>
+<div class="qa"><p><b>Q1.</b> <span class="ml">ചുവടെ നൽകിയിരിക്കുന്ന സംഗീതോപകരണങ്ങൾ വാദനം ചെയ്യുമ്പോൾ കമ്പനം ചെയ്യുന്ന പ്രധാനഭാഗം ഏത്? (a) മൃദംഗം (b) ഓടക്കുഴൽ (c) ഗിറ്റാർ</span> – Which is the main vibrating part when these are played: (a) mridangam (b) odakkuzhal (flute) (c) guitar?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">(a) Mridangam → the <b>stretched skin (membrane)</b> at its ends. (b) Odakkuzhal → the <b>air column inside</b> the bamboo tube. (c) Guitar → the <b>strings</b>. <i>Why:</i> in each case this is the part we strike, blow into or pluck – it starts vibrating first; the body and the air inside are associated parts.</div></div></div>
+<div class="qa"><p><b>Q2.</b> <span class="ml">പ്രധാനഭാഗമായോ അനുബന്ധഭാഗമായോ വായു കമ്പനം ചെയ്യുന്ന സംഗീതോപകരണങ്ങളുടെ പേരുകൾ ലിസ്റ്റ് ചെയ്യുക.</span> – List musical instruments in which air vibrates as the main part or as an associated part.</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>Air is the main part:</b> odakkuzhal (flute), nadaswaram, shehnai, kombu, conch (shankhu), trumpet and bugle, mouth organ and harmonium (with their reeds), whistle. <b>Air is an associated part:</b> veena, violin, guitar, chenda, tabla, mridangam, idakka, ghatam – the air inside the hollow body vibrates along with the strings or the skin. <i>Why so many:</i> almost every instrument has a hollow body, because the vibrating air inside makes the sound louder.</div></div></div>
+<div class="qa"><p><b>Q3 – Table 8.2.</b> <span class="ml">പട്ടിക 8.2 ൽ പരാമർശിച്ചിരിക്കുന്ന ജീവികൾ ശബ്ദമുണ്ടാക്കുമ്പോൾ അവയുടെ ഏതു ശരീരഭാഗമാണ് പ്രധാനമായും കമ്പനം ചെയ്യുന്നതെന്ന് വിവരശേഖരണം നടത്തി പട്ടിക പൂർത്തിയാക്കൂ.</span> – Find out which body part mainly vibrates when these animals make sound, and complete the table.</p>
+<div class="lab" style="margin:.4rem 0">
+<div class="tw"><table class="obs"><thead><tr><th>Animal <span class="ml">ജീവി</span></th><th>Part that vibrates to make the sound <span class="ml">ശബ്ദമുണ്ടാക്കാൻ കമ്പനം ചെയ്യുന്ന ഭാഗം</span></th></tr></thead><tbody>
+<tr><td>Honeybee <span class="ml">തേനീച്ച</span></td><td><b>wings</b> <span class="ml">ചിറക്</span> <span class="tag">given</span></td></tr>
+<tr><td>Elephant <span class="ml">ആന</span></td><td><b>vocal cords</b> <span class="ml">സ്വനതന്തു</span> <span class="tag">given</span></td></tr>
+<tr><td>Mosquito <span class="ml">കൊതുക്</span></td><td><span class="yn" data-ans="1" data-why="Wings – they beat several hundred times a second; that is the whine you hear near your ear at night."><button class="btn">vocal cords</button><button class="btn">wings</button><button class="btn">legs</button></span><div class="why"></div></td></tr>
+<tr><td>Cricket <span class="ml">ചീവീട്</span></td><td><span class="yn" data-ans="2" data-why="A cricket rubs its two front wings together (a toothed ridge on one wing scrapes the other), making them vibrate. (The cicada, also called ചീവീട്, instead vibrates a drum-like membrane on its body called the tymbal.)"><button class="btn">vocal cords</button><button class="btn">its feelers</button><button class="btn">wings rubbed together</button></span><div class="why"></div></td></tr>
+<tr><td>Koel <span class="ml">കുയിൽ</span></td><td><span class="yn" data-ans="0" data-why="The bird's voice box, called the syrinx, at the bottom of its windpipe – its membranes vibrate as air flows out. (Birds have a syrinx, not a larynx like ours, but it does the same job.)"><button class="btn">its voice box (syrinx)</button><button class="btn">its wings</button><button class="btn">its beak</button></span><div class="why"></div></td></tr>
+</tbody></table></div></div></div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.physicsclassroom.com/tutorial/sound-waves/nature-of-sound-waves/sound-is-a-mechanical-wave" target="_blank" rel="noopener noreferrer">📄 Sound is a Mechanical Wave</a> <span class="src">The Physics Classroom</span><br><span class="note">Every sound starts with something vibrating, and the vibration is passed on particle to particle.</span></li><li><a href="https://phet.colorado.edu/en/simulations/waves-intro" target="_blank" rel="noopener noreferrer">🧪 Waves Intro (PhET simulation)</a> <span class="src">PhET, University of Colorado Boulder</span><br><span class="note">Switch to the Sound tab, change frequency and amplitude, and watch the speaker cone vibrate.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/sound-waves/properties-of-sound/pitch-and-frequency" target="_blank" rel="noopener noreferrer">📄 Pitch and Frequency</a> <span class="src">The Physics Classroom</span><br><span class="note">Faster vibrations mean higher frequency and a higher pitch; also explains the 20 Hz to 20,000 Hz hearing range.</span></li><li><a href="https://en.wikipedia.org/wiki/Tuning_fork" target="_blank" rel="noopener noreferrer">📄 Tuning fork</a> <span class="src">Wikipedia</span><br><span class="note">How a tuning fork vibrates at one fixed frequency, and why musicians and doctors use it.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/sound-waves/physics-of-musical-instruments/guitar-strings" target="_blank" rel="noopener noreferrer">📄 Guitar Strings</a> <span class="src">The Physics Classroom</span><br><span class="note">How the length, tension and thickness of a string decide the note it plays.</span></li><li><a href="https://www.exploratorium.edu/snacks/pipes-of-pan" target="_blank" rel="noopener noreferrer">📄 Pipes of Pan</a> <span class="src">Exploratorium</span><br><span class="note">Make a set of pipes from tubes and hear how a longer air column gives a lower note.</span></li><li><a href="https://en.wikipedia.org/wiki/Chenda" target="_blank" rel="noopener noreferrer">📄 Chenda</a> <span class="src">Wikipedia</span><br><span class="note">Kerala&#x27;s famous temple drum: how its stretched skins vibrate to make that loud sound.</span></li><li><a href="https://en.wikipedia.org/wiki/Panchavadyam" target="_blank" rel="noopener noreferrer">📄 Panchavadyam</a> <span class="src">Wikipedia</span><br><span class="note">Kerala&#x27;s five-instrument temple orchestra, with drums, cymbals and a wind instrument playing together.</span></li></ul></div>
+
+<h2 id="check">7. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li>Sound is a form of energy that gives us the sensation of hearing.</li>
+<li>Sound is produced by <b>vibration</b> – a rapid to-and-fro motion (rubber band, tuning fork, bell). Stop the vibration and the sound stops.</li>
+<li>Objects that produce sound are <b>sources of sound</b>.</li>
+<li>Every source has a <b>main vibrating part</b> (strings of a veena, skin of a chenda, reeds of a harmonium, plates of an elathalam) and <b>associated parts</b> (body, air inside) that make the sound louder and sweeter.</li>
+<li>Our voice comes from the <b>vocal cords</b> in the <b>larynx (voice box)</b>; the throat, mouth, nose and the air in them vibrate too.</li>
+</ul></div>
+<p>Next: <a href="06_propagation_of_sound.html">How does sound reach our ears? – Propagation of sound ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Sound · Class 9 Physics", "icon": "🔔", "key": "physics_ch8_progress", "pages": [["index.html", "Home"], ["01_vibrations_oscillations.html", "1 · Vibrations & To-and-fro Motion"], ["02_particles_states_of_matter.html", "2 · Particles, Solids, Liquids & Gases"], ["03_waves_compressions.html", "3 · Waves, Compressions & Rarefactions"], ["04_speed_distance_time.html", "4 · Speed, Distance & Time; Light vs Sound"], ["05_how_sound_is_produced.html", "5 · How Sound Is Produced"], ["06_propagation_of_sound.html", "6 · Propagation of Sound"], ["07_speed_of_sound.html", "7 · Speed of Sound, Thunder & Lightning"], ["08_ear_and_hearing.html", "8 · The Ear, Hearing & Ear Care"], ["09_music_noise_pollution.html", "9 · Music, Noise & Noise Pollution"], ["10_intext_questions_solutions.html", "10 · In-text Questions – Solutions"], ["11_assess_solutions.html", "11 · Let Us Assess & Extended Activities – Solutions"], ["12_applications_explore.html", "12 · Applications & Explore Online"], ["13_summary_revision.html", "13 · Summary & Quick Quiz"], ["14_model_test_paper.html", "14 · Model Test Paper"], ["15_model_test_solutions.html", "15 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ==== common helpers (same on pages 05–09) ==== */
+const {P, el} = K;
+const $id = id => document.getElementById(id);
+const CV = c => (c[0] === '#' || c.startsWith('var(') || c.startsWith('rgb')) ? c : 'var(--' + (c === 'amber' ? 'accent' : c) + ')';
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const rnd = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const TAU = 2 * Math.PI;
+function ln(svg, a, b, c='text', w=2, extra=''){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, style: `stroke:${CV(c)};stroke-width:${w};stroke-linecap:round;${extra}`}, svg); }
+function arrow(svg, a, b, c='red', w=3, head=11){ const L = K.dist(a, b); if (L < 2) return; const hh = Math.min(head, L * .6); const u = K.unit(a, b), n = P(-u.y, u.x), base = P(b.x - u.x * hh, b.y - u.y * hh); ln(svg, a, base, c, w); K.polygon(svg, [b, P(base.x + n.x * hh * .55, base.y + n.y * hh * .55), P(base.x - n.x * hh * .55, base.y - n.y * hh * .55)], {style: `fill:${CV(c)}`}); }
+function rect(svg, x, y, w, h, style, rx=0){ return el('rect', {x, y, width: w, height: h, rx, style}, svg); }
+function circ(svg, c, r, style){ return el('circle', {cx: c.x, cy: c.y, r, style}, svg); }
+function ell(svg, c, rx, ry, style){ return el('ellipse', {cx: c.x, cy: c.y, rx, ry, style}, svg); }
+function path(svg, d, style){ return el('path', {d, style}, svg); }
+function tx(svg, x, y, s, cls='lbl', anchor='start', extra={}){ return K.text(svg, P(x, y), s, {class: cls, 'text-anchor': anchor, ...extra}); }
+/* sound "ripples" spreading from c towards dirDeg; s = strength 0..1, ph = time in s */
+function waves(svg, c, dirDeg, s, ph, o={}){ if (s <= .01) return; const n = o.n || 3, gap = o.gap || 16, r0 = o.r0 || 12, half = o.half || 38;
+  for (let k = 0; k < n; k++){ const f = (ph * (o.speed || 1.2) + k / n) % 1, r = r0 + f * gap * n, a1 = K.rad(dirDeg - half), a2 = K.rad(dirDeg + half);
+    path(svg, `M${(c.x + r * Math.cos(a1)).toFixed(1)},${(c.y + r * Math.sin(a1)).toFixed(1)} A${r.toFixed(1)},${r.toFixed(1)} 0 ${half > 90 ? 1 : 0},1 ${(c.x + r * Math.cos(a2)).toFixed(1)},${(c.y + r * Math.sin(a2)).toFixed(1)}`, `fill:none;stroke:${CV(o.c || 'blue')};stroke-width:${o.w || 2.5};stroke-linecap:round;opacity:${(s * (1 - f) * .95).toFixed(3)}`); } }
+/* simple head; facing = -1 looks left (ear on the right side of the face), +1 looks right */
+function head(svg, c, r=26, facing=-1, o={}){ const g = K.group(svg);
+  circ(g, c, r, `fill:${o.skin || '#f5c49b'};stroke:var(--text);stroke-width:1.5`);
+  path(g, `M${c.x - r},${c.y - 4} A${r},${r} 0 0,1 ${c.x + r},${c.y - 4} L${c.x + r * .9},${c.y - r * .45} Q${c.x},${c.y - r * .62} ${c.x - r * .9},${c.y - r * .45} Z`, `fill:${o.hair || '#1f2937'}`);
+  circ(g, P(c.x + facing * r * .45, c.y + 2), 2.4, 'fill:#1f2937');
+  ell(g, P(c.x - facing * r * .2, c.y + 4), 5, 8, 'fill:#eab38a;stroke:#92400e;stroke-width:1.2');
+  return g; }
+/* shared animation clock: runs only while a lab is on screen and was used in the last 25 s */
+const ANIM = []; let animOn = false, animLast = 0;
+function animLoop(now){ const dt = Math.min(.05, Math.max(0, (now - animLast) / 1000)); animLast = now; let any = false;
+  for (const it of ANIM){ if (it.vis && now < it.until){ it.t += dt; try { it.fn(it.t, dt); } catch (e){ it.until = 0; throw e; } any = true; } }
+  if (any) requestAnimationFrame(animLoop); else animOn = false; }
+function animStart(){ if (!animOn){ animOn = true; animLast = performance.now(); requestAnimationFrame(animLoop); } }
+function anim(elm, fn){ const it = {elm, fn, t: 0, until: 0, vis: true}; ANIM.push(it);
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(e => { it.vis = e.isIntersecting; if (it.vis) wake(it); })).observe(elm);
+  it.fn(0, 0); wake(it); return it; }
+function wake(it){ it.until = performance.now() + 25000; animStart(); }
+/* buttons that behave like radio buttons; returns a setter */
+function radio(ids, onPick){ const els = ids.map(id => $id(id)); const set = k => { els.forEach((b, i) => b.classList.toggle('primary', i === k)); onPick(k); }; els.forEach((b, i) => b.addEventListener('click', () => set(i))); return set; }
+/* choice buttons: <span class="yn" data-ans="1" data-why="..."><button class="btn">…</button>…</span> followed by a <div class="why"> */
+function choices(root=document){ K.$$('.yn[data-ans]', root).forEach(box => { const ans = +box.dataset.ans, why = box.parentElement.querySelector('.why');
+  K.$$('button', box).forEach((b, k) => b.addEventListener('click', () => { K.$$('button', box).forEach(x => x.classList.remove('ok', 'bad')); b.classList.add(k === ans ? 'ok' : 'bad');
+    if (why){ why.innerHTML = k === ans ? '✅ ' + (box.dataset.why || 'Correct.') : '❌ ' + (box.dataset.hint || 'Look at the lab again and try the other option.'); why.style.color = k === ans ? 'var(--green)' : 'var(--red)'; } })); }); }
+/* two-way sorter: items = [{t, a: 0|1, why}] */
+function sorter(id, labels, items){ const box = $id(id); box.classList.add('sorter'); let right = 0; const done = new Set();
+  box.innerHTML = items.map((it, i) => `<div class="item"><span class="t">${it.t}</span><span class="yn">${labels.map((l, k) => `<button class="btn" data-i="${i}" data-k="${k}">${l}</button>`).join('')}</span><div class="why"></div></div>`).join('') + '<p class="score"></p>';
+  const score = box.querySelector('.score'); const upd = () => { score.textContent = `Sorted correctly: ${right} of ${items.length}` + (right === items.length ? ' – well done!' : ''); }; upd();
+  box.addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (!b) return; const i = +b.dataset.i, k = +b.dataset.k, it = items[i], row = b.closest('.item');
+    K.$$('button', row).forEach(x => x.classList.remove('ok', 'bad')); b.classList.add(k === it.a ? 'ok' : 'bad');
+    const w = row.querySelector('.why'); w.innerHTML = (k === it.a ? '✅ ' : '❌ Not quite – ') + it.why; w.style.color = k === it.a ? 'var(--green)' : 'var(--red)';
+    if (k === it.a && !done.has(i)){ done.add(i); right++; } else if (k !== it.a && done.has(i)){ done.delete(i); right--; } upd(); }); }
+/* ==== end common ==== */
+const WOOD = '#b45309', WOOD2 = '#7c2d12', SKIN = '#fde7c4', BRASS = '#d4a017', STEEL = '#94a3b8';
+
+/* ---------- 1. bell jar (opening picture) ---------- */
+(function(){
+  const svg = $id('bjSvg'), out = $id('bjOut'); let on = false, air = 1, target = 1;
+  const pts = []; for (let i = 0; pts.length < 70 && i < 2000; i++){ const x = 172 + rnd(i) * 196, y = 72 + rnd(i + 999) * 188; if (y >= 140 || ((x - 270) / 104) ** 2 + ((y - 140) / 84) ** 2 < 1) pts.push(P(x, y)); }
+  function draw(t){
+    K.clear(svg);
+    rect(svg, 0, 290, 800, 30, 'fill:#a16207;opacity:.35');
+    rect(svg, 120, 268, 300, 22, 'fill:var(--blue);opacity:.55', 4);
+    ln(svg, P(420, 281), P(640, 281), 'muted', 6); rect(svg, 640, 236, 130, 54, 'fill:var(--surface2);stroke:var(--text);stroke-width:1.5', 6);
+    tx(svg, 705, 258, 'vacuum pump', 'lbl sm', 'middle'); tx(svg, 705, 276, 'വാക്വം പമ്പ്', 'lbl sm purple', 'middle');
+    rect(svg, 455, 200, 34, 64, 'fill:var(--blue);opacity:.8', 4); tx(svg, 472, 228, 'battery', 'lbl sm', 'middle', {transform: 'rotate(-90 472 228)'});
+    rect(svg, 520, 250, 40, 16, 'fill:var(--surface2);stroke:var(--text);stroke-width:1.2', 4); circ(svg, P(540, 248), 6, `fill:${on ? 'var(--red)' : 'var(--muted)'}`); tx(svg, 540, 236, 'switch', 'lbl sm', 'middle');
+    K.polyline(svg, [P(472, 200), P(472, 180), P(420, 180)], {style: 'stroke:var(--text);stroke-width:1.5;fill:none'}); K.polyline(svg, [P(489, 258), P(520, 258)], {style: 'stroke:var(--text);stroke-width:1.5;fill:none'});
+    /* inside: stand, bell, electromagnet, hammer */
+    ln(svg, P(300, 268), P(300, 130), 'text', 3); ln(svg, P(300, 130), P(262, 130), 'text', 3);
+    const g0 = P(262, 200); circ(svg, g0, 30, `fill:${BRASS};stroke:var(--text);stroke-width:1.5`); circ(svg, g0, 6, 'fill:#78350f');
+    rect(svg, 236, 132, 42, 26, 'fill:var(--purple);opacity:.85', 4);
+    const hx = on ? 7 * Math.sin(TAU * 7 * t) : 0;
+    ln(svg, P(257, 158), P(250 + hx, 172), 'text', 2.5); circ(svg, P(250 + hx, 174), 6, 'fill:#334155');
+    /* air particles */
+    const n = Math.round(air * pts.length); for (let i = 0; i < n; i++) circ(svg, P(pts[i].x + (on ? 1.2 * Math.sin(TAU * 3 * t + i) : 0), pts[i].y), 2.6, 'fill:var(--blue);opacity:.7');
+    /* glass dome */
+    path(svg, 'M160,268 L160,140 A110,90 0 0,1 380,140 L380,268', 'fill:var(--blue-soft);fill-opacity:.25;stroke:var(--muted);stroke-width:3');
+    rect(svg, 262, 42, 16, 10, 'fill:var(--muted)', 3);
+    tx(svg, 270, 306, 'bell jar  ബെൽജാർ', 'lbl sm', 'middle');
+    if (on){ waves(svg, g0, 0, Math.max(.25, air), t, {half: 170, n: 3, gap: 10, r0: 34, c: 'blue'}); waves(svg, P(390, 175), 0, air, t, {n: 4, gap: 26, r0: 8, half: 30}); }
+    /* listener */
+    head(svg, P(610, 140), 26, -1, {hair: '#3f2a1d'}); tx(svg, 610, 196, on ? (air > .6 ? 'ring ring!' : air > .15 ? 'faint…' : '“no sound!”') : '', 'lbl sm', 'middle');
+    /* meter */
+    tx(svg, 20, 26, `air left in the jar: ${Math.round(air * 100)} %`, 'lbl', 'start');
+    rect(svg, 20, 40, 120, 12, 'fill:var(--surface2);stroke:var(--border)', 3); rect(svg, 20, 40, 120 * air, 12, 'fill:var(--blue)', 3);
+    tx(svg, 520, 26, 'loudness outside', 'lbl sm', 'start'); rect(svg, 520, 36, 150, 12, 'fill:var(--surface2);stroke:var(--border)', 3); rect(svg, 520, 36, 150 * (on ? air : 0), 12, 'fill:var(--accent)', 3);
+    out.textContent = !on ? 'The bell is switched off. Press the switch.'
+      : air > .6 ? `Bell ON, air ${Math.round(air * 100)} %: the hammer strikes the gong and you hear it clearly through the air and the glass.`
+      : air > .15 ? `Bell ON, air ${Math.round(air * 100)} %: the sound outside is getting fainter – there is less air to carry it.`
+      : `Bell ON, air ${Math.round(air * 100)} %: hardly any sound – yet you can still SEE the hammer striking the gong!`;
+  }
+  const it = anim(svg, (t, dt) => { if (air !== target){ air = target < air ? Math.max(target, air - .3 * dt) : Math.min(target, air + .3 * dt); } draw(t); });
+  $id('bjSwitch').addEventListener('click', () => { on = !on; $id('bjSwitch').textContent = on ? '🔕 Switch the bell off' : '🔔 Press the bell switch'; wake(it); });
+  $id('bjPump').addEventListener('click', () => { target = .03; on = true; $id('bjSwitch').textContent = '🔕 Switch the bell off'; wake(it); });
+  $id('bjAir').addEventListener('click', () => { target = 1; wake(it); });
+})();
+
+/* ---------- 2. sorter ---------- */
+sorter('srcSort', ['🌿 nature', '🏭 people'], [
+  {t: 'the koel singing (<span class="ml">കുയിലിന്റെ നാദം</span>)', a: 0, why: 'made by a bird – nature.'},
+  {t: 'thunder in the monsoon (<span class="ml">ഇടിനാദം</span>)', a: 0, why: 'lightning suddenly heats the air – nature.'},
+  {t: 'the school bell', a: 1, why: 'a bell made and rung by people.'},
+  {t: 'rain on the roof', a: 0, why: 'falling raindrops – nature.'},
+  {t: 'a pressure-cooker whistle', a: 1, why: 'a machine made by people.'},
+  {t: 'the chenda at the temple', a: 1, why: 'an instrument made and played by people.'},
+  {t: 'waves breaking on the beach', a: 0, why: 'moving sea water – nature.'}
+]);
+
+/* ---------- 3. rubber band ---------- */
+(function(){
+  const svg = $id('rbSvg'), out = $id('rbOut'); const X1 = 120, X2 = 420, Y0 = 186, PX = 3.4, F = 1.6, TAUD = 2.6;
+  let pull = 6, state = 'pulled', A0 = 0, tRel = 0, hist = [], T = 0;
+  function bandY(x, d, tri){ const s = (x - X1) / (X2 - X1); return Y0 - d * (tri ? (1 - Math.abs(2 * s - 1)) : Math.sin(Math.PI * s)); }
+  function disp(){ if (state === 'pulled') return pull * PX; if (state === 'vib'){ const tt = T - tRel; return A0 * Math.exp(-tt / TAUD) * Math.cos(TAU * F * tt); } return 0; }
+  function draw(){
+    K.clear(svg); const d = disp(); const tri = state === 'pulled';
+    /* box (side view) */
+    rect(svg, 80, 200, 380, 70, 'fill:var(--accent-soft);stroke:var(--accent);stroke-width:2', 6); tx(svg, 270, 244, 'pencil box (side view)', 'lbl sm muted', 'middle');
+    ln(svg, P(84, 262), P(80, 206), '#be123c', 3); ln(svg, P(456, 262), P(460, 206), '#be123c', 3);
+    ln(svg, P(80, 206), P(X1, Y0 - 1), '#be123c', 3); ln(svg, P(460, 206), P(X2, Y0 - 1), '#be123c', 3);
+    ln(svg, P(84, 272), P(456, 272), '#be123c', 2, 'stroke-dasharray:5 4;opacity:.6');
+    const pts = []; for (let k = 0; k <= 40; k++){ const x = X1 + (X2 - X1) * k / 40; pts.push(P(x, bandY(x, d, tri))); }
+    K.polyline(svg, pts, {style: 'stroke:#be123c;stroke-width:3.2;fill:none;stroke-linejoin:round'});
+    if (state === 'vib' && Math.abs(A0 * Math.exp(-(T - tRel) / TAUD)) > 2){ const e = A0 * Math.exp(-(T - tRel) / TAUD); const g = []; for (let k = 0; k <= 40; k++){ const x = X1 + (X2 - X1) * k / 40; g.push(P(x, bandY(x, e, false))); } const h = []; for (let k = 0; k <= 40; k++){ const x = X1 + (X2 - X1) * k / 40; h.push(P(x, bandY(x, -e, false))); } K.polyline(svg, g, {style: 'stroke:#be123c;stroke-width:1;fill:none;opacity:.25;stroke-dasharray:3 4'}); K.polyline(svg, h, {style: 'stroke:#be123c;stroke-width:1;fill:none;opacity:.25;stroke-dasharray:3 4'}); }
+    [X1, X2].forEach(x => { circ(svg, P(x, Y0 + 7), 8, 'fill:#facc15;stroke:var(--text);stroke-width:1.2'); });
+    tx(svg, X1, Y0 + 32, 'pencil', 'lbl sm', 'middle'); tx(svg, X2, Y0 + 32, 'pencil', 'lbl sm', 'middle');
+    ln(svg, P(X1 + 6, Y0), P(X2 - 6, Y0), 'muted', 1, 'stroke-dasharray:3 4');
+    if (state === 'pulled' && pull > 0){ const m = P((X1 + X2) / 2, Y0 - pull * PX); ell(svg, P(m.x, m.y - 12), 9, 14, 'fill:#f5c49b;stroke:#92400e;stroke-width:1.5'); tx(svg, m.x + 18, m.y - 16, 'finger pulls the middle up', 'lbl sm', 'start'); }
+    if (state === 'stopped'){ ell(svg, P(270, Y0 - 10), 10, 14, 'fill:#f5c49b;stroke:#92400e;stroke-width:1.5'); tx(svg, 290, Y0 - 24, 'finger touching – vibration stopped', 'lbl sm red', 'start'); }
+    const env = state === 'vib' ? A0 * Math.exp(-(T - tRel) / TAUD) / (10 * PX) : 0;
+    waves(svg, P(270, Y0 - 34), -90, env * 1.4, T, {n: 3, gap: 14, r0: 10, half: 50});
+    waves(svg, P(270, 290), 90, env, T, {n: 2, gap: 12, r0: 6, half: 40});
+    /* graph */
+    const GX = 500, GW = 280, GY = 130, GH = 80;
+    tx(svg, GX, 28, 'position of the middle of the band', 'lbl sm', 'start');
+    ln(svg, P(GX, GY), P(GX + GW, GY), 'muted', 1); ln(svg, P(GX, GY - GH), P(GX, GY + GH), 'text', 1.2);
+    tx(svg, GX - 6, GY - GH + 6, 'up', 'lbl sm', 'end'); tx(svg, GX - 6, GY, 'rest', 'lbl sm', 'end'); tx(svg, GX - 6, GY + GH - 6, 'down', 'lbl sm', 'end');
+    tx(svg, GX + GW, GY + GH + 18, 'time →  (last 4 s, slow motion)', 'lbl sm', 'end');
+    if (hist.length > 1) K.polyline(svg, hist.map(([tt, y]) => P(GX + GW - (T - tt) / 4 * GW, GY - y / (10 * PX) * GH)).filter(p => p.x >= GX), {style: 'stroke:#be123c;stroke-width:2;fill:none'});
+    circ(svg, P(GX + GW, GY - d / (10 * PX) * GH), 4, 'fill:#be123c');
+    const label = state === 'vib' && env > .02 ? 'to and fro about the rest line = VIBRATION' : state === 'pulled' ? 'held up by the finger' : 'at rest – no sound';
+    tx(svg, GX + GW / 2, GY + GH + 44, label, 'lbl ' + (state === 'vib' && env > .02 ? 'green' : 'muted'), 'middle');
+    out.textContent = state === 'pulled' ? `Middle of the band pulled up by ${pull} mm. Press “Let go”.`
+      : state === 'vib' ? (env > .02 ? `Vibrating! The middle moves up and down about its rest position – ${(F * (T - tRel)).toFixed(0)} vibrations so far (slow motion).\nSound is heard while it vibrates; each swing is a little smaller (energy slowly lost).` : 'The vibration has died away – and so has the sound.')
+      : state === 'stopped' ? 'You touched the band: the vibration stops at once, and so does the sound.' : 'At rest.';
+  }
+  const it = anim(svg, (t) => { T = t; hist.push([t, disp()]); while (hist.length && t - hist[0][0] > 4.2) hist.shift(); draw(); });
+  K.slider('#rbPull', v => { pull = v; state = 'pulled'; wake(it); draw(); }, 0);
+  $id('rbGo').addEventListener('click', () => { if (pull === 0){ out.textContent = 'Pull the middle up first (slider).'; return; } A0 = pull * PX; tRel = T; state = 'vib'; wake(it); });
+  $id('rbStop').addEventListener('click', () => { state = 'stopped'; wake(it); });
+})();
+
+/* ---------- 4. toys ---------- */
+(function(){
+  const svg = $id('toySvg'), out = $id('toyOut'); let toy = 0, play = false;
+  const TXT = [
+    'Ola-peepi (palm-leaf whistle): a strip of coconut palm leaf rolled into a cone. You blow at the narrow end, where the leaf is pressed flat.\nMain vibrating part: the flattened leaf at the mouthpiece flutters like a reed (red). Associated: the air inside the cone and the leaf cone itself (amber) – the cone makes the sound louder.',
+    'Paper whistle: a folded paper with a small half-circle torn out at the fold, held near the lips and blown.\nMain vibrating part: the thin paper edge across the hole flutters in the stream of air (red). Associated: the air around the hole and the paper sheet (amber).',
+    'Chiratta-veena (coconut-shell veena): a string runs along a stick and over a coconut shell closed with a thin cover; it is played with a bow.\nMain vibrating part: the string (red). Associated: the coconut shell, its cover (membrane) and the air inside the shell (amber) – they make the sound louder and sweeter.'
+  ];
+  function draw(t){
+    K.clear(svg); const v = play ? 1 : 0;
+    if (toy === 0){
+      const g = K.polygon(svg, [P(150, 100), P(470, 143), P(470, 157), P(150, 200)], {style: 'fill:#4d7c0f;stroke:#365314;stroke-width:1.5'}); void g;
+      for (let k = 0; k < 9; k++){ const x = 170 + k * 34; const h = 50 * (1 - (x - 150) / 360) + 7; ln(svg, P(x, 150 - h), P(x + 26, 150 + h - 6), '#a3e635', 1.2, 'opacity:.6'); }
+      const f = v * 3.2 * Math.sin(TAU * 4 * t);
+      path(svg, `M470,146 Q495,${146 - f} 522,148`, 'fill:none;stroke:var(--red);stroke-width:3'); path(svg, `M470,154 Q495,${154 + f} 522,152`, 'fill:none;stroke:var(--red);stroke-width:3');
+      ell(svg, P(150, 150), 8, 50, 'fill:none;stroke:var(--accent);stroke-width:2.5;stroke-dasharray:4 3');
+      if (v){ arrow(svg, P(620, 150), P(532, 150), 'muted', 2.5); tx(svg, 628, 150, 'breath', 'lbl sm', 'start'); waves(svg, P(140, 150), 180, 1, t, {n: 4, gap: 18, half: 40}); }
+      tx(svg, 500, 120, 'flattened leaf = reed (main)', 'lbl sm red', 'middle'); tx(svg, 300, 230, 'air inside the cone + leaf cone (associated)', 'lbl sm amber', 'middle');
+      tx(svg, 40, 30, 'Fig 8.3 (a)  ഓലപ്പീപ്പി – palm-leaf whistle', 'lbl', 'start');
+    } else if (toy === 1){
+      rect(svg, 300, 70, 140, 170, 'fill:var(--surface2);stroke:var(--text);stroke-width:1.5', 3); ln(svg, P(300, 70), P(300, 240), 'text', 2);
+      path(svg, 'M300,130 A26,26 0 0,1 300,182', 'fill:var(--svgbg);stroke:var(--text);stroke-width:1.5');
+      const f = v * 4 * Math.sin(TAU * 5 * t);
+      path(svg, `M300,132 Q${306 + f},156 300,180`, 'fill:none;stroke:var(--red);stroke-width:3');
+      ell(svg, P(306, 156), 40, 40, 'fill:none;stroke:var(--accent);stroke-width:2.5;stroke-dasharray:4 3');
+      ell(svg, P(230, 156), 16, 22, 'fill:#f5c49b;stroke:#92400e;stroke-width:1.5'); tx(svg, 230, 200, 'lips', 'lbl sm', 'middle');
+      if (v){ arrow(svg, P(248, 156), P(292, 156), 'muted', 2.5); waves(svg, P(330, 156), 0, 1, t, {n: 4, gap: 18, half: 45}); }
+      tx(svg, 470, 110, 'paper edge across the hole (main)', 'lbl sm red', 'start'); tx(svg, 470, 214, 'air near the hole + paper (associated)', 'lbl sm amber', 'start');
+      tx(svg, 40, 30, 'Fig 8.3 (b)  പേപ്പർവിസിൽ – paper whistle', 'lbl', 'start');
+    } else {
+      ln(svg, P(175, 210), P(650, 90), WOOD, 9);
+      circ(svg, P(170, 215), 56, `fill:${WOOD2};stroke:var(--text);stroke-width:1.5`); ell(svg, P(170, 215), 40, 50, `fill:${SKIN};stroke:var(--accent);stroke-width:2.5`);
+      circ(svg, P(170, 215), 26, 'fill:var(--blue-soft);opacity:.6;stroke:var(--accent);stroke-width:1.5;stroke-dasharray:3 3');
+      const A = P(180, 235), B = P(640, 84); const m = K.mid(A, B), u = K.unit(A, B), n = P(-u.y, u.x); const f = v * 5 * Math.sin(TAU * 4 * t);
+      path(svg, `M${A.x},${A.y} Q${m.x + n.x * f * 2},${m.y + n.y * f * 2} ${B.x},${B.y}`, 'fill:none;stroke:var(--red);stroke-width:2.5');
+      rect(svg, 634, 70, 14, 26, 'fill:#78350f', 3);
+      const bo = v ? 50 * Math.sin(TAU * .5 * t) : 0; ln(svg, P(250 + bo, 110), P(315 + bo, 262), '#78350f', 4); ln(svg, P(256 + bo, 112), P(321 + bo, 260), '#e7e5e4', 1.5);
+      if (v) waves(svg, P(120, 215), 180, 1, t, {n: 4, gap: 18, half: 45});
+      tx(svg, 470, 150, 'string (main)', 'lbl sm red', 'start'); tx(svg, 330 + bo, 268, 'bow', 'lbl sm muted', 'start');
+      tx(svg, 120, 290, 'shell, cover, air inside (associated)', 'lbl sm amber', 'middle');
+      tx(svg, 40, 30, 'Fig 8.3 (c)  ചിരട്ടവീണ – coconut-shell veena', 'lbl', 'start');
+    }
+    out.textContent = TXT[toy] + (play ? '\n▶ Playing: the red part vibrates first, the amber parts vibrate along with it.' : '');
+  }
+  const it = anim(svg, t => draw(t));
+  radio(['toyA', 'toyB', 'toyC'], k => { toy = k; wake(it); draw(it.t); });
+  $id('toyPlay').addEventListener('click', () => { play = !play; $id('toyPlay').textContent = play ? '⏸ Stop' : '▶ Blow / play (silent animation)'; wake(it); });
+})();
+
+/* ---------- 5. tuning fork ---------- */
+(function(){
+  const svg = $id('tfSvg'), out = $id('tfOut'); let A = 0, pos = 'idle', T = 0, tHit = -9, gripHad = false;
+  const TAUS = {idle: 20, free: 20, ear: 20, touch: 4, water: 1.2, grip: .12};
+  function fork(cx, by, dir, off){ const L = 140, gap = 16, w = 10;
+    [-1, 1].forEach(s => { const bx = cx + s * (gap / 2 + w / 2), tip = bx + s * off; K.polygon(svg, [P(bx - w / 2, by), P(bx + w / 2, by), P(tip + w / 2, by + dir * L), P(tip - w / 2, by + dir * L)], {style: `fill:${STEEL};stroke:var(--text);stroke-width:1.3`}); });
+    rect(svg, cx - gap / 2 - w, dir < 0 ? by - 4 : by - 12, gap + 2 * w, 16, `fill:${STEEL};stroke:var(--text);stroke-width:1.3`, 8);
+    rect(svg, cx - 4, dir < 0 ? by + 10 : by - 100, 8, 90, `fill:${STEEL};stroke:var(--text);stroke-width:1.3`, 3);
+    return {tipY: by + dir * L}; }
+  function obs(id, html){ const c = $id(id); c.className = 'filled'; c.innerHTML = html; }
+  function draw(){
+    K.clear(svg); const off = A * 7 * Math.sin(TAU * 5 * T); const cx = 220;
+    if (pos === 'water'){
+      rect(svg, 100, 296, 240, 70, 'fill:#3b82f6;opacity:.25'); K.polyline(svg, [P(100, 270), P(100, 366), P(340, 366), P(340, 270)], {style: 'stroke:var(--muted);stroke-width:3;fill:none'});
+      ln(svg, P(100, 296), P(340, 296), 'blue', 1.5); tx(svg, 220, 384, 'bowl of water', 'lbl sm muted', 'middle');
+      const f = fork(cx, 160, 1, off); void f;
+      ell(svg, P(cx, 64), 18, 12, 'fill:#f5c49b;stroke:#92400e;stroke-width:1.5');
+      if (A > .05){ for (let k = 0; k < 18; k++){ const life = (T * 1.6 + k / 18) % 1, side = rnd(k) < .5 ? -1 : 1; const vx = side * (40 + 90 * rnd(k + 7)), vy = -(110 + 120 * rnd(k + 3)); const tt = life * .9;
+          const x = cx + side * 14 + vx * tt, y = 296 + vy * tt + 300 * tt * tt; if (y < 298 && rnd(k + 11) < A + .1) circ(svg, P(x, y), 3, 'fill:#3b82f6;opacity:.85'); }
+        for (let k = 0; k < 2; k++){ const r = ((T * 1.5 + k / 2) % 1) * 70 + 12; ell(svg, P(cx, 297), r, r * .18, `fill:none;stroke:var(--blue);stroke-width:1.5;opacity:${(A * (1 - r / 82)).toFixed(2)}`); } }
+    } else {
+      fork(cx, 240, -1, off);
+      ell(svg, P(cx, 312), 16, 22, 'fill:#f5c49b;stroke:#92400e;stroke-width:1.5'); tx(svg, cx, 352, 'hold it by the stem', 'lbl sm muted', 'middle');
+      if (A > .05 && pos !== 'grip'){ ln(svg, P(cx - 30, 110), P(cx - 30, 200), 'muted', 1, `opacity:${A};stroke-dasharray:2 5`); ln(svg, P(cx + 30, 110), P(cx + 30, 200), 'muted', 1, `opacity:${A};stroke-dasharray:2 5`); }
+      if (pos === 'free' && T - tHit < .5){ const s = clamp((T - tHit) / .25, 0, 1); const hx = 330 - 70 * (s < 1 ? s : 1) + (T - tHit > .25 ? 40 * (T - tHit - .25) / .25 : 0); ln(svg, P(hx + 20, 150), P(hx + 90, 210), '#78350f', 6); ell(svg, P(hx, 138), 16, 12, 'fill:#1f2937'); tx(svg, hx + 40, 120, 'rubber hammer', 'lbl sm', 'start'); }
+      if (pos === 'ear'){ head(svg, P(370, 150), 34, -1, {hair: '#3f2a1d'}); waves(svg, P(240, 150), 0, A, T, {n: 3, gap: 22, r0: 22, half: 32}); }
+      else if (pos !== 'grip') waves(svg, P(220, 90), -90, A * .8, T, {n: 3, gap: 14, r0: 14, half: 60});
+      if (pos === 'touch'){ ell(svg, P(cx + 30 + Math.max(0, off), 150), 14, 9, 'fill:#f5c49b;stroke:#92400e;stroke-width:1.5'); if (A > .05) for (let k = 0; k < 3; k++) path(svg, `M${cx + 50},${138 + k * 12} l6,-4 l6,4 l6,-4`, `fill:none;stroke:var(--red);stroke-width:1.5;opacity:${A.toFixed(2)}`); }
+      if (pos === 'grip'){ ell(svg, P(cx - 20, 150), 18, 40, 'fill:#f5c49b;stroke:#92400e;stroke-width:1.5;opacity:.95'); ell(svg, P(cx + 20, 150), 18, 40, 'fill:#f5c49b;stroke:#92400e;stroke-width:1.5;opacity:.95'); tx(svg, cx, 82, 'both prongs gripped', 'lbl sm red', 'middle'); }
+    }
+    /* panel */
+    const X = 480; tx(svg, X, 40, 'Tuning fork', 'lbl big', 'start');
+    tx(svg, X, 76, 'vibration of the prongs', 'lbl sm', 'start'); rect(svg, X, 86, 220, 14, 'fill:var(--surface2);stroke:var(--border)', 3); rect(svg, X, 86, 220 * A, 14, 'fill:var(--red)', 3);
+    const snd = pos === 'ear' ? A : A * .5; tx(svg, X, 126, pos === 'ear' ? 'sound at the ear' : 'sound (fork held away from the ear)', 'lbl sm', 'start'); rect(svg, X, 136, 220, 14, 'fill:var(--surface2);stroke:var(--border)', 3); rect(svg, X, 136, 220 * snd, 14, 'fill:var(--blue)', 3);
+    const vt = A > .3 ? 'vibrating strongly' : A > .05 ? 'vibrating weakly' : 'not vibrating';
+    tx(svg, X, 184, 'fork: ' + vt, 'lbl ' + (A > .05 ? 'red' : 'muted'), 'start');
+    tx(svg, X, 212, A > .05 ? (pos === 'ear' ? 'sound: a clear, steady hum' : 'sound: a soft hum') : 'sound: none', 'lbl ' + (A > .05 ? 'blue' : 'muted'), 'start');
+    const tip = {idle: 'Press “Strike” to start the fork vibrating.', free: 'Struck! Now bring it near the ear, touch it or dip it.', ear: 'Listen – the hum lasts as long as the prongs vibrate.', touch: 'Feel the tingle – the prongs are vibrating.', water: A > .05 ? 'Splash! The vibrating prongs throw the water out.' : 'The water stays still – the fork is not vibrating.', grip: 'Gripped: the vibration stops – and the sound stops.'}[pos];
+    K.multiText(svg, P(X, 252), tip.match(/.{1,36}(\s|$)/g).map(s => s.trim()), {class: 'lbl sm', 'text-anchor': 'start'}, 18);
+    out.textContent = `Position: ${({idle: 'held up by the stem', free: 'held up after striking', ear: 'near the ear', touch: 'fingertip touching a prong', water: 'prongs touching the water', grip: 'both prongs gripped'})[pos]}.  Fork ${vt}.`;
+  }
+  const it = anim(svg, (t, dt) => { T = t; A = A * Math.exp(-dt / TAUS[pos]); if (A < .004) A = 0; draw(); });
+  function act(p){ pos = p; wake(it);
+    if (p === 'ear') obs('tfO1', A > .05 ? '✅ Yes – a clear hum is heard.' : '❌ No sound – strike the fork first!');
+    if (p === 'touch') obs('tfO2', A > .05 ? '✅ Yes – the prongs tingle against the finger: they are vibrating.' : 'Nothing felt – strike the fork first.');
+    if (p === 'water') obs('tfO3', A > .05 ? '✅ Yes – water drops splash out because the prongs are vibrating rapidly.' : 'The water stays still – the fork was not vibrating. Strike it first.');
+    if (p === 'grip'){ obs('tfO4', '✅ No – the sound stops at once.'); obs('tfO5', gripHad ? '✅ No – gripping stopped the vibration.' : '✅ No.'); }
+    draw(); }
+  $id('tfStrike').addEventListener('click', () => { A = 1; tHit = T; act('free'); });
+  $id('tfEar').addEventListener('click', () => act('ear'));
+  $id('tfTouch').addEventListener('click', () => act('touch'));
+  $id('tfWater').addEventListener('click', () => act('water'));
+  $id('tfGrip').addEventListener('click', () => { A = 1; gripHad = true; act('grip'); });
+})();
+
+/* ---------- 6. instrument explorer ---------- */
+(function(){
+  const svg = $id('insSvg'), out = $id('insOut'), pick = $id('insPick'), partsBox = $id('insParts'), body = $id('insBody');
+  const ROLE = {main: ['var(--red)', 'MAIN vibrating part'], assoc: ['var(--accent)', 'associated part – vibrates along with the main part'], none: ['var(--muted)', 'does NOT vibrate to make the sound']};
+  const INS = [
+    {k: 'veena', name: 'Veena', ml: 'വീണ', main: 'strings <span class="ml">കമ്പികൾ</span>', assoc: 'wooden body – the round kudam, the neck (dandi) and the small gourd – and the air inside', given: 'main',
+      parts: [['strings', 'main', 'strings', 'plucked by the fingers – they vibrate first'], ['body', 'assoc', 'wooden body (kudam, neck, gourd)', 'the strings shake the hollow wooden body through the bridge'], ['air', 'assoc', 'air inside the kudam', 'the air in the hollow body vibrates and makes the sound louder']]},
+    {k: 'violin', name: 'Violin', ml: 'വയലിൻ', main: 'strings', assoc: 'bridge, wooden body and the air inside',
+      parts: [['strings', 'main', 'strings', 'the bow rubs them and they vibrate'], ['bridge', 'assoc', 'bridge', 'passes the string vibrations to the body'], ['body', 'assoc', 'wooden body', 'the thin wooden top and back vibrate'], ['air', 'assoc', 'air inside the body', 'vibrates and comes out through the f-shaped holes'], ['bow', 'none', 'bow', 'only rubs the strings to start them vibrating']]},
+    {k: 'ela', name: 'Elathalam (cymbals)', ml: 'ഇലത്താളം', main: 'the two metal (bell-metal) plates', assoc: 'the air around the plates',
+      parts: [['plates', 'main', 'metal plates', 'struck together, the plates vibrate (you see their edges shimmer)'], ['air', 'assoc', 'air around them', 'the vibrating plates set the surrounding air vibrating'], ['cord', 'none', 'cord / handle', 'only for holding the plates']]},
+    {k: 'tabla', name: 'Tabla', ml: 'തബല', main: 'the stretched skin (membrane) on top', assoc: 'the wooden (dayan) and metal (bayan) bodies and the air inside',
+      parts: [['skin', 'main', 'stretched skin', 'struck by the fingers and palm – it vibrates'], ['body', 'assoc', 'wooden / metal body', 'the shells vibrate along with the skin'], ['air', 'assoc', 'air inside', 'the air in the hollow drums vibrates'], ['straps', 'none', 'leather straps and blocks', 'only keep the skin tight (they set the pitch)']]},
+    {k: 'harm', name: 'Harmonium', ml: 'ഹാർമോണിയം', main: 'reeds <span class="ml">റീഡുകൾ</span>', assoc: 'the air column (air in the reed chamber) and the wooden box', given: 'main',
+      parts: [['reeds', 'main', 'metal reeds', 'thin brass tongues; air rushing past makes them vibrate'], ['air', 'assoc', 'air in the reed chamber', 'the air column vibrates with the reed'], ['box', 'assoc', 'wooden box', 'the box vibrates and makes the sound fuller'], ['keys', 'none', 'keys', 'only open a valve so air reaches a reed'], ['bellows', 'none', 'bellows', 'only push air in']]},
+    {k: 'chenda', name: 'Chenda', ml: 'ചെണ്ട', main: 'the stretched skin (membrane) on top', assoc: '<span class="ml">മരം കൊണ്ടുണ്ടാക്കിയ ചട്ടക്കൂട്, ചെണ്ടയ്ക്കുള്ളിലെ വായുയൂപം</span> – the wooden frame and the air column inside', given: 'assoc',
+      parts: [['skin', 'main', 'stretched skin', 'struck with the sticks – it vibrates'], ['frame', 'assoc', 'wooden frame', 'the long wooden body vibrates'], ['air', 'assoc', 'air column inside', 'the air inside vibrates and makes it very loud'], ['sticks', 'none', 'sticks', 'only strike the skin'], ['ropes', 'none', 'ropes', 'only keep the skins tight']]}
+  ];
+  let cur = 0, play = false, sel = null; const found = INS.map(() => ({})), rowDone = INS.map(() => false);
+  pick.innerHTML = INS.map((s, i) => `<button class="btn${i === 0 ? ' primary' : ''}" data-i="${i}">${s.name} <span class="ml">${s.ml}</span></button>`).join('');
+  function role(k){ return INS[cur].parts.find(p => p[0] === k)[1]; }
+  function S(k, fill, extra=''){ const f = found[cur][k]; const c = f ? ROLE[role(k)][0] : 'var(--text)'; return `fill:${fill};stroke:${c};stroke-width:${f ? 3.5 : 1.4};${sel === k ? 'filter:drop-shadow(0 0 4px ' + c + ');' : ''}${extra}`; }
+  const lineC = k => found[cur][k] ? ROLE[role(k)][0] : 'var(--text)';
+  const pulse = (k, t) => (play && role(k) === 'assoc') ? `opacity:${(.65 + .35 * Math.sin(TAU * 3 * t)).toFixed(2)};` : '';
+  function D(t){
+    const v = play ? Math.sin(TAU * 6 * t) : 0, s = INS[cur].k;
+    if (s === 'veena'){
+      rect(svg, 150, 172, 470, 28, S('body', WOOD2, pulse('body', t)), 6); circ(svg, P(130, 200), 70, S('body', WOOD, pulse('body', t))); circ(svg, P(560, 240), 30, S('body', '#a16207', pulse('body', t)));
+      circ(svg, P(130, 200), 50, 'fill:none;stroke:#fde68a;stroke-width:2;opacity:.6'); circ(svg, P(130, 200), 34, S('air', 'var(--blue-soft)', 'stroke-dasharray:4 3;' + pulse('air', t)));
+      for (let x = 330; x <= 560; x += 23) rect(svg, x, 166, 4, 6, 'fill:#e5e7eb;stroke:#475569;stroke-width:.6');
+      path(svg, 'M618,176 q34,-12 30,-44 q-4,-16 -18,-8', `fill:none;stroke:${WOOD2};stroke-width:9;stroke-linecap:round`);
+      for (let k = 0; k < 4; k++){ const y = 176 + k * 5; path(svg, `M150,${y} Q385,${y + 4 * v * (play ? 1 : 0)} 615,${y - 2}`, `fill:none;stroke:${lineC('strings')};stroke-width:${found[cur].strings ? 2 : 1.2}`); }
+      tx(svg, 385, 152, 'strings', 'lbl sm', 'middle'); tx(svg, 130, 290, 'kudam (wooden body)', 'lbl sm', 'middle'); tx(svg, 130, 204, 'air', 'lbl sm blue', 'middle'); tx(svg, 560, 290, 'gourd', 'lbl sm', 'middle');
+    } else if (s === 'violin'){
+      const body = 'M300,110 C250,110 238,148 250,172 C256,186 260,192 258,202 C238,214 228,240 234,266 C246,306 354,306 366,266 C372,240 362,214 342,202 C340,192 344,186 350,172 C362,148 350,110 300,110 Z';
+      path(svg, body, S('body', WOOD, pulse('body', t))); ell(svg, P(300, 236), 34, 34, S('air', 'var(--blue-soft)', 'opacity:.75;stroke-dasharray:4 3;' + pulse('air', t)));
+      path(svg, 'M276,214 q-8,16 2,34', 'fill:none;stroke:#1f2937;stroke-width:2.5'); path(svg, 'M324,214 q8,16 -2,34', 'fill:none;stroke:#1f2937;stroke-width:2.5');
+      rect(svg, 292, 34, 16, 120, 'fill:#1f2937', 3); circ(svg, P(300, 30), 10, `fill:${WOOD2}`);
+      K.polygon(svg, [P(284, 252), P(316, 252), P(312, 240), P(288, 240)], {style: S('bridge', '#fef3c7', pulse('bridge', t))});
+      K.polygon(svg, [P(292, 300), P(308, 300), P(312, 272), P(288, 272)], {style: 'fill:#1f2937'});
+      for (let k = 0; k < 4; k++){ const xa = 294.5 + k * 3.7, xb = 290 + k * 6.7; const xm = (xa + xb) / 2 + 2.5 * v * (k % 2 ? 1 : -1); path(svg, `M${xa},40 Q${xm},170 ${xb},280`, `fill:none;stroke:${lineC('strings')};stroke-width:${found[cur].strings ? 2 : 1.1}`); }
+      const bo = play ? 60 * Math.sin(TAU * .5 * t) : 0; const u = K.unit(P(120, 236), P(480, 176));
+      ln(svg, P(120 + u.x * bo, 236 + u.y * bo), P(480 + u.x * bo, 176 + u.y * bo), lineC('bow'), found[cur].bow ? 5 : 4); ln(svg, P(124 + u.x * bo, 242 + u.y * bo), P(476 + u.x * bo, 183 + u.y * bo), '#e7e5e4', 1.5);
+      tx(svg, 330, 72, 'strings', 'lbl sm', 'start'); tx(svg, 330, 246, 'bridge', 'lbl sm', 'start'); tx(svg, 380, 290, 'wooden body', 'lbl sm', 'start'); tx(svg, 300, 222, 'air', 'lbl sm blue', 'middle'); tx(svg, 470, 168, 'bow', 'lbl sm', 'start');
+    } else if (s === 'ela'){
+      const cl = play ? Math.max(0, Math.cos(TAU * .6 * t)) ** 8 : 0; const gap = 70 - 56 * cl; const sh = play ? 2.5 * Math.sin(TAU * 9 * t) : 0;
+      ell(svg, P(300, 175), 200, 120, S('air', 'var(--blue-soft)', 'fill-opacity:.35;stroke-dasharray:6 5;' + pulse('air', t)));
+      [-1, 1].forEach(d => { const cx = 300 + d * gap; ell(svg, P(cx, 175), 16 + Math.abs(sh), 78, S('plates', BRASS)); ell(svg, P(cx + d * 12, 175), 10, 18, `fill:#a16207;stroke:var(--text);stroke-width:1`);
+        path(svg, `M${cx + d * 22},175 q${d * 40},-30 ${d * 80},-20`, `fill:none;stroke:${lineC('cord')};stroke-width:${found[cur].cord ? 4 : 2.5}`); });
+      if (play && cl > .5) tx(svg, 300, 70, 'clash!', 'lbl red', 'middle');
+      tx(svg, 300, 278, 'two bell-metal plates', 'lbl sm', 'middle'); tx(svg, 460, 130, 'cord', 'lbl sm', 'start'); tx(svg, 120, 80, 'air around', 'lbl sm blue', 'start');
+    } else if (s === 'tabla'){
+      path(svg, 'M70,190 Q66,300 150,300 Q234,300 230,190 Z', S('body', '#64748b', pulse('body', t))); ell(svg, P(150, 230), 46, 34, S('air', 'var(--blue-soft)', 'opacity:.7;stroke-dasharray:4 3;' + pulse('air', t)));
+      K.polygon(svg, [P(290, 170), P(400, 170), P(412, 300), P(278, 300)], {style: S('body', WOOD, pulse('body', t))}); ell(svg, P(345, 236), 34, 40, S('air', 'var(--blue-soft)', 'opacity:.7;stroke-dasharray:4 3;' + pulse('air', t)));
+      for (let k = 0; k < 7; k++){ const x1 = 294 + k * 17, x2 = 282 + k * 21; ln(svg, P(x1, 172), P(x2, 298), lineC('straps'), found[cur].straps ? 2.5 : 1.2); if (k % 2 === 0) rect(svg, (x1 + x2) / 2 - 4, 258, 9, 16, `fill:${WOOD2};stroke:${lineC('straps')};stroke-width:1`, 2); }
+      const sv = play ? 3 * v : 0;
+      ell(svg, P(150, 190), 80, 18 + sv, S('skin', SKIN)); ell(svg, P(165, 190), 22, 6, 'fill:#111827');
+      ell(svg, P(345, 170), 55, 14 + sv, S('skin', SKIN)); ell(svg, P(345, 170), 18, 5, 'fill:#111827');
+      tx(svg, 150, 160, 'bayan (metal)', 'lbl sm', 'middle'); tx(svg, 345, 142, 'dayan (wood)', 'lbl sm', 'middle'); tx(svg, 470, 190, 'stretched skin on top', 'lbl sm', 'start'); tx(svg, 470, 280, 'straps and blocks', 'lbl sm', 'start');
+    } else if (s === 'harm'){
+      rect(svg, 80, 140, 400, 150, S('box', WOOD, pulse('box', t)), 6);
+      rect(svg, 112, 116, 336, 26, 'fill:#f8fafc;stroke:var(--text);stroke-width:1'); for (let k = 0; k < 24; k++) ln(svg, P(112 + k * 14, 116), P(112 + k * 14, 142), lineC('keys'), found[cur].keys ? 2 : .8); for (let k = 0; k < 24; k++) if ([1, 3, 6, 8, 10].includes(k % 12)) rect(svg, 108 + k * 14, 116, 9, 15, 'fill:#1f2937');
+      const keyDown = play ? 7 : -1; if (keyDown >= 0) rect(svg, 112 + keyDown * 14, 118, 14, 24, 'fill:var(--accent);opacity:.6');
+      rect(svg, 120, 180, 320, 90, S('air', 'var(--blue-soft)', 'stroke-dasharray:5 4;' + pulse('air', t)), 4); tx(svg, 280, 196, 'cut-away: reed chamber', 'lbl sm', 'middle');
+      for (let k = 0; k < 10; k++){ const x = 136 + k * 30, act = play && k === 4; const f = act ? 5 * v : 0; rect(svg, x, 226, 20, 12, 'fill:#a16207;opacity:.6', 2); path(svg, `M${x + 2},232 L${x + 18},${232 + f}`, `fill:none;stroke:${lineC('reeds')};stroke-width:${found[cur].reeds ? 3.5 : 2.5}`); }
+      const bl = 485, bw = play ? 30 + 10 * Math.sin(TAU * .8 * t) : 34; const zz = []; for (let k = 0; k <= 8; k++) zz.push(P(bl + (k % 2 ? bw : 0), 148 + k * 17)); K.polyline(svg, zz, {style: `stroke:${lineC('bellows')};stroke-width:${found[cur].bellows ? 4 : 2};fill:none`});
+      if (play){ arrow(svg, P(510, 250), P(450, 250), 'blue', 2.5); waves(svg, P(260, 120), -90, 1, t, {n: 3, gap: 14, half: 50}); }
+      tx(svg, 456, 110, 'keys', 'lbl sm', 'start'); tx(svg, 280, 256, 'brass reeds', 'lbl sm', 'middle'); tx(svg, 530, 150, 'bellows', 'lbl sm', 'start'); tx(svg, 280, 284, 'wooden box', 'lbl sm', 'middle');
+    } else {
+      rect(svg, 190, 96, 140, 206, S('frame', WOOD, pulse('frame', t)));
+      rect(svg, 214, 118, 92, 160, S('air', 'var(--blue-soft)', 'opacity:.7;stroke-dasharray:5 4;' + pulse('air', t)), 6);
+      for (let k = 0; k < 8; k++){ const x = 192 + k * 19; ln(svg, P(x, 104), P(x + 10, 296), lineC('ropes'), found[cur].ropes ? 2.5 : 1.2); ln(svg, P(x + 10, 104), P(x, 296), lineC('ropes'), found[cur].ropes ? 2.5 : 1.2); }
+      ell(svg, P(260, 302), 70, 14, `fill:${SKIN};stroke:var(--text);stroke-width:1.4`); const sv = play ? 3 * v : 0; ell(svg, P(260, 96), 70, 15 + sv, S('skin', SKIN));
+      const hit = play ? Math.max(0, Math.sin(TAU * 1.5 * t)) : 0, hit2 = play ? Math.max(0, -Math.sin(TAU * 1.5 * t)) : 0;
+      path(svg, `M${380 - 30 * hit},${40 + 40 * hit} Q340,60 ${248},${86 - 20 * (1 - hit)}`, `fill:none;stroke:${lineC('sticks')};stroke-width:${found[cur].sticks ? 6 : 5};stroke-linecap:round`);
+      path(svg, `M${175 + 30 * hit2},${40 + 40 * hit2} Q200,60 ${272},${86 - 20 * (1 - hit2)}`, `fill:none;stroke:${lineC('sticks')};stroke-width:${found[cur].sticks ? 6 : 5};stroke-linecap:round`);
+      tx(svg, 350, 110, 'stretched skin', 'lbl sm', 'start'); tx(svg, 350, 200, 'wooden frame', 'lbl sm', 'start'); tx(svg, 260, 200, 'air', 'lbl sm blue', 'middle'); tx(svg, 350, 290, 'ropes', 'lbl sm', 'start'); tx(svg, 400, 46, 'sticks', 'lbl sm', 'start');
+    }
+    if (play && s !== 'harm') waves(svg, P(s === 'veena' ? 220 : 300, s === 'chenda' ? 60 : 110), -90, 1, t, {n: 3, gap: 14, half: 55});
+  }
+  function draw(t){ K.clear(svg); D(t);
+    const X = 560; tx(svg, X, 30, INS[cur].name, 'lbl big', 'start'); tx(svg, X, 52, INS[cur].ml, 'lbl purple', 'start');
+    [['main', 'red'], ['assoc', 'amber'], ['none', 'muted']].forEach(([r, c], i) => { rect(svg, 14, 12 + i * 18, 14, 10, `fill:${ROLE[r][0]}`, 2); tx(svg, 34, 18 + i * 18, r === 'main' ? 'main part' : r === 'assoc' ? 'associated part' : 'not a vibrating part', `lbl sm ${c}`, 'start'); });
+    const n = INS[cur].parts.length, f = Object.keys(found[cur]).length; tx(svg, X, 80, `parts found: ${f} of ${n}`, 'lbl sm', 'start');
+  }
+  function parts(){ partsBox.innerHTML = INS[cur].parts.map(p => `<button class="btn${found[cur][p[0]] ? (p[1] === 'none' ? ' bad' : ' ok') : ''}" data-k="${p[0]}">${p[2]}</button>`).join(''); }
+  function tableRows(){ body.innerHTML = INS.map((s, i) => { const done = rowDone[i]; const g = w => s.given === w ? ' <span class="tag">given</span>' : '';
+      const m = (done || s.given === 'main') ? `<b>${s.main}</b>${g('main')}` : '<span class="pending">…</span>'; const a = (done || s.given === 'assoc') ? `<b>${s.assoc}</b>${g('assoc')}` : '<span class="pending">…</span>';
+      return `<tr><td>${s.name} <span class="ml">${s.ml}</span></td><td>${m}</td><td>${a}</td></tr>`; }).join(''); }
+  function info(k){ const p = INS[cur].parts.find(q => q[0] === k); out.textContent = `${p[2]}: ${ROLE[p[1]][1]}.\n(${p[3]})`; }
+  function check(){ const need = INS[cur].parts.filter(p => p[1] !== 'none').every(p => found[cur][p[0]]); if (need && !rowDone[cur]){ rowDone[cur] = true; tableRows(); out.textContent += `\n✅ All vibrating parts of the ${INS[cur].name} found – its row in Table 8.1 is filled in.`; } }
+  const it = anim(svg, t => draw(t));
+  pick.addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (!b) return; cur = +b.dataset.i; sel = null; K.$$('button', pick).forEach(x => x.classList.toggle('primary', x === b)); parts(); out.textContent = `Click each part of the ${INS[cur].name} below the picture. Which one vibrates first?`; wake(it); draw(it.t); });
+  partsBox.addEventListener('click', e => { const b = e.target.closest('button[data-k]'); if (!b) return; const k = b.dataset.k; found[cur][k] = true; sel = k; parts(); info(k); check(); wake(it); draw(it.t); });
+  $id('insPlay').addEventListener('click', () => { play = !play; $id('insPlay').textContent = play ? '⏸ Stop' : '▶ Play (silent animation)'; wake(it); });
+  $id('insFill').addEventListener('click', () => { INS[cur].parts.forEach(p => { found[cur][p[0]] = true; }); parts(); rowDone[cur] = true; tableRows(); out.textContent = `Row for the ${INS[cur].name} filled in. Main: ${INS[cur].main.replace(/<[^>]+>/g, '')}. Associated: ${INS[cur].assoc.replace(/<[^>]+>/g, '')}.`; wake(it); draw(it.t); });
+  parts(); tableRows(); out.textContent = 'Choose an instrument, then click each of its parts. Red = main part, amber = associated part, grey = not a vibrating part.';
+})();
+
+/* ---------- 7. voice box ---------- */
+(function(){
+  const svg = $id('vbSvg'), out = $id('vbOut'); let mode = 'speak', touch = false;
+  function draw(t){
+    K.clear(svg); const sp = mode === 'speak';
+    path(svg, 'M300,40 C220,30 160,50 150,95 C146,108 132,118 118,128 C112,134 120,140 130,141 C126,150 130,156 136,158 C132,166 136,172 146,176 C150,190 150,200 160,204 C178,210 196,214 200,230 L198,330 L330,330 L322,240 C350,220 362,180 360,130 C358,80 340,48 300,40 Z', 'fill:#f5c49b;stroke:#92400e;stroke-width:1.6;opacity:.9');
+    path(svg, 'M150,108 Q190,104 214,118 L222,130 Q186,128 152,120 Z', 'fill:#fca5a5;opacity:.8');
+    path(svg, 'M142,160 Q180,150 214,150 L222,172 Q190,178 150,170 Z', 'fill:#fca5a5;opacity:.8');
+    path(svg, 'M214,118 Q240,126 240,150 L240,330 L216,330 L216,176 Q218,150 214,150 Z', 'fill:#fecaca;stroke:#b91c1c;stroke-width:1.2');
+    rect(svg, 212, 236, 34, 34, 'fill:var(--purple);opacity:.85', 6); tx(svg, 160, 254, 'voice box', 'lbl sm purple', 'end'); tx(svg, 160, 270, '(larynx) സ്വനപേടകം', 'lbl sm purple', 'end');
+    for (let y = 280; y < 330; y += 8) ln(svg, P(216, y), P(240, y), '#b91c1c', 1, 'opacity:.6'); tx(svg, 250, 318, 'windpipe', 'lbl sm', 'start');
+    const fl = (mode === 'breathe' || sp) ? 1 : 0; for (let k = 0; k < 3; k++){ const y = 330 - ((t * 60 + k * 30) % 90); if (fl) arrow(svg, P(228, y + 14), P(228, y), 'blue', 2, 6); }
+    if (sp){ waves(svg, P(126, 165), 180, 1, t, {n: 3, gap: 16, half: 40}); for (let k = 0; k < 3; k++) path(svg, `M250,${244 + k * 8} l5,-3 l5,3 l5,-3`, 'fill:none;stroke:var(--red);stroke-width:1.5'); }
+    if (touch){ ell(svg, P(186, 252), 22, 12, 'fill:#eab38a;stroke:#92400e;stroke-width:1.5'); tx(svg, 186, 290, sp ? 'buzz felt!' : 'nothing felt', 'lbl sm ' + (sp ? 'red' : 'muted'), 'middle'); if (sp) for (let k = 0; k < 2; k++) path(svg, `M${160 - k * 8},${240 + k * 10} l-4,4 l4,4 l-4,4`, 'fill:none;stroke:var(--red);stroke-width:1.5'); }
+    /* inset: vocal cords from above */
+    const C = P(600, 170); circ(svg, C, 110, 'fill:#7f1d1d;opacity:.18;stroke:var(--text);stroke-width:1.5');
+    tx(svg, C.x, 40, 'vocal cords seen from above', 'lbl sm', 'middle'); tx(svg, C.x, 56, 'സ്വനതന്തുക്കൾ', 'lbl sm purple', 'middle');
+    const gapBot = sp ? 3 + 3 * (1 + Math.sin(TAU * 4 * t)) : 34; const top = P(C.x, 90);
+    [-1, 1].forEach(d => { const bot = P(C.x + d * gapBot, 250); path(svg, `M${top.x},${top.y} Q${C.x + d * (gapBot * .6 + 18)},170 ${bot.x},${bot.y} L${C.x + d * 70},250 L${C.x + d * 50},100 Z`, 'fill:#fecaca;stroke:#b91c1c;stroke-width:1.5');
+      ln(svg, top, bot, 'var(--red)', 3); });
+    K.polygon(svg, [top, P(C.x - gapBot, 250), P(C.x + gapBot, 250)], {style: 'fill:#111827;opacity:.75'});
+    tx(svg, C.x, 296, sp ? 'held close together – air makes them vibrate' : 'wide open – air passes silently', 'lbl sm ' + (sp ? 'red' : 'muted'), 'middle');
+    out.textContent = sp ? 'Speaking: air from the lungs is pushed up the windpipe. The vocal cords are held close together, so the air makes them vibrate rapidly – that vibration is the source of your voice. The air in the throat, mouth and nose vibrates too, and the lips, tongue and teeth shape the sound into words.'
+      : 'Breathing quietly: the vocal cords are wide apart and air passes through without making them vibrate – so there is no sound.';
+  }
+  const it = anim(svg, t => draw(t));
+  radio(['vbBreathe', 'vbSpeak'], k => { mode = k ? 'speak' : 'breathe'; wake(it); draw(it.t); });
+  $id('vbTouch').addEventListener('click', () => { touch = !touch; $id('vbTouch').classList.toggle('primary', touch); wake(it); draw(it.t); });
+})();
+
+choices();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'Sound is produced by…', options: ['the straight-line motion of objects', 'the vibration of objects', 'the colour of objects', 'objects at rest'], answer: 1, explain: 'Vibration – a rapid to-and-fro motion – produces sound (key idea, page 159).', hint: 'What did the tuning fork do while it was humming?'});
+K.mcq('#q2', {q: 'A vibrating tuning fork is gripped tightly by both prongs. What happens?', options: ['The sound becomes louder', 'The sound stops because the vibration stops', 'The sound continues as before', 'Water splashes out'], answer: 1, explain: 'Gripping stops the vibration, and with it the sound.', hint: 'No vibration, no …'});
+K.mcq('#q3', {q: 'In a harmonium, the main part that vibrates is…', options: ['the keys', 'the bellows', 'the reeds', 'the wooden box'], answer: 2, explain: 'Air rushing past the brass reeds makes them vibrate; the air column and the box are associated parts.', hint: 'Table 8.1 gives this one.'});
+K.mcq('#q4', {q: 'Which instrument has a stretched skin (membrane) as its main vibrating part?', options: ['violin', 'odakkuzhal', 'chenda', 'veena'], answer: 2, explain: 'The chenda (and the tabla, mridangam, idakka) – the skin is struck and vibrates.', hint: 'Which one is played with sticks?'});
+K.mcq('#q5', {q: 'Our voice is produced mainly by the vibration of…', options: ['the teeth', 'the vocal cords in the larynx', 'the eardrum', 'the lungs'], answer: 1, explain: 'The vocal cords in the larynx (voice box), at the top of the windpipe.', hint: 'Touch your throat while you speak.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

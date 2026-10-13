@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Propagation of Sound</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.qa{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.6rem 1rem;margin:.7rem 0;box-shadow:var(--shadow)}
+.qa p{margin:.25em 0}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.bubbles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.7rem;margin:.8rem 0}
+.bubble{background:var(--surface);border:2px solid var(--purple);border-radius:18px;padding:.6rem .9rem;font-size:.95rem}
+.bubble .ml{display:block;font-weight:600;margin-bottom:.2rem}
+.obs td,.obs th{vertical-align:middle}
+.tw{overflow-x:auto}
+.diary{background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:1rem 0}
+.diary h3{margin:.1rem 0 .4rem;color:var(--accent-ink)}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;padding:.05rem .45rem;border-radius:6px;background:var(--surface2);color:var(--muted);margin-left:.3rem}
+.yn{display:inline-flex;gap:.3rem;flex-wrap:wrap}
+.yn .btn{padding:.25rem .6rem;font-size:.88rem}
+.btn.ok{background:var(--green-soft);border-color:var(--green);color:var(--text)}
+.btn.bad{background:var(--red-soft);border-color:var(--red);color:var(--text)}
+.why{font-size:.9rem;margin-top:.25rem}
+.sorter .item{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .6rem;padding:.45rem .6rem;border:1px solid var(--border);border-radius:8px;margin:.35rem 0;background:var(--surface2)}
+.sorter .item .t{flex:1 1 220px}
+.sorter .why{flex-basis:100%;margin:0}
+.score{font-weight:700;color:var(--primary-ink);margin:.4rem 0 0}
+.filled{font-weight:600;color:var(--green)}
+.pending{color:var(--muted);font-style:italic}
+.btn.primary .ml{color:#fff}
+</style>
+</head>
+<body data-page="06_propagation_of_sound">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 8 · Section 2</span><span class="chip amber">Textbook pages 162–163</span>
+<h1>Propagation of Sound <span class="ml">ശബ്ദപ്രേഷണം</span></h1>
+<p class="lead">A bell rings in the staff room and you hear it in your classroom. How does the sound travel all that way? On this page you watch air particles pass the vibration along, pump the air out of a jar until the buzzer goes silent, listen through a desk and through a bucket of water, and find out why astronauts need a radio to talk to each other.</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 2, 3 and 5 of this guide)</div>
+<ul style="margin:0">
+<li>Solids, liquids and gases are made of particles; in a <b>vacuum</b> (<span class="ml">ശൂന്യത</span>) there are no particles at all (page 2).</li>
+<li>A vibrating object pushes the particles next to it, which push their neighbours: crowded regions are <b>compressions</b> (C, <span class="ml">മർദം കൂടിയ മേഖല</span>), spread-out regions are <b>rarefactions</b> (R, <span class="ml">മർദം കുറഞ്ഞ മേഖല</span>) (page 3).</li>
+<li>Sound is produced by vibration (page 5).</li>
+</ul></div>
+
+<h2 id="how">1. How does sound reach our ears?</h2>
+<div class="bubbles"><div class="bubble"><span class="ml">വിവിധ ശബ്ദസ്രോതസ്സുകളിൽനിന്ന് പുറപ്പെടുന്ന ശബ്ദം നമ്മുടെ ചെവിയിൽ എത്തുന്നത് എങ്ങനെയാണ്?</span>How does the sound from different sources reach our ears?</div></div>
+<p>The material through which sound travels is called the <b>medium</b> (<span class="ml">മാധ്യമം</span>). Watch what the vibrating prong of a tuning fork does to the air particles in front of it.</p>
+<div class="lab">
+  <div class="lab-title">🎬 Air particles passing on the vibration</div>
+  <svg id="pSvg" viewBox="0 0 800 300" role="img" aria-label="A vibrating prong pushes rows of air particles, making crowded regions (compressions) and spread-out regions (rarefactions) that move away; one red particle only moves to and fro"></svg>
+  <div class="controls"><label>slow motion <input id="pSpd" type="range" min="1" max="10" step="1" value="5"><output></output></label><button class="btn primary" id="pRun">⏸ Pause</button><button class="btn" id="pTrace">✏ Show the red particle's path</button></div>
+  <div class="readout" id="pOut"></div>
+  <p class="hint">Watch the red particle: it only moves a little to and fro about one place, along the direction the sound travels. It never reaches the ear itself – what travels is the pattern of compressions (C) and rarefactions (R), carrying the energy. (Spacing and movement are exaggerated.)</p>
+</div>
+
+<h2 id="vacuum">2. Activity – the buzzer in a jar (Fig 8.8)</h2>
+<p><span class="ml">ചിത്രത്തിൽ കാണുന്നതു പോലെ പ്ലാസ്റ്റിക് ട്യൂബ് ഘടിപ്പിച്ച, സുതാര്യമായ ഗ്ലാസ് കണ്ടെയ്നറിനുള്ളിൽ ബാറ്ററിയിൽ പ്രവർത്തിച്ചുകൊണ്ടിരിക്കുന്ന ബസ്സർ തൂക്കിയിട്ട ശേഷം കണ്ടെയ്നർ അടയ്ക്കുക.</span> – Hang a working, battery-powered buzzer inside a transparent container fitted with a plastic tube, and close the container. Then draw the air out through the tube.</p>
+<div class="safety">⚠ Use only a clean, empty container that has never held chemicals, and stop if you feel dizzy. The bell jar with a vacuum pump (the chapter-opening picture) is a teacher's demonstration – never use a vacuum pump yourself, and never pump air out of a thin glass bottle (it can implode).</div>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: take the air out (Fig 8.8 and the opening bell jar)</div>
+  <div class="controls"><button class="btn primary" id="jM1">Fig 8.8 – buzzer in a jar</button><button class="btn" id="jM2">Opening picture – bell jar and vacuum pump</button></div>
+  <svg id="jarSvg" viewBox="0 0 800 340" role="img" aria-label="A buzzer hanging in a closed jar; as air is removed the loudness meter falls to zero while the buzzer keeps vibrating"></svg>
+  <div class="controls"><label>air left in the container <input id="jAir" type="range" min="0" max="100" step="5" value="100"><output></output> %</label><button class="btn" id="jSuck">👄 Draw out some air</button><button class="btn" id="jBack">↺ Let the air back in</button></div>
+  <div class="readout" id="jOut"></div>
+  <div class="tw"><table class="obs"><thead><tr><th>Textbook question (page 162)</th><th>Observation (fills in as you use the slider)</th></tr></thead><tbody>
+  <tr><td><span class="ml">ശബ്ദം കേൾക്കാൻ കഴിയുന്നുണ്ടോ?</span> Can you hear the sound (container full of air)?</td><td id="jO1" class="pending">set the air to 100 %</td></tr>
+  <tr><td><span class="ml">ശബ്ദം കുറയുന്നതായി അനുഭവപ്പെടുന്നുണ്ടോ?</span> After drawing out some air – does the sound become fainter?</td><td id="jO2" class="pending">remove some air (40–95 %)</td></tr>
+  <tr><td><span class="ml">ഇനിയും കുറേക്കൂടി വായുവിനെ നീക്കം ചെയ്തു നോക്കൂ. ശബ്ദം വീണ്ടും കുറയുന്നില്ലേ?</span> Remove more air – doesn't it get fainter still?</td><td id="jO3" class="pending">remove more air (5–35 %)</td></tr>
+  <tr><td><span class="ml">വായു പൂർണ്ണമായും നീക്കം ചെയ്യാൻ കഴിഞ്ഞിരുന്നെങ്കിൽ ശബ്ദം കേൾക്കാൻ കഴിയുമായിരുന്നോ?</span> If all the air could be removed, could you hear the sound?</td><td id="jO4" class="pending">imagine 0 % air</td></tr>
+  </tbody></table></div>
+  <p class="hint">The loudness meter is a simple model (loudness falls as the air is removed). In a real jar a very faint sound may still leak out through the thread and the lid – that is solids carrying sound, as you will see in section 3. Notice that the buzzer keeps vibrating all the time: only the <i>medium</i> is being taken away.</p>
+</div>
+<div class="qa"><p><b>Q.</b> <span class="ml">ഈ പരീക്ഷണത്തിൽ നിന്ന് എന്ത് അനുമാനിക്കാം?</span> – What can you infer from this experiment? (<span class="ml">സയൻസ് ഡയറിയിൽ കുറിക്കൂ</span> – note it in your science diary.)</p>
+<div class="reveal" data-btn="Show the inference"><div class="answer">The buzzer kept vibrating, yet the sound became fainter as the air was removed, and with no air it would not be heard at all. So <b>sound reaches our ears by travelling through air</b>, and <b>sound cannot travel through a vacuum</b>. <i>Why:</i> sound is passed on by particles pushing their neighbours; in a vacuum there are no particles to pass it on.</div></div></div>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 162)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">വായുവിലൂടെ സഞ്ചരിച്ചാണ് ശബ്ദം നമ്മുടെ ചെവിയിൽ എത്തുന്നത്. ശൂന്യതയിലൂടെ സഞ്ചരിക്കാൻ ശബ്ദത്തിന് കഴിയില്ല.</p>
+<p>Sound reaches our ears by travelling through <b>air</b>. Sound <b>cannot travel through vacuum</b> (<span class="ml">ശൂന്യത</span>).</p></div>
+<div class="qa"><p><b>The opening picture explained.</b> <span class="ml">വാക്വം പമ്പ് ഉപയോഗിച്ച് വായു നീക്കം ചെയ്ത ബെൽ ജാറിനുള്ളിലെ അലാം പുറപ്പെടുവിക്കുന്ന ശബ്ദം ജാറിനു വെളിയിൽ കേൾക്കാൻ കഴിയാതിരുന്നത് എന്തുകൊണ്ടായിരിക്കുമെന്ന് മനസ്സിലായല്ലോ?</span> – Now do you understand why the alarm in the bell jar could not be heard outside?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">The vacuum pump had removed the air from the bell jar, leaving (almost) a <b>vacuum</b> around the bell. The bell was vibrating – the teacher could see the hammer striking – but there was no medium to carry the vibration to the glass and out to her ear. <i>Why we still see it:</i> light can travel through a vacuum (that is how sunlight reaches us through space); sound cannot.</div></div></div>
+
+<h2 id="solid">3. Does sound travel only through air? – the desk (Fig 8.9)</h2>
+<div class="bubbles"><div class="bubble"><span class="ml">ശബ്ദം വായുവിലൂടെ മാത്രമാണോ സഞ്ചരിക്കുന്നത്?</span>Does sound travel only through air?</div></div>
+<p><span class="ml">കുട്ടികൾ ഡെസ്കിൽ ചെവി അമർത്തിവച്ച ശേഷം മറ്റൊരു കുട്ടി ട്യൂണിങ് ഫോർക്ക് കമ്പനം ചെയ്യിച്ച് അതിന്റെ തണ്ട് ഡെസ്കിൽ അമർത്തട്ടെ.</span> – Children press their ears to a desk; another child sets a tuning fork vibrating and presses its stem on the desk.</p>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: listen through the desk (Fig 8.9)</div>
+  <div class="controls"><button class="btn" id="dA">Fork held in the air above the desk</button><button class="btn primary" id="dB">Stem pressed on the desk</button><button class="btn" id="dC">Stem on the desk, ear lifted off</button></div>
+  <svg id="deskSvg" viewBox="0 0 800 300" role="img" aria-label="A long wooden desk; a vibrating tuning fork's stem is pressed on one end while a child's ear rests on the other end; vibrations travel through the wood"></svg>
+  <div class="readout" id="dOut"></div>
+  <p class="hint">Loudness values are a simple comparison, not measurements. Try it for real: with your ear on the desk, ask a friend to scratch the far end very gently with a fingernail – you hear it clearly through the wood but hardly at all through the air.</p>
+</div>
+<div class="qa"><p><b>Questions (page 162–163).</b></p>
+<ol style="margin:.2rem 0"><li><span class="ml">ശബ്ദം കേൾക്കാൻ കഴിയുന്നുണ്ടോ?</span> Can you hear the sound?</li><li><span class="ml">ഈ സന്ദർഭത്തിൽ ഏതെല്ലാം മാധ്യമങ്ങളിലൂടെയാണ് ശബ്ദം പ്രേഷണം ചെയ്തത്?</span> Through which media did the sound travel here?</li><li><span class="ml">ശബ്ദത്തിന് ഖരവസ്തുക്കളിലൂടെ സഞ്ചരിക്കാൻ സാധിക്കുന്നുണ്ടോ?</span> Can sound travel through solids?</li></ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">1. <b>Yes</b> – clearly, even though the fork is at the far end of the desk.<br>2. Mainly through the <b>wood of the desk</b> (a solid), from the stem to the ear pressed on it; a little also reaches the ear through the <b>air</b>.<br>3. <b>Yes.</b> <i>Why we are sure:</i> when the ear is lifted off the desk, the sound becomes much fainter – so most of it was coming through the wood, not the air.</div></div></div>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 163)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">ഖരവസ്തുക്കളിലൂടെയും ശബ്ദം സഞ്ചരിക്കും.</p>
+<p>Sound can travel through <b>solids</b> (<span class="ml">ഖരം</span>) too.</p></div>
+
+<h2 id="liquid">4. Can sound travel through liquids? – the bucket (Fig 8.10)</h2>
+<div class="bubbles"><div class="bubble"><span class="ml">അങ്ങനെയെങ്കിൽ ശബ്ദത്തിന് ദ്രാവകങ്ങളിലൂടെ സഞ്ചരിക്കാൻ കഴിയുമോ?</span>Then can sound travel through liquids?</div></div>
+<p><span class="ml">ഒരു ബക്കറ്റിൽ ജലം എടുക്കുക. ജലത്തിനുള്ളിലായി ഒരു സ്റ്റീൽപാത്രം പിടിച്ച് അതിനെ സ്പൂൺ കൊണ്ട് തട്ടി നോക്കൂ. ശബ്ദം കേൾക്കാൻ സാധിക്കുന്നുണ്ടോ?</span> – Take water in a bucket. Hold a steel vessel under the water and tap it with a spoon. Can you hear the sound?</p>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: tap under water (Fig 8.10)</div>
+  <svg id="bkSvg" viewBox="0 0 800 320" role="img" aria-label="A steel vessel held under water in a bucket is tapped with a spoon; ripples of sound spread through the water to the bucket wall and the air outside"></svg>
+  <div class="controls"><button class="btn primary" id="bkTap">🥄 Tap the vessel</button><button class="btn" id="bkPath">🔍 Show the path of the sound</button></div>
+  <div class="readout" id="bkOut"></div>
+</div>
+<div class="qa"><p><b>Questions (page 163).</b></p>
+<ol style="margin:.2rem 0"><li><span class="ml">ഈ സന്ദർഭത്തിൽ ഏതെല്ലാം മാധ്യമങ്ങളിലൂടെയാണ് ശബ്ദം സഞ്ചരിച്ചത്?</span> Through which media did the sound travel here?</li><li><span class="ml">ഈ പ്രവർത്തനത്തിൽ നിന്ന് രൂപീകരിച്ച നിഗമനം എന്താണ്?</span> What conclusion do you draw?</li></ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">Yes, the tap is heard clearly. 1. The sound travelled through the <b>steel vessel</b> (solid) → the <b>water</b> (liquid) → the <b>wall of the bucket</b> (solid) → the <b>air</b> (gas) → our ear. 2. <b>Sound can travel through liquids</b> as well. <i>Why we can say so:</i> the vessel is completely surrounded by water, so the sound had to pass through the water to get out.</div></div></div>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 163)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">ശബ്ദത്തിന് വാതകങ്ങളിലൂടെ മാത്രമല്ല, ദ്രാവകങ്ങളിലൂടെയും ഖരവസ്തുക്കളിലൂടെയും സഞ്ചരിക്കാൻ സാധിക്കും. ശബ്ദപ്രേഷണത്തിന് മാധ്യമം ആവശ്യമാണ്.</p>
+<p>Sound can travel not only through <b>gases</b> but also through <b>liquids</b> and <b>solids</b>. <b>Sound needs a medium to travel.</b></p></div>
+<div class="callout book"><div class="title">🧪 The textbook's simulation – PhET → Sound Waves</div>
+<p>The box “PhET → Sound Waves” on page 163 points to the PhET <b>Sound Waves</b> simulation, installed offline on the <b>KITE Ubuntu</b> school laptops (look in the Education/Science menu). In it a loudspeaker sends compressions and rarefactions across the screen; you can switch to a view of the air particles – just like the first lab on this page – and, in one part, pump the air out of a box around the speaker and watch the sound fade, exactly like the bell jar. Online, PhET's <b>Sound Waves</b> and <b>Waves Intro</b> (Sound tab) do the same – see the Explore box below.</p></div>
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://phet.colorado.edu/en/simulations/sound-waves" target="_blank" rel="noopener noreferrer">🧪 Sound Waves (PhET simulation)</a> <span class="src">PhET, University of Colorado Boulder</span><br><span class="note">The simulation named in the textbook: see the air particles carry sound, then pump the air out and watch the sound fade.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/sound-waves/nature-of-sound-waves/sound-as-a-longitudinal-wave" target="_blank" rel="noopener noreferrer">📄 Sound as a Longitudinal Wave</a> <span class="src">The Physics Classroom</span><br><span class="note">Animations of compressions and rarefactions moving through air, in the same direction as the sound travels.</span></li><li><a href="https://science.nasa.gov/ems/02_anatomy/" target="_blank" rel="noopener noreferrer">📄 Anatomy of an Electromagnetic Wave</a> <span class="src">NASA Science</span><br><span class="note">NASA explains why sound cannot cross the vacuum of space, while light and radio waves can.</span></li><li><a href="https://oceanservice.noaa.gov/facts/sonar.html" target="_blank" rel="noopener noreferrer">📄 What is sonar?</a> <span class="src">NOAA Ocean Service</span><br><span class="note">Ships send sound through water and time the echo to find the depth of the sea and hidden objects.</span></li></ul></div>
+
+<h2 id="animals">5. Animals that use sound in the ground and in water (Fig 8.11)</h2>
+<div class="lab">
+  <div class="lab-title">🎬 (a) A snake feels the ground · (b) whales call through the sea</div>
+  <div class="controls"><button class="btn primary" id="aS">(a) Snake <span class="ml">പാമ്പ്</span></button><button class="btn" id="aW">(b) Whales and dolphins</button></div>
+  <svg id="swSvg" viewBox="0 0 800 280" role="img" aria-label="(a) Footsteps send vibrations through the ground to a snake resting its jaw on the ground; (b) two whales exchange calls through sea water"></svg>
+  <div class="readout" id="swOut"></div>
+</div>
+<p><span class="ml">പാമ്പ് - ഇരപിടിക്കാനും ആത്മരക്ഷയ്ക്കുമായി തറയിലൂടെയുള്ള ശബ്ദപ്രേഷണം പ്രയോജനപ്പെടുത്തുന്നു.</span> – (a) Snakes use sound travelling through the ground to catch prey and to protect themselves. <span class="ml">ഡോൾഫിൻ, തിമിംഗലങ്ങൾ തുടങ്ങിയ ജലജീവികൾ ആശയ വിനിമയത്തിന് കടൽ ജലത്തിലൂടെയുള്ള ശബ്ദപ്രേഷണം ഉപയോഗപ്പെടുത്തുന്നു.</span> – (b) Water animals such as dolphins and whales use sound travelling through sea water to communicate.</p>
+<div class="callout think"><div class="title">💡 Why does a snake slip away before you even see it?</div>
+<p>Snakes have no outer ears and no eardrum. They pick up vibrations of the ground through their lower jaw and body, which lie on the ground. So your footsteps reach a snake through the soil – a solid medium – long before it sees you. That is why walking with heavy steps on a dark path in the rainy season, or tapping a stick, gives snakes a warning to move away.</p></div>
+
+<h2 id="space">6. Astronauts and the radio (Fig 8.12)</h2>
+<div class="qa"><p><b>Q (page 163).</b> <span class="ml">ബഹിരാകാശ സഞ്ചാരികൾ പരസ്പരം സംസാരിക്കാൻ റേഡിയോ സംവിധാനം ഉപയോഗിക്കേണ്ടിവരുന്നത് എന്തുകൊണ്ടാണ്?</span> – Why do astronauts have to use radio to talk to each other?</p>
+<div class="lab" style="margin:.4rem 0">
+  <div class="controls"><button class="btn" id="sShout">🗣 Shout</button><button class="btn" id="sRadio">📻 Use the radio</button><button class="btn" id="sTouch">🪖 Touch helmets</button></div>
+  <svg id="asSvg" viewBox="0 0 800 290" role="img" aria-label="Two astronauts outside a spacecraft: a shout stops at the helmet because space has no air, but radio waves cross the vacuum"></svg>
+  <div class="readout" id="sOut"></div>
+</div>
+<div class="reveal" data-btn="Show answer"><div class="answer">Outer space is (almost) a <b>vacuum</b> – there is <b>no air</b>, so there is no medium to carry sound from one astronaut to the other. Their voices stay inside their own helmets. A <b>radio</b> sends <b>radio waves</b>, which are electromagnetic waves like light – they do not need a medium and travel easily through a vacuum. <i>Going further:</i> if two astronauts press their helmets together, they can hear each other faintly – the sound then travels through the solid helmets.</div></div></div>
+
+<h2 id="check">7. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li>The material that carries sound is the <b>medium</b>. A vibrating object makes compressions and rarefactions in it; the particles only vibrate about their places – the disturbance (and the energy) travels.</li>
+<li>Buzzer in a jar / bell jar: as the air is removed the sound fades, though the source still vibrates → <b>sound cannot travel through vacuum</b>.</li>
+<li>Desk: sound travels through <b>solids</b>. Bucket: sound travels through <b>liquids</b>. Air: through <b>gases</b>.</li>
+<li><b>Sound needs a medium.</b> Snakes feel ground vibrations; whales and dolphins call through water; astronauts in airless space need radio.</li>
+</ul></div>
+<p>Next: <a href="07_speed_of_sound.html">How fast does sound travel? – Speed of sound, thunder and lightning ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Sound · Class 9 Physics", "icon": "🔔", "key": "physics_ch8_progress", "pages": [["index.html", "Home"], ["01_vibrations_oscillations.html", "1 · Vibrations & To-and-fro Motion"], ["02_particles_states_of_matter.html", "2 · Particles, Solids, Liquids & Gases"], ["03_waves_compressions.html", "3 · Waves, Compressions & Rarefactions"], ["04_speed_distance_time.html", "4 · Speed, Distance & Time; Light vs Sound"], ["05_how_sound_is_produced.html", "5 · How Sound Is Produced"], ["06_propagation_of_sound.html", "6 · Propagation of Sound"], ["07_speed_of_sound.html", "7 · Speed of Sound, Thunder & Lightning"], ["08_ear_and_hearing.html", "8 · The Ear, Hearing & Ear Care"], ["09_music_noise_pollution.html", "9 · Music, Noise & Noise Pollution"], ["10_intext_questions_solutions.html", "10 · In-text Questions – Solutions"], ["11_assess_solutions.html", "11 · Let Us Assess & Extended Activities – Solutions"], ["12_applications_explore.html", "12 · Applications & Explore Online"], ["13_summary_revision.html", "13 · Summary & Quick Quiz"], ["14_model_test_paper.html", "14 · Model Test Paper"], ["15_model_test_solutions.html", "15 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ==== common helpers (same on pages 05–09) ==== */
+const {P, el} = K;
+const $id = id => document.getElementById(id);
+const CV = c => (c[0] === '#' || c.startsWith('var(') || c.startsWith('rgb')) ? c : 'var(--' + (c === 'amber' ? 'accent' : c) + ')';
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const rnd = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const TAU = 2 * Math.PI;
+function ln(svg, a, b, c='text', w=2, extra=''){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, style: `stroke:${CV(c)};stroke-width:${w};stroke-linecap:round;${extra}`}, svg); }
+function arrow(svg, a, b, c='red', w=3, head=11){ const L = K.dist(a, b); if (L < 2) return; const hh = Math.min(head, L * .6); const u = K.unit(a, b), n = P(-u.y, u.x), base = P(b.x - u.x * hh, b.y - u.y * hh); ln(svg, a, base, c, w); K.polygon(svg, [b, P(base.x + n.x * hh * .55, base.y + n.y * hh * .55), P(base.x - n.x * hh * .55, base.y - n.y * hh * .55)], {style: `fill:${CV(c)}`}); }
+function rect(svg, x, y, w, h, style, rx=0){ return el('rect', {x, y, width: w, height: h, rx, style}, svg); }
+function circ(svg, c, r, style){ return el('circle', {cx: c.x, cy: c.y, r, style}, svg); }
+function ell(svg, c, rx, ry, style){ return el('ellipse', {cx: c.x, cy: c.y, rx, ry, style}, svg); }
+function path(svg, d, style){ return el('path', {d, style}, svg); }
+function tx(svg, x, y, s, cls='lbl', anchor='start', extra={}){ return K.text(svg, P(x, y), s, {class: cls, 'text-anchor': anchor, ...extra}); }
+/* sound "ripples" spreading from c towards dirDeg; s = strength 0..1, ph = time in s */
+function waves(svg, c, dirDeg, s, ph, o={}){ if (s <= .01) return; const n = o.n || 3, gap = o.gap || 16, r0 = o.r0 || 12, half = o.half || 38;
+  for (let k = 0; k < n; k++){ const f = (ph * (o.speed || 1.2) + k / n) % 1, r = r0 + f * gap * n, a1 = K.rad(dirDeg - half), a2 = K.rad(dirDeg + half);
+    path(svg, `M${(c.x + r * Math.cos(a1)).toFixed(1)},${(c.y + r * Math.sin(a1)).toFixed(1)} A${r.toFixed(1)},${r.toFixed(1)} 0 ${half > 90 ? 1 : 0},1 ${(c.x + r * Math.cos(a2)).toFixed(1)},${(c.y + r * Math.sin(a2)).toFixed(1)}`, `fill:none;stroke:${CV(o.c || 'blue')};stroke-width:${o.w || 2.5};stroke-linecap:round;opacity:${(s * (1 - f) * .95).toFixed(3)}`); } }
+/* simple head; facing = -1 looks left (ear on the right side of the face), +1 looks right */
+function head(svg, c, r=26, facing=-1, o={}){ const g = K.group(svg);
+  circ(g, c, r, `fill:${o.skin || '#f5c49b'};stroke:var(--text);stroke-width:1.5`);
+  path(g, `M${c.x - r},${c.y - 4} A${r},${r} 0 0,1 ${c.x + r},${c.y - 4} L${c.x + r * .9},${c.y - r * .45} Q${c.x},${c.y - r * .62} ${c.x - r * .9},${c.y - r * .45} Z`, `fill:${o.hair || '#1f2937'}`);
+  circ(g, P(c.x + facing * r * .45, c.y + 2), 2.4, 'fill:#1f2937');
+  ell(g, P(c.x - facing * r * .2, c.y + 4), 5, 8, 'fill:#eab38a;stroke:#92400e;stroke-width:1.2');
+  return g; }
+/* shared animation clock: runs only while a lab is on screen and was used in the last 25 s */
+const ANIM = []; let animOn = false, animLast = 0;
+function animLoop(now){ const dt = Math.min(.05, Math.max(0, (now - animLast) / 1000)); animLast = now; let any = false;
+  for (const it of ANIM){ if (it.vis && now < it.until){ it.t += dt; try { it.fn(it.t, dt); } catch (e){ it.until = 0; throw e; } any = true; } }
+  if (any) requestAnimationFrame(animLoop); else animOn = false; }
+function animStart(){ if (!animOn){ animOn = true; animLast = performance.now(); requestAnimationFrame(animLoop); } }
+function anim(elm, fn){ const it = {elm, fn, t: 0, until: 0, vis: true}; ANIM.push(it);
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(e => { it.vis = e.isIntersecting; if (it.vis) wake(it); })).observe(elm);
+  it.fn(0, 0); wake(it); return it; }
+function wake(it){ it.until = performance.now() + 25000; animStart(); }
+/* buttons that behave like radio buttons; returns a setter */
+function radio(ids, onPick){ const els = ids.map(id => $id(id)); const set = k => { els.forEach((b, i) => b.classList.toggle('primary', i === k)); onPick(k); }; els.forEach((b, i) => b.addEventListener('click', () => set(i))); return set; }
+/* choice buttons: <span class="yn" data-ans="1" data-why="..."><button class="btn">…</button>…</span> followed by a <div class="why"> */
+function choices(root=document){ K.$$('.yn[data-ans]', root).forEach(box => { const ans = +box.dataset.ans, why = box.parentElement.querySelector('.why');
+  K.$$('button', box).forEach((b, k) => b.addEventListener('click', () => { K.$$('button', box).forEach(x => x.classList.remove('ok', 'bad')); b.classList.add(k === ans ? 'ok' : 'bad');
+    if (why){ why.innerHTML = k === ans ? '✅ ' + (box.dataset.why || 'Correct.') : '❌ ' + (box.dataset.hint || 'Look at the lab again and try the other option.'); why.style.color = k === ans ? 'var(--green)' : 'var(--red)'; } })); }); }
+/* two-way sorter: items = [{t, a: 0|1, why}] */
+function sorter(id, labels, items){ const box = $id(id); box.classList.add('sorter'); let right = 0; const done = new Set();
+  box.innerHTML = items.map((it, i) => `<div class="item"><span class="t">${it.t}</span><span class="yn">${labels.map((l, k) => `<button class="btn" data-i="${i}" data-k="${k}">${l}</button>`).join('')}</span><div class="why"></div></div>`).join('') + '<p class="score"></p>';
+  const score = box.querySelector('.score'); const upd = () => { score.textContent = `Sorted correctly: ${right} of ${items.length}` + (right === items.length ? ' – well done!' : ''); }; upd();
+  box.addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (!b) return; const i = +b.dataset.i, k = +b.dataset.k, it = items[i], row = b.closest('.item');
+    K.$$('button', row).forEach(x => x.classList.remove('ok', 'bad')); b.classList.add(k === it.a ? 'ok' : 'bad');
+    const w = row.querySelector('.why'); w.innerHTML = (k === it.a ? '✅ ' : '❌ Not quite – ') + it.why; w.style.color = k === it.a ? 'var(--green)' : 'var(--red)';
+    if (k === it.a && !done.has(i)){ done.add(i); right++; } else if (k !== it.a && done.has(i)){ done.delete(i); right--; } upd(); }); }
+/* ==== end common ==== */
+const STEEL = '#94a3b8', WOOD = '#b45309';
+
+/* ---------- 1. particles ---------- */
+(function(){
+  const svg = $id('pSvg'), out = $id('pOut'); let run = true, trace = false, spd = 5, ph = 0; const hist = [];
+  const X0 = 70, X1 = 780, ROWS = 7, DX = 14, Y0 = 70, DY = 22, AMP = 6, LAM = 160;
+  function s(x){ return AMP * Math.sin(ph - TAU * x / LAM); }
+  function draw(){
+    K.clear(svg);
+    const off = AMP * Math.sin(ph); rect(svg, 40 + off, 50, 14, 170, `fill:${STEEL};stroke:var(--text);stroke-width:1.3`, 3); tx(svg, 47, 238, 'vibrating prong', 'lbl sm', 'middle');
+    const red = Math.round((330 - X0) / DX);
+    for (let r = 0; r < ROWS; r++) for (let c = 0; X0 + c * DX <= X1; c++){ const x0 = X0 + c * DX + (r % 2 ? DX / 2 : 0); const isRed = r === 3 && c === red; circ(svg, P(x0 + s(x0), Y0 + r * DY), isRed ? 5 : 3.2, isRed ? 'fill:var(--red);stroke:var(--text);stroke-width:1' : 'fill:var(--blue);opacity:.75'); }
+    const rx = X0 + red * DX; ln(svg, P(rx, Y0 + 3 * DY - 14), P(rx, Y0 + 3 * DY + 14), 'red', 1, 'stroke-dasharray:2 3');
+    if (trace){ hist.push(rx + s(rx)); if (hist.length > 90) hist.shift(); const ty = 238; ln(svg, P(rx - AMP - 6, ty), P(rx + AMP + 6, ty), 'muted', 1); circ(svg, P(rx + s(rx), ty), 4, 'fill:var(--red)'); tx(svg, rx + 18, ty, '← the red particle only moves to and fro here', 'lbl sm red', 'start'); }
+    /* C and R labels */
+    for (let n = -3; n < 8; n++){ const xc = (ph - TAU * n) * LAM / TAU, xr = xc + LAM / 2; if (xc > X0 + 4 && xc < X1) tx(svg, xc, 42, 'C', 'lbl big red', 'middle'); if (xr > X0 + 4 && xr < X1) tx(svg, xr, 42, 'R', 'lbl big blue', 'middle'); }
+    arrow(svg, P(580, 276), P(760, 276), 'green', 2.5); tx(svg, 670, 258, 'C and R move this way', 'lbl sm green', 'middle');
+    tx(svg, 70, 276, 'C = compression (crowded)   R = rarefaction (spread out)', 'lbl sm', 'start');
+  }
+  const it = anim(svg, (t, dt) => { if (run) ph += dt * TAU * .1 * spd; draw(); });
+  K.slider('#pSpd', v => { spd = v; wake(it); }, 0);
+  $id('pRun').addEventListener('click', () => { run = !run; $id('pRun').textContent = run ? '⏸ Pause' : '▶ Play'; wake(it); });
+  $id('pTrace').addEventListener('click', () => { trace = !trace; hist.length = 0; $id('pTrace').classList.toggle('primary', trace); wake(it); });
+  out.textContent = 'The prong moves forward → it squeezes the particles in front of it together: a compression (C).\nThe prong moves back → the particles spread out: a rarefaction (R).\nEach particle pushes its neighbour, so C and R travel outwards – this is how sound travels through a medium.';
+})();
+
+/* ---------- 2. buzzer jar / bell jar ---------- */
+(function(){
+  const svg = $id('jarSvg'), out = $id('jOut'), inp = $id('jAir'); let air = 1, mode = 0;
+  const pts = []; for (let i = 0; pts.length < 80 && i < 3000; i++){ const x = 150 + rnd(i) * 230, y = 95 + rnd(i + 500) * 200; pts.push(P(x, y)); }
+  function obs(id, html){ const c = $id(id); c.className = 'filled'; c.innerHTML = html; }
+  function draw(t){
+    K.clear(svg); const A = Math.round(air * 100);
+    rect(svg, 0, 310, 800, 30, 'fill:#a16207;opacity:.3');
+    if (mode === 0){
+      rect(svg, 140, 80, 250, 230, 'fill:var(--blue-soft);fill-opacity:.25;stroke:var(--muted);stroke-width:3', 14); rect(svg, 132, 64, 266, 18, 'fill:var(--muted)', 4);
+      tx(svg, 265, 330, 'transparent container', 'lbl sm', 'middle');
+      K.polyline(svg, [P(360, 64), P(360, 30), P(470, 30), P(470, 110)], {style: 'stroke:var(--muted);stroke-width:7;fill:none;stroke-linejoin:round'}); tx(svg, 420, 22, 'plastic tube', 'lbl sm', 'middle');
+      head(svg, P(500, 130), 28, -1, {hair: '#3f2a1d'}); ell(svg, P(475, 120), 8, 6, 'fill:#be123c'); tx(svg, 500, 178, 'draws air out', 'lbl sm', 'middle');
+    } else {
+      path(svg, 'M140,300 L140,150 A125,90 0 0,1 390,150 L390,300', 'fill:var(--blue-soft);fill-opacity:.25;stroke:var(--muted);stroke-width:3'); rect(svg, 120, 300, 290, 12, 'fill:var(--blue);opacity:.6', 3);
+      ln(svg, P(410, 306), P(470, 306), 'muted', 6); rect(svg, 470, 270, 120, 46, 'fill:var(--surface2);stroke:var(--text);stroke-width:1.5', 6); tx(svg, 530, 290, 'vacuum pump', 'lbl sm', 'middle'); tx(svg, 530, 306, 'വാക്വം പമ്പ്', 'lbl sm purple', 'middle');
+      tx(svg, 265, 330, 'bell jar on the pump plate (teacher demo)', 'lbl sm', 'middle');
+    }
+    const n = Math.round(air * pts.length); for (let i = 0; i < n; i++){ const p = pts[i]; if (mode === 1 && p.y < 150 && ((p.x - 265) / 115) ** 2 + ((p.y - 150) / 82) ** 2 > 1) continue; circ(svg, P(p.x + 1.2 * Math.sin(TAU * 3 * t + i), p.y), 2.6, 'fill:var(--blue);opacity:.7'); }
+    /* buzzer on a thread */
+    ln(svg, P(265, mode === 0 ? 82 : 62), P(265, 160), 'text', 1.2);
+    rect(svg, 240, 160, 50, 40, 'fill:#1f2937', 6); const f = 3 * Math.sin(TAU * 6 * t); ell(svg, P(265, 204 + f * .3), 18, 4 + Math.abs(f) * .4, 'fill:var(--red)'); tx(svg, 265, 180, 'buzzer', 'lbl sm', 'middle', {style: 'fill:#fff;stroke:none'});
+    rect(svg, 200, 240, 22, 34, 'fill:var(--blue);opacity:.8', 3); tx(svg, 211, 290, 'cell', 'lbl sm', 'middle');
+    waves(svg, P(265, 210), 90, Math.max(.3, air), t, {n: 3, gap: 12, r0: 10, half: 70});
+    waves(svg, P(395, 220), 0, air, t, {n: 4, gap: 20, r0: 6, half: 30});
+    /* listener and meter */
+    head(svg, P(690, 210), 26, -1, {hair: '#1f2937'});
+    const X = 610; tx(svg, X, 40, `air left: ${A} %`, 'lbl', 'start'); rect(svg, X, 52, 170, 12, 'fill:var(--surface2);stroke:var(--border)', 3); rect(svg, X, 52, 170 * air, 12, 'fill:var(--blue)', 3);
+    tx(svg, X, 88, 'loudness heard outside', 'lbl sm', 'start'); rect(svg, X, 98, 170, 12, 'fill:var(--surface2);stroke:var(--border)', 3); rect(svg, X, 98, 170 * air, 12, 'fill:var(--accent)', 3);
+    tx(svg, X, 134, 'buzzer: still vibrating ✓', 'lbl sm red', 'start');
+    tx(svg, 690, 260, A >= 100 ? 'loud and clear' : A >= 40 ? 'fainter…' : A > 0 ? 'very faint' : 'silence', 'lbl sm', 'middle');
+    out.textContent = A >= 100 ? 'Full of air: the buzzer is heard clearly.'
+      : A >= 40 ? `${A} % of the air left: the sound is fainter – fewer particles to pass the vibration on.`
+      : A > 0 ? `Only ${A} % of the air left: the sound is very faint, although the buzzer is vibrating just as before.`
+      : 'No air at all (a vacuum): no sound reaches you – yet you can see the buzzer vibrating. Sound cannot travel through vacuum.';
+    if (A >= 100) obs('jO1', '✅ Yes – heard clearly.'); else if (A >= 40) obs('jO2', '✅ Yes – the sound becomes fainter.'); else if (A > 0) obs('jO3', '✅ Yes – fainter still.'); else obs('jO4', '✅ No – no sound would be heard; there is no medium to carry it.');
+  }
+  const it = anim(svg, t => draw(t));
+  const run = K.slider(inp, v => { air = v / 100; wake(it); draw(it.t); }, 0);
+  $id('jSuck').addEventListener('click', () => { inp.value = Math.max(0, +inp.value - 20); run(); });
+  $id('jBack').addEventListener('click', () => { inp.value = 100; run(); });
+  radio(['jM1', 'jM2'], k => { mode = k; wake(it); draw(it.t); });
+})();
+
+/* ---------- 3. desk ---------- */
+(function(){
+  const svg = $id('deskSvg'), out = $id('dOut'); let mode = 1;
+  const L = [.25, .9, .35];
+  function draw(t){
+    K.clear(svg); const onDesk = mode !== 0, earOn = mode !== 2;
+    rect(svg, 60, 150, 640, 22, `fill:${WOOD};stroke:var(--text);stroke-width:1.4`, 3);
+    for (let k = 0; k < 5; k++) path(svg, `M${70 + k * 120},158 q30,6 60,0 q30,-6 60,0`, 'fill:none;stroke:#7c2d12;stroke-width:1;opacity:.5');
+    ln(svg, P(90, 172), P(90, 280), WOOD, 8); ln(svg, P(670, 172), P(670, 280), WOOD, 8);
+    tx(svg, 380, 196, 'wooden desk (a solid)', 'lbl sm', 'middle');
+    /* fork */
+    const fy = onDesk ? 148 : 90; const off = 4 * Math.sin(TAU * 5 * t);
+    [-1, 1].forEach(d => K.polygon(svg, [P(130 + d * 8 - 3, fy - 30), P(130 + d * 8 + 3, fy - 30), P(130 + d * (8 + off) + 3, fy - 110), P(130 + d * (8 + off) - 3, fy - 110)], {style: `fill:${STEEL};stroke:var(--text);stroke-width:1`}));
+    rect(svg, 116, fy - 36, 28, 10, `fill:${STEEL};stroke:var(--text);stroke-width:1`, 5); rect(svg, 127, fy - 28, 6, 28, `fill:${STEEL};stroke:var(--text);stroke-width:1`, 2);
+    ell(svg, P(160, fy - 16), 14, 9, 'fill:#f5c49b;stroke:#92400e;stroke-width:1.3');
+    tx(svg, 130, 20, onDesk ? 'stem pressed on the desk' : 'fork held in the air', 'lbl sm', 'middle');
+    /* vibrations in the wood */
+    if (onDesk) for (let k = 0; k < 6; k++){ const x = 140 + ((t * 260 + k * 95) % 560); ln(svg, P(x, 152), P(x, 170), 'red', 3, 'opacity:.75'); }
+    waves(svg, P(130, fy - 70), 0, onDesk ? .35 : .5, t, {n: 3, gap: 30, r0: 20, half: 25, c: 'blue'});
+    /* listener */
+    const hy = earOn ? 122 : 78; head(svg, P(620, hy), 26, -1, {hair: '#1f2937'}); rect(svg, 600, hy + 26, 40, 30, 'fill:var(--purple);opacity:.6', 8);
+    tx(svg, 620, earOn ? 30 : 30, earOn ? 'ear pressed on the desk' : 'ear lifted off the desk', 'lbl sm', 'middle');
+    const X = 300; tx(svg, X, 40, 'loudness heard', 'lbl sm', 'start'); rect(svg, X, 50, 200, 12, 'fill:var(--surface2);stroke:var(--border)', 3); rect(svg, X, 50, 200 * L[mode], 12, 'fill:var(--accent)', 3);
+    tx(svg, X, 84, ['mostly through air: faint', 'through the wood: clear and loud', 'wood reaches the ear only via air: faint'][mode], 'lbl sm', 'start');
+    out.textContent = ['Fork vibrating in the air above the desk: the sound reaches the ear only through the air – faint.',
+      'Stem pressed on the desk: the vibrations travel through the wood straight to the ear on the desk – clear and loud. Media: the wood of the desk (and a little air).',
+      'Stem on the desk but ear lifted: the vibrations still run through the wood, but must cross the air to reach the ear – much fainter. So most of the sound was travelling through the solid.'][mode];
+  }
+  const it = anim(svg, t => draw(t));
+  radio(['dA', 'dB', 'dC'], k => { mode = k; wake(it); draw(it.t); });
+})();
+
+/* ---------- 4. bucket ---------- */
+(function(){
+  const svg = $id('bkSvg'), out = $id('bkOut'); let tTap = -9, showPath = false, T = 0;
+  function draw(){
+    K.clear(svg); const dt = T - tTap;
+    path(svg, 'M120,60 L150,300 L410,300 L440,60', 'fill:none;stroke:var(--muted);stroke-width:4;stroke-linejoin:round');
+    path(svg, 'M126,100 L150,298 L410,298 L434,100 Z', 'fill:#3b82f6;opacity:.22'); ln(svg, P(126, 100), P(434, 100), 'blue', 1.5);
+    tx(svg, 280, 316, 'bucket of water', 'lbl sm', 'middle');
+    /* vessel */
+    rect(svg, 230, 180, 100, 70, `fill:${STEEL};stroke:var(--text);stroke-width:1.5`, 6); ell(svg, P(280, 180), 50, 8, `fill:#cbd5e1;stroke:var(--text);stroke-width:1.2`);
+    ln(svg, P(250, 182), P(250, 40), '#f5c49b', 12); ln(svg, P(310, 182), P(310, 40), '#f5c49b', 12); tx(svg, 330, 40, 'hands hold the vessel', 'lbl sm', 'start');
+    tx(svg, 280, 222, 'steel vessel', 'lbl sm', 'middle', {style: 'fill:#1f2937;stroke:none'});
+    const sw = dt < .25 ? 1 - dt / .25 : 0; const sx = 180 - 30 * sw;
+    ln(svg, P(sx, 150), P(sx + 46, 205), '#cbd5e1', 4); ell(svg, P(sx + 2, 148), 6, 9, 'fill:#94a3b8'); tx(svg, 196, 130, 'spoon', 'lbl sm', 'start');
+    if (dt >= 0 && dt < 2.2){ for (let k = 0; k < 3; k++){ const r = (dt - k * .25) * 140; if (r > 0 && r < 220) path(svg, `M${280 - r},215 A${r},${r * .8} 0 0,1 ${280 + r},215`, `fill:none;stroke:var(--red);stroke-width:2;opacity:${(1 - r / 220).toFixed(2)}`); }
+      if (dt > .8) waves(svg, P(445, 200), 0, Math.max(0, 1 - (dt - .8) / 1.4), T, {n: 3, gap: 20, r0: 6, half: 30}); }
+    head(svg, P(640, 190), 28, -1, {hair: '#3f2a1d'});
+    if (showPath){ const steps = [['spoon', 120, 'muted'], ['steel vessel (solid)', 150, 'text'], ['water (liquid)', 180, 'blue'], ['bucket wall (solid)', 210, 'text'], ['air (gas)', 240, 'blue'], ['your ear', 270, 'green']];
+      steps.forEach(([s, y, c], i) => { tx(svg, 520, y - 80, `${i + 1}. ${s}`, 'lbl sm ' + (c === 'text' ? '' : c), 'start'); }); }
+    out.textContent = dt >= 0 && dt < 2.2 ? 'Tap! The vibration spreads through the water (red ripples), reaches the bucket wall and then the air – and you hear it clearly.' : 'Press “Tap the vessel”. The vessel is completely under water.';
+  }
+  const it = anim(svg, t => { T = t; draw(); });
+  $id('bkTap').addEventListener('click', () => { tTap = T; wake(it); });
+  $id('bkPath').addEventListener('click', () => { showPath = !showPath; $id('bkPath').classList.toggle('primary', showPath); wake(it); draw(); });
+})();
+
+/* ---------- 5. snake and whales ---------- */
+(function(){
+  const svg = $id('swSvg'), out = $id('swOut'); let m = 0;
+  function draw(t){
+    K.clear(svg);
+    if (m === 0){
+      rect(svg, 0, 170, 800, 110, 'fill:#a16207;opacity:.35'); ln(svg, P(0, 170), P(800, 170), '#78350f', 2); tx(svg, 400, 266, 'ground (a solid medium)', 'lbl sm', 'middle');
+      const step = Math.floor(t * 1.5) % 2; const fx = 640 - (t * 20 % 200);
+      ell(svg, P(fx, 164), 16, 6, 'fill:#1f2937'); ell(svg, P(fx + 30, 164 - (step ? 8 : 0)), 16, 6, 'fill:#1f2937'); tx(svg, fx + 16, 130, 'footsteps', 'lbl sm', 'middle');
+      for (let k = 0; k < 4; k++){ const r = ((t * 1.5 + k / 4) % 1) * 420; path(svg, `M${fx - r},172 A${r},${r * .35} 0 0,0 ${fx + r},172`, `fill:none;stroke:var(--red);stroke-width:2;opacity:${(1 - r / 420).toFixed(2)}`); }
+      const sp = []; for (let k = 0; k <= 40; k++){ const x = 120 + k * 5; sp.push(P(x, 160 - 8 * Math.sin(k / 4))); } K.polyline(svg, sp, {style: 'stroke:#a16207;stroke-width:14;fill:none;stroke-linecap:round;stroke-linejoin:round'}); K.polyline(svg, sp, {style: 'stroke:#facc15;stroke-width:4;fill:none;stroke-dasharray:6 8'});
+      ell(svg, P(112, 162), 14, 9, 'fill:#a16207'); circ(svg, P(106, 158), 2, 'fill:#111');
+      tx(svg, 112, 120, 'jaw rests on the ground', 'lbl sm', 'middle');
+      out.textContent = '(a) A snake has no outer ear or eardrum. Footsteps make the ground vibrate; the vibrations travel through the soil and reach the snake through its jaw and body. It uses this to catch prey and to escape danger.';
+    } else {
+      rect(svg, 0, 30, 800, 250, 'fill:#1d4ed8;opacity:.28'); ln(svg, P(0, 30), P(800, 30), 'blue', 2); tx(svg, 400, 266, 'sea water (a liquid medium)', 'lbl sm', 'middle');
+      const whale = (x, y, d) => { path(svg, `M${x},${y} q${d * 60},-34 ${d * 130},0 q${-d * 30},22 ${-d * 70},20 q${-d * 30},2 ${-d * 60},-20 Z`, 'fill:#475569;stroke:var(--text);stroke-width:1.2'); path(svg, `M${x},${y} l${-d * 26},-16 l${d * 6},16 l${-d * 6},16 Z`, 'fill:#475569'); circ(svg, P(x + d * 112, y - 4), 2.4, 'fill:#fff'); };
+      whale(90, 130, 1); whale(710, 190, -1);
+      const turn = Math.floor(t / 2) % 2; if (turn === 0) waves(svg, P(230, 132), 15, 1, t, {n: 5, gap: 50, r0: 10, half: 25, c: '#fff'}); else waves(svg, P(570, 186), 195, 1, t, {n: 5, gap: 50, r0: 10, half: 25, c: '#fff'});
+      out.textContent = '(b) Whales and dolphins send calls through sea water – sound travels well (and fast) in water, so they can “talk” to each other over long distances.';
+    }
+  }
+  const it = anim(svg, t => draw(t));
+  radio(['aS', 'aW'], k => { m = k; wake(it); draw(it.t); });
+})();
+
+/* ---------- 6. astronauts ---------- */
+(function(){
+  const svg = $id('asSvg'), out = $id('sOut'); let m = -1, t0 = 0, T = 0;
+  function astro(x, d){ rect(svg, x - 30, 120, 60, 90, 'fill:#e2e8f0;stroke:var(--text);stroke-width:1.5', 14); circ(svg, P(x, 92), 34, 'fill:#e2e8f0;stroke:var(--text);stroke-width:1.5'); circ(svg, P(x + d * 6, 92), 22, 'fill:#0f172a;opacity:.85'); ln(svg, P(x - d * 20, 64), P(x - d * 30, 30), 'text', 2); circ(svg, P(x - d * 30, 28), 4, 'fill:var(--red)'); rect(svg, x - 26, 210, 20, 30, 'fill:#e2e8f0;stroke:var(--text);stroke-width:1.2', 4); rect(svg, x + 6, 210, 20, 30, 'fill:#e2e8f0;stroke:var(--text);stroke-width:1.2', 4); }
+  function draw(){
+    K.clear(svg); rect(svg, 0, 0, 800, 290, 'fill:#0b1220');
+    for (let k = 0; k < 40; k++) circ(svg, P(rnd(k) * 800, rnd(k + 50) * 260), rnd(k + 9) * 1.4 + .4, 'fill:#fff;opacity:.8');
+    const near = m === 2; const xa = near ? 360 : 200, xb = near ? 440 : 600;
+    astro(xa, 1); astro(xb, -1);
+    const dt = T - t0;
+    if (m === 0){ waves(svg, P(xa + 20, 96), 0, 1, T, {n: 2, gap: 6, r0: 6, half: 40, c: '#fff'}); K.text(svg, P(400, 270), 'no air = no medium: the sound stops at the helmet', {class: 'lbl', style: 'fill:#fca5a5;stroke:none'}); }
+    if (m === 1){ for (let k = 0; k < 4; k++){ const f = ((dt * .8 + k / 4) % 1); const x = xa - 30 + f * (xb - xa); const pts = []; for (let j = 0; j <= 10; j++) pts.push(P(x + j * 4, 28 + (j % 2 ? -6 : 6))); K.polyline(svg, pts, {style: 'stroke:#facc15;stroke-width:2;fill:none'}); }
+      K.text(svg, P(400, 270), 'radio waves cross the vacuum', {class: 'lbl', style: 'fill:#fde68a;stroke:none'}); }
+    if (m === 2){ waves(svg, P(400, 92), 0, 1, T, {n: 2, gap: 6, r0: 2, half: 40, c: '#fff'}); K.text(svg, P(400, 270), 'helmets touching: sound passes through the solid', {class: 'lbl', style: 'fill:#bbf7d0;stroke:none'}); }
+    out.textContent = m === 0 ? 'Shouting: the voice makes the air inside the helmet vibrate, but outside there is no air. With no medium, the sound cannot cross the gap – the other astronaut hears nothing.'
+      : m === 1 ? 'Radio: the voice is turned into radio waves. Radio waves are electromagnetic waves (like light) – they need no medium, so they cross the vacuum and the other astronaut hears clearly.'
+      : m === 2 ? 'Helmets pressed together: now there is a solid path (helmet to helmet), so a faint sound can travel across – sound needs a medium, and a solid works.'
+      : 'Press a button to see what happens in the airless space outside the spacecraft.';
+  }
+  const it = anim(svg, t => { T = t; draw(); });
+  [['sShout', 0], ['sRadio', 1], ['sTouch', 2]].forEach(([id, k]) => $id(id).addEventListener('click', () => { m = k; t0 = T; ['sShout', 'sRadio', 'sTouch'].forEach((x, i) => $id(x).classList.toggle('primary', i === k)); wake(it); draw(); }));
+})();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'As air is pumped out of a bell jar with a ringing bell inside, the sound…', options: ['becomes louder', 'becomes fainter and almost stops', 'does not change', 'changes into light'], answer: 1, explain: 'Less air → less medium to carry the sound; with no air, no sound gets out.', hint: 'What carries the sound to the glass?'});
+K.mcq('#q2', {q: 'Sound cannot travel through…', options: ['water', 'steel', 'vacuum', 'wood'], answer: 2, explain: 'A vacuum has no particles to pass the vibration on.', hint: 'Think of the bell jar with all the air removed.'});
+K.mcq('#q3', {q: 'In the bucket activity (Fig 8.10) the sound of the tap reaches us through…', options: ['water only', 'the steel vessel, water, bucket wall and air', 'air only', 'vacuum'], answer: 1, explain: 'Solid → liquid → solid → gas → ear.', hint: 'The vessel is completely under water.'});
+K.mcq('#q4', {q: 'When sound travels through air, the air particles…', options: ['travel all the way from the source to the ear', 'vibrate to and fro about their own positions', 'stay completely still', 'move in circles'], answer: 1, explain: 'Each particle only vibrates; the compressions and rarefactions (and the energy) travel.', hint: 'Watch the red particle in the first lab.'});
+K.mcq('#q5', {q: 'Astronauts use radio to talk in space because…', options: ['space is too cold for sound', 'there is no air in space to carry sound', 'their helmets are soundproof', 'sound is too slow'], answer: 1, explain: 'No medium, no sound. Radio waves do not need a medium.', hint: 'What does sound need in order to travel?'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>
