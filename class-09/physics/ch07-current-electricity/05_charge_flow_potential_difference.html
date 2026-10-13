@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Charge Flow and Potential Difference</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.qa{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.6rem 1rem;margin:.7rem 0;box-shadow:var(--shadow)}
+.qa p{margin:.25em 0}
+.qbox{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.7rem 1rem;margin:.8rem 0;box-shadow:var(--shadow)}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.bubbles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.7rem;margin:.8rem 0}
+.bubble{background:var(--surface);border:2px solid var(--purple);border-radius:18px;padding:.6rem .9rem;font-size:.95rem}
+.bubble .ml{display:block;font-weight:600;margin-bottom:.2rem}
+.obs td,.obs th{text-align:center;vertical-align:middle}
+.tw{overflow-x:auto}
+.yn{display:inline-flex;gap:.3rem;flex-wrap:wrap;justify-content:center}
+.yn .btn{padding:.25rem .6rem;font-size:.88rem}
+.btn.ok{background:var(--green-soft);border-color:var(--green);color:var(--text)}
+.btn.bad{background:var(--red-soft);border-color:var(--red);color:var(--text)}
+.btn.given{opacity:.85;pointer-events:none;background:var(--green-soft);border-color:var(--green)}
+</style>
+</head>
+<body data-page="05_charge_flow_potential_difference">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 7 · Section 1</span><span class="chip amber">Textbook pages 131–135</span>
+<h1>Charge Flow and Potential Difference <span class="ml">വൈദ്യുതപ്രവാഹവും പൊട്ടൻഷ്യൽ വ്യത്യാസവും</span></h1>
+<p class="lead">Why does an LED glow for only a moment on a charged capacitor, but for hours on a tiny button cell? Water, heat and air answer it for us: things flow only when there is a <b>difference</b> – of level, of temperature, of pressure. For electric charges that difference is the <b>potential difference</b>, and a cell is the "pump" that keeps it going. You will meet the volt, the emf and the formula <b>V = W/Q</b>.</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 1–4 of this guide)</div>
+<ul style="margin:0">
+<li>Rubbing transfers <b>electrons</b>; an electron carries a <b>negative</b> charge. Charge is measured in <b>coulombs (C)</b> (page 1).</li>
+<li>Water, heat and air flow from "high" to "low" – level, temperature, pressure (page 2).</li>
+<li>Work W is measured in <b>joules (J)</b>; a pump does work to lift water (Chapter 6, page 3 of this guide).</li>
+<li>A circuit must be <b>closed</b> for current to flow; LEDs work one way round only (page 4).</li>
+</ul></div>
+
+<h2>1. The science-fair circuit (page 131)</h2>
+<p>At the school science fair (<span class="ml">ശാസ്ത്രോത്സവം</span>) an LED was lit with a battery. A student noticed one extra part in the circuit and asked:</p>
+<div class="bubbles">
+<div class="bubble"><span class="ml">LED പ്രകാശിക്കുവാൻ എന്തിനായിരിക്കും ഈ ഘടകം സെർക്കീട്ടിൽ ഉൾപ്പെടുത്തിയത്?</span>Why was this component included in the circuit to light the LED?</div>
+</div>
+<div class="lab">
+  <div class="lab-title">🎬 The LED circuit at the science fair</div>
+  <svg id="openSvg" viewBox="0 0 800 290" role="img" aria-label="Circuit diagram: a battery, a switch, an LED and a mystery component marked with a question mark, all in one loop"></svg>
+  <div class="controls"><button class="btn primary" id="openSw">Switch ON</button></div>
+  <p class="hint">Keep the student's question in mind. You will be able to answer it yourself on page 10 (Fig 7.33) – after you have learnt about current and resistance.</p>
+</div>
+<p><span class="ml">ഉരസൽ മൂലം വസ്തുക്കൾക്ക് വൈദ്യുതചാർജ് ലഭിക്കുന്നത് ഇലക്ട്രോണുകൾ കൈമാറ്റം ചെയ്യപ്പെടുന്നതുകൊണ്ടാണെന്ന് അറിയാമല്ലോ?</span> – You know that objects get charged by rubbing because <b>electrons are transferred</b> from one to the other.</p>
+<div class="qa"><p><b>Textbook questions (page 131) – a quick recap</b></p>
+<ol style="margin:.3rem 0">
+<li><span class="ml">ഉരസൽമൂലം വസ്തുക്കൾക്ക് ലഭിക്കുന്ന വൈദ്യുതചാർജുകൾ ഏതൊക്കെയാണ്?</span> – What kinds of charge do objects get by rubbing?</li>
+<li><span class="ml">ഇലക്ട്രോണുകളുടെ ചാർജ് ഏതാണ്?</span> – What is the charge of an electron?</li>
+<li><span class="ml">വൈദ്യുതചാർജിന്റെ യൂണിറ്റ് എന്താണ്?</span> – What is the unit of electric charge?</li>
+</ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">
+1. <b>Positive and negative</b> (<span class="ml">പോസിറ്റീവ് / നെഗറ്റീവ്</span>). <i>Why:</i> the object that loses electrons becomes positive; the one that gains them becomes negative.<br>
+2. <b>Negative.</b> <i>Why:</i> that is why gaining electrons makes an object negative.<br>
+3. The <b>coulomb (C)</b> (<span class="ml">കൂളോം</span>). <i>Why:</i> it is the SI unit of charge; one electron carries only a tiny part of a coulomb.</div></div></div>
+
+<h2>2. A capacitor and a button cell (Fig 7.1, 7.2)</h2>
+<p><span class="ml">ചാർജ് ചെയ്യപ്പെട്ട ഒരു കപ്പാസിറ്റർ (6 V, 500 µF) LED യുമായി ചിത്രം 7.1 ൽ കാണുന്നതുപോലെ ബന്ധിപ്പിക്കുക.</span> – Connect a <b>charged capacitor</b> (<span class="ml">കപ്പാസിറ്റർ</span>; 6 V, 500 µF) to an LED as in Fig 7.1. Then do another experiment: connect a <b>button cell</b> (<span class="ml">ബട്ടൺ സെൽ</span>), the kind used in calculators, to the same LED (Fig 7.2).</p>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: capacitor or button cell? (Fig 7.1, 7.2)</div>
+  <div class="controls"><button class="btn primary" id="capC">🔋 Charged capacitor (Fig 7.1)</button><button class="btn" id="capB">🪙 Button cell (Fig 7.2)</button></div>
+  <svg id="capSvg" viewBox="0 0 800 330" role="img" aria-label="Left: the source connected to an LED, with electrons moving in the wires. Right: a graph of LED brightness against time for each source"></svg>
+  <div class="controls"><button class="btn primary" id="capGo">▶ Connect the LED</button><button class="btn" id="capRe">⟲ Recharge and clear graph</button></div>
+  <div class="readout" id="capOut"></div>
+  <p class="hint">Model, with time slowed down: the real capacitor flash lasts only a moment. The LED glows only while the p.d. across it is above about 1.8 V (a red LED, approx.), so the capacitor goes dark while some charge is still left on it.</p>
+</div>
+<div class="qa"><p><b>Textbook questions (pages 131–132)</b></p>
+<ol style="margin:.3rem 0">
+<li><span class="ml">നിങ്ങളുടെ നിരീക്ഷണം എന്ത്?</span> – What do you observe (Fig 7.1)?</li>
+<li><span class="ml">LED യുമായി ബന്ധിപ്പിച്ചപ്പോൾ കപ്പാസിറ്ററിലെ വൈദ്യുതചാർജിന് എന്ത് സംഭവിക്കുന്നു?</span> – What happens to the charge in the capacitor when it is connected to the LED?</li>
+<li><span class="ml">ഈ ക്രമീകരണത്തിൽ LED തുടർച്ചയായി പ്രകാശിക്കാത്തതിന് കാരണമെന്തായിരിക്കും?</span> – Why does the LED not glow continuously in this arrangement?</li>
+<li><span class="ml">ഇവിടെ LED തുടർച്ചയായി പ്രകാശിക്കുന്നുണ്ടോ?</span> – With the button cell (Fig 7.2), does the LED glow continuously?</li>
+</ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">
+1. The LED glows <b>brightly for a moment</b> and then <b>fades out</b>. <i>Why:</i> the capacitor can push charge only while it still has a p.d. between its terminals.<br>
+2. The charge <b>flows out of the capacitor through the LED</b> – the capacitor <b>discharges</b> (<span class="ml">ഡിസ്ചാർജ്</span>). <i>Why:</i> its + and − plates are now joined through the LED, so the charges can move.<br>
+3. The small store of charge is <b>used up very quickly</b>, and <b>nothing keeps the potential difference going</b>. <i>Why:</i> a capacitor only stores charge; it has no energy source inside to keep pushing.<br>
+4. <b>Yes</b> – it glows steadily for a long time. <i>Why:</i> the chemicals in the cell keep supplying energy and keep the p.d. between its terminals.</div></div></div>
+<p><span class="ml">ഒന്നാമത്തെ പരീക്ഷണത്തിൽ വളരെ കുറഞ്ഞ സമയത്തേക്കും രണ്ടാമത്തേതിൽ തുടർച്ചയായും വൈദ്യുത ചാർജിന്റെ പ്രവാഹം ഉണ്ടാകുന്നു</span> – so in the first experiment charge flows for a very short time; in the second it flows continuously.</p>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 132) – Capacitor <span class="ml">കപ്പാസിറ്റർ</span></div>
+<p class="ml" style="margin:.2rem 0 .4rem">വൈദ്യുതോർജം സംഭരിക്കാനും ആവശ്യമുള്ളപ്പോൾ ഡിസ്ചാർജ് വഴി ബാഹ്യ സെർക്കീട്ടിലൂടെ വൈദ്യുത പ്രവാഹം അല്പസമയത്തേക്ക് സാധ്യമാക്കുവാനും ഉപയോഗിക്കുന്ന ഘടകമാണ് കപ്പാസിറ്റർ.</p>
+<p>A <b>capacitor</b> is a component that <b>stores electrical energy</b> and, when needed, <b>discharges</b> to drive a current through the outside circuit <b>for a short time</b>. Almost all electronic devices contain capacitors. To charge one, join its terminals marked + and − to the + and − terminals of a cell for a short time.</p></div>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 132) – electric current</div>
+<p class="ml" style="margin:.2rem 0 .4rem">ചാർജുകളുടെ ചലനം സെർക്കീട്ടിലൂടെ ഒരു വൈദ്യുത പ്രവാഹം സൃഷ്ടിക്കുന്നു.</p>
+<p>The <b>flow of charges</b> through a circuit creates an <b>electric current</b> (<span class="ml">വൈദ്യുതപ്രവാഹം</span>).</p></div>
+<div class="callout think"><div class="title">💡 Go further – how much charge?</div>
+<p>A 6 V, 500 µF capacitor holds only about 0.003 C (Q = CV = 500 × 10<sup>−6</sup> × 6, a Class 11 formula). A CR2032 button cell can push roughly 800 C round a circuit during its life (it is rated about 220 mAh, approx.). No wonder one flashes and the other glows for hours!</p></div>
+
+<h2>3. Water flows only when levels differ (Fig 7.3, 7.4)</h2>
+<p><span class="ml">A, B എന്നീ രണ്ട് പാത്രങ്ങളിൽ ഒന്നിൽ ഏതെങ്കിലും നിറം ചേർത്ത ജലവും രണ്ടാമത്തേതിൽ സാധാരണ ജലവും ഒരേ അളവിൽ എടുക്കുക.</span> – Take the same amount of coloured water in beaker A and plain water in beaker B. Fill a plastic tube with water (a <b>siphon</b>, <span class="ml">സൈഫൺ</span>) and dip its ends into the two beakers (Fig 7.3). Then raise A a little (Fig 7.4).</p>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: the siphon (Fig 7.3, 7.4)</div>
+  <svg id="siSvg" viewBox="0 0 800 360" role="img" aria-label="Two beakers joined by a water-filled tube; beaker A can be raised on a wooden block; water flows only while the levels differ"></svg>
+  <div class="controls"><label>raise beaker A (block height) <input id="siH" type="range" min="0" max="6" step="1" value="0"><output></output> cm</label><button class="btn" id="siRe">⟲ Start again</button></div>
+  <div class="readout" id="siOut"></div>
+  <p class="hint">Try it: with the block at 0 cm nothing happens. Raise A to 4 cm and watch the coloured water run into B until the two water surfaces are at the same height.</p>
+</div>
+<div class="qa"><p><b>Textbook questions (page 132)</b></p>
+<ol style="margin:.3rem 0">
+<li><span class="ml">A എന്ന പാത്രത്തിൽ നിന്ന് B എന്ന പാത്രത്തിലേക്ക് ജലം ഒഴുകുന്നുണ്ടോ?</span> – Does water flow from A to B (Fig 7.3)?</li>
+<li><span class="ml">രണ്ട് പാത്രങ്ങളിലെയും ജലനിരപ്പിന്റെ ഉയരം കൊണ്ടുണ്ടാകുന്ന ഗ്രാവിറ്റേഷണൽ പൊട്ടൻഷ്യൽ തുല്യമാണോ?</span> – Is the gravitational potential due to the height of the water level the same in both beakers? (equal / different)</li>
+<li><span class="ml">A എന്ന പാത്രത്തിൽ നിന്ന് B എന്ന പാത്രത്തിലേക്ക് ഇപ്പോൾ ജലം ഒഴുകുന്നുണ്ടോ?</span> – After raising A, does water flow from A to B now?</li>
+</ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">
+1. <b>No.</b> <i>Why:</i> the two water surfaces are at the same height, so there is no level difference to drive a flow.<br>
+2. <b>Equal</b> (<span class="ml">തുല്യമാണ്</span>). <i>Why:</i> same level ⇒ same gravitational potential (same potential energy for each kilogram of water).<br>
+3. <b>Yes</b>, water flows from A to B – until the levels become equal again. <i>Why:</i> raising A makes its water level higher, so its water has a higher gravitational potential.</div></div></div>
+<p><span class="ml">ചിത്രം 7.3 ലെ പരീക്ഷണത്തിൽ രണ്ട് പാത്രത്തിലെയും ജലനിരപ്പിന്റെ ഉയരത്തിൽ വ്യത്യാസമില്ലാത്തതിനാലാണ് ജലം ഒഴുകാത്തത്.</span> – Water does not flow in Fig 7.3 because there is no difference in level; it flows in Fig 7.4 because there is.</p>
+
+<h2>4. Heat and air flow too (Fig 7.5, 7.6, Table 7.1)</h2>
+<p><b>Situation 1</b> (<span class="ml">സന്ദർഭം 1</span>): an iron rod PQ is held at P and its end Q touches a candle flame (Fig 7.5). <b>Situation 2</b> (<span class="ml">സന്ദർഭം 2</span>): a tyre tube filled with as much air as it can hold (Fig 7.6).</p>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: heat along a rod, air out of a tube (Fig 7.5, 7.6)</div>
+  <svg id="haSvg" viewBox="0 0 800 300" role="img" aria-label="Left: an iron rod with end Q in a candle flame; colours show the temperature along the rod. Right: an inflated tube with a valve; bars compare the pressure inside and outside"></svg>
+  <div class="controls"><button class="btn primary" id="haHeat">🔥 Touch Q to the flame</button><button class="btn" id="haCool">⟲ Cool the rod</button><button class="btn primary" id="haOpen">🔓 Open the valve</button><button class="btn" id="haPump">⟲ Pump up the tube</button></div>
+  <div class="readout" id="haOut"></div>
+  <p class="hint">The temperatures are from a simple model (heat spreading along the rod). The pressure bars compare the air inside the tube with the air outside.</p>
+</div>
+<div class="qa"><p><b>Textbook questions (page 133)</b></p>
+<ol style="margin:.3rem 0">
+<li><span class="ml">മെഴുകുതിരി ജ്വാലയിൽ സ്പർശിച്ച ഉടൻ ദണ്ഡിന്റെ ഏതു ഭാഗത്തായിരിക്കും താപനില (temperature) ഉയരുന്നത്?</span> – As soon as the rod touches the flame, where does the temperature rise first? (P / Q)</li>
+<li><span class="ml">ദണ്ഡിലൂടെ താപം ഒഴുകുന്നത് എവിടെ നിന്ന് എങ്ങോട്ടായിരിക്കും?</span> – In which direction does heat flow through the rod? (P to Q / Q to P)</li>
+<li><span class="ml">വായു മർദം (pressure) കൂടുതൽ എവിടെയാണ്?</span> – Where is the air pressure higher? (inside the tube / outside the tube)</li>
+<li><span class="ml">ട്യൂബിന്റെ വാൽവ് തുറന്നാൽ വായു എവിടെ നിന്ന് എങ്ങോട്ടായിരിക്കും പ്രവഹിക്കുക?</span> – If the valve is opened, in which direction will the air flow?</li>
+</ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">
+1. At <b>Q</b>. <i>Why:</i> Q is the end in the flame, so it gets hot first.<br>
+2. From <b>Q to P</b>. <i>Why:</i> heat flows from the hotter end (Q) to the cooler end (P) – which is why the hand at P slowly feels the warmth.<br>
+3. <b>Inside the tube</b> (<span class="ml">ട്യൂബിനകത്ത്</span>). <i>Why:</i> a lot of air has been forced into a closed space.<br>
+4. From <b>inside to outside</b>. <i>Why:</i> air flows from the region of higher pressure to the region of lower pressure, until the pressures are equal.</div></div></div>
+<div class="lab">
+  <div class="lab-title">📝 Table 7.1 – direction of flow (<span class="ml">പ്രവാഹദിശ</span>)</div>
+  <div class="tw"><table class="obs"><thead><tr><th>Situation <span class="ml">സന്ദർഭം</span></th><th>Direction of flow <span class="ml">പ്രവാഹദിശ</span></th></tr></thead><tbody id="t71"></tbody></table></div>
+  <div class="readout" id="t71Out"></div>
+</div>
+<p><span class="ml">ജലപ്രവാഹം ഉണ്ടായത് ഉയരവ്യത്യാസമുള്ള രണ്ട് സ്ഥാനങ്ങൾ ഉള്ളതുകൊണ്ടാണല്ലോ?</span> – Water flowed because there were two places at <b>different heights</b>; heat flowed because of a <b>difference in temperature</b>; air flowed because of a <b>difference in pressure</b>. Every flow needs a difference.</p>
+
+<h2>5. Keeping the flow going – the pump (Fig 7.7)</h2>
+<p><span class="ml">സൈഫൺ മാത്രം ഉപയോഗിക്കുമ്പോൾ പാത്രം A യിൽ നിന്ന് പാത്രം B യിലേക്കുള്ള ജലപ്രവാഹം, രണ്ട് പാത്രങ്ങളിലെയും ജലനിരപ്പ് തുല്യമാകുന്നത് വരെ മാത്രമല്ലേ സാധ്യമാവുകയുള്ളൂ.</span> – With a siphon alone, water flows from A to B only until the levels become equal. But suppose a <b>pump</b> sends back from B to A, every second, as much water as flows from A to B in that second…</p>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: siphon + pump (Fig 7.7)</div>
+  <svg id="puSvg" viewBox="0 0 800 360" role="img" aria-label="The siphon again, with a pump that lifts water from beaker B back up to beaker A"></svg>
+  <div class="controls"><button class="btn primary" id="puOn">⚡ Pump ON</button><button class="btn" id="puRe">⟲ Start again</button></div>
+  <div class="readout" id="puOut"></div>
+</div>
+<div class="qa"><p><b>Textbook question (page 134)</b> – <span class="ml">പാത്രം A യിൽ നിന്ന് പാത്രം B യിലേക്ക് ജലം തുടർച്ചയായി പ്രവഹിക്കുകയില്ലേ? എന്തായിരിക്കും കാരണം?</span> – Water now flows from A to B continuously. What is the reason?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">The <b>pump</b>, an <b>external source of energy</b> (<span class="ml">ബാഹ്യ ഊർജസ്രോതസ്സ്</span>), keeps the <b>difference in level</b> between A and B. <i>Why:</i> it does work lifting water back up, so the level difference never disappears – and as long as there is a difference, water keeps flowing.</div></div></div>
+<div class="callout real"><div class="title">🌴 Kerala connection – the overhead tank and the motor</div>
+<p>In most Kerala homes water flows from the overhead tank on the roof to the taps below because the tank is <b>higher</b>. When the tank empties, the flow stops – unless someone switches on the <b>motor pump</b>, which lifts water from the well or sump back up to the tank. The motor is the energy source that keeps the "level difference" going. In a circuit, the <b>cell</b> plays the part of the motor.</p></div>
+<p>The thinking student asks: <span class="ml">ഒരു സെർക്കീട്ടിലൂടെ വൈദ്യുതചാർജുകളുടെ പ്രവാഹം സാധ്യമാകുന്നത് എങ്ങനെയാണ്?</span> – <em>How is a flow of charges through a circuit possible?</em> Let us find out.</p>
+
+<h2>6. Potential difference (Fig 7.8)</h2>
+<p><span class="ml">ചിത്രം 7.8 ലെ സെർക്കീട്ട് നിരീക്ഷിക്കുക.</span> – Look at the circuit of Fig 7.8: a bulb and a switch, with two free ends C and D and nothing between them.</p>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: what is missing between C and D? (Fig 7.8)</div>
+  <svg id="cdSvg" viewBox="0 0 800 270" role="img" aria-label="Circuit of Fig 7.8: a bulb at the top, a switch at the bottom right, and a gap between the points C and D where a cell can be added"></svg>
+  <div class="controls"><button class="btn primary" id="cdSw">Switch ON</button><button class="btn" id="cdCell">➕ Put a cell between C and D</button></div>
+  <div class="readout" id="cdOut"></div>
+</div>
+<div class="qa"><p><b>Textbook questions (page 134)</b></p>
+<ol style="margin:.3rem 0">
+<li><span class="ml">സ്വിച്ച് ഓൺ ചെയ്താൽ ബൾബ് പ്രകാശിക്കുമോ?</span> – If the switch is turned on, will the bulb glow?</li>
+<li><span class="ml">എന്തായിരിക്കും കാരണം?</span> – What is the reason?</li>
+</ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">
+1. <b>No.</b> <i>Why:</i> even with the switch on, nothing makes the charges move.<br>
+2. There is <b>no source</b> to maintain a <b>potential difference between C and D</b>. <i>Why:</i> for the bulb to glow continuously, charges must keep flowing through it – and, just like the pump for water, an external source is needed to keep a potential difference between C and D.</div></div></div>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 134) – Potential difference <span class="ml">പൊട്ടൻഷ്യൽ വ്യത്യാസം</span></div>
+<p class="ml" style="margin:.2rem 0 .4rem">ഒരു സെർക്കീട്ടിലെ ഒരു ബിന്ദുവിൽ നിന്ന് മറ്റൊരു ബിന്ദുവിലേക്ക് യൂണിറ്റ് ചാർജിനെ ചലിപ്പിക്കാൻ ആവശ്യമായ പ്രവൃത്തിയുടെ അളവാണ് അവയ്ക്കിടയിലെ പൊട്ടൻഷ്യൽ വ്യത്യാസം.</p>
+<p>The <b>potential difference</b> between two points in a circuit is the <b>work needed to move a unit charge</b> (1 C) from one point to the other.</p></div>
+<div class="callout book"><div class="title">📚 Side box (page 134) – electric potential <span class="ml">ഇലക്ട്രിക് പൊട്ടൻഷ്യൽ</span></div>
+<p><span class="ml">ഒരു വൈദ്യുത മണ്ഡലത്തിൽ (electric field) സ്ഥിതി ചെയ്യുന്ന യൂണിറ്റ് ചാർജിൽ ഉള്ള സ്ഥിതികോർജമാണ് ഇലക്ട്രിക് പൊട്ടൻഷ്യൽ.</span> – <b>Electric potential</b> (or simply potential) at a point is the <b>potential energy of a unit charge</b> placed at that point in an electric field. It is like the "height" of the water: charges flow from higher potential to lower potential in the outside circuit.</p></div>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 134) – source of electricity <span class="ml">വൈദ്യുതസ്രോതസ്സ്</span></div>
+<p class="ml" style="margin:.2rem 0 .4rem">ഒരു വൈദ്യുത സെർക്കീട്ടിലെ രണ്ട് ബിന്ദുക്കൾക്കിടയിൽ പൊട്ടൻഷ്യൽ വ്യത്യാസം നിലനിർത്താൻ ഉപയോഗിക്കുന്ന ഊർജസ്രോതസ്സിനെ വൈദ്യുതസ്രോതസ്സ് എന്നാണ് പറയുന്നത്.</p>
+<p>An energy source used to <b>maintain a potential difference</b> between two points of a circuit is called a <b>source of electricity</b>.</p></div>
+
+<h2>7. emf and the volt (page 135)</h2>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 135) – emf <span class="ml">വിദ്യുത്ചാലകബലം</span></div>
+<p class="ml" style="margin:.2rem 0 .4rem">ഒരു വൈദ്യുതസ്രോതസ്സിൽ നിന്ന് സെർക്കീട്ടിലേക്ക് വൈദ്യുത പ്രവാഹം ഇല്ലാത്ത സന്ദർഭത്തിൽ (open circuit) അതിന്റെ ടെർമിനലുകൾ തമ്മിലുള്ള പൊട്ടൻഷ്യൽ വ്യത്യാസമാണ് ആ വൈദ്യുതസ്രോതസ്സിന്റെ വിദ്യുത്ചാലകബലം (electromotive force-emf).</p>
+<p>The potential difference between the terminals of a source when <b>no current is drawn</b> from it (open circuit) is its <b>electromotive force (emf)</b>. It is the <b>maximum</b> potential difference the source can give, so a source of electricity is also called a <b>source of emf</b>.</p></div>
+<p>The potential difference between any two points of a working circuit is also called the <b>voltage</b> (<span class="ml">വോൾട്ടേജ്</span>). Both emf and potential difference are measured in <b>volts (V)</b> with a <b>voltmeter</b> (<span class="ml">വോൾട്ട്മീറ്റർ</span>).</p>
+<p class="eq">potential difference = <span class="frac"><span>work</span><span>charge</span></span> &nbsp;&nbsp; <b>V = <span class="frac"><span>W</span><span>Q</span></span></b> &nbsp;&nbsp; <span class="ml">പൊട്ടൻഷ്യൽ വ്യത്യാസം (V) = പ്രവൃത്തി (W) / ചാർജ് (Q)</span></p>
+<p class="eq">unit of p.d. = <span class="frac"><span>unit of work</span><span>unit of charge</span></span> = <span class="frac"><span>J</span><span>C</span></span> = <b>volt (V)</b></p>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 135) – one volt</div>
+<p class="ml" style="margin:.2rem 0 .4rem">ഒരു ബിന്ദുവിൽ നിന്ന് മറ്റൊരു ബിന്ദുവിലേക്ക് ഒരു കൂളോം (1 C) വൈദ്യുത ചാർജ് എത്തിക്കുവാൻ ചെയ്യുന്ന പ്രവൃത്തി ഒരു ജൂൾ (1 J) ആണെങ്കിൽ ആ ബിന്ദുക്കൾ തമ്മിലുള്ള പൊട്ടൻഷ്യൽ വ്യത്യാസം ഒരു വോൾട്ട് (1 V) ആയിരിക്കും.</p>
+<p>If <b>1 J</b> of work is done to move <b>1 C</b> of charge from one point to another, the potential difference between them is <b>1 volt (1 V)</b>. 1 V = 1 J/C. <span class="ml">അലസ്സാൻഡ്രോ വോൾട്ട എന്ന ശാസ്ത്രജ്ഞനോടുള്ള ആദരസൂചകമായാണ് ഈ പേര് നൽകപ്പെട്ടത്.</span> – The unit is named in honour of the scientist <b>Alessandro Volta</b> (more about him on page 6).</p></div>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: what does "1.5 V" mean? – joules for every coulomb</div>
+  <div class="controls"><button class="btn primary" id="vw1">Torch cell 1.5 V</button><button class="btn" id="vw2">Two cells 3 V</button><button class="btn" id="vw3">Battery 9 V</button>
+  <label>charge moved Q <input id="vwQ" type="range" min="1" max="10" step="1" value="4"><output></output> C</label></div>
+  <svg id="vwSvg" viewBox="0 0 800 320" role="img" aria-label="Each coulomb is lifted by the source to a height equal to its voltage and gives up that energy in the bulb; a bar shows the total work W equal to V times Q"></svg>
+  <div class="readout" id="vwOut"></div>
+  <p class="hint">Like the pump lifting water, the source "lifts" every coulomb of charge through V volts – that is, it gives each coulomb V joules. The charges hand this energy over in the bulb.</p>
+</div>
+<div class="qbox"><p><b>Worked example (practice).</b> 9 J of work is done in moving 6 C of charge from point A to point B in a circuit. Find the potential difference between A and B.</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Potential difference = work done on each coulomb: divide the work (J) by the charge (C).</p></div></div>
+<div class="lab" id="exV">
+  <div class="lab-title">🎬 Solution in exam layout</div>
+  <svg viewBox="0 0 800 280" role="img" aria-label="Six coulombs sharing nine joules: one and a half joules each"></svg>
+</div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> V = W/Q = 9 J ÷ 6 C = <b>1.5 V</b> (the p.d. of one torch cell). More solved questions: <a href="11_intext_numericals_solutions.html">page 11 ▶</a></div></div>
+<div class="safety">⚠ Never experiment with the mains supply (230 V AC) at home – it can kill. Use only torch cells or a 9 V battery.</div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://phet.colorado.edu/en/simulations/balloons-and-static-electricity" target="_blank" rel="noopener noreferrer">🧪 Balloons and Static Electricity (PhET simulation)</a> <span class="src">PhET, University of Colorado Boulder</span><br><span class="note">Rub a balloon on a sweater and watch negative charges jump across, then see like charges repel.</span></li><li><a href="https://www.sciencelearn.org.nz/resources/2746-static-electricity-and-electrical-charge" target="_blank" rel="noopener noreferrer">📄 Static electricity and electrical charge</a> <span class="src">Science Learning Hub (NZ)</span><br><span class="note">How rubbing moves electrons and leaves objects positively or negatively charged.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/Static-Electricity/charge-and-charge-interactions/charge-interactions" target="_blank" rel="noopener noreferrer">📄 Charge Interactions</a> <span class="src">The Physics Classroom</span><br><span class="note">Like charges repel, unlike charges attract - and why a charged object pulls on a neutral one.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/Electric-Circuits/electric-potential-difference/electric-potential" target="_blank" rel="noopener noreferrer">📄 Electric Potential</a> <span class="src">The Physics Classroom</span><br><span class="note">Compares electric potential with height and gravity, so &#x27;high&#x27; and &#x27;low&#x27; potential make sense.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/Electric-Circuits/electric-potential-difference/electric-potential-difference" target="_blank" rel="noopener noreferrer">📄 Electric Potential Difference</a> <span class="src">The Physics Classroom</span><br><span class="note">What a volt really means: the energy given to each coulomb of charge, V = W/Q.</span></li><li><a href="https://phet.colorado.edu/en/simulations/john-travoltage" target="_blank" rel="noopener noreferrer">🧪 John Travoltage (PhET simulation)</a> <span class="src">PhET, University of Colorado Boulder</span><br><span class="note">Shuffle John&#x27;s foot on the carpet to build up charge, then bring his hand near the doorknob for a spark.</span></li></ul></div>
+
+<h2>8. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li>A <b>flow of charges</b> is an electric current. A charged capacitor drives it only for a moment; a cell drives it continuously.</li>
+<li>Water flows from a higher <b>level</b> to a lower one, heat from higher to lower <b>temperature</b>, air from higher to lower <b>pressure</b>. A pump keeps a level difference so water flows on.</li>
+<li><b>Potential difference</b> = work done to move a unit charge between two points. A <b>source of electricity</b> keeps it going.</li>
+<li><b>emf</b> = p.d. across the terminals of a source when no current is drawn – the maximum p.d. it can give.</li>
+<li><b>V = W/Q</b>; unit J/C = <b>volt (V)</b>; 1 V = 1 J per 1 C.</li>
+</ul></div>
+<p>Next: <a href="06_emf_cells_batteries.html">emf, cells, batteries and combining cells ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Current Electricity · Class 9 Physics", "icon": "🔋", "key": "physics_ch7_progress", "pages": [["index.html", "Home"], ["01_charges_conductors.html", "1 · Charges, Electrons, Conductors & Insulators"], ["02_flow_needs_difference.html", "2 · Flow Needs a Difference: Water, Heat & Air"], ["03_units_ratios_graphs.html", "3 · Units, Prefixes, Ratios & Straight-line Graphs"], ["04_circuits_symbols_safety.html", "4 · Simple Circuits, Symbols & Safety"], ["05_charge_flow_potential_difference.html", "5 · Charge Flow & Potential Difference"], ["06_emf_cells_batteries.html", "6 · emf, Cells, Batteries & Combining Cells"], ["07_electric_current_ammeter.html", "7 · Electric Current, Ammeter & Circuit Diagrams"], ["08_ohms_law_resistance.html", "8 · Ohm's Law & Resistance"], ["09_factors_resistance_rheostat.html", "9 · What Affects Resistance? The Rheostat"], ["10_series_parallel_home.html", "10 · Series & Parallel, Home Circuits, AC & DC"], ["11_intext_numericals_solutions.html", "11 · In-text Questions – Solutions"], ["12_assess_q1_q6_solutions.html", "12 · Let Us Assess Q1–6 – Solutions"], ["13_assess_q7_q11_solutions.html", "13 · Let Us Assess Q7–11 & Extended Activities"], ["14_applications_explore.html", "14 · Applications & Explore Online"], ["15_summary_revision.html", "15 · Summary & Quick Quiz"], ["16_model_test_paper.html", "16 · Model Test Paper"], ["17_model_test_solutions.html", "17 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ---------- page helpers (Chapter 7, pages 5–10; same code on each page) ---------- */
+const {P} = K;
+const COL = {red: 'var(--red)', blue: 'var(--blue)', green: 'var(--green)', amber: 'var(--accent)', purple: 'var(--purple)', text: 'var(--text)', muted: 'var(--muted)', primary: 'var(--primary)'};
+const cv = c => COL[c] || c;
+const $id = id => document.getElementById(id);
+/* a line with its own stroke (seg() carries class 'ln', whose CSS would override it) */
+const sline = (svg, a, b, attrs={}) => K.el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+const ln = (svg, a, b, c='text', w=2, extra={}) => sline(svg, a, b, {stroke: cv(c), 'stroke-width': w, ...extra});
+const rect = (svg, x, y, w, h, attrs={}) => K.el('rect', {x, y, width: Math.max(0, w), height: Math.max(0, h), ...attrs}, svg);
+const circ = (svg, c, r, attrs={}) => K.el('circle', {cx: c.x, cy: c.y, r: Math.max(0, r), ...attrs}, svg);
+const path = (svg, d, attrs={}) => K.el('path', {d, fill: 'none', ...attrs}, svg);
+/* true minus for negative numbers only */
+const minus = s => String(s).replace(/(^|[\s(=:,/×+])-(?=[\d.])/g, '$1−');
+/* number with at most d decimals, true minus */
+const nf = (v, d=2) => { const s = K.fmt(Math.abs(+v), d); return (+v < 0 && +s !== 0 ? '−' : '') + s; };
+/* fixed decimals (for meter displays) */
+const fx = (v, d=2) => { const s = Math.abs(+v).toFixed(d); return (+v < 0 && +s !== 0 ? '−' : '') + s; };
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+/* SVG text that understands subscripts: "R_1" → R with a lowered 1 */
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+function text(svg, p, str, attrs={}){ const s = String(str);
+  if (!/_/.test(s)) return K.text(svg, p, s, attrs);
+  return K.el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs,
+    html: esc(s).replace(/_(\w+)/g, '<tspan baseline-shift="sub" font-size="72%">$1</tspan>')}, svg); }
+const tl = (svg, x, y, str, cls='', extra={}) => text(svg, P(x, y), str, {class: ('lbl ' + cls).trim(), 'text-anchor': 'start', ...extra});
+const tc = (svg, x, y, str, cls='', extra={}) => text(svg, P(x, y), str, {class: ('lbl ' + cls).trim(), ...extra});
+/* working lines: rows = [[step, text, cls], …]; rows whose step ≤ i are shown, the newest fades in */
+function lines(svg, rows, i, t, o={}){ const x = o.x ?? 400, y0 = o.y ?? 36, lh = o.lh ?? 32, an = o.anchor ?? 'start'; let k = 0;
+  rows.forEach(r => { if (r[0] > i) return; const ind = (r[1].match(/^ */)[0].length) * 4.3; text(svg, P(x + ind, y0 + k * lh), minus(r[1].trim()), {class: 'lbl ' + (r[2] || ''), 'text-anchor': an, opacity: r[0] === i ? t : 1}); k++; }); }
+/* arrow from a to b with a filled head; o.c colour, o.w width, o.label, o.lo label offset, o.anchor, o.op */
+function arrow(svg, a, b, o={}){ const c = cv(o.c || 'red'), w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const L = K.dist(a, b); if (L < 1) return g; const u = K.unit(a, b), hs = Math.min(o.head ?? 11, L * .6); const base = P(b.x - u.x * hs, b.y - u.y * hs);
+  K.el('line', {x1: a.x, y1: a.y, x2: base.x, y2: base.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round', ...(o.dash ? {'stroke-dasharray': o.dash} : {})}, g);
+  K.el('polygon', {points: `${b.x},${b.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g);
+  if (o.label) text(g, P(b.x + (o.lo ? o.lo.x : 0), b.y + (o.lo ? o.lo.y : -12)), minus(o.label), {class: 'lbl sm ' + (o.lc || o.c || 'red'), 'text-anchor': o.anchor || 'middle', 'font-weight': 700});
+  return g; }
+const setOut = (id, s) => { $id(id).textContent = minus(s); };
+
+/* ---------- circuit symbols (textbook Table 7.5) ----------
+   Every two-terminal symbol is drawn between end points a and b (any direction); leads join a and b to the body.
+   n = the normal to a→b; for a left-to-right symbol, −n points up. */
+const nrm = u => P(-u.y, u.x);
+const at = (m, u, k, n, h=0) => P(m.x + u.x * k + n.x * h, m.y + u.y * k + n.y * h);
+function wire(svg, pts, o={}){ return K.el('polyline', {points: pts.map(p => `${K.fmt(p.x, 2)},${K.fmt(p.y, 2)}`).join(' '), fill: 'none', stroke: cv(o.c || 'text'), 'stroke-width': o.w ?? 2.4, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', ...(o.dash ? {'stroke-dasharray': o.dash} : {}), ...(o.op !== undefined ? {opacity: o.op} : {})}, svg); }
+const jdot = (svg, p, c='text') => circ(svg, p, 4, {fill: cv(c)});
+/* plates of one cell centred at k along u: long thin = +, short thick = − */
+function plates(svg, m, u, k, plusFirst, c){ const n = nrm(u), lp = plusFirst ? k - 4 : k + 4, sp = plusFirst ? k + 4 : k - 4;
+  sline(svg, at(m, u, lp, n, -15), at(m, u, lp, n, 15), {stroke: c, 'stroke-width': 2.2});
+  sline(svg, at(m, u, sp, n, -8), at(m, u, sp, n, 8), {stroke: c, 'stroke-width': 5, 'stroke-linecap': 'butt'}); }
+/* cell: o.plus = 'a' or 'b' (which end the + terminal faces); o.signs shows + and − */
+function cellSym(svg, a, b, o={}){ const c = cv(o.c || 'text'), u = K.unit(a, b), n = nrm(u), m = K.mid(a, b), pb = (o.plus || 'b') === 'b';
+  ln(svg, a, at(m, u, -4, n), o.c || 'text', 2.4); ln(svg, at(m, u, 4, n), b, o.c || 'text', 2.4);
+  plates(svg, m, u, 0, !pb, c);
+  if (o.signs !== false){ const s = o.signSide ?? -1; tc(svg, at(m, u, pb ? 12 : -12, n, s * 22).x, at(m, u, pb ? 12 : -12, n, s * 22).y, '+', 'sm', {'font-weight': 700}); tc(svg, at(m, u, pb ? -12 : 12, n, s * 22).x, at(m, u, pb ? -12 : 12, n, s * 22).y, '−', 'sm', {'font-weight': 700}); }
+  if (o.label) { const q = at(m, u, 0, n, (o.labelSide ?? 1) * 28); tc(svg, q.x, q.y, o.label, 'sm'); }
+  return m; }
+/* battery of o.n cells (default 2) */
+function batterySym(svg, a, b, o={}){ const c = cv(o.c || 'text'), u = K.unit(a, b), n = nrm(u), m = K.mid(a, b), N = o.n || 2, pb = (o.plus || 'b') === 'b';
+  const W = N * 8 + (N - 1) * 8, k0 = -W / 2;
+  ln(svg, a, at(m, u, k0, n), o.c || 'text', 2.4); ln(svg, at(m, u, -k0, n), b, o.c || 'text', 2.4);
+  for (let i = 0; i < N; i++){ const kc = k0 + 4 + i * 16; plates(svg, m, u, kc, !pb, c); if (i < N - 1) ln(svg, at(m, u, kc + 4, n), at(m, u, kc + 12, n), o.c || 'text', 2); }
+  if (o.signs !== false){ const s = o.signSide ?? -1, pp = at(m, u, pb ? -k0 + 8 : k0 - 8, n, s * 20), mm = at(m, u, pb ? k0 - 8 : -k0 + 8, n, s * 20); tc(svg, pp.x, pp.y, '+', 'sm', {'font-weight': 700}); tc(svg, mm.x, mm.y, '−', 'sm', {'font-weight': 700}); }
+  if (o.label){ const q = at(m, u, 0, n, (o.labelSide ?? 1) * 30); tc(svg, q.x, q.y, o.label, 'sm'); }
+  return m; }
+/* switch / key: two terminal dots and a blade; open = blade lifted 30° */
+function switchSym(svg, a, b, closed, o={}){ const c = o.c || 'text', u = K.unit(a, b), n = nrm(u), m = K.mid(a, b), h = o.half ?? 15;
+  const p1 = at(m, u, -h, n), p2 = at(m, u, h, n);
+  ln(svg, a, p1, c, 2.4); ln(svg, p2, b, c, 2.4);
+  const ang = K.rad(closed ? 0 : -32 * (o.flip ? -1 : 1)), L = 2 * h + 2, d = P((u.x * Math.cos(ang) - u.y * Math.sin(ang)) * L, (u.x * Math.sin(ang) + u.y * Math.cos(ang)) * L);
+  ln(svg, p1, P(p1.x + d.x, p1.y + d.y), c, 2.6);
+  circ(svg, p1, 3.2, {fill: 'var(--svgbg)', stroke: cv(c), 'stroke-width': 2}); circ(svg, p2, 3.2, {fill: 'var(--svgbg)', stroke: cv(c), 'stroke-width': 2});
+  if (o.label){ const q = at(m, u, 0, n, (o.labelSide ?? 1) * 20); tc(svg, q.x, q.y, o.label, 'sm'); }
+  if (o.hit) { const g = K.el('circle', {cx: m.x, cy: m.y, r: 22, fill: 'transparent', style: 'cursor:pointer'}, svg); g.addEventListener('click', o.hit); }
+  return m; }
+/* bulb / lamp: circle with ×; o.glow 0..1 (brightness), o.fused */
+function bulbSym(svg, a, b, o={}){ const r = o.r || 14, u = K.unit(a, b), m = K.mid(a, b), g = clamp(o.glow || 0, 0, 1.4);
+  ln(svg, a, at(m, u, -r, nrm(u)), 'text', 2.4); ln(svg, at(m, u, r, nrm(u)), b, 'text', 2.4);
+  if (g > 0.01){ circ(svg, m, r + 5 + 18 * Math.min(g, 1.2), {fill: '#fde047', opacity: .18 + .4 * Math.min(g, 1)}); }
+  circ(svg, m, r, {fill: g > 0.01 ? '#facc15' : 'var(--svgbg)', 'fill-opacity': g > 0.01 ? .25 + .75 * Math.min(g, 1) : 1, stroke: cv(o.fused ? 'red' : 'text'), 'stroke-width': 2.2});
+  const d = r * .7; ln(svg, P(m.x - d, m.y - d), P(m.x + d, m.y + d), o.fused ? 'red' : 'text', 2); ln(svg, P(m.x - d, m.y + d), P(m.x + d, m.y - d), o.fused ? 'red' : 'text', 2, o.fused ? {'stroke-dasharray': '3 3'} : {});
+  if (o.label){ const q = at(m, u, 0, nrm(u), (o.labelSide ?? -1) * (r + 14)); tc(svg, q.x, q.y, o.label, 'sm'); }
+  return m; }
+/* LED: triangle pointing in the allowed current direction a→b (a = + leg), bar, two light arrows */
+function ledSym(svg, a, b, o={}){ const u = K.unit(a, b), n = nrm(u), m = K.mid(a, b), on = clamp(o.on || 0, 0, 1), col = o.col || '#ef4444';
+  ln(svg, a, at(m, u, -9, n), 'text', 2.4); ln(svg, at(m, u, 9, n), b, 'text', 2.4);
+  if (on > 0.02) circ(svg, m, 14 + 14 * on, {fill: col, opacity: .15 + .4 * on});
+  K.polygon(svg, [at(m, u, -9, n, -10), at(m, u, -9, n, 10), at(m, u, 9, n)], {fill: on > .02 ? col : 'var(--svgbg)', 'fill-opacity': on > .02 ? .4 + .6 * on : 1, stroke: 'var(--text)', 'stroke-width': 2});
+  ln(svg, at(m, u, 9, n, -10), at(m, u, 9, n, 10), 'text', 2.4);
+  const sg = (n.y > .1 || (Math.abs(n.y) <= .1 && n.x > 0)) ? -1 : 1;
+  [-2, 5].forEach(k => arrow(svg, at(m, u, k, n, sg * 14), at(m, u, k + 4, n, sg * 26), {c: on > .02 ? col : 'text', w: 1.6, head: 5}));
+  return m; }
+/* meter (V or A): circle with a letter; + and − marked; o.plus = 'a'|'b'; o.reading shown in a box at o.box offset */
+function meterSym(svg, a, b, letter, o={}){ const r = o.r || 16, u = K.unit(a, b), n = nrm(u), m = K.mid(a, b), pb = (o.plus || 'b') === 'b', c = o.warn ? 'red' : (o.c || 'text');
+  ln(svg, a, at(m, u, -r, n), 'text', 2.4); ln(svg, at(m, u, r, n), b, 'text', 2.4);
+  circ(svg, m, r, {fill: o.warn ? 'var(--red-soft)' : 'var(--surface)', stroke: cv(c), 'stroke-width': 2.2});
+  tc(svg, m.x, m.y + 1, letter, '', {'font-weight': 700, 'font-size': 17});
+  if (o.signs !== false){ const s = o.signSide ?? -1, pp = at(m, u, pb ? r + 6 : -r - 6, n, s * 14), mm = at(m, u, pb ? -r - 6 : r + 6, n, s * 14); tc(svg, pp.x, pp.y, '+', 'sm', {'font-weight': 700}); tc(svg, mm.x, mm.y, '−', 'sm', {'font-weight': 700}); }
+  if (o.reading !== undefined && o.reading !== null){ const off = o.box || P(0, -(r + 20)); lcd(svg, P(m.x + off.x, m.y + off.y), o.reading, {warn: o.warn}); }
+  return m; }
+/* small digital display */
+function lcd(svg, p, str, o={}){ const s = minus(str), w = Math.max(48, s.length * 8.6 + 14);
+  rect(svg, p.x - w / 2, p.y - 12, w, 24, {rx: 5, fill: o.warn ? 'var(--red-soft)' : '#0f2a1d', stroke: o.warn ? 'var(--red)' : '#14532d', 'stroke-width': 1.5});
+  K.el('text', {x: p.x, y: p.y + 1, 'text-anchor': 'middle', 'dominant-baseline': 'middle', fill: o.warn ? 'var(--red)' : '#4ade80', 'font-family': 'ui-monospace,Menlo,Consolas,monospace', 'font-size': 14, 'font-weight': 700, text: s}, svg); }
+/* resistor: rectangle (or zig-zag with o.zig); o.len body length; o.label text on the −n side; o.arrow = rheostat arrow */
+function resistorSym(svg, a, b, o={}){ const u = K.unit(a, b), n = nrm(u), m = K.mid(a, b), L = o.len || 46, h = o.h || 8;
+  ln(svg, a, at(m, u, -L / 2, n), 'text', 2.4); ln(svg, at(m, u, L / 2, n), b, 'text', 2.4);
+  if (o.zig){ const pts = [at(m, u, -L / 2, n)]; for (let i = 0; i < 6; i++) pts.push(at(m, u, -L / 2 + (i + .5) * L / 6, n, (i % 2 ? 1 : -1) * h)); pts.push(at(m, u, L / 2, n)); K.polyline(svg, pts, {stroke: cv(o.c || 'text'), 'stroke-width': 2.2, 'stroke-linejoin': 'round'}); }
+  else K.polygon(svg, [at(m, u, -L / 2, n, -h), at(m, u, L / 2, n, -h), at(m, u, L / 2, n, h), at(m, u, -L / 2, n, h)], {fill: o.fill || 'var(--surface)', stroke: cv(o.c || 'text'), 'stroke-width': 2.2});
+  if (o.arrow) arrow(svg, at(m, u, -L / 2 - 4, n, h + 10), at(m, u, L / 2 + 6, n, -h - 12), {c: o.c || 'text', w: 1.8, head: 8});
+  if (o.label){ const q = at(m, u, 0, n, (o.labelSide ?? -1) * (h + 13)); tc(svg, q.x, q.y, o.label, 'sm ' + (o.lc || ''), {'font-weight': 700}); }
+  return m; }
+
+/* ---------- moving charges along a path ---------- */
+function pathInfo(pts, closed){ const p = closed ? pts.concat([pts[0]]) : pts.slice(); const L = [0]; for (let i = 1; i < p.length; i++) L.push(L[i - 1] + K.dist(p[i - 1], p[i])); return {p, L, total: L[L.length - 1]}; }
+function pathAt(info, f){ f = ((f % 1) + 1) % 1; const d = f * info.total; let i = 1; while (i < info.L.length - 1 && info.L[i] < d) i++; const seg = info.L[i] - info.L[i - 1] || 1, t = (d - info.L[i - 1]) / seg; return {p: K.lerpPt(info.p[i - 1], info.p[i], t), u: K.unit(info.p[i - 1], info.p[i])}; }
+/* draw n markers spaced along the path, shifted by phase (0..1). kind 'e' = electron dots, 'i' = current chevrons */
+function flowMarks(svg, info, phase, o={}){ const n = o.n || Math.max(4, Math.round(info.total / (o.gap || 40))), g = K.group(svg);
+  for (let k = 0; k < n; k++){ const q = pathAt(info, k / n + phase); if (o.skip && o.skip(q.p)) continue;
+    if ((o.kind || 'e') === 'e'){ circ(g, q.p, o.r || 3.6, {fill: cv(o.c || 'blue'), stroke: 'var(--svgbg)', 'stroke-width': 1}); }
+    else { const s = o.size || 6, nn = nrm(q.u); K.polyline(g, [P(q.p.x - q.u.x * s + nn.x * s * .8, q.p.y - q.u.y * s + nn.y * s * .8), q.p, P(q.p.x - q.u.x * s - nn.x * s * .8, q.p.y - q.u.y * s - nn.y * s * .8)], {stroke: cv(o.c || 'red'), 'stroke-width': 2.4, 'stroke-linecap': 'round', 'stroke-linejoin': 'round'}); } }
+  return g; }
+
+/* ---------- one shared animation clock: runs only while a lab is on screen and was used in the last 40 s ---------- */
+const ANIM = []; let animOn = false, animLast = 0;
+function animLoop(now){ const dt = Math.min(.05, Math.max(0, (now - animLast) / 1000)); animLast = now; let any = false;
+  for (const it of ANIM){ if (it.vis && now < it.until){ it.t += dt; try { it.fn(it.t, dt); } catch (e){ it.until = 0; throw e; } any = true; } }
+  if (any) requestAnimationFrame(animLoop); else animOn = false; }
+function animStart(){ if (!animOn){ animOn = true; animLast = performance.now(); requestAnimationFrame(animLoop); } }
+function anim(el, fn){ const it = {el, fn, t: 0, until: 0, vis: true}; ANIM.push(it);
+  if ('IntersectionObserver' in window){ new IntersectionObserver(es => es.forEach(e => { it.vis = e.isIntersecting; if (it.vis) wake(it); })).observe(el); }
+  it.fn(0, 0); wake(it); return it; }
+function wake(it){ it.until = performance.now() + 40000; animStart(); }
+/* buttons that act like radio buttons: returns a setter */
+function radio(ids, onPick){ const els = ids.map(id => $id(id)); const set = k => { els.forEach((b, i) => b.classList.toggle('primary', i === k)); onPick(k); }; els.forEach((b, i) => b.addEventListener('click', () => set(i))); return set; }
+/* analog meter (pictorial, like the textbook photos): box centred at c, scale 0..max; value < 0 pegs the needle at the stop */
+function dialMeter(svg, c, value, max, o={}){ const w = o.w || 170, h = o.h || 110, g = K.group(svg), letter = o.letter || 'V';
+  rect(g, c.x - w / 2, c.y - h / 2, w, h, {rx: 10, fill: 'var(--surface2)', stroke: 'var(--text)', 'stroke-width': 1.8});
+  const pc = P(c.x, c.y + h * .32), R = h * .62, a0 = -150, a1 = -30;
+  path(g, `M${pc.x + R * Math.cos(K.rad(a0))},${pc.y + R * Math.sin(K.rad(a0))} A${R},${R} 0 0,1 ${pc.x + R * Math.cos(K.rad(a1))},${pc.y + R * Math.sin(K.rad(a1))}`, {stroke: 'var(--text)', 'stroke-width': 1.5});
+  const step = o.step || 1;
+  for (let v = 0; v <= max + 1e-9; v += step / 2){ const a = K.rad(a0 + (a1 - a0) * v / max), major = Math.abs(v / step - Math.round(v / step)) < 1e-6;
+    ln(g, P(pc.x + R * Math.cos(a), pc.y + R * Math.sin(a)), P(pc.x + (R - (major ? 9 : 5)) * Math.cos(a), pc.y + (R - (major ? 9 : 5)) * Math.sin(a)), 'text', 1.2);
+    if (major) tc(g, pc.x + (R + 10) * Math.cos(a), pc.y + (R + 10) * Math.sin(a), K.fmt(v, 1), 'sm', {'font-size': 11}); }
+  const bad = value < -1e-9, vv = clamp(value, 0, max * 1.04), a = K.rad(a0 + (a1 - a0) * vv / max - (bad ? 4 : 0));
+  ln(g, pc, P(pc.x + (R - 4) * Math.cos(a), pc.y + (R - 4) * Math.sin(a)), bad ? 'red' : 'red', 2.4);
+  circ(g, pc, 4, {fill: 'var(--text)'});
+  tc(g, c.x, c.y + h * .14, letter, '', {'font-weight': 700});
+  circ(g, P(c.x - w / 2 + 18, c.y + h / 2 - 14), 6, {fill: '#dc2626', stroke: 'var(--text)'}); circ(g, P(c.x + w / 2 - 18, c.y + h / 2 - 14), 6, {fill: '#111827', stroke: 'var(--text)'});
+  tc(g, c.x - w / 2 + 32, c.y + h / 2 - 14, '+', 'sm', {'font-weight': 700}); tc(g, c.x + w / 2 - 32, c.y + h / 2 - 14, '−', 'sm', {'font-weight': 700});
+  return {plus: P(c.x - w / 2 + 18, c.y + h / 2 - 14), minus: P(c.x + w / 2 - 18, c.y + h / 2 - 14)}; }
+/* pictorial torch cell lying flat: left end x, centre line y, length L; o.plusRight; returns terminal points */
+function torchCell(svg, x, y, L, o={}){ const pr = o.plusRight !== false, d = o.d || 26, g = K.group(svg);
+  rect(g, x, y - d / 2, L, d, {rx: 6, fill: o.col || '#1f2937', stroke: 'var(--text)', 'stroke-width': 1.2});
+  rect(g, pr ? x + L * .62 : x, y - d / 2, L * .38, d, {rx: 6, fill: '#d4a017', opacity: .9});
+  const nub = pr ? x + L : x - 5; rect(g, nub, y - 5, 5, 10, {rx: 2, fill: '#9ca3af', stroke: 'var(--text)', 'stroke-width': 1});
+  K.el('text', {x: x + L / 2, y: y + 1, 'text-anchor': 'middle', 'dominant-baseline': 'middle', fill: '#fff', 'font-size': 12, 'font-weight': 700, text: (pr ? '−  ' : '+  ') + (o.label || '1.5 V') + (pr ? '  +' : '  −')}, g);
+  return pr ? {minus: P(x, y), plus: P(x + L + 5, y)} : {plus: P(x - 5, y), minus: P(x + L, y)}; }
+/* ---------- generic "choose the right button" table ---------- */
+function choiceTable(bodyId, outId, rows, msgDone, msgLeft){
+  const body = $id(bodyId), out = $id(outId), pick = rows.map(r => r.given ? r.a : null);
+  function table(){ let ok = 0;
+    body.innerHTML = rows.map((r, i) => { if (pick[i] === r.a) ok++; return `<tr><td>${r.s}</td><td><span class="yn">` + r.o.map((t, k) => (r.given && k !== r.a) ? '' : `<button class="btn${r.given ? ' given' : (pick[i] === k ? (k === r.a ? ' ok' : ' bad') : '')}" data-r="${i}" data-k="${k}">${t}</button>`).join('') + '</span></td></tr>'; }).join('');
+    out.textContent = ok === rows.length ? msgDone : `${ok} of ${rows.length} rows correct. ${msgLeft}`; }
+  body.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; pick[+b.dataset.r] = +b.dataset.k; table(); });
+  table(); }
+
+/* ---------- 1. science-fair LED circuit ---------- */
+(function(){
+  const svg = $id('openSvg'), btn = $id('openSw'); let on = false;
+  const loop = pathInfo([P(640, 215), P(640, 60), P(160, 60), P(160, 215)], true);
+  function draw(t){
+    K.clear(svg);
+    wire(svg, [P(160, 215), P(160, 60), P(250, 60)]); wire(svg, [P(350, 60), P(440, 60)]); wire(svg, [P(500, 60), P(640, 60), P(640, 120)]); wire(svg, [P(640, 170), P(640, 215), P(470, 215)]); wire(svg, [P(330, 215), P(160, 215)]);
+    rect(svg, 255, 42, 90, 36, {rx: 6, fill: 'var(--accent-soft)', stroke: 'var(--accent)', 'stroke-width': 2, 'stroke-dasharray': '5 4'});
+    ln(svg, P(250, 60), P(255, 60)); ln(svg, P(345, 60), P(350, 60));
+    tc(svg, 300, 61, '?', 'big amber');
+    tc(svg, 300, 98, 'mystery component', 'sm amber');
+    ledSym(svg, P(500, 60), P(440, 60), {on: on ? 1 : 0});
+    tc(svg, 470, 104, 'LED', 'sm');
+    switchSym(svg, P(640, 120), P(640, 170), on, {label: 'switch', labelSide: -1.8, flip: true});
+    batterySym(svg, P(330, 215), P(470, 215), {n: 6, plus: 'b', label: '9 V battery', labelSide: 1.1});
+    if (on) flowMarks(svg, loop, t * .12, {kind: 'i', gap: 46, skip: p => (p.y > 200 && p.x > 320 && p.x < 480) || (p.y < 80 && p.x > 245 && p.x < 355) || (p.y < 80 && p.x > 432 && p.x < 508)});
+    tl(svg, 20, 276, on ? 'Switch ON: the battery drives a current round the loop – the LED glows.' : 'Switch OFF: the circuit is open – no current, no light.', 'sm ' + (on ? 'green' : 'muted'));
+  }
+  const it = anim(svg, t => { if (on) draw(t); });
+  btn.addEventListener('click', () => { on = !on; btn.textContent = on ? 'Switch OFF' : 'Switch ON'; draw(it.t); wake(it); });
+  draw(0);
+})();
+
+/* ---------- 2. capacitor vs button cell ---------- */
+(function(){
+  const svg = $id('capSvg'), out = $id('capOut');
+  let src = 0, t = 0, running = false; const runs = [[], []];
+  const TMAX = 10, GX = 420, GY = 40, GW = 350, GH = 220;
+  const capV = tt => 1.8 + 4.2 * Math.exp(-tt / 1.5);           /* model: capacitor p.d. while the LED conducts */
+  const bright = (s, tt) => s === 0 ? Math.exp(-tt / 1.5) : 0.55; /* LED brightness (relative) */
+  const loop = pathInfo([P(100, 185), P(100, 90), P(300, 90), P(300, 145), P(160, 145), P(160, 185)], false);
+  function draw(ph){
+    K.clear(svg);
+    const b = running || t > 0 ? bright(src, t) : 0;
+    /* source picture */
+    if (src === 0){
+      rect(svg, 60, 185, 150, 95, {rx: 14, fill: '#1f2937', stroke: 'var(--text)', 'stroke-width': 1.5});
+      rect(svg, 60, 185, 150, 16, {rx: 8, fill: '#374151'});
+      rect(svg, 186, 201, 14, 79, {fill: '#9ca3af', opacity: .8});
+      K.el('text', {x: 125, y: 228, 'text-anchor': 'middle', fill: '#fff', 'font-size': 20, 'font-weight': 700, text: '500 µF'}, svg);
+      K.el('text', {x: 125, y: 256, 'text-anchor': 'middle', fill: '#fff', 'font-size': 20, 'font-weight': 700, text: '6 V'}, svg);
+      tc(svg, 193, 192, '−', 'sm'); tc(svg, 88, 175, '+', 'sm', {'font-weight': 700}); tc(svg, 172, 175, '−', 'sm', {'font-weight': 700});
+      /* charge-left bar */
+      const left = running || t > 0 ? capV(t) / 6 : 1;
+      rect(svg, 230, 190, 22, 90, {fill: 'var(--surface2)', stroke: 'var(--border)'});
+      rect(svg, 230, 280 - 90 * left, 22, 90 * left, {fill: 'var(--blue)', opacity: .8});
+      tl(svg, 258, 200, 'charge', 'sm muted'); tl(svg, 258, 216, 'left', 'sm muted'); tl(svg, 258, 262, `${Math.round(left * 100)} %`, 'sm blue', {'font-weight': 700});
+    } else {
+      K.el('ellipse', {cx: 130, cy: 248, rx: 72, ry: 26, fill: '#94a3b8', stroke: 'var(--text)', 'stroke-width': 1.5}, svg);
+      K.el('ellipse', {cx: 130, cy: 236, rx: 72, ry: 26, fill: '#cbd5e1', stroke: 'var(--text)', 'stroke-width': 1.5}, svg);
+      K.el('ellipse', {cx: 130, cy: 236, rx: 52, ry: 17, fill: 'none', stroke: '#64748b', 'stroke-width': 1}, svg);
+      tc(svg, 130, 292, 'button cell, 3 V', 'sm', {'font-weight': 700});
+      tc(svg, 88, 175, '+', 'sm', {'font-weight': 700}); tc(svg, 172, 175, '−', 'sm', {'font-weight': 700});
+    }
+    wire(svg, [P(100, src === 0 ? 185 : 214), P(100, 90), P(150, 90)]); wire(svg, [P(250, 90), P(300, 90), P(300, 145), P(160, 145), P(160, src === 0 ? 185 : 214)]);
+    ledSym(svg, P(150, 90), P(250, 90), {on: b});
+    tc(svg, 200, 58, 'LED', 'sm');
+    if (b > 0.03) flowMarks(svg, loop, -ph * (.05 + .25 * b), {kind: 'e', gap: 34, skip: p => p.y < 100 && p.x > 145 && p.x < 255});
+    if (b > 0.03) tl(svg, 20, 312, '● electrons, moving from − round to +', 'sm blue');
+    /* graph */
+    ln(svg, P(GX, GY + GH), P(GX + GW, GY + GH), 'text', 1.6); ln(svg, P(GX, GY + GH), P(GX, GY - 5), 'text', 1.6);
+    tc(svg, GX + GW / 2, GY + GH + 22, 'time → (slowed down)', 'sm muted');
+    text(svg, P(GX - 16, GY + GH / 2), 'LED brightness', {class: 'lbl sm muted', transform: `rotate(-90 ${GX - 16} ${GY + GH / 2})`});
+    const cols = ['red', 'amber'], names = ['capacitor', 'button cell'];
+    runs.forEach((pts, s) => { if (pts.length > 1) K.polyline(svg, pts.map(q => P(GX + q[0] / TMAX * GW, GY + GH - q[1] * GH * .85)), {stroke: cv(cols[s]), 'stroke-width': 3}); });
+    names.forEach((nm, s) => { rect(svg, GX + 190, GY + 4 + s * 22, 14, 6, {fill: cv(cols[s])}); tl(svg, GX + 210, GY + 8 + s * 22, nm, 'sm'); });
+  }
+  function status(){
+    if (!running && t === 0){ out.textContent = src === 0 ? 'A charged capacitor (6 V, 500 µF). Press ▶ to connect it to the LED.' : 'A button cell (3 V). Press ▶ to connect it to the LED.'; return; }
+    if (src === 0) out.textContent = minus(`Capacitor p.d. ≈ ${fx(capV(t), 1)} V, falling.  LED brightness ${Math.round(bright(0, t) * 100)} %` + (bright(0, t) < .05 ? '\nThe LED has gone out: the stored charge drained away and nothing keeps the p.d. going.' : '\nCharge flows out of the capacitor through the LED – it is discharging.'));
+    else out.textContent = 'Button cell: the LED glows steadily. The chemicals in the cell keep the p.d. between its terminals, so charge flows continuously.';
+  }
+  const it = anim(svg, (tt, dt) => {
+    if (running){ t = Math.min(TMAX, t + dt * 2); runs[src].push([t, bright(src, t)]); if (t >= TMAX) running = false; status(); }
+    draw(tt);
+  });
+  const pick = radio(['capC', 'capB'], k => { src = k; t = 0; running = false; status(); draw(it.t); });
+  $id('capGo').addEventListener('click', () => { t = 0; runs[src] = [[0, bright(src, 0)]]; running = true; wake(it); });
+  $id('capRe').addEventListener('click', () => { t = 0; running = false; runs[0] = []; runs[1] = []; status(); draw(it.t); });
+  pick(0);
+})();
+
+/* ---------- siphon (used twice: Fig 7.3/7.4 and Fig 7.7) ---------- */
+const mixC = f => { const k = clamp(f, 0, 1) * .6; return `rgb(${Math.round(96 + (236 - 96) * k)},${Math.round(165 + (72 - 165) * k)},${Math.round(250 + (153 - 250) * k)})`; };
+function makeSiphon(svgId, o){
+  const svg = $id(svgId), PX = 14, TABLE = 330, BH = 12, AX = 130, BX = 520, BW = 140;
+  const S = {block: o.block || 0, dA: 7, dB: 7, cA: 1, cB: 0, pump: false, q: 0};
+  function levels(){ return {hA: S.block + S.dA, hB: S.dB}; }
+  function step(dt){ const {hA, hB} = levels(); const q = 0.6 * (hA - hB); S.q = q;
+    const pq = S.pump ? 1.2 : 0;   /* pump delivery (cm of depth per second) from B back to A */
+    const dA = (-q + pq) * dt, dB = (q - pq) * dt;
+    if (q > 0) S.cB = (S.cB * S.dB + S.cA * q * dt) / Math.max(.1, S.dB + q * dt); else if (q < 0) S.cA = (S.cA * S.dA - S.cB * q * dt) / Math.max(.1, S.dA - q * dt);
+    if (pq) S.cA = (S.cA * S.dA + S.cB * pq * dt) / Math.max(.1, S.dA + pq * dt);
+    S.dA = clamp(S.dA + dA, 1.2, 11.5); S.dB = clamp(S.dB + dB, 1.2, 11.5); }
+  function beaker(x, bottom, depth, conc, name){
+    const top = bottom - BH * PX;
+    rect(svg, x, bottom - depth * PX, BW, depth * PX, {fill: mixC(conc), opacity: .55});
+    K.polyline(svg, [P(x, top), P(x, bottom), P(x + BW, bottom), P(x + BW, top)], {stroke: 'var(--text)', 'stroke-width': 2.5});
+    ln(svg, P(x, bottom - depth * PX), P(x + BW, bottom - depth * PX), 'blue', 2);
+    tc(svg, x - 16, bottom - 14, name, 'big');
+    return top; }
+  function draw(ph){
+    K.clear(svg);
+    rect(svg, 0, TABLE, 800, 30, {fill: '#a16207', opacity: .35});
+    const aBot = TABLE - S.block * PX;
+    if (S.block > 0){ rect(svg, AX - 12, aBot, BW + 24, S.block * PX, {fill: '#b45309', opacity: .75, stroke: 'var(--text)', 'stroke-width': 1}); tc(svg, AX + BW / 2, aBot + S.block * PX / 2, `block ${S.block} cm`, 'sm', {fill: '#fff', stroke: 'none'}); }
+    const aTop = beaker(AX, aBot, S.dA, S.cA, 'A'), bTop = beaker(BX, TABLE, S.dB, S.cB, 'B');
+    const {hA, hB} = levels(), yA = TABLE - hA * PX, yB = TABLE - hB * PX;
+    /* level comparison */
+    ln(svg, P(AX + BW, yA), P(BX + BW + 40, yA), 'blue', 1.2, {'stroke-dasharray': '5 5'}); ln(svg, P(AX - 30, yB), P(BX, yB), 'purple', 1.2, {'stroke-dasharray': '5 5'});
+    if (Math.abs(hA - hB) > .15){ const xx = BX - 22; arrow(svg, P(xx, yB), P(xx, yA), {c: 'red', w: 2, head: 7}); arrow(svg, P(xx, yA), P(xx, yB), {c: 'red', w: 2, head: 7}); text(svg, P(xx - 8, (yA + yB) / 2), `level difference ${nf(Math.abs(hA - hB), 1)} cm`, {class: 'lbl sm red', 'text-anchor': 'end'}); }
+    else tl(svg, BX + BW + 12, yB - 14, 'levels equal', 'sm green', {'font-weight': 700});
+    /* siphon tube */
+    const tTop = Math.min(aTop, bTop) - 34, ta = AX + BW - 35, tb = BX + 35;
+    const tube = [P(ta, aBot - 22), P(ta, tTop), P(tb, tTop), P(tb, TABLE - 22)];
+    K.polyline(svg, tube, {stroke: '#94a3b8', 'stroke-width': 13, 'stroke-linejoin': 'round', opacity: .8});
+    K.polyline(svg, tube, {stroke: mixC(S.q >= 0 ? S.cA : S.cB), 'stroke-width': 7, 'stroke-linejoin': 'round', opacity: .9});
+    if (Math.abs(S.q) > .05){ const info = pathInfo(tube, false); flowMarks(svg, info, (S.q > 0 ? 1 : -1) * ph * clamp(Math.abs(S.q) * .15, .05, .5), {kind: 'i', c: 'blue', gap: 45, size: 5}); }
+    /* pump */
+    if (o.pump){
+      const px = 690, py = tTop - 6, pipe = [P(BX + BW - 25, TABLE - 22), P(BX + BW - 25, py), P(AX + 30, py), P(AX + 30, aBot - 22)];
+      const pp = [P(BX + BW - 25, TABLE - 22), P(BX + BW - 25, py + 30), P(px - 30, py + 30)];
+      K.polyline(svg, [P(BX + BW - 25, TABLE - 22), P(BX + BW - 25, py - 30), P(AX + 30, py - 30), P(AX + 30, aBot - 22)], {stroke: '#64748b', 'stroke-width': 9, 'stroke-linejoin': 'round', opacity: .7});
+      if (S.pump) flowMarks(svg, pathInfo([P(BX + BW - 25, TABLE - 22), P(BX + BW - 25, py - 30), P(AX + 30, py - 30), P(AX + 30, aBot - 22)], false), ph * .12, {kind: 'i', c: 'green', gap: 45, size: 5});
+      rect(svg, BX + BW - 50, py - 52, 50, 40, {rx: 6, fill: S.pump ? 'var(--green-soft)' : 'var(--surface2)', stroke: cv(S.pump ? 'green' : 'muted'), 'stroke-width': 2});
+      tc(svg, BX + BW - 25, py - 32, 'pump', 'sm ' + (S.pump ? 'green' : 'muted'), {'font-weight': 700});
+      void pipe; void pp;
+    }
+  }
+  function status(){ const {hA, hB} = levels(), d = hA - hB;
+    let s = `Water surface A: ${nf(hA, 1)} cm above the table · B: ${nf(hB, 1)} cm\n`;
+    if (Math.abs(S.q) < .05) s += 'Levels equal → equal gravitational potential → no flow.';
+    else s += `Level difference ${nf(Math.abs(d), 1)} cm → water flows ${d > 0 ? 'A → B' : 'B → A'} (higher level to lower level).`;
+    if (o.pump) s += S.pump ? '\nPump ON: it lifts back as much water as flows across, so the level difference stays – the flow never stops.' : '\nPump OFF: the flow will stop once the levels become equal.';
+    out.textContent = s; }
+  const out = $id(o.out);
+  const it = anim(svg, (t, dt) => { step(dt); draw(t); status(); });
+  function reset(){ S.dA = 7; S.dB = 7; S.cA = 1; S.cB = 0; S.block = o.block || 0; S.pump = false; if (o.slider) { $id(o.slider).value = S.block; $id(o.slider).dispatchEvent(new Event('input')); } if (o.pumpBtn){ $id(o.pumpBtn).textContent = '⚡ Pump ON'; } wake(it); draw(it.t); status(); }
+  if (o.slider) K.slider('#' + o.slider, v => { S.block = v; wake(it); draw(it.t); status(); }, 0);
+  if (o.pumpBtn) $id(o.pumpBtn).addEventListener('click', () => { S.pump = !S.pump; $id(o.pumpBtn).textContent = S.pump ? '⏻ Pump OFF' : '⚡ Pump ON'; wake(it); });
+  $id(o.reset).addEventListener('click', reset);
+  draw(0); status();
+}
+makeSiphon('siSvg', {slider: 'siH', reset: 'siRe', out: 'siOut'});
+makeSiphon('puSvg', {block: 4, pump: true, pumpBtn: 'puOn', reset: 'puRe', out: 'puOut'});
+
+/* ---------- 4. heat along a rod; air out of a tube ---------- */
+(function(){
+  const svg = $id('haSvg'), out = $id('haOut'), N = 28, AIR = 30;
+  const T = new Array(N).fill(AIR); let heat = false, open = false, p = 2.2, parts = [];   /* p = pressure inside ÷ pressure outside (model) */
+  const RX0 = 70, RX1 = 330, RY = 122;
+  function tcol(v){ const f = clamp((v - AIR) / 450, 0, 1); return `rgb(${Math.round(100 + 155 * f)},${Math.round(116 - 40 * f + 60 * f * f)},${Math.round(139 - 120 * f)})`; }
+  function step(dt){
+    const sub = 20, h = dt / sub;
+    for (let s = 0; s < sub; s++){ const nT = T.slice();
+      for (let i = 0; i < N; i++){ const l = T[Math.max(0, i - 1)], r = T[Math.min(N - 1, i + 1)]; nT[i] = T[i] + h * (30 * (l - 2 * T[i] + r) - 0.08 * (T[i] - AIR)); }
+      if (heat) nT[N - 1] += h * 60 * (600 - nT[N - 1]) / 10;
+      for (let i = 0; i < N; i++) T[i] = nT[i]; }
+    if (open){ p = 1 + (p - 1) * Math.exp(-dt * 0.5); if (p - 1 > .02 && Math.random() < (p - 1) * 0.9) parts.push({x: 712, y: 236, vx: 40 + 120 * (p - 1), vy: 20 + 40 * Math.random(), life: 0}); }
+    parts.forEach(q => { q.x += q.vx * dt; q.y += q.vy * dt; q.life += dt; }); parts = parts.filter(q => q.life < 1.4 && q.x < 800 && q.y < 300);
+  }
+  function draw(ph){
+    K.clear(svg);
+    ln(svg, P(400, 10), P(400, 290), 'muted', 1, {'stroke-dasharray': '4 6'});
+    tc(svg, 200, 22, 'Situation 1 – Fig 7.5', 'sm', {'font-weight': 700}); tc(svg, 600, 22, 'Situation 2 – Fig 7.6', 'sm', {'font-weight': 700});
+    /* candle */
+    rect(svg, 312, 170, 36, 100, {rx: 4, fill: '#fde68a', stroke: 'var(--text)', 'stroke-width': 1.2});
+    ln(svg, P(330, 170), P(330, 158), 'text', 2);
+    const fl = 1 + .08 * Math.sin(ph * 12);
+    K.el('path', {d: `M330,${158 - 52 * fl} C352,${140 - 20 * fl} 346,150 330,158 C314,150 308,${140 - 20 * fl} 330,${158 - 52 * fl}Z`, fill: '#f59e0b', opacity: .85}, svg);
+    K.el('path', {d: `M330,${158 - 30 * fl} C340,140 338,150 330,156 C322,150 320,140 330,${158 - 30 * fl}Z`, fill: '#fde047'}, svg);
+    /* rod */
+    const RXE = heat ? RX1 : RX1 - 30, dx = (RXE - RX0) / N;
+    for (let i = 0; i < N; i++) rect(svg, RX0 + i * dx, RY - 7, dx + .6, 14, {fill: tcol(T[i])});
+    rect(svg, RX0, RY - 7, RXE - RX0, 14, {fill: 'none', stroke: 'var(--text)', 'stroke-width': 1.2, rx: 3});
+    /* hand */
+    K.el('ellipse', {cx: 52, cy: RY + 4, rx: 26, ry: 18, fill: '#f5c39b', stroke: 'var(--text)', 'stroke-width': 1.2}, svg);
+    tc(svg, RX0 + 6, RY - 22, 'P', 'big'); tc(svg, RXE - 6, RY - 22, 'Q', 'big');
+    tl(svg, 30, 180, `P: ${Math.round(T[0])} °C`, 'sm blue', {'font-weight': 700}); tl(svg, 30, 202, `Q: ${Math.round(T[N - 1])} °C`, 'sm red', {'font-weight': 700});
+    if (T[N - 1] - T[0] > 5) arrow(svg, P(RXE - 40, RY + 30), P(RX0 + 40, RY + 30), {c: 'red', w: 3, label: 'heat flows Q → P', lo: {x: 70, y: 18}});
+    tl(svg, 30, 285, '(temperatures: a simple model)', 'sm muted');
+    /* tube */
+    const cx = 600, cy = 150, k = .85 + .15 * Math.min(1, (p - 1) / 1.2), th = 26 * k;
+    K.el('ellipse', {cx, cy, rx: 120, ry: 62, fill: 'none', stroke: '#1f2937', 'stroke-width': th}, svg);
+    K.el('ellipse', {cx, cy, rx: 120, ry: 62, fill: 'none', stroke: '#475569', 'stroke-width': th * .35, opacity: .6}, svg);
+    for (let i = 0; i < 18; i++){ const a = i / 18 * 6.283 + ph * (open ? .6 : .15); circ(svg, P(cx + 120 * Math.cos(a) + 4 * Math.sin(ph * 7 + i), cy + 62 * Math.sin(a)), 2.4, {fill: '#93c5fd', opacity: Math.min(1, (p - .8) / 1.4)}); }
+    rect(svg, 698, 210, 14, 30, {rx: 3, fill: open ? 'var(--green)' : '#64748b', transform: 'rotate(-35 705 225)'});
+    tl(svg, 716, 214, open ? 'valve open' : 'valve', 'sm ' + (open ? 'green' : 'muted'));
+    parts.forEach(q => circ(svg, P(q.x, q.y), 2.6, {fill: '#60a5fa', opacity: 1 - q.life / 1.4}));
+    /* pressure bars */
+    const bx = 440, base = 285;
+    [[p, 'inside', 'red'], [1, 'outside', 'blue']].forEach(([v, nm, c], i) => { rect(svg, bx + i * 60, base - 20 - 24 * v, 36, 24 * v, {fill: cv(c), opacity: .75}); tc(svg, bx + 18 + i * 60, base - 6, nm, 'sm'); });
+    tl(svg, bx + 120, base - 50, 'pressure', 'sm muted');
+    if (open && p - 1 > .03) tl(svg, bx + 120, base - 30, 'air: inside → outside', 'sm red', {'font-weight': 700});
+  }
+  function status(){ const s1 = heat ? `Rod: Q is in the flame. Q ${Math.round(T[N - 1])} °C, P ${Math.round(T[0])} °C – heat flows from Q (hot) to P (cool).` : (T[N - 1] - T[0] > 5 ? `Rod out of the flame: Q ${Math.round(T[N - 1])} °C, P ${Math.round(T[0])} °C – heat still flows Q → P and the rod evens out.` : 'Rod at room temperature everywhere – no heat flows along it.');
+    const s2 = open ? (p - 1 > .03 ? `Tube: valve open, inside pressure ${nf(p, 2)} × outside – air rushes out (high → low pressure).` : 'Tube: pressures now equal – the air stops flowing.') : `Tube: valve closed, pressure inside ≈ ${nf(p, 1)} × outside (higher inside).`;
+    out.textContent = s1 + '\n' + s2; }
+  const it = anim(svg, (t, dt) => { step(dt); draw(t); status(); });
+  $id('haHeat').addEventListener('click', () => { heat = true; wake(it); });
+  $id('haCool').addEventListener('click', () => { heat = false; T.fill(AIR); wake(it); });
+  $id('haOpen').addEventListener('click', () => { open = true; wake(it); });
+  $id('haPump').addEventListener('click', () => { open = false; p = 2.2; parts = []; wake(it); });
+  draw(0); status();
+})();
+
+/* ---------- Table 7.1 ---------- */
+(function(){
+  const body = $id('t71'), out = $id('t71Out');
+  const R = [
+    {s: 'Water flows <span class="ml">ജലം ഒഴുകുന്നത്</span>', o: ['from the higher level to the lower level', 'from the lower level to the higher level'], a: 0},
+    {s: 'Heat flows <span class="ml">താപം പ്രവഹിക്കുന്നത്</span>', o: ['from higher temperature to lower temperature <span class="ml">ഉയർന്ന താപനിലയുള്ള ഭാഗത്തു നിന്ന് താഴ്ന്ന താപനിലയുള്ള ഭാഗത്തേക്ക്</span>'], a: 0, given: true},
+    {s: 'Air flows <span class="ml">വായു പ്രവഹിക്കുന്നത്</span>', o: ['from lower pressure to higher pressure', 'from higher pressure to lower pressure'], a: 1}
+  ];
+  const pick = R.map(r => r.given ? 0 : null);
+  function table(){ let ok = 0;
+    body.innerHTML = R.map((r, i) => { if (pick[i] === r.a) ok++; return `<tr><td>${r.s}</td><td><span class="yn">` + r.o.map((t, k) => `<button class="btn${r.given ? ' given' : (pick[i] === k ? (k === r.a ? ' ok' : ' bad') : '')}" data-r="${i}" data-k="${k}">${t}</button>`).join('') + '</span></td></tr>'; }).join('');
+    out.textContent = ok === 3 ? '✔ Table 7.1 complete! Water: higher level → lower level. Heat: higher temperature → lower temperature. Air: higher pressure → lower pressure. Every flow needs a difference.' : `${ok} of 3 rows correct. The heat row is filled in by the textbook – choose the right direction for water and air.`; }
+  body.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; pick[+b.dataset.r] = +b.dataset.k; table(); });
+  table();
+})();
+
+/* ---------- 6. Fig 7.8: the missing source ---------- */
+(function(){
+  const svg = $id('cdSvg'), out = $id('cdOut'), bS = $id('cdSw'), bC = $id('cdCell'); let on = false, cell = false;
+  const loop = pathInfo([P(310, 210), P(600, 210), P(600, 60), P(200, 60), P(200, 210)], true);
+  function draw(t){
+    K.clear(svg);
+    wire(svg, [P(250, 210), P(200, 210), P(200, 60), P(370, 60)]); wire(svg, [P(430, 60), P(600, 60), P(600, 210), P(520, 210)]); wire(svg, [P(460, 210), P(300, 210)]);
+    bulbSym(svg, P(370, 60), P(430, 60), {glow: on && cell ? 1 : 0, label: 'bulb', r: 18});
+    switchSym(svg, P(460, 210), P(520, 210), on, {label: 'switch', labelSide: 1.4});
+    if (cell){ cellSym(svg, P(250, 210), P(300, 210), {plus: 'b', label: 'cell', labelSide: 1.5}); }
+    else { circ(svg, P(250, 210), 4, {fill: 'var(--text)'}); circ(svg, P(300, 210), 4, {fill: 'var(--text)'}); rect(svg, 254, 196, 42, 28, {rx: 5, fill: 'none', stroke: 'var(--accent)', 'stroke-dasharray': '4 4'}); tc(svg, 275, 246, 'nothing here', 'sm amber'); }
+    tc(svg, 226, 192, 'C', 'big'); tc(svg, 324, 192, 'D', 'big');
+    if (on && cell){ flowMarks(svg, loop, -t * .1, {kind: 'e', gap: 34, skip: p => (p.y > 195 && p.x > 240 && p.x < 310) || (p.y < 75 && p.x > 350 && p.x < 450)}); tl(svg, 20, 254, '● electrons drift from − (C) round the loop to + (D)', 'sm blue'); }
+  }
+  function status(){ out.textContent = !cell ? (on ? 'Switch ON, but the bulb stays dark: C and D are just two loose wire ends – nothing keeps a potential difference between them, so no charges flow.' : 'Switch OFF. Is the circuit ready to light the bulb? Turn it on and see.')
+    : (on ? 'Cell between C and D: it keeps D at a higher potential than C. Charges flow continuously and the bulb glows.' : 'A cell now sits between C and D. Close the switch to complete the circuit.'); }
+  const it = anim(svg, t => { if (on && cell) draw(t); });
+  bS.addEventListener('click', () => { on = !on; bS.textContent = on ? 'Switch OFF' : 'Switch ON'; draw(it.t); status(); wake(it); });
+  bC.addEventListener('click', () => { cell = !cell; bC.textContent = cell ? '➖ Remove the cell' : '➕ Put a cell between C and D'; draw(it.t); status(); wake(it); });
+  draw(0); status();
+})();
+
+/* ---------- 7. joules per coulomb ---------- */
+(function(){
+  const svg = $id('vwSvg'), out = $id('vwOut'); let V = 1.5, Q = 4;
+  const names = ['torch cell', 'two cells', '9 V battery'];
+  let nm = names[0];
+  function draw(t){
+    K.clear(svg);
+    const base = 270, H = V * 22, x0 = 70, x1 = 330;
+    /* lift (source) and slope (bulb) */
+    rect(svg, x0 - 22, base - H, 44, H, {fill: 'var(--accent-soft)', stroke: 'var(--accent)', 'stroke-width': 2, rx: 6});
+    tc(svg, x0, base + 18, nm, 'sm amber', {'font-weight': 700}); tc(svg, x0, base - H - 14, `${nf(V, 1)} V`, 'amber', {'font-weight': 700});
+    ln(svg, P(x0 + 22, base - H), P(x1 - 40, base - H), 'muted', 2);
+    ln(svg, P(x1 - 40, base - H), P(x1, base), 'muted', 2);
+    ln(svg, P(x0 + 22, base), P(x1, base), 'muted', 2);
+    const bm = P(x1 - 20, base - H / 2); circ(svg, bm, 13, {fill: '#facc15', opacity: .8, stroke: 'var(--text)'}); ln(svg, P(bm.x - 8, bm.y - 8), P(bm.x + 8, bm.y + 8), 'text', 1.6); ln(svg, P(bm.x - 8, bm.y + 8), P(bm.x + 8, bm.y - 8), 'text', 1.6);
+    tl(svg, x1 + 6, base - H / 2, 'bulb', 'sm');
+    /* height ladder: one rung per volt */
+    for (let v = 1; v <= V + 1e-9; v++) { ln(svg, P(x0 - 30, base - v * 22), P(x0 - 24, base - v * 22), 'amber', 2); }
+    tl(svg, 8, base - H / 2, `${nf(V, 1)} J`, 'sm amber'); tl(svg, 8, base - H / 2 + 16, 'per C', 'sm amber');
+    /* coulombs going round */
+    const loopI = pathInfo([P(x0, base - 6), P(x0, base - H - 6), P(x1 - 40, base - H - 6), P(x1, base - 6)], true);
+    for (let k = 0; k < Q; k++){ const q = pathAt(loopI, k / Q + t * .08); circ(svg, q.p, 9, {fill: 'var(--blue)', stroke: 'var(--svgbg)', 'stroke-width': 1.5}); K.el('text', {x: q.p.x, y: q.p.y + 1, 'text-anchor': 'middle', 'dominant-baseline': 'middle', fill: '#fff', 'font-size': 9, 'font-weight': 700, text: '1C'}, svg); }
+    /* bars: W = V × Q */
+    const bx = 470, bw = 260, Wmax = 90, W = V * Q;
+    tl(svg, bx, 40, 'work done on the charge', 'sm muted');
+    for (let k = 0; k < Q; k++) rect(svg, bx + k * (bw / 10), 60, bw / 10 - 4, 150 * V / 9, {fill: 'var(--blue)', opacity: .75});
+    for (let k = 0; k < Q; k++) tc(svg, bx + k * (bw / 10) + bw / 20 - 2, 60 + 150 * V / 9 + 14, '1 C', 'sm muted');
+    tl(svg, bx, 250, `W = V × Q = ${nf(V, 1)} × ${Q} = ${nf(W, 1)} J`, 'big');
+    tl(svg, bx, 280, `V = W/Q = ${nf(W, 1)} ÷ ${Q} = ${nf(V, 1)} J/C = ${nf(V, 1)} V`, 'sm');
+    void Wmax;
+  }
+  function status(){ out.textContent = `${nm}: ${nf(V, 1)} V means ${nf(V, 1)} J of work for every 1 C of charge moved.\nFor Q = ${Q} C: W = V × Q = ${nf(V, 1)} × ${Q} = ${nf(V * Q, 1)} J.  Check: V = W ÷ Q = ${nf(V * Q, 1)} ÷ ${Q} = ${nf(V, 1)} V.`; }
+  const it = anim(svg, t => draw(t));
+  radio(['vw1', 'vw2', 'vw3'], k => { V = [1.5, 3, 9][k]; nm = names[k]; status(); draw(it.t); wake(it); });
+  K.slider('#vwQ', v => { Q = v; status(); draw(it.t); wake(it); }, 0);
+  $id('vw1').classList.add('primary');
+})();
+
+/* ---------- worked example: 9 J, 6 C ---------- */
+(function(){
+  const rows = [
+    [0, 'Given: W = 9 J', 'blue'],
+    [0, '            Q = 6 C', 'blue'],
+    [1, 'Formula: V = W / Q', 'purple'],
+    [2, 'Substitution: V = 9 J ÷ 6 C', ''],
+    [3, 'Answer: V = 1.5 J/C = 1.5 V', 'big green']
+  ];
+  new K.Stepper('#exV', {steps: [
+    '<b>Given:</b> work done W = 9 J; charge moved Q = 6 C.',
+    '<b>Formula:</b> potential difference = work ÷ charge, <b>V = W/Q</b>.',
+    '<b>Substitution:</b> V = 9 ÷ 6 – share the 9 J equally among the 6 coulombs.',
+    '<b>Answer:</b> V = <b>1.5 V</b> – each coulomb received 1.5 J, the same as one torch cell gives.'
+  ], ms: 900, draw(svg, i, t){
+    const share = i >= 2 ? (i === 2 ? t : 1) : 0;
+    rect(svg, 30, 40, 300, 34, {rx: 6, fill: 'var(--accent-soft)', stroke: 'var(--accent)', 'stroke-width': 1.5});
+    tc(svg, 180, 58, '9 J of work', 'amber', {'font-weight': 700});
+    for (let k = 0; k < 6; k++){ const x = 55 + k * 50, y = 180; circ(svg, P(x, y), 17, {fill: 'var(--blue)', opacity: .85}); K.el('text', {x, y: y + 1, 'text-anchor': 'middle', 'dominant-baseline': 'middle', fill: '#fff', 'font-size': 12, 'font-weight': 700, text: '1 C'}, svg);
+      if (share > 0){ const from = P(180, 74), to = P(x, y - 20), q = K.lerpPt(from, to, share); ln(svg, from, q, 'amber', 1.5, {'stroke-dasharray': '3 3'}); if (share > .95) tc(svg, x, y - 34, '1.5 J', 'sm amber', {'font-weight': 700}); } }
+    lines(svg, rows, i, t, {x: 400, y: 50, lh: 40});
+  }});
+})();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'An LED joined to a charged capacitor glows only for a moment because…', options: ['the LED is faulty', 'the capacitor\'s small store of charge runs out and nothing keeps the p.d. going', 'capacitors give alternating current', 'the LED needs 230 V'], answer: 1, explain: 'The capacitor discharges through the LED; it has no energy source to keep pushing charge.', hint: 'What keeps a button cell going that a capacitor lacks?'});
+K.mcq('#q2', {q: 'Water flows through a siphon from beaker A to beaker B only when…', options: ['A has more water than B', 'the water level in A is higher than in B', 'the tube is very long', 'B is coloured'], answer: 1, explain: 'Flow needs a difference in level (gravitational potential).', hint: 'Compare the heights of the water surfaces.'});
+K.numq('#q3', {q: '18 J of work is done to move 6 C of charge between two points. What is the potential difference (in V)?', answer: 3, tol: 0.01, unit: 'V', explain: 'V = W/Q = 18 ÷ 6 = 3 V.', hint: 'V = W ÷ Q.'});
+K.mcq('#q4', {q: 'The emf of a source is…', options: ['the current it gives', 'the p.d. between its terminals when no current is drawn from it', 'the work done in 1 second', 'its resistance'], answer: 1, explain: 'emf = open-circuit p.d., the maximum p.d. the source can give.', hint: 'Think "open circuit".'});
+K.mcq('#q5', {q: 'In Fig 7.8 the bulb does not glow even when the switch is on, because…', options: ['the switch is broken', 'there is no source between C and D to maintain a potential difference', 'the bulb has fused', 'the wires are too long'], answer: 1, explain: 'Without a source there is no p.d., so no charges flow.', hint: 'What is missing between C and D?'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

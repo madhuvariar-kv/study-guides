@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resistance Factors and the Rheostat</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.qa{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.6rem 1rem;margin:.7rem 0;box-shadow:var(--shadow)}
+.qa p{margin:.25em 0}
+.qbox{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.7rem 1rem;margin:.8rem 0;box-shadow:var(--shadow)}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.obs td,.obs th{text-align:center;vertical-align:middle}
+.tw{overflow-x:auto}
+.diary{background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:1rem 0}
+.diary h3{margin:.1rem 0 .4rem;color:var(--accent-ink)}
+</style>
+</head>
+<body data-page="09_factors_resistance_rheostat">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 7 · Section 5</span><span class="chip amber">Textbook pages 146–149</span>
+<h1>What Affects Resistance? The Rheostat <span class="ml">പ്രതിരോധകം · റിയോസ്റ്റാറ്റ്</span></h1>
+<p class="lead">Why is a heater coil made of nichrome while house wiring is copper? Why does a thick wire carry current more easily than a thin one? On this page you measure a heater coil hot and cold, test four wires on a board (Fig 7.25), explore length, thickness and material, and slide the contact of a rheostat to dim a bulb.</p>
+
+<div class="callout book"><div class="title">📖 What you need (page 8 of this guide)</div>
+<ul style="margin:0">
+<li><b>R = V/I</b>: with the same p.d., a bigger resistance means a smaller current.</li>
+<li>Resistance comes from collisions of free electrons with atoms; it changes with temperature (Ohm noticed this).</li>
+<li>Unit: ohm (Ω); 1 kΩ = 1000 Ω.</li>
+</ul></div>
+
+<h2>1. Resistors and the multimeter (Fig 7.24)</h2>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 146) – resistor <span class="ml">പ്രതിരോധകം / റെസിസ്റ്റർ</span></div>
+<p class="ml" style="margin:.2rem 0 .4rem">ഒരു നിശ്ചിത പ്രതിരോധം സെർക്കീട്ടിൽ ഉൾപ്പെടുത്താനായി ഉപയോഗിക്കുന്ന ചാലകങ്ങളെ പ്രതിരോധകം അഥവാ റെസിസ്റ്റർ (resistor) എന്ന് വിളിക്കുന്നു.</p>
+<p>A conductor used to put a <b>definite resistance</b> into a circuit is a <b>resistor</b>. Its symbol is a zig-zag or a rectangle. The <b>multimeter</b> (<span class="ml">മൾട്ടിമീറ്റർ</span>) measures resistance directly; it can also measure potential difference and current.</p></div>
+<div class="callout book"><div class="title">📚 Resistors (<span class="ml">റെസിസ്റ്ററുകൾ</span>)</div>
+<p><span class="ml">വിപണിയിൽ പല മൂല്യങ്ങളിലുള്ള റെസിസ്റ്ററുകൾ ലഭ്യമാണ്.</span> – Resistors of many values are sold in the market and are used in all electronic devices. Their value is either printed on them or shown with <b>colour codes</b> (coloured bands).</p></div>
+<div class="lab">
+  <div class="lab-title">🎨 Go further: read a resistor's colour bands</div>
+  <svg id="rcSvg" viewBox="0 0 800 200" role="img" aria-label="A resistor with four coloured bands; tap a band to change its colour and read the value"></svg>
+  <div class="controls"><button class="btn" id="rc1">Band 1</button><button class="btn" id="rc2">Band 2</button><button class="btn" id="rc3">Band 3 (multiplier)</button><button class="btn" id="rc4">Band 4 (tolerance)</button></div>
+  <div class="readout" id="rcOut"></div>
+  <p class="hint">Standard code: black 0, brown 1, red 2, orange 3, yellow 4, green 5, blue 6, violet 7, grey 8, white 9. Bands 1 and 2 are digits, band 3 says how many zeros follow, band 4 is the tolerance (gold ±5 %, silver ±10 %). Not in the textbook – just for fun.</p>
+</div>
+<p>The thinking student asks: <span class="ml">പ്രതിരോധത്തെ സ്വാധീനിക്കുന്ന ഘടകങ്ങൾ ഏതെല്ലാമാണ്?</span> – <em>What are the factors that affect resistance?</em></p>
+
+<h2>2. Hot and cold – the heater coil</h2>
+<p><span class="ml">വൈദ്യുത ഹീറ്ററിൽ ഉപയോഗിക്കുന്ന നിക്രോം കമ്പിയുടെ പ്രതിരോധം, ഹീറ്റർ ഓഫാക്കിയ ഉടനെയും തണുത്ത ശേഷവും മൾട്ടിമീറ്റർ ഉപയോഗിച്ച് അളക്കുക.</span> – Measure the resistance of the <b>nichrome</b> (<span class="ml">നിക്രോം</span>) coil of an electric heater with a multimeter, just after the heater is switched off and again after it has cooled.</p>
+<div class="safety">⚠ A heater runs on the mains (230 V AC). Your teacher must switch it off and pull out the plug before anyone touches it with multimeter probes – and the hot coil burns. Never experiment with the mains supply at home.</div>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: heater coil, hot and cold</div>
+  <svg id="htSvg" viewBox="0 0 800 260" role="img" aria-label="A heater coil glowing red-hot and cooling down, with a multimeter showing its resistance"></svg>
+  <div class="controls"><button class="btn primary" id="htOn">🔥 Heat the coil (heater on)</button><button class="btn" id="htOff">⏻ Switch off, unplug and measure</button></div>
+  <div class="readout" id="htOut"></div>
+  <p class="hint">Model (approx.): a 1000 W heater coil of about 53 Ω when red-hot (≈ 700 °C) and about 41 Ω at room temperature. Readings update as the coil cools.</p>
+</div>
+<div class="qa"><p><b>Textbook questions (page 146)</b></p>
+<ol style="margin:.3rem 0">
+<li><span class="ml">ഏത് സന്ദർഭത്തിലാണ് പ്രതിരോധം കൂടുതൽ ഉള്ളത്?</span> – When is the resistance greater?</li>
+<li><span class="ml">മറ്റേതെങ്കിലും ഘടകങ്ങൾ പ്രതിരോധത്തെ സ്വാധീനിക്കുന്നുണ്ടോ?</span> – Do any other factors affect resistance?</li>
+</ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">
+1. <b>When the coil is hot</b> – just after the heater is switched off. <i>Why:</i> in a hot metal the atoms vibrate more strongly, so the free electrons collide with them more often. <span class="ml">താപനില കുറയുന്നതിനനുസരിച്ച് പ്രതിരോധവും കുറയുന്നു</span> – as the temperature falls, the resistance falls.<br>
+2. <b>Yes</b> – length, thickness (area of cross-section) and the material. <i>Why:</i> the activity of Fig 7.25 below shows each of them.</div></div></div>
+
+<h2>3. Length, thickness and material (Fig 7.25, Table 7.9)</h2>
+<p><span class="ml">40 cm നീളമുള്ള നിക്രോം കമ്പിയാണ് CD. CD യുടെ അതേ നീളവും ഇരട്ടി വണ്ണവുമുള്ള നിക്രോം കമ്പിയാണ് EF. CD യുടെ അതേ നീളവും വണ്ണവുമുള്ള കോപ്പർ കമ്പിയാണ് GH.</span> – On a wooden board: CD is a 40 cm <b>nichrome</b> wire; EF is nichrome of the same length but <b>double thickness</b>; GH is <b>copper</b> of the same length and thickness as CD. M is the midpoint of CD. A bulb, an ammeter and a 3 V battery are joined to the left ends; the free end <b>J</b>, joined to the battery's − terminal, is touched to M, D, F and H in turn.</p>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: the resistance board (Fig 7.25)</div>
+  <div class="controls"><b>Touch J to:</b><button class="btn" id="jM">M</button><button class="btn" id="jD">D</button><button class="btn" id="jF">F</button><button class="btn" id="jH">H</button><button class="btn" id="jX">lift J</button></div>
+  <svg id="bdSvg" viewBox="0 0 800 330" role="img" aria-label="Fig 7.25: three wires CD, EF and GH on a board, joined at the left to a bulb, an ammeter and a 3 volt battery; the free end J touches one point"></svg>
+  <div class="readout" id="bdOut"></div>
+  <div class="tw"><table class="obs"><caption class="small muted">Table 7.9 – sample readings from a stated model (3 V battery, bulb taken as a fixed 5 Ω, CD = 4 Ω) – your real readings will differ</caption>
+  <thead><tr><th>Point J touches <span class="ml">J സ്പർശിക്കുന്ന ബിന്ദു</span></th><th>Length / thickness <span class="ml">ചാലകത്തിന്റെ നീളം/വണ്ണം</span></th><th>Material <span class="ml">ചാലകം നിർമ്മിച്ച പദാർഥം</span></th><th>Ammeter reading <span class="ml">അമ്മീറ്റർ റീഡിങ്</span></th></tr></thead><tbody id="t79"></tbody></table></div>
+  <p class="hint">"Double thickness" is taken as double the <b>area of cross-section</b>, which halves the resistance. (If it meant double the diameter, the area would be 4 times and the resistance a quarter.)</p>
+</div>
+<p><span class="ml">എല്ലാ സന്ദർഭത്തിലും സെർക്കീട്ടിൽ നല്കിയ പൊട്ടൻഷ്യൽ വ്യത്യാസം തുല്യമാണ്. ഓം നിയമമനുസരിച്ച് V = IR ആയതിനാൽ അമ്മീറ്റർ റീഡിങ്ങുകളിൽ (I) വന്ന മാറ്റങ്ങൾക്ക് കാരണം ചാലകത്തിന്റെ പ്രതിരോധത്തിൽ (R) വന്ന മാറ്റമല്ലേ?</span> – The p.d. is the same (3 V) every time, so by V = IR any change in the ammeter reading must come from a change in resistance.</p>
+<div class="qa"><p><b>Textbook questions (page 147)</b></p>
+<ol style="margin:.3rem 0">
+<li><span class="ml">അമ്മീറ്റർ റീഡിങ് (കറന്റ്) ഏറ്റവും കുറവ് ഏത് സന്ദർഭത്തിൽ?</span> – In which case is the ammeter reading (current) the least?</li>
+<li><span class="ml">കാരണം എന്ത്?</span> (<span class="ml">പ്രതിരോധം കൂടുതൽ / പ്രതിരോധം കുറവ്</span>) – Why? (more resistance / less resistance)</li>
+<li><span class="ml">ഒരേ ചാലകത്തിന്റെ നീളം കൂടുമ്പോൾ പ്രതിരോധത്തിന് എന്ത് സംഭവിക്കുന്നു?</span> – What happens to the resistance when the length of the same conductor increases?</li>
+<li><span class="ml">ഒരേ ചാലകത്തിന്റെ വണ്ണം കൂടുമ്പോൾ പ്രതിരോധത്തിന് എന്ത് സംഭവിക്കുന്നു?</span> – What happens when the thickness of the same conductor increases?</li>
+<li><span class="ml">ഒരേ നീളവും വണ്ണവുമുള്ള നിക്രോം, കോപ്പർ എന്നിവയിൽ പ്രതിരോധം കൂടുതൽ ഏതിനാണ്?</span> – Nichrome or copper of the same length and thickness – which has more resistance?</li>
+</ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">
+1. When J touches <b>D</b> (the full 40 cm of thin nichrome). <i>Why:</i> see 2.<br>
+2. <b>More resistance</b> (<span class="ml">പ്രതിരോധം കൂടുതൽ</span>). <i>Why:</i> same p.d., so the smallest current means the largest resistance (I = V/R).<br>
+3. The resistance <b>increases</b>. <i>Why:</i> M (20 cm) gave more current than D (40 cm) – a longer path means more collisions.<br>
+4. The resistance <b>decreases</b>. <i>Why:</i> F (thick) gave more current than D (thin) of the same length – a thicker wire offers more room for the electrons, like a wider road.<br>
+5. <b>Nichrome.</b> <i>Why:</i> H (copper) gave the largest current of all; copper's resistance is very low.</div></div></div>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: resistance explorer – length, thickness, material</div>
+  <div class="controls"><label>length <input id="exL" type="range" min="10" max="100" step="10" value="40"><output></output> cm</label>
+  <label>thickness (area) <input id="exA" type="range" min="1" max="4" step="1" value="1"><output></output> ×</label></div>
+  <div class="controls"><b>Material:</b><button class="btn primary" id="m0">nichrome</button><button class="btn" id="m1">tungsten</button><button class="btn" id="m2">aluminium</button><button class="btn" id="m3">copper</button><button class="btn" id="m4">silver</button></div>
+  <svg id="exSvg" viewBox="0 0 800 230" role="img" aria-label="A wire of chosen length, thickness and material in series with a bulb and a 3 V battery, with its resistance and the current"></svg>
+  <div class="readout" id="exOut"></div>
+</div>
+<div class="diary"><h3>📒 Factors that affect the resistance of a conductor</h3>
+<p style="margin-top:0"><span class="ml">ഈ പ്രവർത്തനങ്ങളുടെ അടിസ്ഥാനത്തിൽ ഒരു ചാലകത്തിന്റെ പ്രതിരോധത്തെ സ്വാധീനിക്കുന്ന ഘടകങ്ങൾ ഏതെല്ലാം എന്ന് എഴുതി നോക്കൂ.</span></p>
+<ul style="margin:0"><li>the <b>nature of the material</b> (<span class="ml">ചാലകം നിർമ്മിച്ച പദാർഥത്തിന്റെ സ്വഭാവം</span>)</li>
+<li>the <b>thickness</b> – area of cross-section (<span class="ml">ചാലകത്തിന്റെ വണ്ണം (ഛേദതല പരപ്പളവ്)</span>)</li>
+<li><span class="reveal" data-btn="Show the third factor"><b>the length</b> of the conductor (<span class="ml">നീളം</span>) – and, from the heater, the <b>temperature</b> (<span class="ml">താപനില</span>)</span></li></ul></div>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 148) – how resistance depends on the conductor</div>
+<p class="ml" style="margin:.2rem 0 .4rem">നീളം കൂടുമ്പോൾ ഒരു ചാലകത്തിന്റെ പ്രതിരോധം വർധിക്കുന്നുവെന്നും വണ്ണം കൂടുമ്പോൾ പ്രതിരോധം കുറയുന്നു എന്നും മനസ്സിലായല്ലോ. കൂടാതെ വിവിധ പദാർഥങ്ങൾക്ക് വ്യത്യസ്ത പ്രതിരോധവും ആയിരിക്കും.</p>
+<ul style="margin:0"><li><b>Longer</b> conductor → <b>more</b> resistance; <b>thicker</b> conductor → <b>less</b> resistance.</li>
+<li>Different materials have different resistance. For wires of the same length and thickness, <b>nichrome and tungsten</b> have comparatively high resistance, <b>aluminium and copper</b> very low resistance, and <b>silver</b> is the metal with the lowest resistance.</li></ul></div>
+<div class="callout think"><div class="title">💡 Go further – resistivity</div>
+<p>All three factors fit one formula: R = ρL/A, where L is the length, A the area of cross-section and ρ ("rho", the resistivity) a number for each material – about 1.1 × 10<sup>−6</sup> Ω m for nichrome and 1.7 × 10<sup>−8</sup> Ω m for copper (approx.). Nichrome's is about 65 times copper's – so heater coils are nichrome and connecting wires are copper. You will meet this formula in higher classes.</p></div>
+<div class="callout book"><div class="title">📚 Superconductivity (<span class="ml">അതിചാലകത</span>)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">വളരെ കുറഞ്ഞ താപനിലയിൽ ചില ലോഹങ്ങളും സംയുക്തങ്ങളും വൈദ്യുത പ്രതിരോധം തീരെ ഇല്ലാത്ത അവസ്ഥ പ്രകടിപ്പിക്കാറുണ്ടെന്ന് 1911 ൽ കണ്ടെത്തുകയുണ്ടായി. ഇത്തരം പദാർഥങ്ങളാണ് അതിചാലകങ്ങൾ (Superconductors). അതിചാലകങ്ങളിലൂടെ ഊർജനഷ്ടമില്ലാതെ വൈദ്യുതപ്രവാഹം സാധ്യമാകുന്നു.</p>
+<p>In <b>1911</b> it was found that some metals and compounds, at <b>very low temperatures</b>, have <b>no electrical resistance at all</b>. Such materials are <b>superconductors</b> (<span class="ml">അതിചാലകങ്ങൾ</span>); current flows through them <b>without any loss of energy</b>. (The discovery was made by Heike Kamerlingh Onnes with mercury cooled to about −269 °C; superconducting magnets are used today in hospital MRI scanners.)</p></div>
+
+<h2>4. The rheostat (Fig 7.26, 7.27)</h2>
+<p><span class="ml">ഒരു ചാലകത്തിന്റെ വണ്ണത്തിൽ മാറ്റമില്ലാതെ നീളം വർധിക്കുമ്പോൾ അതിന്റെ പ്രതിരോധവും വർധിക്കുന്നു. ഈ തത്വത്തിന്റെ അടിസ്ഥാനത്തിൽ പ്രവർത്തിക്കുന്ന ഒരു ഉപകരണമാണ് റിയോസ്റ്റാറ്റ് (Rheostat).</span> – When the length of a conductor increases with no change in thickness, its resistance increases. The <b>rheostat</b> (<span class="ml">റിയോസ്റ്റാറ്റ്</span>) works on this principle. In school labs it is put in a circuit to change the current as needed. Its symbol is a resistor with an arrow across it.</p>
+<p>In Fig 7.27: <b>AB</b> – a coil of high-resistance wire wound on an insulating tube; <b>DC</b> – a metal rod of very low resistance; <b>S</b> – the sliding contact (<span class="ml">സമ്പർക്കകം</span>). <span class="ml">A യിൽ നിന്ന് പ്രവഹിക്കുന്ന വൈദ്യുതി കമ്പിച്ചുരുളിലൂടെ കടന്ന് S വഴി C എന്ന അഗ്രത്തിൽ എത്തുന്നു.</span> – Current entering at A passes through the turns of wire, then through S into the rod, and leaves at C.</p>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: slide the contact S (Fig 7.26, 7.27)</div>
+  <div class="controls"><label>position of S (turns of wire in the circuit) <input id="rhS" type="range" min="0" max="100" step="1" value="40"><output></output></label><button class="btn primary" id="rhSw">Switch OFF</button></div>
+  <svg id="rhSvg" viewBox="0 0 800 360" role="img" aria-label="A rheostat: a coil of 100 turns on a tube, a metal rod and a sliding contact; current flows from A through the turns up to S and along the rod to C; below, the circuit with a battery, switch and bulb"></svg>
+  <div class="readout" id="rhOut"></div>
+  <p class="hint">Model: 100 turns, 0.15 Ω per turn; 3 V battery; bulb taken as a fixed 5 Ω.</p>
+</div>
+<div class="qa"><p><b>Textbook question (page 148)</b> – <span class="ml">റിയോസ്റ്റാറ്റിന്റെ പ്രവർത്തനതത്വം എന്താണ്?</span> – What is the working principle of a rheostat?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">For the same thickness, <b>the resistance of a conductor increases with its length</b>. Moving S changes the <b>length of resistance wire</b> (the number of turns) in the circuit, so it changes the <b>resistance</b> and hence the <b>current</b>. <i>Why:</i> in the lab, S near D puts few turns in the circuit (small R, bright bulb); S near C puts all 100 turns in (15 Ω, dim bulb).</div></div></div>
+<div class="callout real"><div class="title">🌴 Kerala connection – the old fan regulator</div>
+<p>Older ceiling-fan regulators in many Kerala homes worked like a rheostat: turning the knob put more or less resistance wire in series with the fan, changing the current and so the speed. (They got warm – wasted energy. Modern electronic regulators are more efficient.) You will meet the fan and its regulator again in the "Let us assess" questions.</p></div>
+<div class="qbox"><p><b>Textbook question (page 149).</b> <span class="ml">ഒരു റിയോസ്റ്റാറ്റിൽ പ്രതിരോധ കമ്പിയുടെ 100 ചുറ്റുകളാണ് ഉള്ളത്. ഒരു ചുറ്റിന്റെ പ്രതിരോധം 0.15 Ω ആണ്, എങ്കിൽ ഈ റിയോസ്റ്റാറ്റ് ഉപയോഗിച്ച് ഒരു സെർക്കീട്ടിൽ ഉൾപ്പെടുത്താൻ കഴിയാത്ത പ്രതിരോധത്തിന്റെ മൂല്യം താഴെ കൊടുത്തവയിൽ ഏതാണ്? നിങ്ങളുടെ ഉത്തരം സാധൂകരിക്കുക.</span> – A rheostat has 100 turns of resistance wire, each turn 0.15 Ω. Which of these values <b>cannot</b> be put into a circuit with it? Justify. &nbsp; a) 3 Ω &nbsp; b) 7.5 Ω &nbsp; c) 4 Ω &nbsp; d) 8.25 Ω</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>S can only stop at a whole number of turns. Divide each value by 0.15 Ω and see whether you get a whole number (and not more than 100).</p></div></div>
+<div class="lab" id="exRh"><div class="lab-title">🎬 Solution in exam layout – which value is impossible?</div>
+<svg viewBox="0 0 800 300" role="img" aria-label="Each option divided by 0.15 ohm: 20, 50, 26.67 and 55 turns"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer: (c) 4 Ω.</b> Number of turns = R ÷ 0.15: 3 Ω → 20 ✓; 7.5 Ω → 50 ✓; 4 Ω → 26.67 ✗ (not a whole number of turns); 8.25 Ω → 55 ✓. The possible values are 0, 0.15, 0.30, … up to 100 × 0.15 = 15 Ω. More: <a href="11_intext_numericals_solutions.html">page 11 ▶</a></div></div>
+<p>The girl asks: <span class="ml">നിശ്ചിത മൂല്യമുള്ള റെസിസ്റ്ററുകൾ ഉപയോഗിച്ച് നമുക്ക് ആവശ്യമായ വ്യത്യസ്ത മൂല്യം പ്രതിരോധം എങ്ങനെയാണ് സെർക്കീട്ടിൽ ഉൾപ്പെടുത്താനാകുക?</span> – <em>Using resistors of fixed values, how can we get the different resistance we need in a circuit?</em> By combining them – the next page!</p>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://phet.colorado.edu/en/simulations/resistance-in-a-wire" target="_blank" rel="noopener noreferrer">🧪 Resistance in a Wire (PhET simulation)</a> <span class="src">PhET, University of Colorado Boulder</span><br><span class="note">Change a wire&#x27;s length, area and resistivity to see R = rho L / A in action.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/Electric-Circuits/electrical-resistance-delta-vir-relationship/resistance" target="_blank" rel="noopener noreferrer">📄 Resistance</a> <span class="src">The Physics Classroom</span><br><span class="note">What affects resistance: length, thickness and the material of the wire.</span></li><li><a href="https://www.explainthatstuff.com/resistors.html" target="_blank" rel="noopener noreferrer">📄 How do resistors work?</a> <span class="src">Explain that Stuff</span><br><span class="note">What is inside a resistor, how colour bands show its value, and where resistors are used.</span></li><li><a href="https://www.sciencelearn.org.nz/resources/1777-superconductivity" target="_blank" rel="noopener noreferrer">📄 Superconductivity</a> <span class="src">Science Learning Hub (NZ)</span><br><span class="note">Some materials lose all resistance when cooled enough - here is why and what it is used for.</span></li></ul></div>
+
+<h2>5. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li>A <b>resistor</b> puts a definite resistance in a circuit; a <b>multimeter</b> measures R, V and I.</li>
+<li>Resistance depends on <b>material</b>, <b>area of cross-section</b> (thicker → less R), <b>length</b> (longer → more R) and <b>temperature</b> (metals: hotter → more R).</li>
+<li>Fig 7.25: least current at D (longest thin nichrome), most at H (copper).</li>
+<li>Nichrome and tungsten: high resistance; aluminium and copper: very low; silver: lowest. Superconductors (1911): zero resistance at very low temperatures.</li>
+<li><b>Rheostat</b>: S changes the length of wire in the circuit → R and current change. 100 turns × 0.15 Ω: 4 Ω is impossible (26.67 turns).</li>
+</ul></div>
+<p>Next: <a href="10_series_parallel_home.html">Series and parallel, home circuits, AC and DC ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Current Electricity · Class 9 Physics", "icon": "🔋", "key": "physics_ch7_progress", "pages": [["index.html", "Home"], ["01_charges_conductors.html", "1 · Charges, Electrons, Conductors & Insulators"], ["02_flow_needs_difference.html", "2 · Flow Needs a Difference: Water, Heat & Air"], ["03_units_ratios_graphs.html", "3 · Units, Prefixes, Ratios & Straight-line Graphs"], ["04_circuits_symbols_safety.html", "4 · Simple Circuits, Symbols & Safety"], ["05_charge_flow_potential_difference.html", "5 · Charge Flow & Potential Difference"], ["06_emf_cells_batteries.html", "6 · emf, Cells, Batteries & Combining Cells"], ["07_electric_current_ammeter.html", "7 · Electric Current, Ammeter & Circuit Diagrams"], ["08_ohms_law_resistance.html", "8 · Ohm's Law & Resistance"], ["09_factors_resistance_rheostat.html", "9 · What Affects Resistance? The Rheostat"], ["10_series_parallel_home.html", "10 · Series & Parallel, Home Circuits, AC & DC"], ["11_intext_numericals_solutions.html", "11 · In-text Questions – Solutions"], ["12_assess_q1_q6_solutions.html", "12 · Let Us Assess Q1–6 – Solutions"], ["13_assess_q7_q11_solutions.html", "13 · Let Us Assess Q7–11 & Extended Activities"], ["14_applications_explore.html", "14 · Applications & Explore Online"], ["15_summary_revision.html", "15 · Summary & Quick Quiz"], ["16_model_test_paper.html", "16 · Model Test Paper"], ["17_model_test_solutions.html", "17 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ---------- page helpers (Chapter 7, pages 5–10; same code on each page) ---------- */
+const {P} = K;
+const COL = {red: 'var(--red)', blue: 'var(--blue)', green: 'var(--green)', amber: 'var(--accent)', purple: 'var(--purple)', text: 'var(--text)', muted: 'var(--muted)', primary: 'var(--primary)'};
+const cv = c => COL[c] || c;
+const $id = id => document.getElementById(id);
+/* a line with its own stroke (seg() carries class 'ln', whose CSS would override it) */
+const sline = (svg, a, b, attrs={}) => K.el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+const ln = (svg, a, b, c='text', w=2, extra={}) => sline(svg, a, b, {stroke: cv(c), 'stroke-width': w, ...extra});
+const rect = (svg, x, y, w, h, attrs={}) => K.el('rect', {x, y, width: Math.max(0, w), height: Math.max(0, h), ...attrs}, svg);
+const circ = (svg, c, r, attrs={}) => K.el('circle', {cx: c.x, cy: c.y, r: Math.max(0, r), ...attrs}, svg);
+const path = (svg, d, attrs={}) => K.el('path', {d, fill: 'none', ...attrs}, svg);
+/* true minus for negative numbers only */
+const minus = s => String(s).replace(/(^|[\s(=:,/×+])-(?=[\d.])/g, '$1−');
+/* number with at most d decimals, true minus */
+const nf = (v, d=2) => { const s = K.fmt(Math.abs(+v), d); return (+v < 0 && +s !== 0 ? '−' : '') + s; };
+/* fixed decimals (for meter displays) */
+const fx = (v, d=2) => { const s = Math.abs(+v).toFixed(d); return (+v < 0 && +s !== 0 ? '−' : '') + s; };
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+/* SVG text that understands subscripts: "R_1" → R with a lowered 1 */
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+function text(svg, p, str, attrs={}){ const s = String(str);
+  if (!/_/.test(s)) return K.text(svg, p, s, attrs);
+  return K.el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs,
+    html: esc(s).replace(/_(\w+)/g, '<tspan baseline-shift="sub" font-size="72%">$1</tspan>')}, svg); }
+const tl = (svg, x, y, str, cls='', extra={}) => text(svg, P(x, y), str, {class: ('lbl ' + cls).trim(), 'text-anchor': 'start', ...extra});
+const tc = (svg, x, y, str, cls='', extra={}) => text(svg, P(x, y), str, {class: ('lbl ' + cls).trim(), ...extra});
+/* working lines: rows = [[step, text, cls], …]; rows whose step ≤ i are shown, the newest fades in */
+function lines(svg, rows, i, t, o={}){ const x = o.x ?? 400, y0 = o.y ?? 36, lh = o.lh ?? 32, an = o.anchor ?? 'start'; let k = 0;
+  rows.forEach(r => { if (r[0] > i) return; const ind = (r[1].match(/^ */)[0].length) * 4.3; text(svg, P(x + ind, y0 + k * lh), minus(r[1].trim()), {class: 'lbl ' + (r[2] || ''), 'text-anchor': an, opacity: r[0] === i ? t : 1}); k++; }); }
+/* arrow from a to b with a filled head; o.c colour, o.w width, o.label, o.lo label offset, o.anchor, o.op */
+function arrow(svg, a, b, o={}){ const c = cv(o.c || 'red'), w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const L = K.dist(a, b); if (L < 1) return g; const u = K.unit(a, b), hs = Math.min(o.head ?? 11, L * .6); const base = P(b.x - u.x * hs, b.y - u.y * hs);
+  K.el('line', {x1: a.x, y1: a.y, x2: base.x, y2: base.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round', ...(o.dash ? {'stroke-dasharray': o.dash} : {})}, g);
+  K.el('polygon', {points: `${b.x},${b.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g);
+  if (o.label) text(g, P(b.x + (o.lo ? o.lo.x : 0), b.y + (o.lo ? o.lo.y : -12)), minus(o.label), {class: 'lbl sm ' + (o.lc || o.c || 'red'), 'text-anchor': o.anchor || 'middle', 'font-weight': 700});
+  return g; }
+const setOut = (id, s) => { $id(id).textContent = minus(s); };
+
+/* ---------- circuit symbols (textbook Table 7.5) ----------
+   Every two-terminal symbol is drawn between end points a and b (any direction); leads join a and b to the body.
+   n = the normal to a→b; for a left-to-right symbol, −n points up. */
+const nrm = u => P(-u.y, u.x);
+const at = (m, u, k, n, h=0) => P(m.x + u.x * k + n.x * h, m.y + u.y * k + n.y * h);
+function wire(svg, pts, o={}){ return K.el('polyline', {points: pts.map(p => `${K.fmt(p.x, 2)},${K.fmt(p.y, 2)}`).join(' '), fill: 'none', stroke: cv(o.c || 'text'), 'stroke-width': o.w ?? 2.4, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', ...(o.dash ? {'stroke-dasharray': o.dash} : {}), ...(o.op !== undefined ? {opacity: o.op} : {})}, svg); }
+const jdot = (svg, p, c='text') => circ(svg, p, 4, {fill: cv(c)});
+/* plates of one cell centred at k along u: long thin = +, short thick = − */
+function plates(svg, m, u, k, plusFirst, c){ const n = nrm(u), lp = plusFirst ? k - 4 : k + 4, sp = plusFirst ? k + 4 : k - 4;
+  sline(svg, at(m, u, lp, n, -15), at(m, u, lp, n, 15), {stroke: c, 'stroke-width': 2.2});
+  sline(svg, at(m, u, sp, n, -8), at(m, u, sp, n, 8), {stroke: c, 'stroke-width': 5, 'stroke-linecap': 'butt'}); }
+/* cell: o.plus = 'a' or 'b' (which end the + terminal faces); o.signs shows + and − */
+function cellSym(svg, a, b, o={}){ const c = cv(o.c || 'text'), u = K.unit(a, b), n = nrm(u), m = K.mid(a, b), pb = (o.plus || 'b') === 'b';
+  ln(svg, a, at(m, u, -4, n), o.c || 'text', 2.4); ln(svg, at(m, u, 4, n), b, o.c || 'text', 2.4);
+  plates(svg, m, u, 0, !pb, c);
+  if (o.signs !== false){ const s = o.signSide ?? -1; tc(svg, at(m, u, pb ? 12 : -12, n, s * 22).x, at(m, u, pb ? 12 : -12, n, s * 22).y, '+', 'sm', {'font-weight': 700}); tc(svg, at(m, u, pb ? -12 : 12, n, s * 22).x, at(m, u, pb ? -12 : 12, n, s * 22).y, '−', 'sm', {'font-weight': 700}); }
+  if (o.label) { const q = at(m, u, 0, n, (o.labelSide ?? 1) * 28); tc(svg, q.x, q.y, o.label, 'sm'); }
+  return m; }
+/* battery of o.n cells (default 2) */
+function batterySym(svg, a, b, o={}){ const c = cv(o.c || 'text'), u = K.unit(a, b), n = nrm(u), m = K.mid(a, b), N = o.n || 2, pb = (o.plus || 'b') === 'b';
+  const W = N * 8 + (N - 1) * 8, k0 = -W / 2;
+  ln(svg, a, at(m, u, k0, n), o.c || 'text', 2.4); ln(svg, at(m, u, -k0, n), b, o.c || 'text', 2.4);
+  for (let i = 0; i < N; i++){ const kc = k0 + 4 + i * 16; plates(svg, m, u, kc, !pb, c); if (i < N - 1) ln(svg, at(m, u, kc + 4, n), at(m, u, kc + 12, n), o.c || 'text', 2); }
+  if (o.signs !== false){ const s = o.signSide ?? -1, pp = at(m, u, pb ? -k0 + 8 : k0 - 8, n, s * 20), mm = at(m, u, pb ? k0 - 8 : -k0 + 8, n, s * 20); tc(svg, pp.x, pp.y, '+', 'sm', {'font-weight': 700}); tc(svg, mm.x, mm.y, '−', 'sm', {'font-weight': 700}); }
+  if (o.label){ const q = at(m, u, 0, n, (o.labelSide ?? 1) * 30); tc(svg, q.x, q.y, o.label, 'sm'); }
+  return m; }
+/* switch / key: two terminal dots and a blade; open = blade lifted 30° */
+function switchSym(svg, a, b, closed, o={}){ const c = o.c || 'text', u = K.unit(a, b), n = nrm(u), m = K.mid(a, b), h = o.half ?? 15;
+  const p1 = at(m, u, -h, n), p2 = at(m, u, h, n);
+  ln(svg, a, p1, c, 2.4); ln(svg, p2, b, c, 2.4);
+  const ang = K.rad(closed ? 0 : -32 * (o.flip ? -1 : 1)), L = 2 * h + 2, d = P((u.x * Math.cos(ang) - u.y * Math.sin(ang)) * L, (u.x * Math.sin(ang) + u.y * Math.cos(ang)) * L);
+  ln(svg, p1, P(p1.x + d.x, p1.y + d.y), c, 2.6);
+  circ(svg, p1, 3.2, {fill: 'var(--svgbg)', stroke: cv(c), 'stroke-width': 2}); circ(svg, p2, 3.2, {fill: 'var(--svgbg)', stroke: cv(c), 'stroke-width': 2});
+  if (o.label){ const q = at(m, u, 0, n, (o.labelSide ?? 1) * 20); tc(svg, q.x, q.y, o.label, 'sm'); }
+  if (o.hit) { const g = K.el('circle', {cx: m.x, cy: m.y, r: 22, fill: 'transparent', style: 'cursor:pointer'}, svg); g.addEventListener('click', o.hit); }
+  return m; }
+/* bulb / lamp: circle with ×; o.glow 0..1 (brightness), o.fused */
+function bulbSym(svg, a, b, o={}){ const r = o.r || 14, u = K.unit(a, b), m = K.mid(a, b), g = clamp(o.glow || 0, 0, 1.4);
+  ln(svg, a, at(m, u, -r, nrm(u)), 'text', 2.4); ln(svg, at(m, u, r, nrm(u)), b, 'text', 2.4);
+  if (g > 0.01){ circ(svg, m, r + 5 + 18 * Math.min(g, 1.2), {fill: '#fde047', opacity: .18 + .4 * Math.min(g, 1)}); }
+  circ(svg, m, r, {fill: g > 0.01 ? '#facc15' : 'var(--svgbg)', 'fill-opacity': g > 0.01 ? .25 + .75 * Math.min(g, 1) : 1, stroke: cv(o.fused ? 'red' : 'text'), 'stroke-width': 2.2});
+  const d = r * .7; ln(svg, P(m.x - d, m.y - d), P(m.x + d, m.y + d), o.fused ? 'red' : 'text', 2); ln(svg, P(m.x - d, m.y + d), P(m.x + d, m.y - d), o.fused ? 'red' : 'text', 2, o.fused ? {'stroke-dasharray': '3 3'} : {});
+  if (o.label){ const q = at(m, u, 0, nrm(u), (o.labelSide ?? -1) * (r + 14)); tc(svg, q.x, q.y, o.label, 'sm'); }
+  return m; }
+/* LED: triangle pointing in the allowed current direction a→b (a = + leg), bar, two light arrows */
+function ledSym(svg, a, b, o={}){ const u = K.unit(a, b), n = nrm(u), m = K.mid(a, b), on = clamp(o.on || 0, 0, 1), col = o.col || '#ef4444';
+  ln(svg, a, at(m, u, -9, n), 'text', 2.4); ln(svg, at(m, u, 9, n), b, 'text', 2.4);
+  if (on > 0.02) circ(svg, m, 14 + 14 * on, {fill: col, opacity: .15 + .4 * on});
+  K.polygon(svg, [at(m, u, -9, n, -10), at(m, u, -9, n, 10), at(m, u, 9, n)], {fill: on > .02 ? col : 'var(--svgbg)', 'fill-opacity': on > .02 ? .4 + .6 * on : 1, stroke: 'var(--text)', 'stroke-width': 2});
+  ln(svg, at(m, u, 9, n, -10), at(m, u, 9, n, 10), 'text', 2.4);
+  const sg = (n.y > .1 || (Math.abs(n.y) <= .1 && n.x > 0)) ? -1 : 1;
+  [-2, 5].forEach(k => arrow(svg, at(m, u, k, n, sg * 14), at(m, u, k + 4, n, sg * 26), {c: on > .02 ? col : 'text', w: 1.6, head: 5}));
+  return m; }
+/* meter (V or A): circle with a letter; + and − marked; o.plus = 'a'|'b'; o.reading shown in a box at o.box offset */
+function meterSym(svg, a, b, letter, o={}){ const r = o.r || 16, u = K.unit(a, b), n = nrm(u), m = K.mid(a, b), pb = (o.plus || 'b') === 'b', c = o.warn ? 'red' : (o.c || 'text');
+  ln(svg, a, at(m, u, -r, n), 'text', 2.4); ln(svg, at(m, u, r, n), b, 'text', 2.4);
+  circ(svg, m, r, {fill: o.warn ? 'var(--red-soft)' : 'var(--surface)', stroke: cv(c), 'stroke-width': 2.2});
+  tc(svg, m.x, m.y + 1, letter, '', {'font-weight': 700, 'font-size': 17});
+  if (o.signs !== false){ const s = o.signSide ?? -1, pp = at(m, u, pb ? r + 6 : -r - 6, n, s * 14), mm = at(m, u, pb ? -r - 6 : r + 6, n, s * 14); tc(svg, pp.x, pp.y, '+', 'sm', {'font-weight': 700}); tc(svg, mm.x, mm.y, '−', 'sm', {'font-weight': 700}); }
+  if (o.reading !== undefined && o.reading !== null){ const off = o.box || P(0, -(r + 20)); lcd(svg, P(m.x + off.x, m.y + off.y), o.reading, {warn: o.warn}); }
+  return m; }
+/* small digital display */
+function lcd(svg, p, str, o={}){ const s = minus(str), w = Math.max(48, s.length * 8.6 + 14);
+  rect(svg, p.x - w / 2, p.y - 12, w, 24, {rx: 5, fill: o.warn ? 'var(--red-soft)' : '#0f2a1d', stroke: o.warn ? 'var(--red)' : '#14532d', 'stroke-width': 1.5});
+  K.el('text', {x: p.x, y: p.y + 1, 'text-anchor': 'middle', 'dominant-baseline': 'middle', fill: o.warn ? 'var(--red)' : '#4ade80', 'font-family': 'ui-monospace,Menlo,Consolas,monospace', 'font-size': 14, 'font-weight': 700, text: s}, svg); }
+/* resistor: rectangle (or zig-zag with o.zig); o.len body length; o.label text on the −n side; o.arrow = rheostat arrow */
+function resistorSym(svg, a, b, o={}){ const u = K.unit(a, b), n = nrm(u), m = K.mid(a, b), L = o.len || 46, h = o.h || 8;
+  ln(svg, a, at(m, u, -L / 2, n), 'text', 2.4); ln(svg, at(m, u, L / 2, n), b, 'text', 2.4);
+  if (o.zig){ const pts = [at(m, u, -L / 2, n)]; for (let i = 0; i < 6; i++) pts.push(at(m, u, -L / 2 + (i + .5) * L / 6, n, (i % 2 ? 1 : -1) * h)); pts.push(at(m, u, L / 2, n)); K.polyline(svg, pts, {stroke: cv(o.c || 'text'), 'stroke-width': 2.2, 'stroke-linejoin': 'round'}); }
+  else K.polygon(svg, [at(m, u, -L / 2, n, -h), at(m, u, L / 2, n, -h), at(m, u, L / 2, n, h), at(m, u, -L / 2, n, h)], {fill: o.fill || 'var(--surface)', stroke: cv(o.c || 'text'), 'stroke-width': 2.2});
+  if (o.arrow) arrow(svg, at(m, u, -L / 2 - 4, n, h + 10), at(m, u, L / 2 + 6, n, -h - 12), {c: o.c || 'text', w: 1.8, head: 8});
+  if (o.label){ const q = at(m, u, 0, n, (o.labelSide ?? -1) * (h + 13)); tc(svg, q.x, q.y, o.label, 'sm ' + (o.lc || ''), {'font-weight': 700}); }
+  return m; }
+
+/* ---------- moving charges along a path ---------- */
+function pathInfo(pts, closed){ const p = closed ? pts.concat([pts[0]]) : pts.slice(); const L = [0]; for (let i = 1; i < p.length; i++) L.push(L[i - 1] + K.dist(p[i - 1], p[i])); return {p, L, total: L[L.length - 1]}; }
+function pathAt(info, f){ f = ((f % 1) + 1) % 1; const d = f * info.total; let i = 1; while (i < info.L.length - 1 && info.L[i] < d) i++; const seg = info.L[i] - info.L[i - 1] || 1, t = (d - info.L[i - 1]) / seg; return {p: K.lerpPt(info.p[i - 1], info.p[i], t), u: K.unit(info.p[i - 1], info.p[i])}; }
+/* draw n markers spaced along the path, shifted by phase (0..1). kind 'e' = electron dots, 'i' = current chevrons */
+function flowMarks(svg, info, phase, o={}){ const n = o.n || Math.max(4, Math.round(info.total / (o.gap || 40))), g = K.group(svg);
+  for (let k = 0; k < n; k++){ const q = pathAt(info, k / n + phase); if (o.skip && o.skip(q.p)) continue;
+    if ((o.kind || 'e') === 'e'){ circ(g, q.p, o.r || 3.6, {fill: cv(o.c || 'blue'), stroke: 'var(--svgbg)', 'stroke-width': 1}); }
+    else { const s = o.size || 6, nn = nrm(q.u); K.polyline(g, [P(q.p.x - q.u.x * s + nn.x * s * .8, q.p.y - q.u.y * s + nn.y * s * .8), q.p, P(q.p.x - q.u.x * s - nn.x * s * .8, q.p.y - q.u.y * s - nn.y * s * .8)], {stroke: cv(o.c || 'red'), 'stroke-width': 2.4, 'stroke-linecap': 'round', 'stroke-linejoin': 'round'}); } }
+  return g; }
+
+/* ---------- one shared animation clock: runs only while a lab is on screen and was used in the last 40 s ---------- */
+const ANIM = []; let animOn = false, animLast = 0;
+function animLoop(now){ const dt = Math.min(.05, Math.max(0, (now - animLast) / 1000)); animLast = now; let any = false;
+  for (const it of ANIM){ if (it.vis && now < it.until){ it.t += dt; try { it.fn(it.t, dt); } catch (e){ it.until = 0; throw e; } any = true; } }
+  if (any) requestAnimationFrame(animLoop); else animOn = false; }
+function animStart(){ if (!animOn){ animOn = true; animLast = performance.now(); requestAnimationFrame(animLoop); } }
+function anim(el, fn){ const it = {el, fn, t: 0, until: 0, vis: true}; ANIM.push(it);
+  if ('IntersectionObserver' in window){ new IntersectionObserver(es => es.forEach(e => { it.vis = e.isIntersecting; if (it.vis) wake(it); })).observe(el); }
+  it.fn(0, 0); wake(it); return it; }
+function wake(it){ it.until = performance.now() + 40000; animStart(); }
+/* buttons that act like radio buttons: returns a setter */
+function radio(ids, onPick){ const els = ids.map(id => $id(id)); const set = k => { els.forEach((b, i) => b.classList.toggle('primary', i === k)); onPick(k); }; els.forEach((b, i) => b.addEventListener('click', () => set(i))); return set; }
+/* analog meter (pictorial, like the textbook photos): box centred at c, scale 0..max; value < 0 pegs the needle at the stop */
+function dialMeter(svg, c, value, max, o={}){ const w = o.w || 170, h = o.h || 110, g = K.group(svg), letter = o.letter || 'V';
+  rect(g, c.x - w / 2, c.y - h / 2, w, h, {rx: 10, fill: 'var(--surface2)', stroke: 'var(--text)', 'stroke-width': 1.8});
+  const pc = P(c.x, c.y + h * .32), R = h * .62, a0 = -150, a1 = -30;
+  path(g, `M${pc.x + R * Math.cos(K.rad(a0))},${pc.y + R * Math.sin(K.rad(a0))} A${R},${R} 0 0,1 ${pc.x + R * Math.cos(K.rad(a1))},${pc.y + R * Math.sin(K.rad(a1))}`, {stroke: 'var(--text)', 'stroke-width': 1.5});
+  const step = o.step || 1;
+  for (let v = 0; v <= max + 1e-9; v += step / 2){ const a = K.rad(a0 + (a1 - a0) * v / max), major = Math.abs(v / step - Math.round(v / step)) < 1e-6;
+    ln(g, P(pc.x + R * Math.cos(a), pc.y + R * Math.sin(a)), P(pc.x + (R - (major ? 9 : 5)) * Math.cos(a), pc.y + (R - (major ? 9 : 5)) * Math.sin(a)), 'text', 1.2);
+    if (major) tc(g, pc.x + (R + 10) * Math.cos(a), pc.y + (R + 10) * Math.sin(a), K.fmt(v, 1), 'sm', {'font-size': 11}); }
+  const bad = value < -1e-9, vv = clamp(value, 0, max * 1.04), a = K.rad(a0 + (a1 - a0) * vv / max - (bad ? 4 : 0));
+  ln(g, pc, P(pc.x + (R - 4) * Math.cos(a), pc.y + (R - 4) * Math.sin(a)), bad ? 'red' : 'red', 2.4);
+  circ(g, pc, 4, {fill: 'var(--text)'});
+  tc(g, c.x, c.y + h * .14, letter, '', {'font-weight': 700});
+  circ(g, P(c.x - w / 2 + 18, c.y + h / 2 - 14), 6, {fill: '#dc2626', stroke: 'var(--text)'}); circ(g, P(c.x + w / 2 - 18, c.y + h / 2 - 14), 6, {fill: '#111827', stroke: 'var(--text)'});
+  tc(g, c.x - w / 2 + 32, c.y + h / 2 - 14, '+', 'sm', {'font-weight': 700}); tc(g, c.x + w / 2 - 32, c.y + h / 2 - 14, '−', 'sm', {'font-weight': 700});
+  return {plus: P(c.x - w / 2 + 18, c.y + h / 2 - 14), minus: P(c.x + w / 2 - 18, c.y + h / 2 - 14)}; }
+/* pictorial torch cell lying flat: left end x, centre line y, length L; o.plusRight; returns terminal points */
+function torchCell(svg, x, y, L, o={}){ const pr = o.plusRight !== false, d = o.d || 26, g = K.group(svg);
+  rect(g, x, y - d / 2, L, d, {rx: 6, fill: o.col || '#1f2937', stroke: 'var(--text)', 'stroke-width': 1.2});
+  rect(g, pr ? x + L * .62 : x, y - d / 2, L * .38, d, {rx: 6, fill: '#d4a017', opacity: .9});
+  const nub = pr ? x + L : x - 5; rect(g, nub, y - 5, 5, 10, {rx: 2, fill: '#9ca3af', stroke: 'var(--text)', 'stroke-width': 1});
+  K.el('text', {x: x + L / 2, y: y + 1, 'text-anchor': 'middle', 'dominant-baseline': 'middle', fill: '#fff', 'font-size': 12, 'font-weight': 700, text: (pr ? '−  ' : '+  ') + (o.label || '1.5 V') + (pr ? '  +' : '  −')}, g);
+  return pr ? {minus: P(x, y), plus: P(x + L + 5, y)} : {plus: P(x - 5, y), minus: P(x + L, y)}; }
+/* ---------- generic "choose the right button" table ---------- */
+function choiceTable(bodyId, outId, rows, msgDone, msgLeft){
+  const body = $id(bodyId), out = $id(outId), pick = rows.map(r => r.given ? r.a : null);
+  function table(){ let ok = 0;
+    body.innerHTML = rows.map((r, i) => { if (pick[i] === r.a) ok++; return `<tr><td>${r.s}</td><td><span class="yn">` + r.o.map((t, k) => (r.given && k !== r.a) ? '' : `<button class="btn${r.given ? ' given' : (pick[i] === k ? (k === r.a ? ' ok' : ' bad') : '')}" data-r="${i}" data-k="${k}">${t}</button>`).join('') + '</span></td></tr>'; }).join('');
+    out.textContent = ok === rows.length ? msgDone : `${ok} of ${rows.length} rows correct. ${msgLeft}`; }
+  body.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; pick[+b.dataset.r] = +b.dataset.k; table(); });
+  table(); }
+
+/* ---------- colour code ---------- */
+(function(){
+  const svg = $id('rcSvg'), out = $id('rcOut');
+  const C = [['black', '#111827'], ['brown', '#7c2d12'], ['red', '#dc2626'], ['orange', '#f97316'], ['yellow', '#facc15'], ['green', '#16a34a'], ['blue', '#2563eb'], ['violet', '#7c3aed'], ['grey', '#9ca3af'], ['white', '#f8fafc']];
+  const MUL = [0, 1, 2, 3, 4, 5, 6, -1], TOL = [['gold', '#d4a017', 5], ['silver', '#cbd5e1', 10]];
+  const b = [1, 0, 2, 0];   /* brown black red gold = 1 kΩ */
+  function draw(){
+    K.clear(svg);
+    ln(svg, P(60, 100), P(220, 100), 'muted', 4); ln(svg, P(580, 100), P(740, 100), 'muted', 4);
+    rect(svg, 220, 60, 360, 80, {rx: 36, fill: '#e7c9a0', stroke: 'var(--text)', 'stroke-width': 1.5});
+    const cols = [C[b[0]], C[b[1]], MUL[b[2]] < 0 ? ['gold', '#d4a017'] : C[MUL[b[2]]], TOL[b[3]]];
+    [270, 320, 370, 500].forEach((x, k) => { rect(svg, x, 60, 22, 80, {fill: cols[k][1], stroke: 'var(--text)', 'stroke-width': .8}); tc(svg, x + 11, 160, cols[k][0], 'sm'); });
+  }
+  function show(){ const m = MUL[b[2]], v = (b[0] * 10 + b[1]) * Math.pow(10, m); const s = v >= 1e6 ? nf(v / 1e6, 2) + ' MΩ' : (v >= 1e3 ? nf(v / 1e3, 2) + ' kΩ' : nf(v, 2) + ' Ω');
+    out.textContent = `${b[0]}${b[1]} × 10^${m}`.replace('^-1', '⁻¹').replace(/\^(\d)/, (q, d) => K.supStr(d)) + ` Ω = ${s}  (±${TOL[b[3]][2]} %)`; }
+  [['rc1', 0, 10], ['rc2', 1, 10], ['rc3', 2, MUL.length], ['rc4', 3, 2]].forEach(([id, k, n]) => $id(id).addEventListener('click', () => { b[k] = (b[k] + 1) % n; draw(); show(); }));
+  draw(); show();
+})();
+
+/* ---------- heater coil ---------- */
+(function(){
+  const svg = $id('htSvg'), out = $id('htOut'); let T = 25, heating = false, plugged = false;
+  const R = tt => 41 * (1 + 0.00043 * (tt - 25));
+  function step(dt){ if (heating) T += (700 - T) * Math.min(1, dt * .8); else T = 25 + (T - 25) * Math.exp(-dt / 4); }
+  function draw(){
+    K.clear(svg);
+    const f = clamp((T - 25) / 675, 0, 1), col = `rgb(${Math.round(120 + 135 * f)},${Math.round(110 - 60 * f + 40 * f * f)},${Math.round(110 - 90 * f)})`;
+    rect(svg, 40, 40, 400, 170, {rx: 12, fill: 'var(--surface2)', stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (f > .3) rect(svg, 60, 70, 360, 110, {rx: 30, fill: '#f97316', opacity: (f - .3) * .5});
+    let d = 'M70,125'; for (let k = 0; k < 18; k++){ const x = 80 + k * 19; d += ` C${x},80 ${x + 16},80 ${x + 16},125 C${x + 16},170 ${x},170 ${x + 19},125`; }
+    path(svg, d, {stroke: col, 'stroke-width': 4});
+    tc(svg, 240, 30, 'nichrome heater coil', 'sm', {'font-weight': 700});
+    tc(svg, 240, 250, heating ? 'heater ON (230 V) – no measuring now!' : `heater OFF and unplugged · coil ≈ ${Math.round(T)} °C (model)`, 'sm ' + (heating ? 'red' : 'muted'));
+    /* multimeter */
+    rect(svg, 540, 30, 180, 200, {rx: 14, fill: '#facc15', stroke: 'var(--text)', 'stroke-width': 1.5});
+    lcd(svg, P(630, 75), heating ? '- - - -' : `${fx(R(T), 1)} Ω`, {warn: heating});
+    circ(svg, P(630, 150), 34, {fill: '#f97316', stroke: 'var(--text)'}); tc(svg, 630, 150, 'Ω', 'big', {fill: '#fff', stroke: 'none'});
+    if (!heating){ path(svg, 'M600,215 C560,240 470,190 420,140', {stroke: '#dc2626', 'stroke-width': 3}); path(svg, 'M660,215 C650,238 90,238 72,150', {stroke: '#111827', 'stroke-width': 3}); }
+  }
+  function status(){ out.textContent = heating ? 'The coil is red-hot. (In real life: switch off and unplug before measuring.)' : (T > 30 ? `Measured just after switching off: R ≈ ${fx(R(T), 1)} Ω at ≈ ${Math.round(T)} °C. Watch the reading fall as the coil cools.` : `Cold coil: R ≈ ${fx(R(T), 1)} Ω. Heat it and measure again – the hot coil reads more.`); }
+  const it = anim(svg, (t, dt) => { step(dt); draw(); status(); });
+  $id('htOn').addEventListener('click', () => { heating = true; plugged = true; wake(it); });
+  $id('htOff').addEventListener('click', () => { heating = false; plugged = false; wake(it); });
+  void plugged;
+})();
+
+/* ---------- Fig 7.25 board ---------- */
+(function(){
+  const svg = $id('bdSvg'), out = $id('bdOut'), body = $id('t79');
+  const RB = 5, RCD = 4, RHO = 1.7e-8 / 1.1e-6;
+  const PTS = {M: {p: P(450, 70), R: RCD / 2, len: '20 cm', mat: 'nichrome <span class="ml">നിക്രോം</span>'}, D: {p: P(640, 70), R: RCD, len: '40 cm', mat: 'nichrome <span class="ml">നിക്രോം</span>'}, F: {p: P(640, 130), R: RCD / 2, len: '40 cm, thicker <span class="ml">വണ്ണം കൂടുതൽ</span>', mat: 'nichrome <span class="ml">നിക്രോം</span>'}, H: {p: P(640, 190), R: RCD * RHO, len: '40 cm', mat: 'copper <span class="ml">കോപ്പർ</span>'}};
+  const ORDER = ['M', 'D', 'F', 'H']; const rec = {}; let J = null;
+  const I = k => 3 / (RB + PTS[k].R);
+  function draw(ph){
+    K.clear(svg);
+    rect(svg, 20, 20, 760, 300, {rx: 8, fill: '#d6a77a', opacity: .3, stroke: '#b45309'});
+    const wires = [['C', 'D', 70, '#94a3b8', 3], ['E', 'F', 130, '#94a3b8', 6], ['G', 'H', 190, '#ea580c', 3]];
+    wires.forEach(([a, b2, y, c, w]) => { ln(svg, P(260, y), P(640, y), c, w); circ(svg, P(260, y), 6, {fill: '#9ca3af', stroke: 'var(--text)'}); circ(svg, P(640, y), 6, {fill: '#9ca3af', stroke: 'var(--text)'}); tc(svg, 260, y - 16, a, 'sm', {'font-weight': 700}); tc(svg, 640, y - 16, b2, 'sm', {'font-weight': 700}); });
+    tc(svg, 450, 54, 'M', 'sm', {'font-weight': 700}); circ(svg, P(450, 70), 3, {fill: 'var(--text)'});
+    tl(svg, 660, 74, '40 cm nichrome', 'sm muted'); tl(svg, 660, 134, 'nichrome, double', 'sm muted'); tl(svg, 660, 150, 'thickness', 'sm muted'); tl(svg, 660, 194, 'copper', 'sm muted');
+    ln(svg, P(230, 70), P(230, 190), 'text', 2.4); [70, 130, 190].forEach(y => ln(svg, P(230, y), P(254, y), 'text', 2.4));
+    const i = J ? I(J) : 0;
+    wire(svg, [P(230, 130), P(80, 130), P(80, 180)]);
+    bulbSym(svg, P(80, 180), P(80, 230), {glow: J ? Math.pow(i / 0.6, 2) : 0, r: 18});
+    wire(svg, [P(80, 230), P(80, 280), P(160, 280)]);
+    meterSym(svg, P(160, 280), P(210, 280), 'A', {plus: 'b', reading: `${fx(i, 2)} A`, box: P(0, -34)});
+    wire(svg, [P(210, 280), P(290, 280)]);
+    batterySym(svg, P(290, 280), P(340, 280), {n: 2, plus: 'a', label: '3 V', labelSide: 1.1});
+    const jp = J ? PTS[J].p : P(560, 250);
+    path(svg, `M340,280 C460,300 ${jp.x - 40},${jp.y + 110} ${jp.x},${jp.y + 8}`, {stroke: '#7c2d12', 'stroke-width': 2.5});
+    K.polygon(svg, [P(jp.x, jp.y + 2), P(jp.x - 7, jp.y + 16), P(jp.x + 7, jp.y + 14)], {fill: '#7c2d12'}); tl(svg, jp.x + 10, jp.y + 24, 'J', 'sm', {'font-weight': 700});
+    if (J){ const y = jp.y, x1 = jp.x; flowMarks(svg, pathInfo([P(260, y), P(x1, y)], false), -ph * .3, {kind: 'e', gap: 34, r: 3}); }
+  }
+  function table(){ body.innerHTML = ORDER.map(k => `<tr><td><b>${k}</b></td><td>${PTS[k].len}</td><td>${PTS[k].mat}</td><td>${rec[k] ? '<b>' + fx(rec[k], 2) + ' A</b>' : '–'}</td></tr>`).join(''); }
+  function status(){ if (!J){ out.textContent = 'J is lifted – open circuit, no current. Touch J to M, D, F and H in turn.'; return; }
+    const r = PTS[J].R; out.textContent = minus(`J on ${J}: wire resistance ≈ ${fx(r, r < 1 ? 3 : 1)} Ω, total R = 5 + ${fx(r, r < 1 ? 3 : 1)} ≈ ${fx(RB + r, 2)} Ω, I = 3 ÷ ${fx(RB + r, 2)} ≈ ${fx(I(J), 2)} A.`) + {M: '\nHalf the length of CD → half the resistance → more current than at D.', D: '\nThe whole thin nichrome wire → the largest resistance → the least current.', F: '\nSame length as CD but twice as thick → half the resistance → more current than at D (the same as M!).', H: '\nCopper of the same size → tiny resistance → the largest current, brightest bulb.'}[J]; }
+  const it = anim(svg, t => { if (J) draw(t); });
+  ['jM', 'jD', 'jF', 'jH', 'jX'].forEach((id, k) => $id(id).addEventListener('click', () => { J = ORDER[k] || null; if (J) rec[J] = I(J); ['jM', 'jD', 'jF', 'jH', 'jX'].forEach((b, m) => $id(b).classList.toggle('primary', m === k)); table(); status(); draw(it.t); wake(it); }));
+  table(); status(); draw(0);
+})();
+
+/* ---------- resistance explorer ---------- */
+(function(){
+  const svg = $id('exSvg'), out = $id('exOut'); let L = 40, A = 1, m = 0;
+  const MAT = [['nichrome', 1.1e-6, '#94a3b8'], ['tungsten', 5.6e-8, '#64748b'], ['aluminium', 2.7e-8, '#cbd5e1'], ['copper', 1.7e-8, '#ea580c'], ['silver', 1.6e-8, '#e2e8f0']];
+  const A0 = 1.1e-7;   /* m²: a 40 cm nichrome wire of this area has 4 Ω */
+  const R = () => MAT[m][1] * (L / 100) / (A0 * A), I = () => 3 / (5 + R());
+  function draw(){
+    K.clear(svg); const x0 = 120, x1 = x0 + L * 6;
+    wire(svg, [P(x0, 80), P(60, 80), P(60, 190), P(200, 190)]); wire(svg, [P(280, 190), P(740, 190), P(740, 80), P(x1, 80)]);
+    ln(svg, P(x0, 80), P(x1, 80), MAT[m][2], 2 + 2.5 * A); ln(svg, P(x0, 80), P(x1, 80), 'text', .6);
+    tc(svg, (x0 + x1) / 2, 50, `${MAT[m][0]}, ${L} cm, ${A}× thickness`, 'sm', {'font-weight': 700});
+    batterySym(svg, P(200, 190), P(280, 190), {n: 2, plus: 'a', label: '3 V', labelSide: 1.2});
+    bulbSym(svg, P(520, 190), P(580, 190), {glow: Math.pow(I() / 0.6, 2), r: 18});
+    lcd(svg, P(400, 130), `R = ${fx(R(), R() < 1 ? 3 : 2)} Ω`); lcd(svg, P(640, 130), `I = ${fx(I(), 2)} A`);
+  }
+  function status(){ out.textContent = `Wire: ${MAT[m][0]}, ${L} cm, ${A}× area → R ≈ ${nf(R(), 3)} Ω. With a 5 Ω bulb on 3 V: I ≈ ${fx(I(), 3)} A.\nDouble the length → double R. Double the thickness → half R. Copper and silver wires hardly resist at all.`; }
+  K.slider('#exL', v => { L = v; draw(); status(); }, 0);
+  K.slider('#exA', v => { A = v; draw(); status(); }, 0);
+  radio(['m0', 'm1', 'm2', 'm3', 'm4'], k => { m = k; draw(); status(); });
+})();
+
+/* ---------- rheostat ---------- */
+(function(){
+  const svg = $id('rhSvg'), out = $id('rhOut'); let n = 40, on = true;
+  const RB = 5, Rr = () => n * 0.15, I = () => on ? 3 / (RB + Rr()) : 0;
+  const XA = 150, XB = 650, TY = 120, TH = 70, ROD = 60;
+  const xs = () => XA + 10 + (XB - XA - 20) * n / 100;
+  function draw(ph){
+    K.clear(svg);
+    rect(svg, XA - 30, ROD - 20, 30, 190, {fill: 'var(--blue)', opacity: .7}); rect(svg, XB, ROD - 20, 30, 190, {fill: 'var(--blue)', opacity: .7});
+    rect(svg, XA, TY, XB - XA, TH, {rx: 10, fill: '#64748b', opacity: .6});
+    for (let k = 0; k <= 50; k++){ const x = XA + 10 + k * (XB - XA - 20) / 50; ln(svg, P(x, TY), P(x + 4, TY + TH), k * 2 <= n ? 'red' : '#b45309', 1.6, {opacity: k * 2 <= n && on ? 1 : .55}); }
+    ln(svg, P(XA - 15, ROD), P(XB + 15, ROD), '#16a34a', 6);
+    const x = xs(); rect(svg, x - 18, ROD - 16, 36, 30, {rx: 4, fill: '#facc15', stroke: 'var(--text)'}); ln(svg, P(x, ROD + 14), P(x, TY), 'text', 2);
+    tc(svg, XA - 15, ROD - 32, 'D', 'big'); tc(svg, XB + 15, ROD - 32, 'C', 'big'); tc(svg, x, ROD - 30, 'S', 'big'); tc(svg, XA - 15, TY + TH + 50, 'A', 'big'); tc(svg, XB + 15, TY + TH + 50, 'B', 'big');
+    /* current path: A → turns → S → rod → C */
+    if (on){ const pts = [P(XA - 60, TY + TH + 30), P(XA - 15, TY + TH + 30), P(XA + 10, TY + TH / 2), P(x, TY + TH / 2), P(x, ROD), P(XB + 15, ROD), P(XB + 60, ROD)]; flowMarks(svg, pathInfo(pts, false), ph * (.05 + I() * .2), {kind: 'i', c: 'red', gap: 40}); }
+    tl(svg, XA + 10, TY + TH + 18, `${n} of 100 turns in the circuit → R = ${n} × 0.15 = ${fx(Rr(), 2)} Ω`, 'sm', {'font-weight': 700});
+    /* Fig 7.26 circuit below */
+    const yb = 300;
+    wire(svg, [P(XA - 15, TY + TH + 30), P(60, TY + TH + 30), P(60, yb), P(200, yb)]); wire(svg, [P(260, yb), P(330, yb)]); wire(svg, [P(390, yb), P(500, yb)]); wire(svg, [P(560, yb), P(760, yb), P(760, ROD), P(XB + 15, ROD)]);
+    batterySym(svg, P(200, yb), P(260, yb), {n: 2, plus: 'a', label: '3 V', labelSide: 1.1});
+    switchSym(svg, P(330, yb), P(390, yb), on);
+    bulbSym(svg, P(500, yb), P(560, yb), {glow: Math.pow(I() / 0.6, 2), r: 17});
+    lcd(svg, P(640, 340), `I = ${fx(I(), 2)} A`);
+  }
+  function status(){ out.textContent = on ? `S at ${n} turns: R(rheostat) = ${fx(Rr(), 2)} Ω, total = 5 + ${fx(Rr(), 2)} = ${fx(RB + Rr(), 2)} Ω, I = 3 ÷ ${fx(RB + Rr(), 2)} = ${fx(I(), 2)} A.\nMove S towards C → more turns → more resistance → less current → dimmer bulb.` : 'Switch is off – no current.'; }
+  const it = anim(svg, t => draw(t));
+  K.slider('#rhS', v => { n = v; status(); draw(it.t); wake(it); }, 0);
+  $id('rhSw').addEventListener('click', e => { on = !on; e.target.textContent = on ? 'Switch OFF' : 'Switch ON'; status(); draw(it.t); wake(it); });
+  status();
+})();
+
+/* ---------- 100 turns stepper ---------- */
+(function(){
+  const opts = [['a', 3], ['b', 7.5], ['c', 4], ['d', 8.25]];
+  const rows = [[0, 'Given: 100 turns, 0.15 Ω per turn', 'blue'], [0, '            max R = 100 × 0.15 = 15 Ω', 'blue'], [1, 'Formula: turns needed = R ÷ 0.15', 'purple'], [2, 'a) 3 ÷ 0.15 = 20 turns ✓', 'green'], [2, 'b) 7.5 ÷ 0.15 = 50 turns ✓', 'green'], [3, 'c) 4 ÷ 0.15 = 26.67 turns ✗', 'red'], [3, 'd) 8.25 ÷ 0.15 = 55 turns ✓', 'green'], [4, 'Answer: (c) 4 Ω cannot be obtained', 'big green']];
+  new K.Stepper('#exRh', {steps: ['<b>Given:</b> 100 turns, each 0.15 Ω; the most the rheostat can give is 15 Ω.', '<b>Idea:</b> S can only stop at a whole number of turns, so R = (whole number) × 0.15 Ω. Turns needed = R ÷ 0.15.', '<b>Check (a) and (b):</b> 3 ÷ 0.15 = 20; 7.5 ÷ 0.15 = 50 – whole numbers ✓.', '<b>Check (c) and (d):</b> 4 ÷ 0.15 = 26.67 – not a whole number ✗; 8.25 ÷ 0.15 = 55 ✓.', '<b>Answer:</b> <b>(c) 4 Ω</b> cannot be put in (26 turns give 3.9 Ω, 27 turns 4.05 Ω).'], ms: 900, draw(svg, i, t){
+    const X0 = 30, W = 330;
+    ln(svg, P(X0, 150), P(X0 + W, 150), 'text', 2);
+    for (let k = 0; k <= 60; k += 5){ const x = X0 + k / 60 * W; ln(svg, P(x, 144), P(x, 156), 'text', 1.4); if (k % 10 === 0) tc(svg, x, 172, String(k), 'sm', {'font-size': 11}); }
+    tc(svg, X0 + W / 2, 196, 'number of turns', 'sm muted');
+    opts.forEach(([nm, r], k) => { const show = (k < 2 && i >= 2) || (k >= 2 && i >= 3); if (!show) return; const turns = r / 0.15, x = X0 + turns / 60 * W, ok = Math.abs(turns - Math.round(turns)) < 1e-9;
+      circ(svg, P(x, 150), 7, {fill: cv(ok ? 'green' : 'red')}); tc(svg, x, 120 - (k % 2) * 22, `${nm}) ${r} Ω`, 'sm ' + (ok ? 'green' : 'red'), {'font-weight': 700}); });
+    lines(svg, rows, i, t, {x: 400, y: 30, lh: 33});
+  }});
+})();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'A wire is replaced by another of the same material and thickness but twice as long. Its resistance…', options: ['halves', 'doubles', 'stays the same', 'becomes zero'], answer: 1, explain: 'Resistance is proportional to length.', hint: 'Longer → more collisions.'});
+K.mcq('#q2', {q: 'Which wire would make the best heating element?', options: ['copper', 'silver', 'nichrome', 'aluminium'], answer: 2, explain: 'Nichrome has a high resistance (and does not burn away when red-hot).', hint: 'A heater needs high resistance.'});
+K.mcq('#q3', {q: 'The resistance of a metal heater coil is greater…', options: ['when it is cold', 'just after switching off, when it is hot', 'only in the morning', 'when it is wet'], answer: 1, explain: 'Metals: resistance rises with temperature.', hint: 'Remember the heater lab.'});
+K.numq('#q4', {q: 'A rheostat has 0.2 Ω per turn. How many turns give 6 Ω?', answer: 30, tol: 0.01, unit: 'turns', explain: '6 ÷ 0.2 = 30 turns.', hint: 'turns = R ÷ resistance per turn.'});
+K.mcq('#q5', {q: 'Superconductors are materials that…', options: ['have very high resistance', 'have zero resistance at very low temperatures', 'only conduct when hot', 'are insulators'], answer: 1, explain: 'Found in 1911: zero resistance at very low temperatures, so no energy is lost.', hint: 'Read the superconductivity box.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

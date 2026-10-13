@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flow Needs a Difference: Water, Heat and Air – Current Electricity</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.6rem 0;background:var(--green-soft)}
+.qbox{background:var(--surface);border:1px solid var(--border);border-left:6px solid var(--accent);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+.controls select{padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;max-width:100%}
+.tablewrap{overflow-x:auto}
+svg .panel{fill:var(--surface2);stroke:var(--border);stroke-width:1.2}
+svg .glass{fill:none;stroke:var(--text);stroke-width:2}
+svg .water{fill:var(--blue-soft);stroke:none}
+svg .stand{fill:var(--surface2);stroke:var(--muted);stroke-width:1.5}
+svg .box{fill:var(--surface);stroke:var(--border);stroke-width:1.5}
+</style>
+</head>
+<body data-page="02_flow_needs_difference">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 7 · Prerequisite 2 of 4</span><span class="chip amber">Basics for textbook pages 131–156</span>
+<h1>Flow Needs a Difference: Water, Heat and Air</h1>
+<p class="lead">Why does a current flow in a circuit at all? Your textbook answers this on pages 132–134 by first looking at three flows you already know: <b>water</b>, <b>heat</b> and <b>air</b>. Each of them flows only when there is a <b>difference</b> between two places – a difference in level, in temperature (<span class="ml">താപനില</span>) or in pressure (<span class="ml">മർദം</span>). When the difference disappears, the flow stops – unless something, like a pump, keeps the difference going. Electric charge behaves the same way. This page also revises the <b>forms of energy</b> that a cell, a bulb or a generator change into one another.</p>
+
+<div class="callout book"><div class="title">📖 What you need</div>
+<ul style="margin:0"><li>Adding, subtracting and finding the average of two numbers.</li><li>Charges and free electrons (page 1).</li></ul></div>
+
+<h2>1. Water flows from a higher level to a lower level</h2>
+<p>Put two vessels of water side by side and join them with a bent tube full of water – a <b>siphon</b> (<span class="ml">സൈഫൺ</span>). If the <b>water levels</b> (<span class="ml">ജലനിരപ്പ്</span>) are the same, nothing happens. Raise one vessel, and water starts flowing <b>from the higher level to the lower level</b>. The flow is fast at first, slows down as the levels come closer, and <b>stops</b> when the two levels are equal.</p>
+<div class="lab">
+  <div class="lab-title">🧪 The siphon and the pump</div>
+  <svg id="siSvg" viewBox="0 0 800 330" role="img" aria-label="Two beakers of water on stands joined by a siphon tube; water flows from the higher level to the lower level until the levels are equal, unless a pump returns the water"></svg>
+  <div class="controls"><label>stand under A (cm) <input id="siA" type="range" min="0" max="20" step="2" value="12"><output></output></label>
+  <label>stand under B (cm) <input id="siB" type="range" min="0" max="20" step="2" value="0"><output></output></label></div>
+  <div class="controls"><button class="btn primary" id="siGo">▶ Let it flow</button><button class="btn" id="siPump">Pump: OFF</button><button class="btn ghost" id="siReset">⟲ Reset</button></div>
+  <div class="readout" id="siOut"></div>
+  <p class="hint">Both beakers are identical and start with 15 cm of water. Make the stands equal and press ▶: no flow, because the levels are the same. Then raise A and try again. Finally switch the <b>pump</b> on: every second it lifts back from B to A exactly as much water as the siphon carries down, so the <b>level difference stays</b> and the flow <b>never stops</b>. The pump needs energy to do this – it is an <b>external energy source</b> (<span class="ml">ബാഹ്യ ഊർജസ്രോതസ്സ്</span>).</p>
+</div>
+
+<h3>Worked example 1 · Two connected tanks</h3>
+<div class="qbox"><p><b>Q.</b> Two identical tanks stand on the same floor. Tank A has water up to 30 cm and tank B up to 12 cm. They are joined by a pipe at the bottom and the valve is opened. (a) Which way does the water flow? (b) What is the water level in each tank when the flow stops?</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Water flows from the higher level. The flow stops when the levels are equal. The tanks are identical, so whatever A loses, B gains – the final level is the average of 30 and 12.</p></div></div>
+<div class="lab" id="we1"><div class="lab-title">🎬 Exam layout, step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Two tanks with water levels of 30 and 12 centimetres becoming equal at 21 centimetres"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> (a) From A (30 cm, higher) to B (12 cm). (b) The flow stops when the levels are equal: (30 + 12) ÷ 2 = <b>21 cm in each tank</b>.</div></div>
+
+<h2>2. Heat flows from a higher temperature to a lower temperature</h2>
+<p>Hold one end <b>P</b> of an iron rod and put the other end <b>Q</b> in a candle flame (textbook Fig 7.5). The temperature rises first at <b>Q</b>, the end in the flame. Then heat flows along the rod <b>from Q to P</b> – from the part at a <b>higher temperature</b> to the part at a <b>lower temperature</b> – and slowly P gets warm too. If the two ends were at the same temperature, no heat would flow.</p>
+<div class="lab">
+  <div class="lab-title">🧪 Heat creeping along an iron rod</div>
+  <svg id="rodSvg" viewBox="0 0 800 270" role="img" aria-label="An iron rod with one end in a candle flame; colours show the temperature along the rod as time passes"></svg>
+  <div class="controls"><label>time after the flame touches Q (s) <input id="rodT" type="range" min="0" max="240" step="10" value="60"><output></output></label></div>
+  <div class="readout" id="rodOut"></div>
+  <p class="hint">Sample model: the end in the flame is kept at about 250 °C and the room is at 30 °C (real values depend on the rod and the flame). Watch the colour spread from Q towards P. Heat always flows <b>down the temperature slope</b>, from hot to cold.</p>
+</div>
+<div class="safety">⚠ Iron conducts heat well – hold a rod near a flame only with a thick cloth or tongs, and keep loose clothes and hair away from the candle.</div>
+
+<h2>3. Air flows from a higher pressure to a lower pressure</h2>
+<p>A tyre tube pumped full of air (textbook Fig 7.6) has a <b>higher pressure</b> inside than the air outside. Open the valve and the air rushes <b>from inside to outside</b> – from the higher pressure to the lower pressure – until the pressures are equal. The air around us presses with about <b>100 kPa</b> (kilopascal, a unit of pressure).</p>
+<div class="lab">
+  <div class="lab-title">🧪 Open the valve of a tyre tube</div>
+  <svg id="airSvg" viewBox="0 0 800 270" role="img" aria-label="A tyre tube with a valve; air flows out if the pressure inside is higher and in if it is lower"></svg>
+  <div class="controls"><label>pressure inside at the start (kPa) <input id="airP" type="range" min="40" max="300" step="10" value="250"><output></output></label>
+  <button class="btn primary" id="airGo">▶ Open the valve</button><button class="btn ghost" id="airReset">⟲ Close and refill</button></div>
+  <div class="readout" id="airOut"></div>
+  <p class="hint">Try a pressure below 100 kPa too (as if some air had been sucked out): now air flows <b>into</b> the tube. Either way it flows from higher to lower pressure and stops when they are equal.</p>
+</div>
+
+<h3>Worked example 2 · Which way does the air go?</h3>
+<div class="qbox"><p><b>Q.</b> A cycle tube has an air pressure of 250 kPa inside. The air outside is at 100 kPa. (a) Find the pressure difference. (b) Which way does air flow when the valve is opened, and when does it stop?</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Difference = higher − lower. Air flows from the higher pressure to the lower pressure, until there is no difference left.</p></div></div>
+<div class="lab" id="we2"><div class="lab-title">🎬 Exam layout, step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="A tube at 250 kilopascal and the outside air at 100 kilopascal"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> (a) 250 − 100 = <b>150 kPa</b>. (b) Air flows <b>from inside the tube to outside</b> and stops when the pressure inside falls to 100 kPa (no difference).</div></div>
+
+<h2>4. The pattern – and what keeps a flow going</h2>
+<p>Put the three cases side by side, as in your textbook's Table 7.1:</p>
+<div class="tablewrap"><table>
+<tr><th>What flows</th><th>Direction of flow</th><th>The flow stops when…</th></tr>
+<tr><td>Water</td><td>From the higher water level to the lower water level</td><td>the levels are equal</td></tr>
+<tr><td>Heat</td><td>From the higher temperature to the lower temperature</td><td>the temperatures are equal</td></tr>
+<tr><td>Air</td><td>From the higher pressure to the lower pressure</td><td>the pressures are equal</td></tr>
+</table></div>
+<div class="callout key"><div class="title">⭐ Key idea</div>
+<p>A flow needs a <b>difference</b>. A <b>continuous</b> flow needs something that <b>keeps the difference going</b> – and that something needs a supply of <b>energy</b>. For water it is a pump. In an electric circuit it is a <b>cell or battery</b>, which keeps a <b>potential difference</b> (<span class="ml">പൊട്ടൻഷ്യൽ വ്യത്യാസം</span>) between its two ends. You will meet this on page 5.</p></div>
+<div class="lab" id="analogy"><div class="lab-title">🎬 A water circuit and an electric circuit</div><svg viewBox="0 0 800 320" role="img" aria-label="Left: a pump pushes water round a pipe loop through a water wheel and a tap. Right: a cell pushes charge round a wire loop through a bulb and a switch."></svg></div>
+<p class="hint">The comparison is only a guide: water needs a pipe and can spill, charge needs a closed loop of conductor. But “a pump keeps a level difference, so water keeps flowing” is exactly how “a cell keeps a potential difference, so charge keeps flowing” works.</p>
+
+<h2>5. Energy changes form – a recap</h2>
+<p>A pump or a cell does not create energy; it <b>changes</b> energy from one form to another. These forms appear again and again in this chapter:</p>
+<ul>
+<li><b>Chemical energy</b> – stored in the substances inside a cell or battery (and in fuel and food).</li>
+<li><b>Electrical energy</b> – carried by the current in a circuit.</li>
+<li><b>Light energy</b> and <b>heat energy</b> – given out by a bulb or an LED (an LED gives much less heat).</li>
+<li><b>Mechanical energy</b> – the energy of moving things: a fan, a motor, a bicycle wheel turning a dynamo.</li>
+<li><b>Solar (light) energy</b> – turned into electrical energy by a solar cell.</li>
+</ul>
+<div class="lab">
+  <div class="lab-title">🧪 Energy chains for electrical things</div>
+  <svg id="chainSvg" viewBox="0 0 800 240" role="img" aria-label="An energy chain: the energy going into a device and the forms of energy coming out"></svg>
+  <div class="controls"><label>device <select id="chainSel">
+    <option value="torch" selected>torch (dry cells + bulb)</option><option value="solar">solar-cell calculator</option><option value="dynamo">bicycle dynamo lamp</option>
+    <option value="station">generator in a power station</option><option value="charge">charging a mobile phone battery</option><option value="phone">mobile phone running on its battery</option>
+    <option value="fan">ceiling fan</option><option value="iron">electric iron box</option></select></label></div>
+  <div class="readout" id="chainOut"></div>
+  <p class="hint">Every source of electricity changes some other form of energy <b>into electrical energy</b>; every appliance changes electrical energy <b>into other forms</b>. Page 6 collects these sources in Table 7.2.</p>
+</div>
+
+<h3>Worked example 3 · The bicycle dynamo lamp</h3>
+<div class="qbox"><p><b>Q.</b> A bicycle has a dynamo that runs a small lamp when you pedal. Write the energy changes, starting from the food you ate.</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Food stores chemical energy. Your legs turn the wheel. The dynamo turns motion into electricity. The lamp gives out light – and gets warm.</p></div></div>
+<div class="lab" id="we3"><div class="lab-title">🎬 Exam layout, step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="An energy chain from food to the cyclist's muscles, the turning wheel, the dynamo and the lamp"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> chemical energy (food, in the muscles) → mechanical energy (turning wheel) → electrical energy (dynamo) → light energy + heat energy (lamp).</div></div>
+
+<div class="callout real"><div class="title">🌴 Kerala connection – the overhead tank</div>
+<p>In most Kerala homes a motor pump lifts water from the well to the overhead tank. From there water flows down to every tap by itself, because the tank is <b>higher</b> than the taps. When the tank is empty the taps run dry – until the pump (using electrical energy) fills it again and restores the height difference. A battery does the same job for electric charge.</p></div>
+
+<h2>6. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div>
+<p>Next: <a href="03_units_ratios_graphs.html">Units, prefixes, ratios and straight-line graphs ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Current Electricity · Class 9 Physics", "icon": "🔋", "key": "physics_ch7_progress", "pages": [["index.html", "Home"], ["01_charges_conductors.html", "1 · Charges, Electrons, Conductors & Insulators"], ["02_flow_needs_difference.html", "2 · Flow Needs a Difference: Water, Heat & Air"], ["03_units_ratios_graphs.html", "3 · Units, Prefixes, Ratios & Straight-line Graphs"], ["04_circuits_symbols_safety.html", "4 · Simple Circuits, Symbols & Safety"], ["05_charge_flow_potential_difference.html", "5 · Charge Flow & Potential Difference"], ["06_emf_cells_batteries.html", "6 · emf, Cells, Batteries & Combining Cells"], ["07_electric_current_ammeter.html", "7 · Electric Current, Ammeter & Circuit Diagrams"], ["08_ohms_law_resistance.html", "8 · Ohm's Law & Resistance"], ["09_factors_resistance_rheostat.html", "9 · What Affects Resistance? The Rheostat"], ["10_series_parallel_home.html", "10 · Series & Parallel, Home Circuits, AC & DC"], ["11_intext_numericals_solutions.html", "11 · In-text Questions – Solutions"], ["12_assess_q1_q6_solutions.html", "12 · Let Us Assess Q1–6 – Solutions"], ["13_assess_q7_q11_solutions.html", "13 · Let Us Assess Q7–11 & Extended Activities"], ["14_applications_explore.html", "14 · Applications & Explore Online"], ["15_summary_revision.html", "15 · Summary & Quick Quiz"], ["16_model_test_paper.html", "16 · Model Test Paper"], ["17_model_test_solutions.html", "17 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+const {P, text} = K;
+const sline = (svg, a, b, attrs={}) => K.el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+const f = (v, d=2) => K.num(K.fmt(v, d));
+const L = (svg, x, y, s, cls='lbl', extra={}) => text(svg, P(x, y), s, {class: cls, 'text-anchor': 'start', ...extra});
+function arrow(svg, a, b, c='var(--red)', w=3, extra={}){
+  const g = K.group(svg, extra); const len = K.dist(a, b); if (len < 3) return g;
+  const u = K.unit(a, b), n = P(-u.y, u.x), hs = Math.min(8, len * .45), base = P(b.x - u.x * hs * 1.5, b.y - u.y * hs * 1.5);
+  sline(g, a, base, {stroke: c, 'stroke-width': w});
+  K.el('polygon', {points: `${b.x},${b.y} ${base.x + n.x * hs * .8},${base.y + n.y * hs * .8} ${base.x - n.x * hs * .8},${base.y - n.y * hs * .8}`, fill: c}, g);
+  return g; }
+function examStepper(sel, rows, fig, x0=380, dy=62){
+  new K.Stepper(sel, {steps: rows.map(r => r.html), draw(svg, i, t){
+    fig(svg, i, t);
+    rows.forEach((r, k) => { if (k > i) return; const o = k === i ? t : 1, y = 30 + k * dy;
+      L(svg, x0, y, r.h, 'lbl sm muted', {opacity: o});
+      L(svg, x0, y + 22, r.s, k === rows.length - 1 ? 'lbl big green' : 'lbl', {opacity: o}); });
+  }});
+}
+function along(pts, s){ let d = s; for (let k = 0; k < pts.length - 1; k++){ const l = K.dist(pts[k], pts[k + 1]); if (d <= l) return K.lerpPt(pts[k], pts[k + 1], l ? d / l : 0); d -= l; } return pts[pts.length - 1]; }
+const plen = pts => { let s = 0; for (let k = 0; k < pts.length - 1; k++) s += K.dist(pts[k], pts[k + 1]); return s; };
+const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* circuit symbols as in textbook Table 7.5, drawn between points a and b */
+function sym(svg, kind, a, b, o={}){
+  const c = K.mid(a, b), th = Math.atan2(b.y - a.y, b.x - a.x), h = K.dist(a, b) / 2, cs = Math.cos(th), sn = Math.sin(th);
+  const G = (x, y) => P(c.x + x * cs - y * sn, c.y + x * sn + y * cs);
+  const col = o.c || 'var(--text)', g = K.group(svg), s = o.flip ? -1 : 1, glow = o.glow || 0;
+  const ln = (x1, y1, x2, y2, w=2.2) => { const p = G(x1, y1), q = G(x2, y2); return K.el('line', {x1: p.x, y1: p.y, x2: q.x, y2: q.y, stroke: col, 'stroke-width': w}, g); };
+  const lead = r => { ln(-h, 0, -r, 0); ln(r, 0, h, 0); };
+  const pm = (xp, xm) => { if (o.pm === false) return; const off = o.pmOff ?? -24; text(g, G(xp, off), '+', {class: 'lbl red', 'font-weight': 700}); text(g, G(xm, off), '−', {class: 'lbl blue', 'font-weight': 700}); };
+  const dotAt = (x, y) => { const p = G(x, y); K.el('circle', {cx: p.x, cy: p.y, r: 2.8, fill: 'var(--svgbg)', stroke: col, 'stroke-width': 1.8}, g); };
+  switch (kind){
+    case 'cell': lead(4); ln(-4 * s, -16, -4 * s, 16, 2); ln(4 * s, -8, 4 * s, 8, 5.5); pm(-14 * s, 14 * s); break;
+    case 'switch': case 'switchOn': lead(14); if (kind === 'switchOn') ln(-14, 0, 14, 0); else ln(-14, 0, 11, -14); dotAt(-14, 0); dotAt(14, 0); break;
+    case 'bulb':
+      lead(13);
+      if (glow > .01) K.el('circle', {cx: c.x, cy: c.y, r: 16 + 16 * glow, fill: 'var(--accent)', opacity: .15 + .3 * glow}, g);
+      K.el('circle', {cx: c.x, cy: c.y, r: 13, fill: glow > .01 ? 'var(--accent)' : 'var(--svgbg)', 'fill-opacity': glow > .01 ? .3 + .7 * glow : 1, stroke: col, 'stroke-width': 2.2}, g);
+      ln(-9.2, -9.2, 9.2, 9.2, 2); ln(-9.2, 9.2, 9.2, -9.2, 2); break;
+  }
+  return g;
+}
+
+/* ---- 1. siphon and pump ---- */
+(function(){ const svg = document.getElementById('siSvg'), out = document.getElementById('siOut'), pbtn = document.getElementById('siPump');
+  const S = 4, GY = 300, BW = 120, BH = 128;                         /* 4 px per cm; table at y = 300; beakers 32 cm tall */
+  let sA = 12, sB = 0, dA = 15, dB = 15, flowing = false, pump = false, phase = 0, raf = null;
+  const lvl = () => [sA + dA, sB + dB];
+  function beaker(x, stand, depth, name, col){ const base = GY - stand * S;
+    if (stand > 0){ K.el('rect', {x: x + 10, y: base, width: BW - 20, height: stand * S, class: 'stand'}, svg); text(svg, P(x + BW / 2, base + stand * S / 2), `${stand} cm`, {class: 'lbl sm muted'}); }
+    K.el('rect', {x, y: base - depth * S, width: BW, height: depth * S, class: 'water'}, svg);
+    K.el('path', {d: `M${x},${base - BH} L${x},${base} L${x + BW},${base} L${x + BW},${base - BH}`, class: 'glass'}, svg);
+    sline(svg, P(x - 4, base - depth * S), P(x + BW + 4, base - depth * S), {stroke: 'var(--blue)', 'stroke-width': 2.4});
+    text(svg, P(x + BW / 2, base - BH - 14), name, {class: 'lbl big ' + col});
+    return base; }
+  const draw = () => { K.clear(svg); const [hA, hB] = lvl(), d = hA - hB;
+    sline(svg, P(10, GY), P(790, GY), {stroke: 'var(--muted)', 'stroke-width': 2});
+    const baseA = beaker(90, sA, dA, 'A', 'blue'), baseB = beaker(450, sB, dB, 'B', 'green');
+    /* siphon tube */
+    const top = Math.min(baseA, baseB) - BH - 34;
+    const tube = [P(190, baseA - 8), P(190, top), P(470, top), P(470, baseB - 8)];
+    K.polyline(svg, tube, {stroke: 'var(--muted)', 'stroke-width': 9, 'stroke-linejoin': 'round'});
+    K.polyline(svg, tube, {stroke: 'var(--blue-soft)', 'stroke-width': 5, 'stroke-linejoin': 'round'});
+    if (flowing && Math.abs(d) > .05){ const tot = plen(tube), dir = d > 0 ? 1 : -1;
+      for (let k = 0; k < 8; k++){ let s = ((k / 8) * tot + phase * dir) % tot; if (s < 0) s += tot; const p = along(tube, s); K.el('circle', {cx: p.x, cy: p.y, r: 3.5, fill: 'var(--blue)'}, svg); } }
+    /* pump: from bottom of B back up into A */
+    const pc = pump ? 'var(--accent)' : 'var(--muted)';
+    K.polyline(svg, [P(570, GY - sB * S - 4), P(620, GY - sB * S - 4), P(620, 270), P(660, 270)], {stroke: pc, 'stroke-width': 4, opacity: .8});
+    K.el('rect', {x: 660, y: 250, width: 70, height: 40, rx: 8, fill: pump ? 'var(--accent-soft)' : 'var(--surface2)', stroke: pc, 'stroke-width': 2}, svg);
+    text(svg, P(695, 270), 'pump', {class: 'lbl sm', 'font-weight': 700});
+    K.polyline(svg, [P(730, 270), P(760, 270), P(760, 20), P(112, 20), P(112, baseA - BH + 6)], {stroke: pc, 'stroke-width': 4, opacity: .8});
+    if (pump && flowing){ const pp = [P(570, GY - sB * S - 4), P(620, GY - sB * S - 4), P(620, 270), P(760, 270), P(760, 20), P(112, 20), P(112, baseA - BH + 6)], tot = plen(pp);
+      for (let k = 0; k < 10; k++){ const p = along(pp, ((k / 10) * tot + phase * 1.5) % tot); K.el('circle', {cx: p.x, cy: p.y, r: 3, fill: 'var(--accent)'}, svg); } }
+    /* level read-outs */
+    L(svg, 230, 236, `level A: ${f(hA, 1)} cm`, 'lbl sm blue', {'font-weight': 700});
+    L(svg, 230, 256, `level B: ${f(hB, 1)} cm`, 'lbl sm green', {'font-weight': 700});
+    L(svg, 230, 276, `difference: ${f(Math.abs(d), 1)} cm`, 'lbl sm', {'font-weight': 700});
+    let msg;
+    if (!flowing) msg = Math.abs(d) < .05 ? 'Levels equal – nothing will flow. Raise one beaker.' : `Level ${d > 0 ? 'A' : 'B'} is higher by ${f(Math.abs(d), 1)} cm. Press ▶ to open the siphon.`;
+    else if (Math.abs(d) < .05) msg = 'The levels are now EQUAL, so the flow has STOPPED.';
+    else msg = `Water flows from ${d > 0 ? 'A to B' : 'B to A'} (higher level → lower level)` + (pump ? ' – the pump keeps the difference, so the flow is continuous.' : ' – the difference is shrinking.');
+    out.textContent = `Water level of A = ${sA} + ${f(dA, 1)} = ${f(hA, 1)} cm;  B = ${sB} + ${f(dB, 1)} = ${f(hB, 1)} cm (above the table).  ${msg}`; };
+  function step(){ const [hA, hB] = lvl(), d = hA - hB;
+    if (!pump){ const q = Math.sign(d) * Math.min(Math.abs(d) / 2, Math.abs(d) * .02 + .01); dA -= q; dB += q; if (Math.abs(lvl()[0] - lvl()[1]) < .05){ const m = (sA + dA + sB + dB) / 2; dA = m - sA; dB = m - sB; } }
+    phase += 2 + Math.min(4, Math.abs(d) * .3); draw();
+    if (flowing && (pump || Math.abs(d) > .05)) raf = requestAnimationFrame(step); else raf = null; }
+  const stop = () => { flowing = false; if (raf) cancelAnimationFrame(raf); raf = null; };
+  const reset = () => { stop(); dA = 15; dB = 15; draw(); };
+  K.slider('#siA', v => { sA = v; reset(); }, 0); K.slider('#siB', v => { sB = v; reset(); }, 0);
+  document.getElementById('siGo').addEventListener('click', () => { if (flowing) return; flowing = true; if (reduce){ const m = (sA + dA + sB + dB) / 2; if (!pump){ dA = m - sA; dB = m - sB; } draw(); return; } raf = requestAnimationFrame(step); });
+  pbtn.addEventListener('click', () => { pump = !pump; pbtn.textContent = pump ? 'Pump: ON' : 'Pump: OFF'; if (flowing && !raf && !reduce) raf = requestAnimationFrame(step); draw(); });
+  document.getElementById('siReset').addEventListener('click', reset);
+  draw(); })();
+
+examStepper('#we1', [
+  {h: 'Given', s: 'level A = 30 cm,  level B = 12 cm (identical tanks)', html: '<b>Given:</b> identical tanks on the same floor; level of A = 30 cm, level of B = 12 cm.'},
+  {h: 'Rule', s: 'flow: higher → lower;  stops when levels equal', html: '<b>Rule (formula):</b> water flows from the higher level to the lower level and stops when the levels are equal. Identical tanks → final level = (h<sub>A</sub> + h<sub>B</sub>) ÷ 2.'},
+  {h: 'Substitution', s: 'final level = (30 + 12) ÷ 2 = 42 ÷ 2', html: '<b>Substitution:</b> final level = (30 + 12) ÷ 2 = 42 ÷ 2.'},
+  {h: 'Answer', s: 'A → B;  21 cm in each tank', html: '<b>Answer:</b> (a) from A to B; (b) <b>21 cm</b> in each tank (A falls by 9 cm, B rises by 9 cm).'}
+], (svg, i, t) => { const S = 6, GY = 270;
+  const hA = i >= 2 ? 30 - 9 * (i === 2 ? t : 1) : 30, hB = i >= 2 ? 12 + 9 * (i === 2 ? t : 1) : 12;
+  [[30, hA, 'A'], [190, hB, 'B']].forEach(([x, h, n]) => { K.el('rect', {x, y: GY - h * S, width: 110, height: h * S, class: 'water'}, svg);
+    K.el('path', {d: `M${x},${GY - 34 * S} L${x},${GY} L${x + 110},${GY} L${x + 110},${GY - 34 * S}`, class: 'glass'}, svg);
+    text(svg, P(x + 55, GY - h * S - 12), `${f(h, 1)} cm`, {class: 'lbl sm blue', 'font-weight': 700}); text(svg, P(x + 55, GY + 18), n, {class: 'lbl', 'font-weight': 700}); });
+  K.el('rect', {x: 140, y: GY - 12, width: 50, height: 10, fill: 'var(--blue-soft)', stroke: 'var(--muted)'}, svg);
+  if (i >= 1 && i < 3) arrow(svg, P(146, GY - 7), P(186, GY - 7), 'var(--blue)', 2.4);
+}, 360);
+
+/* ---- 2. heat along the rod ---- */
+(function(){ const svg = document.getElementById('rodSvg'), out = document.getElementById('rodOut');
+  const N = 25, TQ = 250, TR = 30;
+  const sim = secs => { let T = new Array(N).fill(TR); T[N - 1] = TQ; const sub = 8, a = .5 / sub * 1.6, b = .004 / sub;
+    for (let k = 0; k < secs * sub; k++){ const n2 = T.slice(); for (let j = 0; j < N - 1; j++){ const left = j === 0 ? T[1] : T[j - 1]; n2[j] = T[j] + Math.min(.45, a) * (left - 2 * T[j] + T[j + 1]) - b * (T[j] - TR); } T = n2; T[N - 1] = TQ; } return T; };
+  const col = t => `hsl(${Math.round(220 - 220 * Math.min(1, (t - TR) / (TQ - TR)))}, 80%, ${Math.round(55 - 10 * Math.min(1, (t - TR) / (TQ - TR)))}%)`;
+  const draw = secs => { K.clear(svg); const T = sim(secs), x0 = 110, x1 = 650, w = (x1 - x0) / N, Y = 90;
+    for (let j = 0; j < N; j++) K.el('rect', {x: x0 + j * w, y: Y, width: w + .5, height: 18, fill: secs === 0 && j < N - 1 ? 'var(--muted)' : col(T[j])}, svg);
+    K.el('rect', {x: x0, y: Y, width: x1 - x0, height: 18, fill: 'none', stroke: 'var(--text)', 'stroke-width': 1.5}, svg);
+    /* hand at P, candle at Q */
+    K.el('rect', {x: 50, y: Y - 10, width: 70, height: 38, rx: 14, fill: 'var(--accent-soft)', stroke: 'var(--accent)', 'stroke-width': 1.5}, svg); text(svg, P(85, Y + 9), 'hand', {class: 'lbl sm'});
+    K.el('rect', {x: x1 - 40, y: 150, width: 34, height: 80, rx: 4, fill: 'var(--surface2)', stroke: 'var(--text)', 'stroke-width': 1.5}, svg);
+    sline(svg, P(x1 - 23, 150), P(x1 - 23, 138), {stroke: 'var(--text)', 'stroke-width': 2});
+    K.el('path', {d: `M${x1 - 23},${Y + 44} q-14,-24 0,-56 q14,32 0,56 z`, fill: 'var(--accent)', opacity: .85}, svg);
+    text(svg, P(x0 + 6, Y - 18), 'P', {class: 'lbl big'}); text(svg, P(x1 - 12, Y - 18), 'Q', {class: 'lbl big'});
+    L(svg, x0, 140, `P: ${f(T[0], 0)} °C`, 'lbl', {'font-weight': 700});
+    text(svg, P((x0 + x1) / 2, 140), `middle: ${f(T[Math.floor(N / 2)], 0)} °C`, {class: 'lbl', 'font-weight': 700});
+    text(svg, P(x1 + 70, 99), `Q: ${TQ} °C`, {class: 'lbl red', 'font-weight': 700});
+    if (secs > 0) arrow(svg, P(560, 60), P(200, 60), 'var(--red)', 3.4);
+    if (secs > 0) text(svg, P(380, 46), 'heat flows Q → P (hot → cold)', {class: 'lbl sm red', 'font-weight': 700});
+    /* colour key */
+    for (let k = 0; k <= 10; k++) K.el('rect', {x: 220 + k * 20, y: 236, width: 20, height: 12, fill: col(TR + (TQ - TR) * k / 10)}, svg);
+    L(svg, 220, 262, '30 °C', 'lbl sm muted'); text(svg, P(440, 262), '250 °C', {class: 'lbl sm muted', 'text-anchor': 'end'});
+    out.textContent = secs === 0 ? 'Time 0: the flame has just touched Q. The rod is at room temperature (30 °C) everywhere except the end in the flame.' :
+      `After ${secs} s: Q = ${TQ} °C, middle ≈ ${f(T[Math.floor(N / 2)], 0)} °C, P ≈ ${f(T[0], 0)} °C. Q got hot first; heat flows from Q (higher temperature) towards P (lower temperature).`; };
+  K.slider('#rodT', draw, 0); })();
+
+/* ---- 3. air from a tube ---- */
+(function(){ const svg = document.getElementById('airSvg'), out = document.getElementById('airOut'); const PO = 100; let p0 = 250, p = 250, open = false, run = null;
+  const draw = () => { K.clear(svg); const C = P(250, 135), th = 16 + 16 * Math.min(1.6, p / 150), d = p - PO;
+    K.el('ellipse', {cx: C.x, cy: C.y, rx: 150, ry: 95, fill: 'none', stroke: 'var(--text)', 'stroke-width': th + 3}, svg);
+    K.el('ellipse', {cx: C.x, cy: C.y, rx: 150, ry: 95, fill: 'none', stroke: 'var(--muted)', 'stroke-width': th}, svg);
+    /* valve on the right */
+    const V = P(C.x + 150 + th / 2, C.y); K.el('rect', {x: V.x, y: V.y - 7, width: 40, height: 14, fill: open ? 'var(--green-soft)' : 'var(--surface2)', stroke: 'var(--text)', 'stroke-width': 1.5}, svg);
+    text(svg, P(V.x + 34, V.y + 28), open ? 'valve OPEN' : 'valve closed', {class: 'lbl sm ' + (open ? 'green' : 'muted'), 'font-weight': 700});
+    if (open && Math.abs(d) > 1){ for (let k = 0; k < 3; k++){ const y = V.y - 12 + k * 12;
+      if (d > 0) arrow(svg, P(V.x + 46, y), P(V.x + 46 + Math.min(90, 20 + d * .5), y), 'var(--blue)', 2.4); else arrow(svg, P(V.x + 46 + Math.min(90, 20 - d * .5), y), P(V.x + 46, y), 'var(--blue)', 2.4); } }
+    text(svg, C, `inside ${f(p, 0)} kPa`, {class: 'lbl big', 'font-weight': 700});
+    K.el('rect', {x: 560, y: 40, width: 220, height: 190, rx: 12, class: 'panel'}, svg);
+    L(svg, 575, 70, `inside:  ${f(p, 0)} kPa`, 'lbl', {'font-weight': 700});
+    L(svg, 575, 100, `outside: ${PO} kPa`, 'lbl');
+    L(svg, 575, 135, `difference: ${f(Math.abs(d), 0)} kPa`, 'lbl', {'font-weight': 700});
+    const dir = Math.abs(d) <= 1 ? 'no flow (equal)' : d > 0 ? 'air flows OUT' : 'air flows IN';
+    L(svg, 575, 175, open ? dir : 'valve closed', 'lbl ' + (open ? 'blue' : 'muted'), {'font-weight': 700});
+    L(svg, 575, 205, '(higher → lower pressure)', 'lbl sm muted');
+    out.textContent = !open ? `Valve closed. Inside ${f(p, 0)} kPa, outside ${PO} kPa${p0 === PO ? ' – no difference, so nothing would flow.' : '.'}` :
+      Math.abs(d) <= 1 ? 'The pressures are now equal (100 kPa): the air has stopped flowing.' : `Air flows ${d > 0 ? 'out of' : 'into'} the tube, from ${d > 0 ? 'inside' : 'outside'} (higher pressure) to ${d > 0 ? 'outside' : 'inside'} (lower pressure).`; };
+  const reset = () => { if (run) run(); run = null; open = false; p = p0; draw(); };
+  K.slider('#airP', v => { p0 = v; reset(); }, 0);
+  document.getElementById('airGo').addEventListener('click', () => { if (run) run(); open = true; const start = p0; run = K.animate(2500, (e, tl) => { p = PO + (start - PO) * Math.exp(-5 * tl); if (tl >= 1) p = PO; draw(); }); });
+  document.getElementById('airReset').addEventListener('click', reset); })();
+
+examStepper('#we2', [
+  {h: 'Given', s: 'inside = 250 kPa,  outside = 100 kPa', html: '<b>Given:</b> pressure inside = 250 kPa; pressure outside = 100 kPa.'},
+  {h: 'Formula', s: 'difference = higher − lower', html: '<b>Formula:</b> pressure difference = higher pressure − lower pressure. Air flows from higher to lower.'},
+  {h: 'Substitution', s: 'difference = 250 − 100', html: '<b>Substitution:</b> difference = 250 kPa − 100 kPa.'},
+  {h: 'Answer', s: '150 kPa;  air flows out', html: '<b>Answer:</b> <b>150 kPa</b>. Air flows from inside to outside until the inside pressure is also 100 kPa.'}
+], (svg, i, t) => { const C = P(170, 150);
+  K.el('ellipse', {cx: C.x, cy: C.y, rx: 120, ry: 80, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 30}, svg);
+  text(svg, C, '250 kPa', {class: 'lbl', 'font-weight': 700}); text(svg, P(170, 30), 'outside: 100 kPa', {class: 'lbl sm muted'});
+  if (i >= 3) for (let k = 0; k < 3; k++) arrow(svg, P(305, 138 + k * 12), P(305 + 50 * t, 138 + k * 12), 'var(--blue)', 2.4);
+});
+
+/* ---- 4. water circuit ↔ electric circuit ---- */
+(function(){
+  const PAIRS = [
+    ['The two circuits', 'A water circuit (left) and an electric circuit (right). Step through to match each part.'],
+    ['pump ↔ cell', 'The <b>pump</b> lifts water and keeps a level (pressure) difference. The <b>cell</b> keeps a <b>potential difference</b> between its terminals. Both use up energy to do this.'],
+    ['water ↔ charge', 'Water flows through the pipe; <b>charge</b> (free electrons) flows through the wire. The flow of charge is the <b>electric current</b> (<span class="ml">വൈദ്യുതപ്രവാഹം</span>).'],
+    ['pipe ↔ wire', 'The <b>pipe</b> guides the water; the <b>wire</b> (a conductor) guides the charge. Both must form a complete loop.'],
+    ['water wheel ↔ bulb', 'The flowing water turns a <b>water wheel</b>; the flowing charge lights a <b>bulb</b>. This is where the energy is given out.'],
+    ['tap ↔ switch', 'Closing a <b>tap</b> stops the water everywhere in the loop; opening a <b>switch</b> stops the current everywhere in the circuit.']];
+  const hl = (i, k) => i === k ? 'var(--accent)' : 'var(--text)';
+  new K.Stepper('#analogy', {steps: PAIRS.map(p => `<b>${p[0]}:</b> ${p[1]}`), draw(svg, i, t){
+    /* water side */
+    const W = [P(40, 80), P(340, 80), P(340, 260), P(40, 260)];
+    K.polyline(svg, [...W, W[0]], {stroke: i === 3 ? 'var(--accent)' : 'var(--muted)', 'stroke-width': 12, 'stroke-linejoin': 'round'});
+    K.polyline(svg, [...W, W[0]], {stroke: 'var(--blue-soft)', 'stroke-width': 7, 'stroke-linejoin': 'round'});
+    const tot = 2 * (300 + 180); for (let k = 0; k < 14; k++){ const s = (k / 14 * tot + (i >= 2 ? t * 40 : 0)) % tot; const p = along([...W, W[0]], tot - s); K.el('circle', {cx: p.x, cy: p.y, r: 3, fill: i === 2 ? 'var(--accent)' : 'var(--blue)'}, svg); }
+    K.el('rect', {x: 15, y: 140, width: 50, height: 60, rx: 8, fill: 'var(--surface)', stroke: hl(i, 1), 'stroke-width': i === 1 ? 3 : 2}, svg); text(svg, P(40, 170), 'pump', {class: 'lbl sm', 'font-weight': 700});
+    const WC = P(190, 80); K.el('circle', {cx: WC.x, cy: WC.y, r: 26, fill: 'var(--surface)', stroke: hl(i, 4), 'stroke-width': i === 4 ? 3 : 2}, svg);
+    for (let b = 0; b < 6; b++){ const q = K.polar(WC, 24, b * 60 + (i >= 4 ? t * 120 : 0)); sline(svg, WC, q, {stroke: hl(i, 4), 'stroke-width': 2}); }
+    text(svg, P(190, 36), 'water wheel', {class: 'lbl sm', 'font-weight': 700});
+    K.el('rect', {x: 326, y: 155, width: 28, height: 30, rx: 4, fill: 'var(--surface)', stroke: hl(i, 5), 'stroke-width': i === 5 ? 3 : 2}, svg); L(svg, 280, 210, 'tap', 'lbl sm', {'font-weight': 700});
+    text(svg, P(190, 295), 'water circuit', {class: 'lbl', 'font-weight': 700});
+    /* electric side */
+    const E = [P(460, 80), P(760, 80), P(760, 260), P(460, 260)];
+    K.polyline(svg, [P(460, 140), E[0], P(590, 80)], {stroke: i === 3 ? 'var(--accent)' : 'var(--text)', 'stroke-width': i === 3 ? 3.4 : 2.2});
+    K.polyline(svg, [P(630, 80), E[1], P(760, 150)], {stroke: i === 3 ? 'var(--accent)' : 'var(--text)', 'stroke-width': i === 3 ? 3.4 : 2.2});
+    K.polyline(svg, [P(760, 190), E[2], E[3], P(460, 200)], {stroke: i === 3 ? 'var(--accent)' : 'var(--text)', 'stroke-width': i === 3 ? 3.4 : 2.2});
+    sym(svg, 'cell', P(460, 140), P(460, 200), {c: hl(i, 1), pmOff: -26});
+    sym(svg, 'bulb', P(590, 80), P(630, 80), {c: hl(i, 4), glow: .8});
+    sym(svg, 'switchOn', P(760, 150), P(760, 190), {c: hl(i, 5)});
+    const ep = [P(460, 200), E[3], E[2], P(760, 190), P(760, 150), E[1], E[0], P(460, 140)], et = plen(ep);
+    for (let k = 0; k < 12; k++){ const p = along(ep, (k / 12 * et + (i >= 2 ? t * 40 : 0)) % et); K.el('circle', {cx: p.x, cy: p.y, r: 3.5, fill: i === 2 ? 'var(--accent)' : 'var(--blue)'}, svg); }
+    text(svg, P(610, 36), 'bulb', {class: 'lbl sm', 'font-weight': 700}); L(svg, 690, 228, 'switch', 'lbl sm', {'font-weight': 700}); L(svg, 500, 172, 'cell', 'lbl sm', {'font-weight': 700});
+    text(svg, P(610, 295), 'electric circuit', {class: 'lbl', 'font-weight': 700});
+    if (i > 0) text(svg, P(400, 170), '↔', {class: 'lbl big amber'});
+    if (i > 0) text(svg, P(400, 140), PAIRS[i][0], {class: 'lbl sm amber', 'font-weight': 700, opacity: t});
+  }});
+})();
+
+/* ---- 5. energy chains ---- */
+(function(){ const svg = document.getElementById('chainSvg'), out = document.getElementById('chainOut'), sel = document.getElementById('chainSel');
+  const C = {torch: ['chemical (in the cells)', 'torch', ['electrical (in the wires)', 'light + heat (bulb)']],
+    solar: ['light', 'solar cell', ['electrical', 'runs the calculator']], dynamo: ['mechanical (turning wheel)', 'dynamo', ['electrical', 'light + heat (lamp)']],
+    station: ['mechanical (turbine)', 'generator', ['electrical', 'to homes and factories']], charge: ['electrical (charger)', 'phone battery', ['chemical (stored)', 'a little heat']],
+    phone: ['chemical (in the battery)', 'mobile phone', ['electrical', 'light, sound, heat']], fan: ['electrical', 'ceiling fan', ['mechanical (moving air)', 'heat + sound (wasted)']],
+    iron: ['electrical', 'iron box', ['heat (useful)', 'a little light (lamp)']]};
+  const draw = () => { K.clear(svg); const [inp, dev, outs] = C[sel.value];
+    const box = (x, y, w, s, cls) => { K.el('rect', {x, y, width: w, height: 46, rx: 10, class: cls, stroke: 'var(--text)', 'stroke-width': 1.3}, svg); text(svg, P(x + w / 2, y + 23), s, {class: 'lbl sm', 'font-weight': 700}); };
+    box(20, 97, 210, inp, 'fill-purple'); arrow(svg, P(234, 120), P(290, 120), 'var(--text)', 2.4);
+    box(294, 97, 170, dev, 'fill-surface'); arrow(svg, P(468, 110), P(530, 70), 'var(--text)', 2.4); arrow(svg, P(468, 130), P(530, 170), 'var(--text)', 2.4);
+    box(534, 47, 250, outs[0], 'fill-green'); box(534, 147, 250, outs[1], 'fill-amber');
+    text(svg, P(125, 80), 'energy in', {class: 'lbl sm muted'}); text(svg, P(659, 32), 'energy out', {class: 'lbl sm muted'});
+    out.textContent = `${dev}: ${inp} → ${outs[0]} → ${outs[1]}.`; };
+  sel.addEventListener('change', draw); draw(); })();
+
+examStepper('#we3', [
+  {h: 'Start', s: 'food → chemical energy', html: '<b>Start:</b> the food you ate stores <b>chemical energy</b>, used by your leg muscles.'},
+  {h: 'Pedalling', s: 'chemical → mechanical', html: '<b>Pedalling:</b> your muscles turn the wheel – <b>mechanical energy</b>.'},
+  {h: 'Dynamo', s: 'mechanical → electrical', html: '<b>Dynamo:</b> the turning wheel spins the dynamo, which produces <b>electrical energy</b>.'},
+  {h: 'Answer', s: 'chem. → mech. → elec. → light + heat', html: '<b>Answer:</b> chemical → mechanical → electrical → <b>light</b> (useful) + <b>heat</b> (wasted) in the lamp.'}
+], (svg, i, t) => { const labels = ['food', 'wheel', 'dynamo', 'lamp'], cols = ['fill-purple', 'fill-blue', 'fill-green', 'fill-amber'];
+  labels.forEach((s, k) => { if (k > i) return; const y = 30 + k * 66; K.el('rect', {x: 70, y, width: 190, height: 44, rx: 10, class: cols[k], stroke: 'var(--text)', 'stroke-width': 1.3, opacity: k === i ? t : 1}, svg);
+    text(svg, P(165, y + 22), s, {class: 'lbl', 'font-weight': 700, opacity: k === i ? t : 1}); if (k > 0) arrow(svg, P(165, y - 20), P(165, y - 2), 'var(--text)', 2.2); });
+}, 360);
+
+/* ---- quiz ---- */
+K.mcq('#q1', {q: 'Two vessels joined by a siphon have the same water level. What happens?', options: ['Water flows from the bigger vessel to the smaller one', 'Water flows back and forth', 'No water flows', 'Water flows until one vessel is empty'], answer: 2, explain: 'No difference in level → no flow.'});
+K.mcq('#q2', {q: 'An iron rod is held with one end in a flame. Heat flows', options: ['from the cooler end to the hotter end', 'from the end in the flame to the end in the hand', 'equally both ways', 'only while the rod is moving'], answer: 1, explain: 'Heat flows from the higher temperature (the end in the flame) to the lower temperature.'});
+K.mcq('#q3', {q: 'The valve of a fully pumped tyre tube is opened. Air flows', options: ['from outside to inside', 'from inside to outside', 'not at all', 'in and out together'], answer: 1, explain: 'The pressure inside is higher, so air flows out until the pressures are equal.'});
+K.mcq('#q4', {q: 'In Fig 7.7 a pump returns water from B to A every second. Why does the water now flow continuously?', options: ['The pump makes the water lighter', 'The pump keeps the level difference between A and B', 'The siphon tube gets wider', 'The water levels become equal faster'], answer: 1, explain: 'The pump (an external energy source) maintains the difference, so the flow never stops – like a cell in a circuit.'});
+K.mcq('#q5', {q: 'In an electric circuit, which part does the job of the pump?', options: ['the wire', 'the bulb', 'the cell or battery', 'the switch'], answer: 2, explain: 'The cell keeps a potential difference between its terminals, just as the pump keeps a level difference.'});
+K.numq('#q6', {q: 'Two identical tanks on the same floor have water levels of 40 cm and 16 cm. They are joined at the bottom. What is the level in each when the flow stops?', answer: 28, tol: 0.01, unit: 'cm', explain: '(40 + 16) ÷ 2 = 28 cm in each.', hint: 'The levels become equal – take the average.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

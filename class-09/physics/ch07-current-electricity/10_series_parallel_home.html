@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Series, Parallel and Home Circuits</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.qa{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.6rem 1rem;margin:.7rem 0;box-shadow:var(--shadow)}
+.qa p{margin:.25em 0}
+.qbox{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.7rem 1rem;margin:.8rem 0;box-shadow:var(--shadow)}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.obs td,.obs th{vertical-align:middle}
+.tw{overflow-x:auto}
+.diary{background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:1rem 0}
+.diary h3{margin:.1rem 0 .4rem;color:var(--accent-ink)}
+.bubbles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.7rem;margin:.8rem 0}
+.bubble{background:var(--surface);border:2px solid var(--purple);border-radius:18px;padding:.6rem .9rem;font-size:.95rem}
+.bubble .ml{display:block;font-weight:600;margin-bottom:.2rem}
+.sw .btn{padding:.3rem .65rem;font-size:.9rem}
+</style>
+</head>
+<body data-page="10_series_parallel_home">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 7 · Section 6</span><span class="chip amber">Textbook pages 149–153</span>
+<h1>Series and Parallel, Home Circuits, AC and DC <span class="ml">ശ്രേണീരീതി · സമാന്തരരീതി</span></h1>
+<p class="lead">Two identical bulbs, one battery – joined one way they glow dimly and both go out when one switch opens; joined the other way each glows fully and works on its own. On this page you find the <b>effective resistance</b> of series and parallel combinations, see why our homes are wired in parallel, and finally answer the science-fair question: why the resistor next to the LED?</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 8–9 of this guide)</div>
+<ul style="margin:0">
+<li>Ohm's law: <b>V = IR</b>, so I = V/R and R = V/I.</li>
+<li>Adding fractions: 1/6 + 1/3 = 1/6 + 2/6 = 3/6 = 1/2 (page 3).</li>
+<li>A bulb can be taken as a fixed resistance (its value is fixed by its rating); the bigger the current through a bulb, the brighter it glows.</li>
+</ul></div>
+
+<h2>1. Two bulbs, two ways (Fig 7.28)</h2>
+<p><span class="ml">3 V ബാറ്ററി, സ്വിച്ചുകൾ, 3 V ബൾബുകൾ എന്നിവ ഉപയോഗിച്ച് താഴെക്കൊടുത്ത രീതിയിൽ (ചിത്രം 7.28 (a), (b)) രണ്ട് സെർക്കീട്ടുകൾ നിർമ്മിക്കുക.</span> – Using a 3 V battery, switches and two 3 W, 3 V bulbs, build the two circuits of Fig 7.28. Work the switches and watch the bulbs.</p>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: Fig 7.28 (a) and (b)</div>
+  <div class="controls sw"><b>(a)</b><button class="btn" id="a1">S₁</button><button class="btn" id="a2">S₂</button><b>(b)</b><button class="btn" id="b1">S₁</button><button class="btn" id="b2">S₂</button>
+  <button class="btn primary" id="abAll">All switches ON</button><button class="btn" id="abS1">Only S₁ ON</button><button class="btn" id="abOff">All OFF</button></div>
+  <svg id="f728" viewBox="0 0 800 320" role="img" aria-label="Left: two bulbs and switches S1 and S2 in series with a 3 V battery. Right: the same bulbs in parallel, each with its own switch"></svg>
+  <div class="readout" id="f728Out"></div>
+  <p class="hint">Model: each 3 W, 3 V bulb taken as a fixed 3 Ω (R = V² ÷ P = 9 ÷ 3); ideal 3 V battery. Brightness is shown in proportion to the power in each bulb.</p>
+</div>
+<div class="qa"><p><b>Textbook questions (page 150)</b></p>
+<ol style="margin:.3rem 0">
+<li><span class="ml">രണ്ട് സെർക്കീട്ടുകളിലെയും S₁, S₂ ഓണാക്കുക. ഏത് സെർക്കീട്ടിലെ ബൾബാണ് കൂടുതൽ തീവ്രതയോടെ പ്രകാശിച്ചത്?</span> – Turn on S₁ and S₂ in both circuits. In which circuit do the bulbs glow more brightly?</li>
+<li><span class="ml">രണ്ട് സെർക്കീട്ടുകളിലെയും S₁ എന്ന സ്വിച്ച് മാത്രം ഓൺ ചെയ്യുക. നിരീക്ഷണം എന്ത്?</span> – Turn on only S₁ in both circuits. What do you observe?</li>
+<li><span class="ml">രണ്ട് സെർക്കീട്ടുകളിലെയും എല്ലാ സ്വിച്ചുകളും ഓൺ ചെയ്താൽ ചിത്രം 7.28 (b) യിലെ ബൾബുകൾ താരതമ്യേന കൂടുതൽ ശോഭയോടെ പ്രകാശിക്കാൻ കാരണമെന്ത്?</span> – With all switches on, why do the bulbs of Fig 7.28 (b) glow more brightly?</li>
+</ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">
+1. In circuit <b>(b)</b>. <i>Why:</i> see answer 3.<br>
+2. In (a) <b>neither bulb glows</b> – the single path is broken at S₂. In (b) <b>only the bulb with S₁ glows</b> (at full brightness). <i>Why:</i> in (b) each bulb has its own path to the battery.<br>
+3. In (b) <b>each bulb gets the full 3 V</b> and so a larger current (1 A each in the model); in (a) the two bulbs <b>share</b> the 3 V (1.5 V each, 0.5 A). <i>Why:</i> <span class="ml">ബൾബുകൾക്ക് ലഭിക്കുന്ന പൊട്ടൻഷ്യൽ വ്യത്യാസത്തിലും കറന്റിലുമുള്ള വ്യത്യാസമാണ് പ്രകാശതീവ്രത കൂടുന്നതിനും കുറയുന്നതിനുമുള്ള കാരണം.</span> – the difference in p.d. and current is what makes a bulb brighter or dimmer.</div></div></div>
+<p>Arrangement (a) is the <b>series connection</b> (<span class="ml">ശ്രേണീരീതി</span>); arrangement (b) is the <b>parallel connection</b> (<span class="ml">സമാന്തരരീതി</span>). Does joining in series or in parallel change the resistance of a circuit? Let us find out with resistors instead of bulbs.</p>
+<div class="callout book"><div class="title">📚 Textbook box – try it on a computer</div>
+<p><b>PhET → Circuit Construction Kit → Virtual Lab.</b> In this free simulation you can drag batteries, bulbs, switches, resistors, ammeters and voltmeters onto a workbench and build every circuit on this page. The link is in the "Explore online" box below (it needs the internet).</p></div>
+
+<h2>2. Effective resistance</h2>
+<p>The thinking student asks: <span class="ml">സെർക്കീട്ടിലെ സഫല പ്രതിരോധം കണ്ടുപിടിക്കുന്നതെങ്ങനെയാണ്?</span> – <em>How do we find the effective resistance of a circuit?</em></p>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 150) – effective resistance <span class="ml">സഫലപ്രതിരോധം</span></div>
+<p class="ml" style="margin:.2rem 0 .4rem">ഒരു സെർക്കീട്ടിൽ ഉൾപ്പെടുത്തിയ ഒന്നിലധികം പ്രതിരോധകങ്ങളുടെ ഫലം ഉളവാക്കാൻ കഴിയുന്ന ഒരു പ്രതിരോധകത്തിന്റെ പ്രതിരോധമാണ് സഫലപ്രതിരോധം.</p>
+<p>The <b>effective resistance</b> of a combination of resistors is the resistance of the <b>single resistor</b> that would have the <b>same effect</b> in the circuit (the same current from the same battery).</p></div>
+
+<h2>3. Resistors in series (Fig 7.29)</h2>
+<p><span class="ml">ശ്രേണീരീതിയിൽ പ്രതിരോധകങ്ങളെ ഘടിപ്പിക്കുമ്പോൾ സെർക്കീട്ടിലെ പൊട്ടൻഷ്യൽ വ്യത്യാസം പ്രതിരോധകങ്ങൾക്കിടയിൽ വിഭജിക്കപ്പെടുന്നു.</span> – In series, the p.d. of the circuit is <b>divided</b> among the resistors, and the <b>same current I</b> flows through each.</p>
+<div class="lab" id="drS"><div class="lab-title">🎬 Derivation – series (Fig 7.29)</div>
+<svg viewBox="0 0 800 300" role="img" aria-label="Fig 7.29: R1 and R2 in series between A and B with a battery and switch; the derivation of R = R1 + R2"></svg></div>
+<div class="callout key"><div class="title">⭐ Key idea (textbook pages 150–151) – series</div>
+<p class="ml" style="margin:.2rem 0 .4rem">ശ്രേണീരീതിയിൽ പ്രതിരോധകങ്ങളെ ഘടിപ്പിക്കുമ്പോൾ പ്രതിരോധങ്ങളുടെ ആകെ തുകയായിരിക്കും സഫലപ്രതിരോധം.</p>
+<p>In series the effective resistance <b>increases</b>: it is the <b>sum</b> of the resistances. <b>V = V₁ + V₂</b>, <b>R = R₁ + R₂</b>. For <b>n</b> equal resistors of R Ω each: effective resistance = <b>nR</b>.</p></div>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: how the p.d. divides in series</div>
+  <div class="controls"><label>R₁ <input id="vdR1" type="range" min="1" max="20" step="1" value="8"><output></output> Ω</label><label>R₂ <input id="vdR2" type="range" min="1" max="20" step="1" value="4"><output></output> Ω</label><label>battery <input id="vdV" type="range" min="1.5" max="12" step="1.5" value="6"><output></output> V</label></div>
+  <svg id="vdSvg" viewBox="0 0 800 260" role="img" aria-label="Two resistors in series with a battery, voltmeters across each and an ammeter, with bars showing how the battery's p.d. is shared"></svg>
+  <div class="readout" id="vdOut"></div>
+</div>
+<div class="qa"><p><b>Textbook questions (page 151)</b></p>
+<ol style="margin:.3rem 0">
+<li><span class="ml">ശ്രേണീരീതിയിൽ പ്രതിരോധകങ്ങൾ ഘടിപ്പിക്കുമ്പോൾ ഉയർന്ന പ്രതിരോധം ഉള്ള പ്രതിരോധകത്തിന്റെ അഗ്രങ്ങൾക്കിടയിൽ അനുഭവപ്പെടുന്ന പൊട്ടൻഷ്യൽ വ്യത്യാസം എപ്രകാരമായിരിക്കും?</span> (<span class="ml">കൂടുതൽ / കുറവ്</span>) – In series, is the p.d. across the resistor of higher resistance more or less?</li>
+<li><span class="ml">ഒരേ മൂല്യമുള്ള പ്രതിരോധകങ്ങളാണ് ശ്രേണീരീതിയിൽ ഘടിപ്പിക്കുന്നതെങ്കിൽ പ്രതിരോധകങ്ങളുടെ അഗ്രങ്ങൾക്കിടയിൽ അനുഭവപ്പെടുന്ന പൊട്ടൻഷ്യൽ വ്യത്യാസം എപ്രകാരമായിരിക്കും?</span> (<span class="ml">തുല്യം / വ്യത്യസ്തം</span>) – If equal resistors are in series, how do the p.d.s across them compare? (equal / different)</li>
+</ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">
+1. <b>More</b> (<span class="ml">കൂടുതൽ</span>). <i>Why:</i> the same current I flows through both, and V = IR, so the bigger R gets the bigger share (8 Ω and 4 Ω on 6 V: 4 V and 2 V).<br>
+2. <b>Equal</b> (<span class="ml">തുല്യം</span>). <i>Why:</i> same I and same R give the same V = IR.</div></div></div>
+<div class="qbox"><p><b>Question 1.</b> <span class="ml">8 Ω, 4 Ω എന്നീ രണ്ട് പ്രതിരോധകങ്ങളും 6 V ബാറ്ററിയും തന്നിരിക്കുന്നു. a) ഇവയെ ശ്രേണീരീതിയിൽ ബന്ധിപ്പിക്കുന്നതിന്റെ സെർക്കീട്ട് ഡയഗ്രം വരയ്ക്കുക. b) സെർക്കീട്ടിലെ സഫലപ്രതിരോധം കണ്ടുപിടിക്കുക. c) സെർക്കീട്ടിലൂടെയുള്ള കറന്റ് എത്രയെന്ന് കണക്കാക്കുക.</span> – Resistors of 8 Ω and 4 Ω and a 6 V battery: (a) draw the series circuit; (b) find the effective resistance; (c) find the current.</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Series: add the resistances. Then I = V/R.</p></div></div>
+<div class="lab" id="exS1"><div class="lab-title">🎬 Solution in exam layout</div>
+<svg viewBox="0 0 800 290" role="img" aria-label="8 ohm and 4 ohm resistors in series with a 6 volt battery"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> (a) the diagram above – battery, switch, 8 Ω and 4 Ω in one loop. (b) R = 8 + 4 = <b>12 Ω</b>. (c) I = V/R = 6 ÷ 12 = <b>0.5 A</b>. (Extra: V across 8 Ω = 0.5 × 8 = 4 V, across 4 Ω = 2 V; 4 + 2 = 6 V.) More: <a href="11_intext_numericals_solutions.html">page 11 ▶</a></div></div>
+<div class="qbox"><p><b>Question 2.</b> <span class="ml">2 Ω വീതം പ്രതിരോധമുള്ള പത്ത് പ്രതിരോധകങ്ങൾ ശ്രേണീരീതിയിൽ ബന്ധിപ്പിച്ചാൽ ലഭിക്കുന്ന സഫലപ്രതിരോധം എത്ര?</span> – Ten resistors of 2 Ω each are joined in series. What is the effective resistance?</p>
+<p><b>Question 3.</b> <span class="ml">6 Ω പ്രതിരോധമുള്ള എത്ര പ്രതിരോധകങ്ങൾ ശ്രേണീരീതിയിൽ ബന്ധിപ്പിച്ചാലാണ് 42 Ω സഫലപ്രതിരോധം ലഭിക്കുക?</span> – How many 6 Ω resistors must be joined in series to get 42 Ω?</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>For n equal resistors in series, effective resistance = nR. In Q3 the unknown is n.</p></div></div>
+<div class="lab" id="exS2"><div class="lab-title">🎬 Solutions in exam layout – n equal resistors in series</div>
+<svg viewBox="0 0 800 290" role="img" aria-label="Ten 2 ohm resistors in a row adding to 20 ohms; then seven 6 ohm resistors adding to 42 ohms"></svg></div>
+<div class="reveal" data-btn="✅ Show final answers"><div class="answer"><b>Answers:</b> Q2: R = nR = 10 × 2 = <b>20 Ω</b>. Q3: n = 42 ÷ 6 = <b>7 resistors</b>. More: <a href="11_intext_numericals_solutions.html">page 11 ▶</a></div></div>
+
+<h2>4. Resistors in parallel (Fig 7.30, 7.31)</h2>
+<p><span class="ml">ചിത്രം 7.30 ൽ കാണിച്ചതുപോലെ പ്രതിരോധകങ്ങളെ സമാന്തരമായി ഘടിപ്പിച്ചാൽ, കറന്റ് ഓരോ ശാഖ വഴിയും വിഭജിച്ച് സെർക്കീട്ട് പൂർത്തിയാക്കുന്നു.</span> – In parallel, the current <b>divides</b> among the branches, so the total current is the sum of the branch currents: <b>I = I₁ + I₂</b>. Each resistor gets the <b>same p.d.</b> V.</p>
+<div class="lab" id="drP"><div class="lab-title">🎬 Derivation – parallel (Fig 7.30)</div>
+<svg viewBox="0 0 800 320" role="img" aria-label="Fig 7.30: R1 and R2 in parallel between A and B; the current I splits into I1 and I2; the derivation of 1/R = 1/R1 + 1/R2"></svg></div>
+<div class="callout key"><div class="title">⭐ Key idea (textbook pages 151–152) – parallel</div>
+<p class="ml" style="margin:.2rem 0 .4rem">സമാന്തര രീതിയിൽ പ്രതിരോധകങ്ങളെ ഘടിപ്പിക്കുമ്പോൾ സെർക്കീട്ടിലെ സഫലപ്രതിരോധം കുറയുന്നു.</p>
+<p>In parallel the effective resistance <b>decreases</b> – it is less than the smallest resistance. <b>I = I₁ + I₂</b>; <b><span class="frac"><span>1</span><span>R</span></span> = <span class="frac"><span>1</span><span>R₁</span></span> + <span class="frac"><span>1</span><span>R₂</span></span></b>, so for two resistors <b>R = <span class="frac"><span>R₁R₂</span><span>R₁ + R₂</span></span></b>. For <b>n</b> equal resistors of R Ω each: effective resistance = <b>R/n</b>.</p></div>
+<div class="bubbles"><div class="bubble"><span class="ml">സമാന്തരമായി രണ്ട് പാലങ്ങൾ ഉണ്ടായതിനാൽ യാത്ര മുടങ്ങിയില്ല</span>"Because there were two bridges side by side, our trip wasn't held up!" (Fig 7.31)</div></div>
+<div class="lab">
+  <div class="lab-title">🌴 Fig 7.31 – a canal with one or two foot-bridges</div>
+  <div class="controls"><button class="btn primary" id="br1">One bridge</button><button class="btn" id="br2">Two bridges side by side</button></div>
+  <svg id="brSvg" viewBox="0 0 800 240" role="img" aria-label="Children crossing a canal on one foot-bridge, or on two bridges side by side; with two paths more children cross each minute"></svg>
+  <div class="readout" id="brOut"></div>
+</div>
+<div class="qbox"><p><b>Question 4.</b> <span class="ml">6 Ω, 3 Ω എന്നീ രണ്ട് പ്രതിരോധകങ്ങളും 6 V ബാറ്ററിയും തന്നിരിക്കുന്നു. a) ഇവയെ സമാന്തരമായി ബന്ധിപ്പിക്കുന്നതിന്റെ സെർക്കീട്ട് ഡയഗ്രം വരയ്ക്കുക. b) സെർക്കീട്ടിലെ സഫലപ്രതിരോധം കണ്ടുപിടിക്കുക. c) ഓരോ പ്രതിരോധകത്തിലൂടെയുമുള്ള കറന്റ് എത്രയെന്ന് കണക്കാക്കുക.</span> – Resistors of 6 Ω and 3 Ω and a 6 V battery: (a) draw the parallel circuit; (b) find the effective resistance; (c) find the current through each resistor.</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>R = R₁R₂/(R₁ + R₂). Each resistor has the full 6 V across it, so I = 6/R for each.</p></div></div>
+<div class="lab" id="exP1"><div class="lab-title">🎬 Solution in exam layout</div>
+<svg viewBox="0 0 800 300" role="img" aria-label="6 ohm and 3 ohm resistors in parallel with a 6 volt battery; 1 A and 2 A in the branches"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> (b) R = (6 × 3)/(6 + 3) = 18/9 = <b>2 Ω</b>. (c) I(6 Ω) = 6/6 = <b>1 A</b>; I(3 Ω) = 6/3 = <b>2 A</b>. Check: total 1 + 2 = 3 A = 6 V ÷ 2 Ω ✓. More: <a href="11_intext_numericals_solutions.html">page 11 ▶</a></div></div>
+<div class="qa"><p><b>Question 5.</b> <span class="ml">ഒരേ മൂല്യമുള്ള പ്രതിരോധകങ്ങളാണ് സമാന്തര രീതിയിൽ ഘടിപ്പിക്കുന്നതെങ്കിൽ ഓരോ പ്രതിരോധകത്തിലൂടെയുമുള്ള കറന്റ് എപ്രകാരമായിരിക്കും?</span> – If equal resistors are connected in parallel, how do the currents through them compare?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">The currents are <b>equal</b>. <i>Why:</i> each has the same p.d. V and the same R, so I = V/R is the same in every branch – the total current is shared equally (n equal branches each carry I/n).</div></div></div>
+<div class="qbox"><p><b>Question 6.</b> <span class="ml">10 Ω വീതം പ്രതിരോധമുള്ള അഞ്ച് പ്രതിരോധകങ്ങൾ സമാന്തരമായി ഘടിപ്പിച്ചാൽ ലഭിക്കുന്ന സഫലപ്രതിരോധം എത്ര?</span> – Five resistors of 10 Ω each are connected in parallel. Find the effective resistance.</p>
+<p><b>Question 7.</b> <span class="ml">ചിത്രം 7.32 ൽ കൊടുത്ത ക്രമീകരണത്തിന്റെ സഫല പ്രതിരോധം എത്രയെന്ന് കണ്ടുപിടിക്കുക.</span> – Find the effective resistance of the arrangement in Fig 7.32 (a 2 Ω resistor in series with two 2 Ω resistors in parallel).</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Q6: n equal resistors in parallel give R/n. Q7: first replace the parallel pair by one resistor, then add the series 2 Ω.</p></div></div>
+<div class="lab" id="exP2"><div class="lab-title">🎬 Solutions in exam layout – five 10 Ω; Fig 7.32</div>
+<svg viewBox="0 0 800 300" role="img" aria-label="Five 10 ohm resistors in parallel giving 2 ohms; Fig 7.32 reduced step by step to 3 ohms"></svg></div>
+<div class="reveal" data-btn="✅ Show final answers"><div class="answer"><b>Answers:</b> Q6: R = R/n = 10 ÷ 5 = <b>2 Ω</b>. Q7: 2 Ω ∥ 2 Ω = (2 × 2)/(2 + 2) = 1 Ω; then 2 Ω + 1 Ω = <b>3 Ω</b>. More: <a href="11_intext_numericals_solutions.html">page 11 ▶</a></div></div>
+
+<h2>5. Resistor combination calculator</h2>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: combine up to three resistors</div>
+  <div class="controls"><button class="btn primary" id="cmS">Series</button><button class="btn" id="cmP">Parallel</button><button class="btn" id="cmM">R₁ + (R₂ ∥ R₃) – like Fig 7.32</button>
+  <label>how many <input id="cmN" type="range" min="2" max="3" step="1" value="2"><output></output></label></div>
+  <div class="controls"><label>R₁ <input id="cm1" type="range" min="1" max="20" step="1" value="6"><output></output> Ω</label><label>R₂ <input id="cm2" type="range" min="1" max="20" step="1" value="3"><output></output> Ω</label><label>R₃ <input id="cm3" type="range" min="1" max="20" step="1" value="2"><output></output> Ω</label><label>battery <input id="cmV" type="range" min="1.5" max="12" step="1.5" value="6"><output></output> V</label></div>
+  <svg id="cmSvg" viewBox="0 0 800 320" role="img" aria-label="The chosen combination of resistors with a battery; arrow thickness shows how the current divides; each resistor is labelled with its current and p.d."></svg>
+  <div class="readout" id="cmOut"></div>
+</div>
+<div class="diary"><h3>📒 Science diary (<span class="ml">സയൻസ് ഡയറി</span>) – series and parallel compared</h3>
+<p style="margin-top:0"><span class="ml">പ്രതിരോധകങ്ങൾ സെർക്കീട്ടിൽ ശ്രേണിയായി ഘടിപ്പിക്കുമ്പോഴും സമാന്തരമായി ഘടിപ്പിക്കുമ്പോഴും ഉള്ള വ്യത്യാസങ്ങൾ സയൻസ് ഡയറിയിൽ രേഖപ്പെടുത്തൂ.</span></p>
+<div class="reveal" data-btn="Show the comparison table"><div class="tw"><table class="obs"><thead><tr><th></th><th>Series <span class="ml">ശ്രേണീരീതി</span></th><th>Parallel <span class="ml">സമാന്തരരീതി</span></th></tr></thead><tbody>
+<tr><td>Current</td><td>the <b>same</b> through every resistor</td><td><b>divides</b>: I = I₁ + I₂</td></tr>
+<tr><td>Potential difference</td><td><b>divides</b>: V = V₁ + V₂ (bigger R, bigger share)</td><td>the <b>same</b> across every branch</td></tr>
+<tr><td>Effective resistance</td><td><b>increases</b>: R = R₁ + R₂ (n equal: nR)</td><td><b>decreases</b>: 1/R = 1/R₁ + 1/R₂, less than the smallest (n equal: R/n)</td></tr>
+<tr><td>If one part breaks</td><td>the whole circuit stops</td><td>the other branches keep working</td></tr>
+<tr><td>Switches</td><td>one switch controls everything</td><td>each branch can have its own switch</td></tr>
+<tr><td>Used in</td><td>decoration serial lights, a fuse or switch with its appliance, cells in a torch</td><td>household appliances, power-bank cells</td></tr>
+</tbody></table></div></div></div>
+
+<h2>6. How our homes are wired (page 153)</h2>
+<p><span class="ml">പ്രതിരോധകങ്ങൾ സെർക്കീട്ടിലൂടെയുള്ള കറന്റിനെ കുറയ്ക്കുന്നവയാണ് ... ഒരു സെർക്കീട്ടിൽ ഉപയോഗിക്കുന്ന ബൾബ്, ഹീറ്റർ, ഇസ്തിരിപ്പെട്ടി തുടങ്ങിയ വൈദ്യുത ഉപകരണങ്ങളിലെല്ലാം പ്രതിരോധകങ്ങൾ ഉണ്ട്.</span> – Resistors reduce the current in a circuit, and resistors of different values are combined to get the p.d. or current needed. Every electrical appliance – bulb, heater, iron box – has resistance.</p>
+<div class="lab">
+  <div class="lab-title">🏠 Virtual lab: a home's parallel wiring</div>
+  <div class="controls sw"><button class="btn primary" id="hL">💡 Light</button><button class="btn" id="hF">🌀 Fan</button><button class="btn" id="hT">📺 TV</button><button class="btn" id="hX">Let the light bulb fuse</button></div>
+  <svg id="hSvg" viewBox="0 0 800 280" role="img" aria-label="The supply from the KSEB meter and the main switch runs along two lines; a light, a fan and a TV are each connected across the lines with their own switch"></svg>
+  <div class="readout" id="hOut"></div>
+</div>
+<div class="qa"><p><b>Textbook questions (page 153)</b></p>
+<ol style="margin:.3rem 0">
+<li><span class="ml">ഗാർഹിക സെർക്കീട്ടുകളിൽ ബൾബ്, ഫാൻ തുടങ്ങിയ വൈദ്യുതോപകരണങ്ങൾ ഘടിപ്പിക്കുന്നത് ഏത് രീതിയിലാണ്?</span> – How are appliances like bulbs and fans connected in household circuits?</li>
+<li><span class="ml">സമാന്തര രീതിയിൽ വൈദ്യുത ഉപകരണങ്ങൾ ഘടിപ്പിക്കുന്നത് കൊണ്ടുള്ള ഗുണങ്ങൾ എന്തെല്ലാം?</span> – What are the advantages of connecting appliances in parallel?</li>
+</ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">
+1. <b>In parallel</b>. <i>Why:</i> each appliance is connected directly across the two supply wires.<br>
+2. (i) Every appliance gets the <b>full supply voltage (230 V)</b> it is designed for. (ii) Each can be <b>switched on and off independently</b> with its own switch. (iii) If one appliance <b>fails or fuses, the others keep working</b>. (iv) Appliances of different power draw their own different currents. <i>Why:</i> each branch is a separate path from the supply – compare Fig 7.28 (b).</div></div></div>
+
+<h2>7. Protecting the bulb (Fig 7.33) – the science-fair answer</h2>
+<p><span class="ml">3 V പൊട്ടൻഷ്യൽ വ്യത്യാസത്തിൽ പ്രവർത്തിക്കുന്ന ബൾബ്, 12 Ω പ്രതിരോധകം, 9 V ബാറ്ററി എന്നിവ ഉൾപ്പെടുന്ന ഒരു സെർക്കീട്ടും [ചിത്രം 7.33 (a)] 12 Ω പ്രതിരോധകം ഉൾപ്പെടാത്ത മറ്റൊരു സെർക്കീട്ടുമാണ് [ചിത്രം 7.33 (b)] നൽകിയിരിക്കുന്നത്. ബൾബിന്റെ പ്രതിരോധം 6 Ω ആണ്.</span> – A bulb made to work at 3 V (resistance 6 Ω) is connected to a 9 V battery (a) with a 12 Ω resistor in series, and (b) without it.</p>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: Fig 7.33 (a) and (b)</div>
+  <div class="controls"><button class="btn primary" id="pbA">Switch ON circuit (a)</button><button class="btn" id="pbB">Switch ON circuit (b)</button><button class="btn" id="pbR">⟲ New bulbs, switches off</button></div>
+  <svg id="pbSvg" viewBox="0 0 800 300" role="img" aria-label="Left: a 6 ohm bulb in series with a 12 ohm resistor on a 9 V battery. Right: the same bulb alone on 9 V; it fuses"></svg>
+  <div class="readout" id="pbOut"></div>
+</div>
+<div class="qa"><p><b>Textbook questions (page 153)</b></p>
+<ol style="margin:.3rem 0">
+<li><span class="ml">ഏത് സെർക്കീട്ടിലാണ് പ്രതിരോധം കൂടുതൽ?</span> – Which circuit has more resistance?</li>
+<li><span class="ml">ഏത് സെർക്കീട്ടിലാണ് ബൾബിന്റെ അഗ്രങ്ങൾക്കിടയിൽ 3 V പൊട്ടൻഷ്യൽ വ്യത്യാസം ലഭിക്കുന്നത്?</span> – In which circuit does the bulb get a p.d. of 3 V?</li>
+<li><span class="ml">സ്വിച്ച് ഓൺ ചെയ്താൽ ചിത്രം 7.33 (b) സെർക്കീട്ടിലെ ബൾബിന് എന്താണ് സംഭവിക്കുക?</span> – What happens to the bulb of Fig 7.33 (b) when it is switched on?</li>
+</ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">
+1. Circuit <b>(a)</b>: 6 + 12 = 18 Ω, against only 6 Ω in (b).<br>
+2. Circuit <b>(a)</b>: I = 9 ÷ 18 = 0.5 A, so V(bulb) = 0.5 × 6 = 3 V – exactly what it needs.<br>
+3. The bulb <b>fuses</b> (burns out). <i>Why:</i> it gets the whole 9 V, so I = 9 ÷ 6 = 1.5 A – three times the 0.5 A it is made for. <span class="ml">ബൾബിന് ആവശ്യമായതിലും അധികം പൊട്ടൻഷ്യൽ വ്യത്യാസം ലഭിക്കുന്നതിനാൽ കറന്റ് വർധിക്കുകയും ബൾബ് കേടാവുകയും ചെയ്യും.</span></div></div></div>
+<div class="lab" id="ex733"><div class="lab-title">🎬 Solution in exam layout – Fig 7.33</div>
+<svg viewBox="0 0 800 300" role="img" aria-label="Working for Fig 7.33: total resistance, current and the p.d. across the bulb in circuits a and b"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> (a) R = 18 Ω, I = 0.5 A, V(bulb) = <b>3 V</b> – safe. (b) R = 6 Ω, I = 1.5 A, V(bulb) = 9 V – the bulb <b>fuses</b>. More: <a href="11_intext_numericals_solutions.html">page 11 ▶</a></div></div>
+<div class="callout key"><div class="title">⭐ The science-fair question answered (pages 131 and 153)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">സ്കൂൾ ശാസ്ത്രോത്സവത്തിൽ നിരീക്ഷിച്ച സെർക്കീട്ടിൽ LED യോടൊപ്പം ബന്ധിപ്പിച്ച ഘടകം പ്രതിരോധകം ആണെന്നും ഇത് എന്തിനാണ് സെർക്കീട്ടിൽ ഉൾപ്പെടുത്തിയതെന്നും മനസ്സിലായല്ലോ.</p>
+<p>The component joined with the LED at the science fair was a <b>resistor</b>, connected <b>in series</b> to <b>limit the current</b>: it takes its share of the battery's p.d., so the LED gets only the small p.d. and current it can safely handle – just like the 12 Ω resistor protecting the 3 V bulb on a 9 V battery.</p></div>
+
+<h2>8. DC and AC – and staying safe (page 153)</h2>
+<p><span class="ml">ബാറ്ററി/സെല്ല് എന്നിവയിൽ നിന്ന് ലഭിക്കുന്ന വൈദ്യുതിയും നമ്മുടെ വീടുകളിൽ ലഭിക്കുന്ന വൈദ്യുതിയും തമ്മിൽ എന്തെങ്കിലും വ്യത്യാസമുണ്ടോ?</span> – Is there any difference between the electricity from a battery and the electricity in our homes?</p>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: direct current or alternating current?</div>
+  <div class="controls"><button class="btn primary" id="dc">Battery – DC</button><button class="btn" id="ac">Home supply – AC</button></div>
+  <svg id="acSvg" viewBox="0 0 800 240" role="img" aria-label="Left: a graph of current against time, flat for DC and a wave for AC. Right: electrons in a wire drifting one way for DC and moving back and forth for AC"></svg>
+  <div class="readout" id="acOut"></div>
+</div>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 153) – DC and AC</div>
+<p class="ml" style="margin:.2rem 0 .4rem">ബാറ്ററിയിൽ നിന്ന് ലഭിക്കുന്ന വൈദ്യുതി ഒരേ ദിശയിൽ (Direct Current) മാത്രമാണ് പ്രവഹിക്കുന്നത്. എന്നാൽ വീടുകളിൽ ലഭിക്കുന്ന വൈദ്യുതി ക്രമമായ ഇടവേളയിൽ ദിശ മാറിക്കൊണ്ടിരിക്കുന്ന വൈദ്യുതിയാണ് (Alternating Current). കൂടാതെ ഉയർന്ന വോൾട്ടേജിലുള്ള (230 V) വൈദ്യുതിയും ആണ്.</p>
+<p>Electricity from a battery flows in <b>one direction only</b> – <b>direct current (DC)</b>. The electricity in our homes <b>changes direction at regular intervals</b> – <b>alternating current (AC)</b> – and it is at a <b>high voltage (230 V)</b>. (In India it changes direction 100 times a second – 50 cycles per second, 50 Hz.) <b>So never do the experiments and circuits of this chapter with household electricity.</b></p></div>
+<div class="callout warn"><div class="title">⚠️ Electrical safety at home – discuss with your elders (<span class="ml">മുതിർന്നവരുമായി ചർച്ച ചെയ്യൂ</span>)</div>
+<ul style="margin:0">
+<li>Never touch switches, plugs or appliances with <b>wet hands</b> or while standing on a wet floor.</li>
+<li>Never poke anything into a socket; pull a plug out by its body, not the wire; replace cracked plugs and damaged wires.</li>
+<li>Do not overload one socket with many appliances through multi-plugs.</li>
+<li>Switch off at the main switch / MCB before any repair – and leave repairs to a licensed electrician. An ELCB / RCCB in the meter board cuts the supply if current leaks to earth (go further).</li>
+<li>If someone gets a shock, <b>do not touch them</b> – switch off the supply first or push them away with a dry wooden stick.</li>
+</ul></div>
+<div class="callout real"><div class="title">🌴 Kerala connection – monsoon power lines</div>
+<p>During the monsoon, trees and branches often bring down KSEB lines. A fallen or sagging line, a wet electric post or a waterlogged street near a broken line can be deadly. <b>Keep far away, keep others away, and inform KSEB at once.</b> Never try to move a wire, even with a stick.</p></div>
+<div class="safety">⚠ Never experiment with the mains supply (230 V AC) at home – it can kill. Use only torch cells or a 9 V battery.</div>
+<div class="safety">⚠ Never short-circuit a cell or battery; never put cells in your mouth; stop if a battery gets hot; keep water and fire away; dispose of batteries (nickel, cadmium, lead) at e-waste collection points.</div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://www.physicsclassroom.com/tutorial/Electric-Circuits/circuit-connections/series-circuits" target="_blank" rel="noopener noreferrer">📄 Series Circuits</a> <span class="src">The Physics Classroom</span><br><span class="note">In series the same current flows everywhere and resistances add: R = R1 + R2 + R3.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/Electric-Circuits/circuit-connections/parallel-circuits" target="_blank" rel="noopener noreferrer">📄 Parallel Circuits</a> <span class="src">The Physics Classroom</span><br><span class="note">In parallel each branch gets the same voltage and the total resistance becomes smaller.</span></li><li><a href="https://www.physicsclassroom.com/tutorial/Electric-Circuits/circuit-connections/combination-circuits" target="_blank" rel="noopener noreferrer">📄 Combination Circuits</a> <span class="src">The Physics Classroom</span><br><span class="note">Circuits mixing series and parallel parts, solved step by step.</span></li><li><a href="https://kseb.in/index.php/sbuarticledetail/eyJpdiI6IjRQZXNUSlQvSXdIVjcwRkdaZUJOWUE9PSIsInZhbHVlIjoibzVDMDVDNXkzaXZ0aEhYK3dQWUFrdz09IiwibWFjIjoiYzdhNmM1NTM3MWRlYTFmZTNiYmUwOTVlOWU0MjQ4YzliMjAwMTUwY2RjNzc4ODRiMTY3MmQ4YTI2OWY5OTM0NiIsInRhZyI6IiJ9/eyJpdiI6IjNFbG5uYlRnVG92Qzdmb09qZEdiWVE9PSIsInZhbHVlIjoiTUpzazg1WjQ2UEYwWm1IOUQ0aUdMdz09IiwibWFjIjoiMDE0N2QzYWYwMjY3NGIyMWVmZTZkZWU3Y2QxMDU3NGFlNTQzNTIyZDZkZjhmMTBiY2E1N2RhZWI3MWYyZjRjNSIsInRhZyI6IiJ9" target="_blank" rel="noopener noreferrer">📄 How to avoid accidents at Workplace? (KSEB safety do&#x27;s and don&#x27;ts)</a> <span class="src">Kerala State Electricity Board</span><br><span class="note">Kerala&#x27;s own safety advice: ISI-marked appliances, earth leakage protection, and never touch fallen lines.</span></li><li><a href="https://en.vikaspedia.in/viewcontent/energy/policy-support/battery-waste-management-rules-2022" target="_blank" rel="noopener noreferrer">📄 Battery Waste Management Rules 2022</a> <span class="src">Vikaspedia (Government of India)</span><br><span class="note">Why used cells with lead, cadmium and mercury must be returned for recycling, not thrown in the bin.</span></li><li><a href="https://en.wikipedia.org/wiki/Fuse_(electrical)" target="_blank" rel="noopener noreferrer">📄 Fuse (electrical)</a> <span class="src">Wikipedia</span><br><span class="note">How a thin wire melts on purpose to protect a circuit when the current becomes too large.</span></li><li><a href="https://en.wikipedia.org/wiki/Residual-current_device" target="_blank" rel="noopener noreferrer">📄 Residual-current device</a> <span class="src">Wikipedia</span><br><span class="note">The ELCB/RCCB in your home&#x27;s switchboard that cuts the power within a fraction of a second if current leaks.</span></li></ul></div>
+
+<h2>9. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li><b>Series</b>: same current; V = V₁ + V₂; <b>R = R₁ + R₂</b> (n equal: nR); one break stops everything.</li>
+<li><b>Parallel</b>: same p.d.; I = I₁ + I₂; <b>1/R = 1/R₁ + 1/R₂</b>, R = R₁R₂/(R₁ + R₂) (n equal: R/n); each branch works on its own.</li>
+<li>8 Ω + 4 Ω on 6 V: 12 Ω, 0.5 A. Ten 2 Ω: 20 Ω. 42 Ω from 6 Ω: 7. 6 Ω ∥ 3 Ω on 6 V: 2 Ω, 1 A and 2 A. Five 10 Ω in parallel: 2 Ω. Fig 7.32: 3 Ω.</li>
+<li>Homes are wired in <b>parallel</b>: full 230 V each, independent switches, one failure doesn't stop the others.</li>
+<li>A <b>series resistor</b> protects a bulb or LED by limiting the current (Fig 7.33: 18 Ω, 0.5 A, 3 V).</li>
+<li>Battery: <b>DC</b> (one direction). Home: <b>AC</b> (changes direction), 230 V – never use it for experiments.</li>
+</ul></div>
+<p>Next: <a href="11_intext_numericals_solutions.html">In-text questions – all solutions ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Current Electricity · Class 9 Physics", "icon": "🔋", "key": "physics_ch7_progress", "pages": [["index.html", "Home"], ["01_charges_conductors.html", "1 · Charges, Electrons, Conductors & Insulators"], ["02_flow_needs_difference.html", "2 · Flow Needs a Difference: Water, Heat & Air"], ["03_units_ratios_graphs.html", "3 · Units, Prefixes, Ratios & Straight-line Graphs"], ["04_circuits_symbols_safety.html", "4 · Simple Circuits, Symbols & Safety"], ["05_charge_flow_potential_difference.html", "5 · Charge Flow & Potential Difference"], ["06_emf_cells_batteries.html", "6 · emf, Cells, Batteries & Combining Cells"], ["07_electric_current_ammeter.html", "7 · Electric Current, Ammeter & Circuit Diagrams"], ["08_ohms_law_resistance.html", "8 · Ohm's Law & Resistance"], ["09_factors_resistance_rheostat.html", "9 · What Affects Resistance? The Rheostat"], ["10_series_parallel_home.html", "10 · Series & Parallel, Home Circuits, AC & DC"], ["11_intext_numericals_solutions.html", "11 · In-text Questions – Solutions"], ["12_assess_q1_q6_solutions.html", "12 · Let Us Assess Q1–6 – Solutions"], ["13_assess_q7_q11_solutions.html", "13 · Let Us Assess Q7–11 & Extended Activities"], ["14_applications_explore.html", "14 · Applications & Explore Online"], ["15_summary_revision.html", "15 · Summary & Quick Quiz"], ["16_model_test_paper.html", "16 · Model Test Paper"], ["17_model_test_solutions.html", "17 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ---------- page helpers (Chapter 7, pages 5–10; same code on each page) ---------- */
+const {P} = K;
+const COL = {red: 'var(--red)', blue: 'var(--blue)', green: 'var(--green)', amber: 'var(--accent)', purple: 'var(--purple)', text: 'var(--text)', muted: 'var(--muted)', primary: 'var(--primary)'};
+const cv = c => COL[c] || c;
+const $id = id => document.getElementById(id);
+/* a line with its own stroke (seg() carries class 'ln', whose CSS would override it) */
+const sline = (svg, a, b, attrs={}) => K.el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+const ln = (svg, a, b, c='text', w=2, extra={}) => sline(svg, a, b, {stroke: cv(c), 'stroke-width': w, ...extra});
+const rect = (svg, x, y, w, h, attrs={}) => K.el('rect', {x, y, width: Math.max(0, w), height: Math.max(0, h), ...attrs}, svg);
+const circ = (svg, c, r, attrs={}) => K.el('circle', {cx: c.x, cy: c.y, r: Math.max(0, r), ...attrs}, svg);
+const path = (svg, d, attrs={}) => K.el('path', {d, fill: 'none', ...attrs}, svg);
+/* true minus for negative numbers only */
+const minus = s => String(s).replace(/(^|[\s(=:,/×+])-(?=[\d.])/g, '$1−');
+/* number with at most d decimals, true minus */
+const nf = (v, d=2) => { const s = K.fmt(Math.abs(+v), d); return (+v < 0 && +s !== 0 ? '−' : '') + s; };
+/* fixed decimals (for meter displays) */
+const fx = (v, d=2) => { const s = Math.abs(+v).toFixed(d); return (+v < 0 && +s !== 0 ? '−' : '') + s; };
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+/* SVG text that understands subscripts: "R_1" → R with a lowered 1 */
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+function text(svg, p, str, attrs={}){ const s = String(str);
+  if (!/_/.test(s)) return K.text(svg, p, s, attrs);
+  return K.el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs,
+    html: esc(s).replace(/_(\w+)/g, '<tspan baseline-shift="sub" font-size="72%">$1</tspan>')}, svg); }
+const tl = (svg, x, y, str, cls='', extra={}) => text(svg, P(x, y), str, {class: ('lbl ' + cls).trim(), 'text-anchor': 'start', ...extra});
+const tc = (svg, x, y, str, cls='', extra={}) => text(svg, P(x, y), str, {class: ('lbl ' + cls).trim(), ...extra});
+/* working lines: rows = [[step, text, cls], …]; rows whose step ≤ i are shown, the newest fades in */
+function lines(svg, rows, i, t, o={}){ const x = o.x ?? 400, y0 = o.y ?? 36, lh = o.lh ?? 32, an = o.anchor ?? 'start'; let k = 0;
+  rows.forEach(r => { if (r[0] > i) return; const ind = (r[1].match(/^ */)[0].length) * 4.3; text(svg, P(x + ind, y0 + k * lh), minus(r[1].trim()), {class: 'lbl ' + (r[2] || ''), 'text-anchor': an, opacity: r[0] === i ? t : 1}); k++; }); }
+/* arrow from a to b with a filled head; o.c colour, o.w width, o.label, o.lo label offset, o.anchor, o.op */
+function arrow(svg, a, b, o={}){ const c = cv(o.c || 'red'), w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const L = K.dist(a, b); if (L < 1) return g; const u = K.unit(a, b), hs = Math.min(o.head ?? 11, L * .6); const base = P(b.x - u.x * hs, b.y - u.y * hs);
+  K.el('line', {x1: a.x, y1: a.y, x2: base.x, y2: base.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round', ...(o.dash ? {'stroke-dasharray': o.dash} : {})}, g);
+  K.el('polygon', {points: `${b.x},${b.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g);
+  if (o.label) text(g, P(b.x + (o.lo ? o.lo.x : 0), b.y + (o.lo ? o.lo.y : -12)), minus(o.label), {class: 'lbl sm ' + (o.lc || o.c || 'red'), 'text-anchor': o.anchor || 'middle', 'font-weight': 700});
+  return g; }
+const setOut = (id, s) => { $id(id).textContent = minus(s); };
+
+/* ---------- circuit symbols (textbook Table 7.5) ----------
+   Every two-terminal symbol is drawn between end points a and b (any direction); leads join a and b to the body.
+   n = the normal to a→b; for a left-to-right symbol, −n points up. */
+const nrm = u => P(-u.y, u.x);
+const at = (m, u, k, n, h=0) => P(m.x + u.x * k + n.x * h, m.y + u.y * k + n.y * h);
+function wire(svg, pts, o={}){ return K.el('polyline', {points: pts.map(p => `${K.fmt(p.x, 2)},${K.fmt(p.y, 2)}`).join(' '), fill: 'none', stroke: cv(o.c || 'text'), 'stroke-width': o.w ?? 2.4, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', ...(o.dash ? {'stroke-dasharray': o.dash} : {}), ...(o.op !== undefined ? {opacity: o.op} : {})}, svg); }
+const jdot = (svg, p, c='text') => circ(svg, p, 4, {fill: cv(c)});
+/* plates of one cell centred at k along u: long thin = +, short thick = − */
+function plates(svg, m, u, k, plusFirst, c){ const n = nrm(u), lp = plusFirst ? k - 4 : k + 4, sp = plusFirst ? k + 4 : k - 4;
+  sline(svg, at(m, u, lp, n, -15), at(m, u, lp, n, 15), {stroke: c, 'stroke-width': 2.2});
+  sline(svg, at(m, u, sp, n, -8), at(m, u, sp, n, 8), {stroke: c, 'stroke-width': 5, 'stroke-linecap': 'butt'}); }
+/* cell: o.plus = 'a' or 'b' (which end the + terminal faces); o.signs shows + and − */
+function cellSym(svg, a, b, o={}){ const c = cv(o.c || 'text'), u = K.unit(a, b), n = nrm(u), m = K.mid(a, b), pb = (o.plus || 'b') === 'b';
+  ln(svg, a, at(m, u, -4, n), o.c || 'text', 2.4); ln(svg, at(m, u, 4, n), b, o.c || 'text', 2.4);
+  plates(svg, m, u, 0, !pb, c);
+  if (o.signs !== false){ const s = o.signSide ?? -1; tc(svg, at(m, u, pb ? 12 : -12, n, s * 22).x, at(m, u, pb ? 12 : -12, n, s * 22).y, '+', 'sm', {'font-weight': 700}); tc(svg, at(m, u, pb ? -12 : 12, n, s * 22).x, at(m, u, pb ? -12 : 12, n, s * 22).y, '−', 'sm', {'font-weight': 700}); }
+  if (o.label) { const q = at(m, u, 0, n, (o.labelSide ?? 1) * 28); tc(svg, q.x, q.y, o.label, 'sm'); }
+  return m; }
+/* battery of o.n cells (default 2) */
+function batterySym(svg, a, b, o={}){ const c = cv(o.c || 'text'), u = K.unit(a, b), n = nrm(u), m = K.mid(a, b), N = o.n || 2, pb = (o.plus || 'b') === 'b';
+  const W = N * 8 + (N - 1) * 8, k0 = -W / 2;
+  ln(svg, a, at(m, u, k0, n), o.c || 'text', 2.4); ln(svg, at(m, u, -k0, n), b, o.c || 'text', 2.4);
+  for (let i = 0; i < N; i++){ const kc = k0 + 4 + i * 16; plates(svg, m, u, kc, !pb, c); if (i < N - 1) ln(svg, at(m, u, kc + 4, n), at(m, u, kc + 12, n), o.c || 'text', 2); }
+  if (o.signs !== false){ const s = o.signSide ?? -1, pp = at(m, u, pb ? -k0 + 8 : k0 - 8, n, s * 20), mm = at(m, u, pb ? k0 - 8 : -k0 + 8, n, s * 20); tc(svg, pp.x, pp.y, '+', 'sm', {'font-weight': 700}); tc(svg, mm.x, mm.y, '−', 'sm', {'font-weight': 700}); }
+  if (o.label){ const q = at(m, u, 0, n, (o.labelSide ?? 1) * 30); tc(svg, q.x, q.y, o.label, 'sm'); }
+  return m; }
+/* switch / key: two terminal dots and a blade; open = blade lifted 30° */
+function switchSym(svg, a, b, closed, o={}){ const c = o.c || 'text', u = K.unit(a, b), n = nrm(u), m = K.mid(a, b), h = o.half ?? 15;
+  const p1 = at(m, u, -h, n), p2 = at(m, u, h, n);
+  ln(svg, a, p1, c, 2.4); ln(svg, p2, b, c, 2.4);
+  const ang = K.rad(closed ? 0 : -32 * (o.flip ? -1 : 1)), L = 2 * h + 2, d = P((u.x * Math.cos(ang) - u.y * Math.sin(ang)) * L, (u.x * Math.sin(ang) + u.y * Math.cos(ang)) * L);
+  ln(svg, p1, P(p1.x + d.x, p1.y + d.y), c, 2.6);
+  circ(svg, p1, 3.2, {fill: 'var(--svgbg)', stroke: cv(c), 'stroke-width': 2}); circ(svg, p2, 3.2, {fill: 'var(--svgbg)', stroke: cv(c), 'stroke-width': 2});
+  if (o.label){ const q = at(m, u, 0, n, (o.labelSide ?? 1) * 20); tc(svg, q.x, q.y, o.label, 'sm'); }
+  if (o.hit) { const g = K.el('circle', {cx: m.x, cy: m.y, r: 22, fill: 'transparent', style: 'cursor:pointer'}, svg); g.addEventListener('click', o.hit); }
+  return m; }
+/* bulb / lamp: circle with ×; o.glow 0..1 (brightness), o.fused */
+function bulbSym(svg, a, b, o={}){ const r = o.r || 14, u = K.unit(a, b), m = K.mid(a, b), g = clamp(o.glow || 0, 0, 1.4);
+  ln(svg, a, at(m, u, -r, nrm(u)), 'text', 2.4); ln(svg, at(m, u, r, nrm(u)), b, 'text', 2.4);
+  if (g > 0.01){ circ(svg, m, r + 5 + 18 * Math.min(g, 1.2), {fill: '#fde047', opacity: .18 + .4 * Math.min(g, 1)}); }
+  circ(svg, m, r, {fill: g > 0.01 ? '#facc15' : 'var(--svgbg)', 'fill-opacity': g > 0.01 ? .25 + .75 * Math.min(g, 1) : 1, stroke: cv(o.fused ? 'red' : 'text'), 'stroke-width': 2.2});
+  const d = r * .7; ln(svg, P(m.x - d, m.y - d), P(m.x + d, m.y + d), o.fused ? 'red' : 'text', 2); ln(svg, P(m.x - d, m.y + d), P(m.x + d, m.y - d), o.fused ? 'red' : 'text', 2, o.fused ? {'stroke-dasharray': '3 3'} : {});
+  if (o.label){ const q = at(m, u, 0, nrm(u), (o.labelSide ?? -1) * (r + 14)); tc(svg, q.x, q.y, o.label, 'sm'); }
+  return m; }
+/* LED: triangle pointing in the allowed current direction a→b (a = + leg), bar, two light arrows */
+function ledSym(svg, a, b, o={}){ const u = K.unit(a, b), n = nrm(u), m = K.mid(a, b), on = clamp(o.on || 0, 0, 1), col = o.col || '#ef4444';
+  ln(svg, a, at(m, u, -9, n), 'text', 2.4); ln(svg, at(m, u, 9, n), b, 'text', 2.4);
+  if (on > 0.02) circ(svg, m, 14 + 14 * on, {fill: col, opacity: .15 + .4 * on});
+  K.polygon(svg, [at(m, u, -9, n, -10), at(m, u, -9, n, 10), at(m, u, 9, n)], {fill: on > .02 ? col : 'var(--svgbg)', 'fill-opacity': on > .02 ? .4 + .6 * on : 1, stroke: 'var(--text)', 'stroke-width': 2});
+  ln(svg, at(m, u, 9, n, -10), at(m, u, 9, n, 10), 'text', 2.4);
+  const sg = (n.y > .1 || (Math.abs(n.y) <= .1 && n.x > 0)) ? -1 : 1;
+  [-2, 5].forEach(k => arrow(svg, at(m, u, k, n, sg * 14), at(m, u, k + 4, n, sg * 26), {c: on > .02 ? col : 'text', w: 1.6, head: 5}));
+  return m; }
+/* meter (V or A): circle with a letter; + and − marked; o.plus = 'a'|'b'; o.reading shown in a box at o.box offset */
+function meterSym(svg, a, b, letter, o={}){ const r = o.r || 16, u = K.unit(a, b), n = nrm(u), m = K.mid(a, b), pb = (o.plus || 'b') === 'b', c = o.warn ? 'red' : (o.c || 'text');
+  ln(svg, a, at(m, u, -r, n), 'text', 2.4); ln(svg, at(m, u, r, n), b, 'text', 2.4);
+  circ(svg, m, r, {fill: o.warn ? 'var(--red-soft)' : 'var(--surface)', stroke: cv(c), 'stroke-width': 2.2});
+  tc(svg, m.x, m.y + 1, letter, '', {'font-weight': 700, 'font-size': 17});
+  if (o.signs !== false){ const s = o.signSide ?? -1, pp = at(m, u, pb ? r + 6 : -r - 6, n, s * 14), mm = at(m, u, pb ? -r - 6 : r + 6, n, s * 14); tc(svg, pp.x, pp.y, '+', 'sm', {'font-weight': 700}); tc(svg, mm.x, mm.y, '−', 'sm', {'font-weight': 700}); }
+  if (o.reading !== undefined && o.reading !== null){ const off = o.box || P(0, -(r + 20)); lcd(svg, P(m.x + off.x, m.y + off.y), o.reading, {warn: o.warn}); }
+  return m; }
+/* small digital display */
+function lcd(svg, p, str, o={}){ const s = minus(str), w = Math.max(48, s.length * 8.6 + 14);
+  rect(svg, p.x - w / 2, p.y - 12, w, 24, {rx: 5, fill: o.warn ? 'var(--red-soft)' : '#0f2a1d', stroke: o.warn ? 'var(--red)' : '#14532d', 'stroke-width': 1.5});
+  K.el('text', {x: p.x, y: p.y + 1, 'text-anchor': 'middle', 'dominant-baseline': 'middle', fill: o.warn ? 'var(--red)' : '#4ade80', 'font-family': 'ui-monospace,Menlo,Consolas,monospace', 'font-size': 14, 'font-weight': 700, text: s}, svg); }
+/* resistor: rectangle (or zig-zag with o.zig); o.len body length; o.label text on the −n side; o.arrow = rheostat arrow */
+function resistorSym(svg, a, b, o={}){ const u = K.unit(a, b), n = nrm(u), m = K.mid(a, b), L = o.len || 46, h = o.h || 8;
+  ln(svg, a, at(m, u, -L / 2, n), 'text', 2.4); ln(svg, at(m, u, L / 2, n), b, 'text', 2.4);
+  if (o.zig){ const pts = [at(m, u, -L / 2, n)]; for (let i = 0; i < 6; i++) pts.push(at(m, u, -L / 2 + (i + .5) * L / 6, n, (i % 2 ? 1 : -1) * h)); pts.push(at(m, u, L / 2, n)); K.polyline(svg, pts, {stroke: cv(o.c || 'text'), 'stroke-width': 2.2, 'stroke-linejoin': 'round'}); }
+  else K.polygon(svg, [at(m, u, -L / 2, n, -h), at(m, u, L / 2, n, -h), at(m, u, L / 2, n, h), at(m, u, -L / 2, n, h)], {fill: o.fill || 'var(--surface)', stroke: cv(o.c || 'text'), 'stroke-width': 2.2});
+  if (o.arrow) arrow(svg, at(m, u, -L / 2 - 4, n, h + 10), at(m, u, L / 2 + 6, n, -h - 12), {c: o.c || 'text', w: 1.8, head: 8});
+  if (o.label){ const q = at(m, u, 0, n, (o.labelSide ?? -1) * (h + 13)); tc(svg, q.x, q.y, o.label, 'sm ' + (o.lc || ''), {'font-weight': 700}); }
+  return m; }
+
+/* ---------- moving charges along a path ---------- */
+function pathInfo(pts, closed){ const p = closed ? pts.concat([pts[0]]) : pts.slice(); const L = [0]; for (let i = 1; i < p.length; i++) L.push(L[i - 1] + K.dist(p[i - 1], p[i])); return {p, L, total: L[L.length - 1]}; }
+function pathAt(info, f){ f = ((f % 1) + 1) % 1; const d = f * info.total; let i = 1; while (i < info.L.length - 1 && info.L[i] < d) i++; const seg = info.L[i] - info.L[i - 1] || 1, t = (d - info.L[i - 1]) / seg; return {p: K.lerpPt(info.p[i - 1], info.p[i], t), u: K.unit(info.p[i - 1], info.p[i])}; }
+/* draw n markers spaced along the path, shifted by phase (0..1). kind 'e' = electron dots, 'i' = current chevrons */
+function flowMarks(svg, info, phase, o={}){ const n = o.n || Math.max(4, Math.round(info.total / (o.gap || 40))), g = K.group(svg);
+  for (let k = 0; k < n; k++){ const q = pathAt(info, k / n + phase); if (o.skip && o.skip(q.p)) continue;
+    if ((o.kind || 'e') === 'e'){ circ(g, q.p, o.r || 3.6, {fill: cv(o.c || 'blue'), stroke: 'var(--svgbg)', 'stroke-width': 1}); }
+    else { const s = o.size || 6, nn = nrm(q.u); K.polyline(g, [P(q.p.x - q.u.x * s + nn.x * s * .8, q.p.y - q.u.y * s + nn.y * s * .8), q.p, P(q.p.x - q.u.x * s - nn.x * s * .8, q.p.y - q.u.y * s - nn.y * s * .8)], {stroke: cv(o.c || 'red'), 'stroke-width': 2.4, 'stroke-linecap': 'round', 'stroke-linejoin': 'round'}); } }
+  return g; }
+
+/* ---------- one shared animation clock: runs only while a lab is on screen and was used in the last 40 s ---------- */
+const ANIM = []; let animOn = false, animLast = 0;
+function animLoop(now){ const dt = Math.min(.05, Math.max(0, (now - animLast) / 1000)); animLast = now; let any = false;
+  for (const it of ANIM){ if (it.vis && now < it.until){ it.t += dt; try { it.fn(it.t, dt); } catch (e){ it.until = 0; throw e; } any = true; } }
+  if (any) requestAnimationFrame(animLoop); else animOn = false; }
+function animStart(){ if (!animOn){ animOn = true; animLast = performance.now(); requestAnimationFrame(animLoop); } }
+function anim(el, fn){ const it = {el, fn, t: 0, until: 0, vis: true}; ANIM.push(it);
+  if ('IntersectionObserver' in window){ new IntersectionObserver(es => es.forEach(e => { it.vis = e.isIntersecting; if (it.vis) wake(it); })).observe(el); }
+  it.fn(0, 0); wake(it); return it; }
+function wake(it){ it.until = performance.now() + 40000; animStart(); }
+/* buttons that act like radio buttons: returns a setter */
+function radio(ids, onPick){ const els = ids.map(id => $id(id)); const set = k => { els.forEach((b, i) => b.classList.toggle('primary', i === k)); onPick(k); }; els.forEach((b, i) => b.addEventListener('click', () => set(i))); return set; }
+/* analog meter (pictorial, like the textbook photos): box centred at c, scale 0..max; value < 0 pegs the needle at the stop */
+function dialMeter(svg, c, value, max, o={}){ const w = o.w || 170, h = o.h || 110, g = K.group(svg), letter = o.letter || 'V';
+  rect(g, c.x - w / 2, c.y - h / 2, w, h, {rx: 10, fill: 'var(--surface2)', stroke: 'var(--text)', 'stroke-width': 1.8});
+  const pc = P(c.x, c.y + h * .32), R = h * .62, a0 = -150, a1 = -30;
+  path(g, `M${pc.x + R * Math.cos(K.rad(a0))},${pc.y + R * Math.sin(K.rad(a0))} A${R},${R} 0 0,1 ${pc.x + R * Math.cos(K.rad(a1))},${pc.y + R * Math.sin(K.rad(a1))}`, {stroke: 'var(--text)', 'stroke-width': 1.5});
+  const step = o.step || 1;
+  for (let v = 0; v <= max + 1e-9; v += step / 2){ const a = K.rad(a0 + (a1 - a0) * v / max), major = Math.abs(v / step - Math.round(v / step)) < 1e-6;
+    ln(g, P(pc.x + R * Math.cos(a), pc.y + R * Math.sin(a)), P(pc.x + (R - (major ? 9 : 5)) * Math.cos(a), pc.y + (R - (major ? 9 : 5)) * Math.sin(a)), 'text', 1.2);
+    if (major) tc(g, pc.x + (R + 10) * Math.cos(a), pc.y + (R + 10) * Math.sin(a), K.fmt(v, 1), 'sm', {'font-size': 11}); }
+  const bad = value < -1e-9, vv = clamp(value, 0, max * 1.04), a = K.rad(a0 + (a1 - a0) * vv / max - (bad ? 4 : 0));
+  ln(g, pc, P(pc.x + (R - 4) * Math.cos(a), pc.y + (R - 4) * Math.sin(a)), bad ? 'red' : 'red', 2.4);
+  circ(g, pc, 4, {fill: 'var(--text)'});
+  tc(g, c.x, c.y + h * .14, letter, '', {'font-weight': 700});
+  circ(g, P(c.x - w / 2 + 18, c.y + h / 2 - 14), 6, {fill: '#dc2626', stroke: 'var(--text)'}); circ(g, P(c.x + w / 2 - 18, c.y + h / 2 - 14), 6, {fill: '#111827', stroke: 'var(--text)'});
+  tc(g, c.x - w / 2 + 32, c.y + h / 2 - 14, '+', 'sm', {'font-weight': 700}); tc(g, c.x + w / 2 - 32, c.y + h / 2 - 14, '−', 'sm', {'font-weight': 700});
+  return {plus: P(c.x - w / 2 + 18, c.y + h / 2 - 14), minus: P(c.x + w / 2 - 18, c.y + h / 2 - 14)}; }
+/* pictorial torch cell lying flat: left end x, centre line y, length L; o.plusRight; returns terminal points */
+function torchCell(svg, x, y, L, o={}){ const pr = o.plusRight !== false, d = o.d || 26, g = K.group(svg);
+  rect(g, x, y - d / 2, L, d, {rx: 6, fill: o.col || '#1f2937', stroke: 'var(--text)', 'stroke-width': 1.2});
+  rect(g, pr ? x + L * .62 : x, y - d / 2, L * .38, d, {rx: 6, fill: '#d4a017', opacity: .9});
+  const nub = pr ? x + L : x - 5; rect(g, nub, y - 5, 5, 10, {rx: 2, fill: '#9ca3af', stroke: 'var(--text)', 'stroke-width': 1});
+  K.el('text', {x: x + L / 2, y: y + 1, 'text-anchor': 'middle', 'dominant-baseline': 'middle', fill: '#fff', 'font-size': 12, 'font-weight': 700, text: (pr ? '−  ' : '+  ') + (o.label || '1.5 V') + (pr ? '  +' : '  −')}, g);
+  return pr ? {minus: P(x, y), plus: P(x + L + 5, y)} : {plus: P(x - 5, y), minus: P(x + L, y)}; }
+/* ---------- generic "choose the right button" table ---------- */
+function choiceTable(bodyId, outId, rows, msgDone, msgLeft){
+  const body = $id(bodyId), out = $id(outId), pick = rows.map(r => r.given ? r.a : null);
+  function table(){ let ok = 0;
+    body.innerHTML = rows.map((r, i) => { if (pick[i] === r.a) ok++; return `<tr><td>${r.s}</td><td><span class="yn">` + r.o.map((t, k) => (r.given && k !== r.a) ? '' : `<button class="btn${r.given ? ' given' : (pick[i] === k ? (k === r.a ? ' ok' : ' bad') : '')}" data-r="${i}" data-k="${k}">${t}</button>`).join('') + '</span></td></tr>'; }).join('');
+    out.textContent = ok === rows.length ? msgDone : `${ok} of ${rows.length} rows correct. ${msgLeft}`; }
+  body.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; pick[+b.dataset.r] = +b.dataset.k; table(); });
+  table(); }
+const par = (...r) => 1 / r.reduce((s, x) => s + 1 / x, 0);
+
+/* ---------- Fig 7.28 ---------- */
+(function(){
+  const svg = $id('f728'), out = $id('f728Out'); const S = {a1: false, a2: false, b1: false, b2: false}; const RB = 3, V = 3;
+  function solve(){ const aOn = S.a1 && S.a2, Ia = aOn ? V / (2 * RB) : 0; return {Ia, Va: Ia * RB, Pa: Ia * Ia * RB, Ib1: S.b1 ? V / RB : 0, Ib2: S.b2 ? V / RB : 0}; }
+  function draw(ph){
+    K.clear(svg); const r = solve();
+    tc(svg, 200, 18, 'Fig 7.28 (a) – series', 'sm', {'font-weight': 700}); tc(svg, 600, 18, 'Fig 7.28 (b) – parallel', 'sm', {'font-weight': 700});
+    ln(svg, P(400, 30), P(400, 300), 'muted', 1, {'stroke-dasharray': '4 6'});
+    /* (a) */
+    const L = 40, R = 370, T = 90, B = 260;
+    wire(svg, [P(180, B), P(L, B), P(L, T), P(80, T)]); wire(svg, [P(124, T), P(150, T)]); wire(svg, [P(190, T), P(220, T)]); wire(svg, [P(264, T), P(290, T)]); wire(svg, [P(330, T), P(R, T), P(R, B), P(220, B)]);
+    bulbSym(svg, P(80, T), P(124, T), {glow: r.Pa / 3, label: '3 W, 3 V', r: 16}); switchSym(svg, P(150, T), P(190, T), S.a1, {label: 'S₁', labelSide: 1.4, half: 12});
+    bulbSym(svg, P(220, T), P(264, T), {glow: r.Pa / 3, label: '3 W, 3 V', r: 16}); switchSym(svg, P(290, T), P(330, T), S.a2, {label: 'S₂', labelSide: 1.4, half: 12});
+    batterySym(svg, P(180, B), P(220, B), {n: 2, plus: 'b', label: '3 V', labelSide: 1.1});
+    if (r.Ia > 0){ flowMarks(svg, pathInfo([P(220, B), P(R, B), P(R, T), P(L, T), P(L, B)], true), ph * .05, {kind: 'i', c: 'amber', gap: 46, skip: p => p.y > B - 10 && p.x > 170 && p.x < 230}); tc(svg, 200, 150, `each bulb: 1.5 V, ${fx(r.Ia, 1)} A`, 'sm amber', {'font-weight': 700}); }
+    /* (b) */
+    const L2 = 440, R2 = 760, B2 = 260, y1 = 80, y2 = 170;
+    [[y1, 'b2', 'S₂', r.Ib2], [y2, 'b1', 'S₁', r.Ib1]].forEach(([y, k, nm, I]) => { wire(svg, [P(L2, y), P(530, y)]); wire(svg, [P(574, y), P(640, y)]); wire(svg, [P(680, y), P(R2, y)]);
+      bulbSym(svg, P(530, y), P(574, y), {glow: I * I * RB / 3, label: '3 W, 3 V', r: 16}); switchSym(svg, P(640, y), P(680, y), S[k], {label: nm, labelSide: 1.4, half: 12});
+      if (I > 0){ flowMarks(svg, pathInfo([P(R2, y), P(L2, y)], false), ph * .1, {kind: 'i', c: 'amber', gap: 46, skip: p => (p.x > 520 && p.x < 584) || (p.x > 632 && p.x < 688)}); tc(svg, 600, y + 38, '3 V, 1 A', 'sm amber', {'font-weight': 700}); } });
+    wire(svg, [P(L2, y1), P(L2, B2), P(580, B2)]); wire(svg, [P(620, B2), P(R2, B2), P(R2, y1)]); jdot(svg, P(L2, y2)); jdot(svg, P(R2, y2));
+    batterySym(svg, P(580, B2), P(620, B2), {n: 2, plus: 'b', label: '3 V', labelSide: 1.1});
+  }
+  function status(){ const r = solve(); const a = r.Ia > 0 ? 'both bulbs dim (1.5 V and 0.5 A each, ¼ of full power)' : 'both bulbs OFF – the single path is broken' + (S.a1 || S.a2 ? ' at the open switch' : '');
+    const b = [r.Ib1 ? 'S₁ bulb bright (3 V, 1 A)' : 'S₁ bulb off', r.Ib2 ? 'S₂ bulb bright (3 V, 1 A)' : 'S₂ bulb off'].join(', ');
+    out.textContent = `(a) series: ${a}.\n(b) parallel: ${b} – each bulb has its own path and the full 3 V.`; }
+  const it = anim(svg, t => draw(t));
+  const sync = () => { ['a1', 'a2', 'b1', 'b2'].forEach(k => $id(k).classList.toggle('primary', S[k])); status(); draw(it.t); wake(it); };
+  ['a1', 'a2', 'b1', 'b2'].forEach(k => $id(k).addEventListener('click', () => { S[k] = !S[k]; sync(); }));
+  $id('abAll').addEventListener('click', () => { S.a1 = S.a2 = S.b1 = S.b2 = true; sync(); });
+  $id('abS1').addEventListener('click', () => { S.a1 = S.b1 = true; S.a2 = S.b2 = false; sync(); });
+  $id('abOff').addEventListener('click', () => { S.a1 = S.a2 = S.b1 = S.b2 = false; sync(); });
+  sync();
+})();
+
+/* ---------- derivation: series ---------- */
+(function(){
+  const rows = [[0, 'Same current I through R₁ and R₂', 'blue'], [1, 'V = V₁ + V₂', ''], [2, 'V₁ = I × R₁ ,  V₂ = I × R₂', ''], [3, 'I × R = I × R₁ + I × R₂', ''], [4, 'IR = I (R₁ + R₂)', ''], [5, 'R = R₁ + R₂', 'big green']];
+  new K.Stepper('#drS', {steps: ['In Fig 7.29 the same current I flows through R₁ and R₂ (there is only one path).', 'The p.d. between A and B divides between the resistors: <b>V = V₁ + V₂</b>.', 'By Ohm\'s law for each resistor: V₁ = IR₁ and V₂ = IR₂. For the whole circuit, V = IR, where R is the effective resistance.', 'Substitute: IR = IR₁ + IR₂.', 'Take I out as a common factor: IR = I(R₁ + R₂).', 'Divide both sides by I: <b>R = R₁ + R₂</b>. For n equal resistors, R = nR.'], ms: 800, draw(svg, i, t){
+    const L = 30, Rr = 360, T = 70, B = 230;
+    wire(svg, [P(150, B), P(L, B), P(L, T), P(90, T)]); wire(svg, [P(150, T), P(210, T)]); wire(svg, [P(270, T), P(Rr, T), P(Rr, B), P(260, B)]); wire(svg, [P(220, B), P(190, B)]);
+    resistorSym(svg, P(90, T), P(150, T), {label: 'R_1', len: 44}); resistorSym(svg, P(210, T), P(270, T), {label: 'R_2', len: 44});
+    batterySym(svg, P(150, B), P(190, B), {n: 2, plus: 'b'}); switchSym(svg, P(220, B), P(260, B), true, {half: 12});
+    tc(svg, L - 12, T, 'A', 'big'); tc(svg, Rr + 14, T, 'B', 'big');
+    arrow(svg, P(330, T - 22), P(300, T - 22), {c: 'red', w: 2.5, label: 'I', lo: {x: 14, y: -10}});
+    if (i >= 1){ const op = i === 1 ? t : 1; arrow(svg, P(92, T + 34), P(148, T + 34), {c: 'purple', w: 2, op}); tc(svg, 120, T + 50, 'V_1', 'sm purple', {opacity: op}); arrow(svg, P(212, T + 34), P(268, T + 34), {c: 'purple', w: 2, op}); tc(svg, 240, T + 50, 'V_2', 'sm purple', {opacity: op}); tc(svg, 195, 158, 'V across A and B', 'sm purple', {opacity: op}); }
+    lines(svg, rows, i, t, {x: 410, y: 40, lh: 40});
+  }});
+})();
+
+/* ---------- series voltage divider ---------- */
+(function(){
+  const svg = $id('vdSvg'), out = $id('vdOut'); let R1 = 8, R2 = 4, V = 6;
+  function draw(){
+    K.clear(svg); const R = R1 + R2, I = V / R, V1 = I * R1, V2 = I * R2;
+    const L = 40, Rr = 470, T = 110, B = 220;
+    wire(svg, [P(200, B), P(L, B), P(L, T), P(110, T)]); wire(svg, [P(170, T), P(270, T)]); wire(svg, [P(330, T), P(Rr, T), P(Rr, 145)]); wire(svg, [P(Rr, 185), P(Rr, B), P(250, B)]);
+    resistorSym(svg, P(110, T), P(170, T), {label: `R_1 = ${R1} Ω`, labelSide: 1, len: 44}); resistorSym(svg, P(270, T), P(330, T), {label: `R_2 = ${R2} Ω`, labelSide: 1, len: 44});
+    batterySym(svg, P(200, B), P(250, B), {n: 2, plus: 'b', label: `${nf(V, 1)} V`, labelSide: 1.1});
+    meterSym(svg, P(Rr, 145), P(Rr, 185), 'A', {plus: 'b', signSide: -1, r: 14, reading: `${fx(I, 2)} A`, box: P(-60, 0)});
+    [[110, 170, V1], [270, 330, V2]].forEach(([a, b, v]) => { wire(svg, [P(a - 10, T), P(a - 10, 50), P((a + b) / 2 - 14, 50)]); wire(svg, [P((a + b) / 2 + 14, 50), P(b + 10, 50), P(b + 10, T)]); jdot(svg, P(a - 10, T)); jdot(svg, P(b + 10, T)); meterSym(svg, P((a + b) / 2 - 14, 50), P((a + b) / 2 + 14, 50), 'V', {plus: 'b', r: 13, signs: false, reading: `${fx(v, 2)} V`, box: P(0, -26)}); });
+    /* share bar */
+    const bx = 540, bw = 230; tl(svg, bx, 70, `battery ${nf(V, 1)} V shared:`, 'sm');
+    rect(svg, bx, 90, bw * V1 / V, 34, {fill: 'var(--blue)', opacity: .75}); rect(svg, bx + bw * V1 / V, 90, bw * V2 / V, 34, {fill: 'var(--green)', opacity: .75});
+    tc(svg, bx + bw * V1 / V / 2, 107, `V₁ ${nf(V1, 2)}`, 'sm', {fill: '#fff', stroke: 'none', 'font-weight': 700}); if (V2 / V > .18) tc(svg, bx + bw * V1 / V + bw * V2 / V / 2, 107, `V₂ ${nf(V2, 2)}`, 'sm', {fill: '#fff', stroke: 'none', 'font-weight': 700});
+    tl(svg, bx, 160, `R = R₁ + R₂ = ${R} Ω`, 'big'); tl(svg, bx, 190, `I = ${nf(V, 1)} ÷ ${R} = ${nf(I, 3)} A`, 'sm');
+  }
+  function status(){ const R = R1 + R2, I = V / R; out.textContent = `Effective R = ${R1} + ${R2} = ${R} Ω; I = V/R = ${nf(V, 1)} ÷ ${R} = ${nf(I, 3)} A (the same in both).\nV₁ = I × R₁ = ${nf(I * R1, 2)} V, V₂ = I × R₂ = ${nf(I * R2, 2)} V; V₁ + V₂ = ${nf(V, 2)} V. The bigger resistor takes the bigger share` + (R1 === R2 ? ' – here they are equal, so the shares are equal.' : '.'); }
+  K.slider('#vdR1', v => { R1 = v; draw(); status(); }, 0); K.slider('#vdR2', v => { R2 = v; draw(); status(); }, 0); K.slider('#vdV', v => { V = v; draw(); status(); }, 1);
+})();
+
+/* ---------- series numericals ---------- */
+(function(){
+  const rows = [[0, 'Given: R₁ = 8 Ω, R₂ = 4 Ω, V = 6 V (series)', 'blue'], [1, '(a) circuit diagram – see left', ''], [2, 'Formula: R = R₁ + R₂ ;  I = V / R', 'purple'], [3, '(b) R = 8 + 4 = 12 Ω', 'green'], [4, '(c) I = 6 ÷ 12 = 0.5 A', 'big green'], [5, 'Extra: V₈ = 0.5 × 8 = 4 V, V₄ = 2 V', '']];
+  new K.Stepper('#exS1', {steps: ['<b>Given:</b> R₁ = 8 Ω, R₂ = 4 Ω in series with a 6 V battery.', '<b>(a)</b> Draw the battery, a switch and the two resistors one after the other in a single loop.', '<b>Formula:</b> series R = R₁ + R₂; then Ohm\'s law I = V/R.', '<b>(b) Substitution:</b> R = 8 + 4 = <b>12 Ω</b>.', '<b>(c)</b> I = 6 ÷ 12 = <b>0.5 A</b>.', '<b>Extra check:</b> V across 8 Ω = 4 V, across 4 Ω = 2 V; 4 + 2 = 6 V ✓.'], ms: 800, draw(svg, i, t){
+    const op = i >= 1 ? (i === 1 ? t : 1) : .15, g = K.group(svg, {opacity: op}), L = 30, Rr = 340, T = 80, B = 230;
+    wire(g, [P(140, B), P(L, B), P(L, T), P(80, T)]); wire(g, [P(140, T), P(200, T)]); wire(g, [P(260, T), P(Rr, T), P(Rr, B), P(240, B)]); wire(g, [P(210, B), P(180, B)]);
+    resistorSym(g, P(80, T), P(140, T), {label: '8 Ω', len: 44}); resistorSym(g, P(200, T), P(260, T), {label: '4 Ω', len: 44});
+    batterySym(g, P(140, B), P(180, B), {n: 2, plus: 'b', label: '6 V', labelSide: 1.1}); switchSym(g, P(210, B), P(240, B), true, {half: 10});
+    if (i >= 4) { arrow(svg, P(320, T - 20), P(280, T - 20), {c: 'red', w: 2.5, label: '0.5 A', lo: {x: 0, y: -10}}); }
+    if (i >= 5) { tc(svg, 110, T + 40, '4 V', 'sm purple', {'font-weight': 700}); tc(svg, 230, T + 40, '2 V', 'sm purple', {'font-weight': 700}); }
+    lines(svg, rows, i, t, {x: 380, y: 40, lh: 40});
+  }});
+  const rows2 = [[0, 'Q2 Given: n = 10, R = 2 Ω', 'blue'], [0, '     Formula: effective R = nR', 'purple'], [1, '     = 10 × 2 = 20 Ω', 'big green'], [2, 'Q3 Given: R = 6 Ω, effective 42 Ω', 'blue'], [2, '     Formula: nR = 42  →  n = 42 / R', 'purple'], [3, '     n = 42 ÷ 6 = 7 resistors', 'big green']];
+  new K.Stepper('#exS2', {steps: ['<b>Q2 Given:</b> ten resistors of 2 Ω in series. <b>Formula:</b> n equal resistors in series → nR.', '<b>Substitution and answer:</b> 10 × 2 = <b>20 Ω</b>.', '<b>Q3 Given:</b> each 6 Ω, wanted 42 Ω. <b>Formula:</b> nR = 42, so n = 42 ÷ R.', '<b>Answer:</b> n = 42 ÷ 6 = <b>7</b> resistors.'], ms: 800, draw(svg, i, t){
+    const n1 = i >= 1 ? (i === 1 ? Math.ceil(t * 10) : 10) : 0;
+    for (let k = 0; k < 10; k++){ const x = 20 + k * 34; ln(svg, P(x, 70), P(x + 34, 70), 'text', 2); rect(svg, x + 6, 62, 22, 16, {fill: k < n1 ? 'var(--blue-soft)' : 'var(--surface)', stroke: 'var(--text)', 'stroke-width': 1.4}); tc(svg, x + 17, 92, '2', 'sm', {'font-size': 10}); }
+    if (i >= 1) tc(svg, 190, 120, `${n1} × 2 = ${2 * n1} Ω`, 'amber', {'font-weight': 700});
+    if (i >= 2){ const n2 = i >= 3 ? 7 : 0; for (let k = 0; k < 7; k++){ const x = 20 + k * 48; ln(svg, P(x, 190), P(x + 48, 190), 'text', 2); rect(svg, x + 8, 181, 32, 18, {fill: k < n2 ? 'var(--green-soft)' : 'var(--surface)', stroke: 'var(--text)', 'stroke-width': 1.4, opacity: i >= 3 ? 1 : .3}); tc(svg, x + 24, 214, '6', 'sm', {'font-size': 10, opacity: i >= 3 ? 1 : .3}); }
+      tc(svg, 190, 245, i >= 3 ? '7 × 6 = 42 Ω' : '? × 6 = 42 Ω', 'amber', {'font-weight': 700}); }
+    lines(svg, rows2, i, t, {x: 400, y: 40, lh: 40});
+  }});
+})();
+
+/* ---------- derivation: parallel ---------- */
+(function(){
+  const rows = [[0, 'Same p.d. V across R₁ and R₂', 'blue'], [1, 'I = I₁ + I₂', ''], [2, 'V/R = V/R₁ + V/R₂', ''], [3, 'V(1/R) = V(1/R₁ + 1/R₂)', ''], [4, '1/R = 1/R₁ + 1/R₂', 'big green'], [5, 'R = R₁R₂ / (R₁ + R₂)', 'big green']];
+  new K.Stepper('#drP', {steps: ['In Fig 7.30 both resistors are connected between A and B, so each has the same p.d. V.', 'The current divides: <b>I = I₁ + I₂</b>.', 'Ohm\'s law: I = V/R (R = effective resistance), I₁ = V/R₁, I₂ = V/R₂. Substitute.', 'Take V out as a common factor.', 'Divide by V: <b>1/R = 1/R₁ + 1/R₂</b>.', 'For two resistors this simplifies to <b>R = R₁R₂/(R₁ + R₂)</b> – always less than either. For n equal resistors, R/n.'], ms: 800, draw(svg, i, t){
+    const A = P(90, 120), B = P(330, 120), yT = 60, yB = 180, yBat = 270;
+    wire(svg, [A, P(130, yT), P(180, yT)]); wire(svg, [P(240, yT), P(290, yT), B]); wire(svg, [A, P(130, yB), P(180, yB)]); wire(svg, [P(240, yB), P(290, yB), B]);
+    resistorSym(svg, P(180, yT), P(240, yT), {label: 'R_2', len: 44}); resistorSym(svg, P(180, yB), P(240, yB), {label: 'R_1', len: 44, labelSide: -1});
+    wire(svg, [A, P(50, 120), P(50, yBat), P(160, yBat)]); wire(svg, [P(200, yBat), P(230, yBat)]); wire(svg, [P(270, yBat), P(370, yBat), P(370, 120), B]);
+    batterySym(svg, P(160, yBat), P(200, yBat), {n: 2, plus: 'b'}); switchSym(svg, P(230, yBat), P(270, yBat), true, {half: 12});
+    tc(svg, A.x - 4, A.y - 18, 'A', 'big'); tc(svg, B.x + 4, B.y - 18, 'B', 'big');
+    arrow(svg, P(370, 230), P(370, 160), {c: 'red', w: 2.5, label: 'I', lo: {x: 14, y: 0}});
+    if (i >= 1){ const op = i === 1 ? t : 1; arrow(svg, P(300, 72), P(320, 100), {c: 'red', w: 2, op}); arrow(svg, P(130, 60), P(100, 100), {c: 'red', w: 2, op}); tc(svg, 300, 42, 'I_2', 'sm red', {opacity: op}); arrow(svg, P(320, 140), P(300, 168), {c: 'red', w: 2, op}); tc(svg, 300, 200, 'I_1', 'sm red', {opacity: op}); }
+    lines(svg, rows, i, t, {x: 420, y: 40, lh: 44});
+  }});
+})();
+
+/* ---------- foot-bridges ---------- */
+(function(){
+  const svg = $id('brSvg'), out = $id('brOut'); let two = false, crossed = 0, tt0 = 0, spawn = 0; let kids = [];
+  const COLS = ['#dc2626', '#2563eb', '#16a34a', '#9333ea', '#d97706'];
+  for (let k = 0; k < 10; k++) kids.push({x: 30 + k * 20, y: 70 + (k * 37) % 100, b: -1, c: COLS[k % 5]});
+  function step(dt, t){ const nb = two ? 2 : 1; spawn += dt; if (spawn > .22 && kids.length < 26){ spawn = 0; kids.push({x: 20 + Math.random() * 60, y: 60 + Math.random() * 120, b: -1, c: COLS[Math.floor(Math.random() * 5)]}); }
+    const busy = [0, 0]; kids.forEach(k => { if (k.b >= 0 && k.x < 560) busy[k.b]++; });
+    kids.forEach(k => { if (k.b < 0){ const free = [0, 1].slice(0, nb).filter(b => busy[b] < 3); const near = k.x > 220; if (near && free.length){ k.b = free[0]; busy[k.b]++; } else if (k.x < 230) k.x += 40 * dt; }
+      else { const by = nb === 1 ? 120 : (k.b === 0 ? 80 : 160); k.y += (by - k.y) * Math.min(1, dt * 4); k.x += 70 * dt; if (k.x > 600 && !k.done){ k.done = true; crossed++; } } });
+    kids = kids.filter(k => k.x < 790); void t; void tt0; }
+  function draw(){
+    K.clear(svg);
+    rect(svg, 0, 0, 800, 240, {fill: '#86efac', opacity: .25});
+    rect(svg, 260, 0, 290, 240, {fill: '#60a5fa', opacity: .45});
+    const nb = two ? 2 : 1; (nb === 1 ? [120] : [80, 160]).forEach(y => { rect(svg, 240, y - 12, 330, 24, {fill: '#a16207', opacity: .85}); for (let x = 245; x < 570; x += 14) ln(svg, P(x, y - 12), P(x, y + 12), '#713f12', 1); });
+    kids.forEach(k => { circ(svg, P(k.x, k.y), 7, {fill: k.c, stroke: 'var(--svgbg)'}); });
+    tc(svg, 405, 228, 'canal', 'sm', {fill: '#1d4ed8'});
+    tl(svg, 600, 30, `crossed: ${crossed}`, 'big');
+  }
+  function status(){ out.textContent = two ? 'Two bridges side by side: the children split between two paths, the queue disappears and more cross each minute – like two resistors in parallel, which let more current through (smaller effective resistance).' : 'One bridge: everyone must use the single path, so a queue builds up on the bank – like a single resistor.'; }
+  const it = anim(svg, (t, dt) => { step(dt, t); draw(); });
+  radio(['br1', 'br2'], k => { two = k === 1; crossed = 0; status(); wake(it); });
+  status(); draw();
+})();
+
+/* ---------- parallel numericals ---------- */
+(function(){
+  const rows = [[0, 'Given: R₁ = 6 Ω, R₂ = 3 Ω, V = 6 V (parallel)', 'blue'], [1, '(a) circuit diagram – see left', ''], [2, 'Formula: R = R₁R₂ / (R₁ + R₂) ;  I = V / R', 'purple'], [3, '(b) R = (6 × 3) / (6 + 3) = 18 / 9 = 2 Ω', 'green'], [4, '(c) I₆ = 6 ÷ 6 = 1 A ,  I₃ = 6 ÷ 3 = 2 A', 'big green'], [5, 'Check: 1 + 2 = 3 A = 6 V ÷ 2 Ω ✓', '']];
+  new K.Stepper('#exP1', {steps: ['<b>Given:</b> 6 Ω and 3 Ω in parallel with a 6 V battery.', '<b>(a)</b> Draw both resistors between the same two points, side by side, with the battery and a switch.', '<b>Formula:</b> R = R₁R₂/(R₁ + R₂); each resistor has the full V, so I = V/R for each.', '<b>(b)</b> R = 18/9 = <b>2 Ω</b>.', '<b>(c)</b> I(6 Ω) = <b>1 A</b>, I(3 Ω) = <b>2 A</b> – the smaller resistor takes the larger current.', '<b>Check:</b> total current 3 A = 6 ÷ 2 ✓.'], ms: 800, draw(svg, i, t){
+    const op = i >= 1 ? (i === 1 ? t : 1) : .15, g = K.group(svg, {opacity: op}); const A = P(70, 120), B = P(300, 120);
+    wire(g, [A, P(110, 60), P(160, 60)]); wire(g, [P(220, 60), P(260, 60), B]); wire(g, [A, P(110, 180), P(160, 180)]); wire(g, [P(220, 180), P(260, 180), B]);
+    resistorSym(g, P(160, 60), P(220, 60), {label: '6 Ω', len: 44}); resistorSym(g, P(160, 180), P(220, 180), {label: '3 Ω', len: 44, labelSide: -1});
+    wire(g, [A, P(30, 120), P(30, 260), P(130, 260)]); wire(g, [P(170, 260), P(200, 260)]); wire(g, [P(240, 260), P(340, 260), P(340, 120), B]);
+    batterySym(g, P(130, 260), P(170, 260), {n: 2, plus: 'b', label: '6 V', labelSide: -1.1}); switchSym(g, P(200, 260), P(240, 260), true, {half: 10});
+    if (i >= 4){ arrow(svg, P(250, 84), P(200, 84), {c: 'red', w: 2, label: '1 A', lo: {x: -30, y: 0}}); arrow(svg, P(250, 205), P(200, 205), {c: 'red', w: 4.5, label: '2 A', lo: {x: -30, y: 0}}); }
+    if (i >= 5) arrow(svg, P(340, 230), P(340, 160), {c: 'red', w: 6, label: '3 A', lo: {x: 22, y: 0}});
+    lines(svg, rows, i, t, {x: 380, y: 40, lh: 40});
+  }});
+  const rows2 = [[0, 'Q6 Given: n = 5, R = 10 Ω (parallel)', 'blue'], [0, '     Formula: effective R = R / n', 'purple'], [1, '     = 10 ÷ 5 = 2 Ω', 'big green'], [2, 'Q7 Fig 7.32: 2 Ω ∥ 2 Ω first', 'blue'], [2, '     = (2 × 2) / (2 + 2) = 1 Ω', ''], [3, '     then 2 Ω + 1 Ω = 3 Ω', 'big green']];
+  new K.Stepper('#exP2', {steps: ['<b>Q6 Given:</b> five 10 Ω resistors in parallel. <b>Formula:</b> n equal resistors in parallel → R/n.', '<b>Answer:</b> 10 ÷ 5 = <b>2 Ω</b> (check: 1/R = 5 × 1/10 = 1/2).', '<b>Q7:</b> in Fig 7.32, first replace the two parallel 2 Ω resistors: (2 × 2)/(2 + 2) = 1 Ω.', '<b>Answer:</b> this 1 Ω is in series with the first 2 Ω: 2 + 1 = <b>3 Ω</b>.'], ms: 800, draw(svg, i, t){
+    if (i <= 1){ for (let k = 0; k < 5; k++){ const y = 30 + k * 34; ln(svg, P(60, y), P(130, y), 'text', 2); ln(svg, P(190, y), P(260, y), 'text', 2); rect(svg, 130, y - 8, 60, 16, {fill: 'var(--blue-soft)', stroke: 'var(--text)', 'stroke-width': 1.4}); tc(svg, 160, y + 1, '10 Ω', 'sm', {'font-size': 10}); }
+      ln(svg, P(60, 30), P(60, 166), 'text', 2); ln(svg, P(260, 30), P(260, 166), 'text', 2); ln(svg, P(20, 98), P(60, 98), 'text', 2); ln(svg, P(260, 98), P(300, 98), 'text', 2);
+      if (i === 1) tc(svg, 160, 220, 'five 10 Ω in parallel = 2 Ω', 'amber', {'font-weight': 700}); }
+    else { const y0 = 130; wire(svg, [P(20, y0), P(50, y0)]); resistorSym(svg, P(50, y0), P(110, y0), {label: '2 Ω', len: 40}); wire(svg, [P(110, y0), P(140, y0)]);
+      if (i === 2){ wire(svg, [P(140, y0), P(170, 90), P(190, 90)]); wire(svg, [P(140, y0), P(170, 170), P(190, 170)]); resistorSym(svg, P(190, 90), P(250, 90), {label: '2 Ω', len: 40}); resistorSym(svg, P(190, 170), P(250, 170), {label: '2 Ω', len: 40, labelSide: -1}); wire(svg, [P(250, 90), P(270, 90), P(300, y0)]); wire(svg, [P(250, 170), P(270, 170), P(300, y0)]); wire(svg, [P(300, y0), P(340, y0)]); tc(svg, 220, 230, 'Fig 7.32: 2 Ω ∥ 2 Ω → 1 Ω', 'amber', {'font-weight': 700}); }
+      else { resistorSym(svg, P(140, y0), P(220, y0), {label: '1 Ω', len: 40, lc: 'green'}); wire(svg, [P(220, y0), P(260, y0)]); tc(svg, 140, 210, '2 Ω + 1 Ω = 3 Ω', 'amber', {'font-weight': 700}); } }
+    lines(svg, rows2, i, t, {x: 380, y: 40, lh: 40});
+  }});
+})();
+
+/* ---------- combination calculator ---------- */
+(function(){
+  const svg = $id('cmSvg'), out = $id('cmOut'); let mode = 0, n = 2, V = 6; const R = [6, 3, 2];
+  function solve(){ const rs = R.slice(0, mode === 2 ? 3 : n);
+    if (mode === 0){ const Re = rs.reduce((a, b) => a + b, 0), I = V / Re; return {Re, I, parts: rs.map(r => ({r, I, V: I * r}))}; }
+    if (mode === 1){ const Re = par(...rs), I = V / Re; return {Re, I, parts: rs.map(r => ({r, I: V / r, V}))}; }
+    const Rp = par(R[1], R[2]), Re = R[0] + Rp, I = V / Re, Vp = I * Rp; return {Re, I, Rp, parts: [{r: R[0], I, V: I * R[0]}, {r: R[1], I: Vp / R[1], V: Vp}, {r: R[2], I: Vp / R[2], V: Vp}]}; }
+  function lab(p, k){ return `R_${k + 1} = ${p.r} Ω`; }
+  function draw(ph){
+    K.clear(svg); const s = solve(), Imax = Math.max(...s.parts.map(p => p.I), s.I);
+    const w = I => 1.5 + 6 * I / Imax;
+    const L = 60, Rr = 740, T = 60, B = 280;
+    batterySym(svg, P(380, B), P(420, B), {n: 2, plus: 'b', label: `${nf(V, 1)} V`, labelSide: 1.1});
+    wire(svg, [P(380, B), P(L, B), P(L, T + 60)]); wire(svg, [P(420, B), P(Rr, B), P(Rr, T + 60)]);
+    const tag = (p, k, c) => { tc(svg, c.x, c.y + 30, `${fx(p.I, 2)} A, ${fx(p.V, 2)} V`, 'sm amber', {'font-weight': 700}); };
+    if (mode === 0){ const y = T + 60, xs = s.parts.map((_, k) => L + (k + 1) * (Rr - L) / (s.parts.length + 1)); wire(svg, [P(L, y), P(Rr, y)], {w: w(s.I)});
+      s.parts.forEach((p, k) => { resistorSym(svg, P(xs[k] - 35, y), P(xs[k] + 35, y), {label: lab(p, k), len: 50, fill: 'var(--blue-soft)'}); tag(p, k, P(xs[k], y)); });
+      flowMarks(svg, pathInfo([P(Rr, y), P(L, y)], false), ph * .1, {kind: 'i', c: 'red', gap: 60, skip: q => xs.some(x => Math.abs(q.x - x) < 40)}); }
+    else if (mode === 1){ const ys = s.parts.map((_, k) => 40 + k * 70), xa = 250, xb = 550;
+      wire(svg, [P(L, T + 60), P(L, 120), P(xa, 120)], {w: w(s.I)}); wire(svg, [P(xb, 120), P(Rr, 120), P(Rr, T + 60)], {w: w(s.I)}); ln(svg, P(xa, ys[0]), P(xa, ys[ys.length - 1]), 'text', 2.4); ln(svg, P(xb, ys[0]), P(xb, ys[ys.length - 1]), 'text', 2.4);
+      s.parts.forEach((p, k) => { const y = ys[k]; wire(svg, [P(xa, y), P(xb, y)], {w: w(p.I)}); resistorSym(svg, P(360, y), P(440, y), {label: lab(p, k), len: 50, fill: 'var(--blue-soft)'}); tl(svg, 460, y - 14, `${fx(p.I, 2)} A`, 'sm red', {'font-weight': 700}); flowMarks(svg, pathInfo([P(xb, y), P(xa, y)], false), ph * (.04 + .12 * p.I / Imax), {kind: 'i', c: 'red', gap: 50, skip: q => Math.abs(q.x - 400) < 40}); });
+      jdot(svg, P(xa, 120)); jdot(svg, P(xb, 120)); tc(svg, 400, 250, `each branch has the full ${nf(V, 1)} V`, 'sm amber', {'font-weight': 700}); }
+    else { const y = 120, xa = 380, xb = 640;
+      wire(svg, [P(L, T + 60), P(L, y), P(140, y)]); resistorSym(svg, P(140, y), P(240, y), {label: lab(s.parts[0], 0), len: 50, fill: 'var(--blue-soft)'}); tag(s.parts[0], 0, P(190, y)); wire(svg, [P(240, y), P(xa, y)], {w: w(s.I)});
+      [[1, 60], [2, 180]].forEach(([k, yy]) => { wire(svg, [P(xa, yy), P(xb, yy)], {w: w(s.parts[k].I)}); resistorSym(svg, P(470, yy), P(550, yy), {label: lab(s.parts[k], k), len: 50, fill: 'var(--blue-soft)'}); tl(svg, 565, yy - 14, `${fx(s.parts[k].I, 2)} A`, 'sm red', {'font-weight': 700}); });
+      ln(svg, P(xa, 60), P(xa, 180), 'text', 2.4); ln(svg, P(xb, 60), P(xb, 180), 'text', 2.4); jdot(svg, P(xa, y)); jdot(svg, P(xb, y)); wire(svg, [P(xb, y), P(Rr, y), P(Rr, T + 60)], {w: w(s.I)});
+      tc(svg, 510, 235, `parallel pair: ${nf(s.Rp, 3)} Ω, ${fx(s.parts[1].V, 2)} V across it`, 'sm amber', {'font-weight': 700}); }
+    lcd(svg, P(140, 30), `R = ${fx(s.Re, 2)} Ω`); lcd(svg, P(330, 30), `I = ${fx(s.I, 2)} A`);
+  }
+  function status(){ const s = solve(), rs = R.slice(0, mode === 2 ? 3 : n);
+    if (mode === 0) out.textContent = `Series: R = ${rs.join(' + ')} = ${nf(s.Re, 3)} Ω.  I = ${nf(V, 1)} ÷ ${nf(s.Re, 3)} = ${nf(s.I, 3)} A through every resistor.\np.d.s: ${s.parts.map((p, k) => `V${'₁₂₃'[k]} = ${nf(p.V, 2)} V`).join(', ')} – they add up to ${nf(V, 2)} V.`;
+    else if (mode === 1) out.textContent = `Parallel: 1/R = ${rs.map(r => '1/' + r).join(' + ')} → R = ${nf(s.Re, 3)} Ω (less than the smallest, ${Math.min(...rs)} Ω).\nEach branch has ${nf(V, 1)} V: ${s.parts.map((p, k) => `I${'₁₂₃'[k]} = ${nf(V, 1)}/${p.r} = ${nf(p.I, 3)} A`).join(', ')}; total ${nf(s.I, 3)} A.`;
+    else out.textContent = `R₂ ∥ R₃ = ${R[1]} × ${R[2]} / (${R[1]} + ${R[2]}) = ${nf(s.Rp, 3)} Ω; R = ${R[0]} + ${nf(s.Rp, 3)} = ${nf(s.Re, 3)} Ω; I = ${nf(V, 1)} ÷ ${nf(s.Re, 3)} = ${nf(s.I, 3)} A.\nSet all three to 2 Ω to check Fig 7.32: 2 + 1 = 3 Ω.`; }
+  const it = anim(svg, t => draw(t));
+  const upd = () => { status(); draw(it.t); wake(it); };
+  radio(['cmS', 'cmP', 'cmM'], k => { mode = k; upd(); });
+  K.slider('#cmN', v => { n = v; upd(); }, 0);
+  ['cm1', 'cm2', 'cm3'].forEach((id, k) => K.slider('#' + id, v => { R[k] = v; upd(); }, 0));
+  K.slider('#cmV', v => { V = v; upd(); }, 1);
+})();
+
+/* ---------- home wiring ---------- */
+(function(){
+  const svg = $id('hSvg'), out = $id('hOut'); const on = [true, false, false]; let fused = false;
+  const NAMES = ['light', 'fan', 'TV'];
+  function draw(ph){
+    K.clear(svg);
+    rect(svg, 20, 60, 110, 120, {rx: 8, fill: 'var(--surface2)', stroke: 'var(--text)', 'stroke-width': 1.5});
+    tc(svg, 75, 95, 'KSEB meter', 'sm', {'font-weight': 700}); tc(svg, 75, 120, '+ main switch', 'sm'); tc(svg, 75, 140, '/ MCB', 'sm'); tc(svg, 75, 165, '230 V AC', 'sm red', {'font-weight': 700});
+    ln(svg, P(130, 80), P(760, 80), 'red', 3); ln(svg, P(130, 220), P(760, 220), 'blue', 3);
+    tl(svg, 140, 70, 'phase (live) wire', 'sm red'); tl(svg, 140, 240, 'neutral wire', 'sm blue');
+    [260, 450, 640].forEach((x, k) => { jdot(svg, P(x, 80), 'red'); jdot(svg, P(x, 220), 'blue');
+      switchSym(svg, P(x, 80), P(x, 130), on[k], {half: 14, label: 'switch', labelSide: -1.4});
+      const works = on[k] && !(k === 0 && fused);
+      if (k === 0) bulbSym(svg, P(x, 130), P(x, 220), {glow: works ? 1 : 0, r: 18, fused});
+      else { ln(svg, P(x, 130), P(x, 155), 'text', 2.4); ln(svg, P(x, 195), P(x, 220), 'text', 2.4); circ(svg, P(x, 175), 20, {fill: 'var(--surface)', stroke: 'var(--text)', 'stroke-width': 2});
+        if (k === 1){ for (let b = 0; b < 3; b++){ const a = (works ? ph * 8 : 0) + b * 2.094; ln(svg, P(x, 175), P(x + 16 * Math.cos(a), 175 + 16 * Math.sin(a)), 'text', 3); } }
+        else { rect(svg, x - 14, 165, 28, 20, {fill: works ? '#60a5fa' : '#1f2937', rx: 2}); } }
+      tl(svg, x + 26, 175, `${NAMES[k]}: ${works ? '230 V, working' : (k === 0 && fused ? 'fused' : 'off')}`, 'sm ' + (works ? 'green' : 'muted'), {'font-weight': 700}); });
+  }
+  function status(){ out.textContent = 'Each appliance is joined across the two supply wires – in parallel – with its own switch in series with it. Every one gets the full 230 V and works on its own.' + (fused ? '\nThe light has fused, yet the fan and TV keep working: their paths are separate. (In a series string, one fused bulb would put out everything.)' : ''); }
+  const it = anim(svg, t => draw(t));
+  ['hL', 'hF', 'hT'].forEach((id, k) => $id(id).addEventListener('click', () => { on[k] = !on[k]; $id(id).classList.toggle('primary', on[k]); status(); draw(it.t); wake(it); }));
+  $id('hX').addEventListener('click', e => { fused = !fused; e.target.textContent = fused ? 'Fit a new bulb' : 'Let the light bulb fuse'; status(); draw(it.t); wake(it); });
+  status();
+})();
+
+/* ---------- Fig 7.33 lab ---------- */
+(function(){
+  const svg = $id('pbSvg'), out = $id('pbOut'); let a = false, b = false, fusedB = false, flash = 0;
+  function panel(x0, withR, on, fz, ph){
+    const L = x0 + 30, R = x0 + 350, T = 70, B = 230, I = on && !fz ? 9 / (6 + (withR ? 12 : 0)) : 0;
+    tc(svg, x0 + 190, 22, withR ? 'Fig 7.33 (a)' : 'Fig 7.33 (b)', 'sm', {'font-weight': 700});
+    wire(svg, [P(x0 + 110, B), P(L, B), P(L, T), P(x0 + 90, T)]); wire(svg, [P(x0 + 140, T), P(withR ? x0 + 220 : R, T)]); if (withR) wire(svg, [P(x0 + 290, T), P(R, T)]); wire(svg, [P(R, T), P(R, B), P(x0 + 275, B)]); wire(svg, [P(x0 + 240, B), P(x0 + 215, B)]);
+    bulbSym(svg, P(x0 + 90, T), P(x0 + 140, T), {glow: fz ? 0 : (I > 0 ? Math.min(1.3, I / 0.5) : 0), r: 18, label: '6 Ω', fused: fz});
+    if (withR) resistorSym(svg, P(x0 + 220, T), P(x0 + 290, T), {label: '12 Ω', len: 50});
+    batterySym(svg, P(x0 + 110, B), P(x0 + 215, B), {n: 6, plus: 'b', label: '9 V', labelSide: 1.1});
+    switchSym(svg, P(x0 + 240, B), P(x0 + 275, B), on, {half: 12});
+    if (I > 0) flowMarks(svg, pathInfo([P(x0 + 215, B), P(R, B), P(R, T), P(L, T), P(L, B)], true), ph * .06, {kind: 'i', c: 'amber', gap: 46, skip: p => (p.y > B - 10 && p.x > x0 + 100 && p.x < x0 + 285) || (Math.abs(p.y - T) < 12 && ((p.x > x0 + 80 && p.x < x0 + 150) || (withR && p.x > x0 + 215 && p.x < x0 + 295)))});
+    if (fz && flash > 0){ circ(svg, P(x0 + 115, T), 30 + 40 * flash, {fill: '#fde047', opacity: flash}); }
+    if (on) { lcd(svg, P(x0 + 190, 150), fz ? 'I = 0 (fused!)' : `I = ${fx(I, 2)} A`, {warn: fz}); tc(svg, x0 + 190, 185, fz ? 'got 9 V, 1.5 A – too much' : `bulb: ${fx(I * 6, 1)} V`, 'sm ' + (fz ? 'red' : 'green'), {'font-weight': 700}); }
+  }
+  function draw(ph){ K.clear(svg); panel(0, true, a, false, ph); ln(svg, P(400, 30), P(400, 290), 'muted', 1, {'stroke-dasharray': '4 6'}); panel(400, false, b, fusedB, ph); }
+  function status(){ out.textContent = [a ? '(a): R = 6 + 12 = 18 Ω, I = 9 ÷ 18 = 0.5 A, bulb p.d. = 0.5 × 6 = 3 V – it glows normally.' : '(a): switch off.', b ? '(b): R = 6 Ω, I = 9 ÷ 6 = 1.5 A, bulb p.d. = 9 V – three times what it is made for. The filament overheats and the bulb FUSES.' : '(b): switch off.'].join('\n'); }
+  const it = anim(svg, (t, dt) => { if (flash > 0) flash = Math.max(0, flash - dt * 1.5); draw(t); });
+  $id('pbA').addEventListener('click', () => { a = !a; $id('pbA').textContent = a ? 'Switch OFF circuit (a)' : 'Switch ON circuit (a)'; status(); wake(it); });
+  $id('pbB').addEventListener('click', () => { b = !b; if (b && !fusedB){ fusedB = true; flash = 1; } $id('pbB').textContent = b ? 'Switch OFF circuit (b)' : 'Switch ON circuit (b)'; status(); wake(it); });
+  $id('pbR').addEventListener('click', () => { a = b = fusedB = false; flash = 0; $id('pbA').textContent = 'Switch ON circuit (a)'; $id('pbB').textContent = 'Switch ON circuit (b)'; status(); wake(it); });
+  status(); draw(0);
+})();
+
+/* ---------- Fig 7.33 stepper ---------- */
+(function(){
+  const rows = [[0, 'Given: bulb 6 Ω (works at 3 V), resistor 12 Ω, V = 9 V', 'blue'], [1, '(a) R = 6 + 12 = 18 Ω', ''], [2, '     I = V / R = 9 ÷ 18 = 0.5 A', ''], [3, '     V(bulb) = I × R = 0.5 × 6 = 3 V ✓', 'green'], [4, '(b) R = 6 Ω, I = 9 ÷ 6 = 1.5 A', ''], [4, '     V(bulb) = 9 V → the bulb fuses ✗', 'red'], [5, 'Answer: (a) more R; 3 V in (a); (b) fuses', 'big green']];
+  new K.Stepper('#ex733', {steps: ['<b>Given:</b> bulb resistance 6 Ω, made for 3 V; a 12 Ω resistor; a 9 V battery.', '<b>(a) total resistance</b> (series): R = 6 + 12 = 18 Ω.', '<b>Current</b> in (a): I = V/R = 9 ÷ 18 = 0.5 A.', '<b>p.d. across the bulb</b> in (a): V = IR = 0.5 × 6 = 3 V – exactly right.', '<b>(b):</b> R = 6 Ω only; I = 9 ÷ 6 = 1.5 A; the bulb gets all 9 V.', '<b>Answer:</b> (a) has more resistance (18 Ω); the bulb gets 3 V in (a); in (b) the bulb fuses.'], ms: 800, draw(svg, i, t){
+    const bars = [[60, 'bulb (a)', i >= 3 ? 3 : 0, 'green'], [160, '12 Ω (a)', i >= 3 ? 6 : 0, 'blue'], [260, 'bulb (b)', i >= 4 ? 9 : 0, 'red']];
+    ln(svg, P(30, 250), P(330, 250), 'text', 1.5); ln(svg, P(30, 250), P(30, 40), 'text', 1.5); tc(svg, 30, 30, 'p.d. (V)', 'sm');
+    [3, 6, 9].forEach(v => { ln(svg, P(30, 250 - v * 22), P(330, 250 - v * 22), 'muted', .6, {'stroke-dasharray': '3 4'}); tc(svg, 18, 250 - v * 22, String(v), 'sm', {'font-size': 11}); });
+    bars.forEach(([x, nm, v, c]) => { const f = (i === 3 && nm !== 'bulb (b)') || (i === 4 && nm === 'bulb (b)') ? t : 1; rect(svg, x, 250 - v * 22 * f, 60, v * 22 * f, {fill: cv(c), opacity: .75}); tc(svg, x + 30, 268, nm, 'sm'); if (v) tc(svg, x + 30, 240 - v * 22, `${v} V`, 'sm ' + c, {'font-weight': 700}); });
+    lines(svg, rows, i, t, {x: 360, y: 36, lh: 36});
+  }});
+})();
+
+/* ---------- AC / DC ---------- */
+(function(){
+  const svg = $id('acSvg'), out = $id('acOut'); let ac = false;
+  function draw(ph){
+    K.clear(svg);
+    const GX = 40, GY = 120, GW = 330, A = 70;
+    ln(svg, P(GX, GY), P(GX + GW, GY), 'text', 1.5); ln(svg, P(GX, GY - 90), P(GX, GY + 90), 'text', 1.5);
+    tc(svg, GX + GW - 20, GY + 18, 'time →', 'sm'); tl(svg, GX + 6, GY - 92, 'current', 'sm');
+    const pts = []; for (let k = 0; k <= 120; k++){ const x = k / 120 * GW; pts.push(P(GX + x, GY - (ac ? A * Math.sin(x / GW * 4 * Math.PI * 2 / 2) : A * .7))); }
+    K.polyline(svg, pts, {stroke: cv(ac ? 'red' : 'blue'), 'stroke-width': 3});
+    const cur = (ph * .25) % 1; circ(svg, pts[Math.floor(cur * 120)], 6, {fill: cv(ac ? 'red' : 'blue')});
+    tc(svg, GX + GW / 2, 225, ac ? 'AC: the current keeps reversing (50 times forward, 50 back each second)' : 'DC: steady, always in one direction', 'sm', {'font-weight': 700});
+    /* wire with electrons */
+    rect(svg, 430, 90, 340, 60, {rx: 26, fill: '#d97706', opacity: .25, stroke: 'var(--accent)'});
+    for (let k = 0; k < 10; k++){ const x = 445 + ((k * 34 + (ac ? 22 * Math.sin(ph * 4) : ph * 30)) % 320 + 320) % 320; circ(svg, P(x, 108 + (k % 3) * 12), 5, {fill: 'var(--blue)'}); }
+    tc(svg, 600, 70, ac ? 'electrons jiggle back and forth' : 'electrons drift steadily one way', 'sm blue', {'font-weight': 700});
+    tc(svg, 600, 180, ac ? 'home supply: 230 V AC – dangerous!' : 'battery: a few volts DC – safe for experiments', 'sm ' + (ac ? 'red' : 'green'), {'font-weight': 700});
+  }
+  function status(){ out.textContent = ac ? 'Alternating current (AC): the direction changes at regular intervals; the household supply is also at a high voltage, 230 V. Never use it for the experiments of this chapter.' : 'Direct current (DC): a cell or battery drives the current in one direction only.'; }
+  const it = anim(svg, t => draw(t));
+  radio(['dc', 'ac'], k => { ac = k === 1; status(); draw(it.t); wake(it); });
+  status();
+})();
+
+/* ---------- quiz ---------- */
+K.numq('#q1', {q: 'Resistors of 5 Ω, 10 Ω and 15 Ω are joined in series. Effective resistance (in Ω)?', answer: 30, tol: 0.01, unit: 'Ω', explain: '5 + 10 + 15 = 30 Ω.', hint: 'Series: add.'});
+K.numq('#q2', {q: 'A 12 Ω and a 4 Ω resistor are joined in parallel. Effective resistance (in Ω)?', answer: 3, tol: 0.01, unit: 'Ω', explain: '(12 × 4)/(12 + 4) = 48/16 = 3 Ω.', hint: 'R₁R₂/(R₁ + R₂).'});
+K.mcq('#q3', {q: 'In a series circuit, which quantity is the same for every resistor?', options: ['the p.d.', 'the current', 'the resistance', 'the power'], answer: 1, explain: 'There is only one path, so the same current flows everywhere.', hint: 'One path.'});
+K.mcq('#q4', {q: 'Household appliances are connected in parallel because…', options: ['it uses less wire', 'each gets the full 230 V and can be switched on and off independently', 'the current is the same in each', 'it increases the resistance'], answer: 1, explain: 'Parallel: same voltage for each, independent switching, one fault does not stop the others.', hint: 'Think of Fig 7.28 (b).'});
+K.numq('#q5', {q: 'Four 8 Ω resistors are joined in parallel. Effective resistance (in Ω)?', answer: 2, tol: 0.01, unit: 'Ω', explain: 'R/n = 8 ÷ 4 = 2 Ω.', hint: 'n equal resistors in parallel: R/n.'});
+K.mcq('#q6', {q: 'Why is a resistor connected in series with an LED?', options: ['to make the LED brighter than its rating', 'to limit the current so the LED is not damaged', 'to change DC into AC', 'to store charge'], answer: 1, explain: 'Like the 12 Ω resistor in Fig 7.33 (a), it takes part of the p.d. and limits the current.', hint: 'Remember Fig 7.33.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>
