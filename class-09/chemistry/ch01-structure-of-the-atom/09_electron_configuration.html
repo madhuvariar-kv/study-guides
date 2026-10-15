@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Electron Configuration</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+/* ==== common styles (same on pages 08–11) ==== */
+.qa,.qbox{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.7rem 1rem;margin:.8rem 0;box-shadow:var(--shadow)}
+.qa p,.qbox p{margin:.3em 0}
+.qbox ol,.qbox ul{margin:.3rem 0}
+.mlq{display:block;font-weight:500;margin:.2rem 0 .4rem}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.tw{overflow-x:auto}
+.nuc{display:inline-flex;align-items:center;white-space:nowrap;vertical-align:middle;line-height:1;margin:0 .05em}
+.nuc .az{display:inline-grid;grid-template-rows:auto auto;font-size:.62em;line-height:1.12;text-align:right;margin-right:.08em}
+.nuc .sy{font-weight:600}
+.nuc.big{font-size:1.5em}
+.ft{width:auto;min-width:min(100%,560px)}
+.ft td,.ft th{text-align:center;vertical-align:middle;padding:.35rem .45rem}
+.ft th{font-size:.88rem;line-height:1.3}
+.ft th .ml{display:block;font-size:.85em}
+.ft input{width:3.6em;padding:.25rem .3rem;border-radius:6px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;text-align:center}
+.ft input.wide{width:6.5em}
+.ft input.ok{border-color:var(--green);background:var(--green-soft)}
+.ft input.bad{border-color:var(--red);background:var(--red-soft)}
+.ft td.given{font-weight:600}
+.score{font-weight:700;color:var(--primary-ink);margin:.4rem 0 0;min-height:1.3em}
+td.fill{font-weight:700;color:var(--green)}
+.ans-tab td,.ans-tab th{text-align:center;vertical-align:middle}
+.further{border-left:6px solid var(--purple);background:var(--purple-soft);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+.further .title{font-weight:700;color:var(--purple);margin-bottom:.3rem}
+.yn{display:inline-flex;gap:.3rem;flex-wrap:wrap}
+.yn .btn{padding:.25rem .6rem;font-size:.88rem}
+.btn.ok{background:var(--green-soft);border-color:var(--green);color:var(--text)}
+.btn.bad{background:var(--red-soft);border-color:var(--red);color:var(--text)}
+.btn.sel{background:var(--accent-soft);border-color:var(--accent);color:var(--text)}
+.why{font-size:.92rem;margin-top:.3rem}
+.btn.primary .ml{color:#fff}
+.counter{display:flex;align-items:center;gap:.5rem;margin:.35rem 0;flex-wrap:wrap}
+.counter .btn{min-width:2.5rem;font-weight:700;font-size:1.05rem;padding:.3rem .6rem}
+.counter .v{min-width:2.2ch;text-align:center;font-size:1.25rem;font-weight:800}
+.counter .nm{min-width:7.5rem;font-weight:600}
+.dotp,.dotn,.dote{display:inline-block;width:.85em;height:.85em;border-radius:50%;vertical-align:-.08em;margin-right:.25em;border:1px solid rgba(0,0,0,.35)}
+.dotp{background:#dc2626}.dotn{background:#94a3b8}.dote{background:#22c55e}
+.keyml{display:block;margin:.2rem 0 .4rem}
+.cards3{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.8rem;margin:.8rem 0}
+.cards3 .card{margin:0}
+.bigsym{font-size:1.7rem;margin:.2rem 0 .3rem}
+
+.rule{border-top:5px solid var(--accent)}
+.rule h3{margin:.1rem 0 .4rem;color:var(--accent-ink)}
+.rule .ml{display:block;font-weight:500;margin-bottom:.3rem}
+#fillOut{min-height:6.2em}
+</style>
+</head>
+<body data-page="09_electron_configuration">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 1 · Electron configuration</span><span class="chip amber">Textbook pages 15–18</span>
+<h1>Electron Configuration and Shell Diagrams <span class="ml">ഇലക്ട്രോൺ വിന്യാസം</span></h1>
+<p class="lead">Electrons do not crowd anywhere they like. Like seats in a bus filled from the front row, they fill the shells in order, following three simple rules. Here you learn the rules, write configurations such as 2, 8, 3, draw orbit diagrams like the textbook's, and watch the shells fill up electron by electron for the first 20 elements.</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 7–8 of this guide)</div>
+<ul style="margin:0">
+<li>Bohr's model: electrons move in fixed <b>orbits</b> <span class="ml">ഓർബിറ്റ്</span> = <b>energy levels</b> <span class="ml">ഊർജനിലകൾ</span> around the nucleus; the energy increases as you go away from the nucleus (<a href="07_bohr_model_particles.html">page 7</a>).</li>
+<li>Number of electrons = atomic number Z (for a neutral atom); neutrons = A − Z (<a href="08_atomic_mass_number.html">page 8</a>).</li>
+<li>Squares: 1² = 1, 2² = 4, 3² = 9, 4² = 16 (<a href="03_tiny_numbers_units.html">page 3</a>).</li></ul></div>
+
+<h2 id="where">1. Where are the electrons?</h2>
+<div class="qa"><p><b>Questions (page 15).</b></p>
+<ol style="margin:.2rem 0"><li><span class="ml mlq">ബോർ ആറ്റം മാതൃക അനുസരിച്ച് ഇലക്ട്രോൺ എവിടെയാണ് കാണപ്പെടുന്നത്?</span> According to the Bohr atom model <span class="ml">ബോർ ആറ്റം മാതൃക</span>, where are the electrons found?</li>
+<li><span class="ml mlq">1, 2, 3, 4 എന്നീ ഊർജനിലകൾക്ക് യഥാക്രമം ഏതെല്ലാം പ്രതീകങ്ങളാണ് നൽകിയിരിക്കുന്നത്?</span> Which letters are given to the energy levels 1, 2, 3 and 4?</li></ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">1. Electrons revolve around the nucleus in <b>definite (fixed) orbits</b>, each with a definite energy – the <b>energy levels</b> or <b>shells</b> <span class="ml">ഷെല്ലുകൾ</span>. They are not inside the nucleus.<br>2. Energy levels 1, 2, 3, 4 are the <b>K, L, M, N</b> shells (and 5 is O).</div></div></div>
+<div class="lab"><div class="lab-title">🪜 Shells K, L, M, N, O (Fig 1.7)</div>
+<svg id="shSvg" viewBox="0 0 800 250" role="img" aria-label="Quarter circles around a nucleus labelled K, L, M, N and O shells, with n equals 1 to 5; energy increases going outward"></svg></div>
+<p><span class="ml">ഒരു ആറ്റത്തിലെ ഇലക്ട്രോണുകൾ വിവിധ ഓർബിറ്റുകളിൽ ക്രമീകരിക്കപ്പെടുന്നത് ചില നിയമങ്ങൾ അനുസരിച്ചാണ്.</span> – The electrons of an atom are arranged in the different orbits according to some rules.</p>
+
+<h2 id="rules">2. The three rules of filling</h2>
+<div class="cards3">
+<div class="card rule"><h3>Rule 1 · 2n²</h3><span class="ml">ഏതൊരു ഓർബിറ്റിലും ഉൾക്കൊള്ളാവുന്ന പരമാവധി ഇലക്ട്രോണുകളുടെ എണ്ണം 2n² ആണ് (n = ഓർബിറ്റ് നമ്പർ).</span>The maximum number of electrons any orbit can hold is <b>2n²</b>, where n is the orbit number.</div>
+<div class="card rule"><h3>Rule 2 · lower first</h3><span class="ml">പൊതുവേ താഴ്ന്ന ഊർജനിലയിൽ ഉള്ള ഒരു ഓർബിറ്റിൽ ഉൾക്കൊള്ളാവുന്ന പരമാവധി ഇലക്ട്രോണുകൾ നിറഞ്ഞതിനുശേഷം മാത്രമേ അടുത്ത ഊർജനിലയിലുള്ള ഓർബിറ്റിൽ ഇലക്ട്രോൺ പൂരണം നടക്കുകയുള്ളൂ.</span>Generally, electrons start filling the next energy level only after the lower-energy orbit is full.</div>
+<div class="card rule"><h3>Rule 3 · outermost ≤ 8</h3><span class="ml">ഏതൊരു ആറ്റത്തിന്റെയും ബാഹ്യ ഓർബിറ്റിൽ ഉൾക്കൊള്ളാവുന്ന പരമാവധി ഇലക്ട്രോണുകളുടെ എണ്ണം 8 ആയിരിക്കും.</span>The <b>outermost orbit</b> <span class="ml">ബാഹ്യ ഓർബിറ്റ്</span> of any atom can hold at most <b>8</b> electrons.</div>
+</div>
+<p><b>Rule 1 in a table (Table 1.3).</b> Work out 2n² for the M and N shells and type the numbers.</p>
+<div class="lab" id="t13"><div class="lab-title">✍ Table 1.3 – maximum electrons in each shell</div></div>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 16)</div>
+<p class="ml keyml">ഒരു ആറ്റത്തിന്റെ ഓർബിറ്റുകളിൽ ഇലക്ട്രോണുകൾ നിറയുന്നത് രേഖപ്പെടുത്തുന്നതാണ് ഇലക്ട്രോൺ വിന്യാസം.</p>
+<p>Recording how the electrons fill the orbits of an atom is called its <b>electron configuration</b> <span class="ml">ഇലക്ട്രോൺ വിന്യാസം</span>. We write the numbers of electrons in K, L, M, N in order, separated by commas: sodium (11 electrons) → <b>2, 8, 1</b>.</p></div>
+<div class="callout think"><div class="title">🧠 Why does sodium need a third shell?</div>
+<p>11 electrons: K takes 2 (full, 2 × 1²), L takes 8 (full, 2 × 2²). That uses 10, so the 11th electron must go to M → <b>2, 8, 1</b>. Think of a bus where the front row (K) has 2 seats and the second row (L) has 8: passenger number 11 has to sit in the third row.</p></div>
+
+<h2 id="t14">3. Table 1.4 – configurations of elements 1 to 18</h2>
+<p><span class="ml">ചില മൂലകങ്ങളുടെ ഇലക്ട്രോൺ വിന്യാസം എഴുതി നോക്കാം. പട്ടിക 1.4 പൂർത്തിയാക്കി സയൻസ് ഡയറിയിൽ രേഖപ്പെടുത്തുക.</span> – Let us write the electron configuration of some elements. Complete Table 1.4. Fill the empty boxes; leave a shell box <b>empty</b> (or type –) if that shell has no electrons.</p>
+<div class="lab" id="t14box"><div class="lab-title">✍ Table 1.4 – fill in and check</div></div>
+<div class="callout book"><div class="title">📖 Note (textbook page 17)</div>
+<p><span class="ml">1 മുതൽ 18 വരെ അറ്റോമിക നമ്പറുള്ള മൂലകങ്ങളുടെ ഇലക്ട്രോൺ വിന്യാസം മാത്രമേ ഈ രീതിയനുസരിച്ച് കൃത്യമായി എഴുതാൻ കഴിയൂ.</span> Only for elements with atomic numbers 1 to 18 can the configuration be written exactly by this method. For atomic numbers above 18, the method is learnt in higher classes. (The book's Fig 1.12 does show potassium 2, 8, 8, 1 and calcium 2, 8, 8, 2 – for elements up to 20, the outer shell takes at most 8.)</p></div>
+
+<h2 id="draw">4. Drawing the orbit diagram (Figs 1.8, 1.9)</h2>
+<p><span class="ml">ഹൈഡ്രജന്റെ ഓർബിറ്റ് ഇലക്ട്രോൺ വിന്യാസം ചിത്രീകരിച്ചിരിക്കുന്നത് ശ്രദ്ധിക്കൂ (ചിത്രം 1.8).</span> – Look at the orbit diagram of hydrogen (Fig 1.8): the nucleus is a disc labelled with the number of protons (p) and neutrons (n); each shell is a circle; each electron is a dot on its circle. Boron (Fig 1.9) has atomic number 5 and mass number 11: 5 protons, 11 − 5 = 6 neutrons, and electrons 2, 3.</p>
+<div class="lab"><div class="lab-title">🖼 Fig 1.8 hydrogen and Fig 1.9 boron</div>
+<svg id="figSvg" viewBox="0 0 800 330" role="img" aria-label="Fig 1.8: hydrogen, nucleus 1p 0n with one electron on one ring. Fig 1.9: boron, nucleus 5p 6n with 2 electrons on the inner ring and 3 on the outer ring"></svg>
+<p class="hint">Rules for a neat diagram: draw the nucleus first and write "Np / Nn" in it; draw one circle per shell; space the electrons on each circle evenly.</p></div>
+
+<div class="qbox"><p><b>Question (page 17).</b> <span class="ml mlq">²⁷₁₃Al ന്റെ ഓർബിറ്റ് ഇലക്ട്രോൺ വിന്യാസം ചിത്രീകരിക്കുക.</span> Draw the orbit electron configuration (orbit diagram) of <span class="nuc"><span class="az"><span>27</span><span>13</span></span><span class="sy">Al</span></span>.</p>
+<div class="reveal" data-btn="💡 Hint"><p>First find p, n and e. Then write the configuration with the rules, then draw.</p></div></div>
+<div class="lab" id="alStep"><div class="lab-title">🎬 Step by step: the orbit diagram of aluminium-27</div>
+<svg viewBox="0 0 800 330" role="img" aria-label="Step-by-step drawing of the aluminium-27 orbit diagram: nucleus 13p 14n, then electrons 2, 8, 3"></svg></div>
+
+<div class="qbox"><p><b>Question (pages 17–18).</b> <span class="ml mlq">ഒരു ആറ്റത്തിന്റെ ഓർബിറ്റ് ഇലക്ട്രോൺ വിന്യാസം നൽകിയിരിക്കുന്നു. ചിത്രം വിശകലനം ചെയ്ത് ചുവടെ കൊടുത്തിരിക്കുന്നവ കണ്ടെത്തുക.</span> The orbit diagram of an atom is given. Analyse it and find: atomic number, mass number, number of protons, number of neutrons, electron configuration.</p></div>
+<div class="lab" id="t18"><div class="lab-title">🔍 Read the diagram</div>
+<svg id="arSvg" viewBox="0 0 800 300" role="img" aria-label="Orbit diagram: nucleus 18p 22n with 2, 8 and 8 electrons on three rings"></svg></div>
+<div class="reveal" data-btn="✅ Show answer"><div class="answer">Protons = <b>18</b> → atomic number <b>18</b>. Neutrons = <b>22</b>. Mass number = 18 + 22 = <b>40</b>. Electrons: count the dots ring by ring → <b>2, 8, 8</b> (18 electrons = 18 protons ✔). This is <b>argon</b>, <span class="nuc"><span class="az"><span>40</span><span>18</span></span><span class="sy">Ar</span></span>.</div></div>
+
+<h2 id="filler">5. Virtual lab: the shell filler (Z = 1 to 20)</h2>
+<p>Pick an atomic number. Press <b>Fill one by one</b> and watch each electron take its place, with the rule that sends it there.</p>
+<div class="lab"><div class="lab-title">🧲 Shell filler</div>
+<div class="controls"><label>atomic number Z <input id="zS" type="range" min="1" max="20" step="1" value="11"><output></output></label><button class="btn primary" id="fillGo">▶ Fill one by one</button><button class="btn" id="fillAll">⏭ Show all at once</button></div>
+<svg id="fillSvg" viewBox="0 0 800 360" role="img" aria-label="Orbit diagram with K, L, M and N rings; electrons fill them one at a time; on the right, slots show how many electrons each shell holds"></svg>
+<div class="readout" id="fillOut"></div>
+<p class="hint">The slots on the right show 2n² for each shell (K 2, L 8, M 18, N 32). For the first 20 elements M never gets past 8, because the outermost shell holds at most 8 – that is why electron 19 starts the N shell.</p></div>
+
+<h2 id="gallery">6. Activity: orbit diagrams of elements 1–20</h2>
+<p><span class="ml">1 മുതൽ 18 വരെ അറ്റോമിക നമ്പറുള്ള മൂലക ആറ്റങ്ങളുടെ ഇലക്ട്രോൺ വിന്യാസം എഴുതി അവയുടെ ഷെൽ ഇലക്ട്രോൺ വിന്യാസം സയൻസ് ഡയറിയിൽ ചിത്രീകരിക്കുക.</span> – Write the electron configurations of the elements with atomic numbers 1 to 18 and draw their shell diagrams in your science diary. Draw yours first, then compare with this gallery (19 and 20 are added from Fig 1.12).</p>
+<div class="lab"><div class="lab-title">🖼 Gallery – shell diagrams of Z = 1 to 20</div>
+<svg id="galSvg" viewBox="0 0 800 1112" role="img" aria-label="Twenty small orbit diagrams, hydrogen to calcium, each with its nuclide symbol and electron configuration"></svg>
+<p class="hint">Neutrons are shown for the commonest atom of each element (for example <span class="nuc"><span class="az"><span>35</span><span>17</span></span><span class="sy">Cl</span></span> has 18 neutrons). Look down each column: the number of shells grows by one after 2 (helium), 10 (neon) and 18 (argon).</p></div>
+
+<div class="callout warn"><div class="title">⚠️ Common mistakes</div>
+<ul style="margin:0">
+<li>Putting 8 electrons in K ✗ – K holds only 2.</li>
+<li>Filling M before L is full ✗ – for 11 electrons it is 2, 8, 1, not 2, 7, 2.</li>
+<li>Putting 9 or more in the outermost shell ✗ – potassium is 2, 8, 8, 1, not 2, 8, 9.</li>
+<li>Drawing the electrons inside the nucleus ✗ – the nucleus has only protons and neutrons.</li></ul></div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://en.wikipedia.org/wiki/Electron_shell" target="_blank" rel="noopener noreferrer">📄 Electron shell</a> <span class="src">Wikipedia</span><br><span class="note">The K, L, M, N shells and the 2n² rule. The parts on subshells (s, p, d) are for higher classes.</span></li><li><a href="https://ptable.com/" target="_blank" rel="noopener noreferrer">🧪 Ptable – interactive periodic table</a> <span class="src">Ptable</span><br><span class="note">Click any element to see its atomic number, its mass and how its electrons are arranged, then compare it with your shell diagrams.</span></li></ul></div>
+
+<h2 id="check">7. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li>Shells K, L, M, N (n = 1, 2, 3, 4) hold at most 2n² = 2, 8, 18, 32 electrons.</li>
+<li>Fill the lower shell first; the outermost shell holds at most 8.</li>
+<li>Configurations: Na 2, 8, 1 · Al 2, 8, 3 · Cl 2, 8, 7 · Ar 2, 8, 8 · K 2, 8, 8, 1 · Ca 2, 8, 8, 2.</li>
+<li>Orbit diagram: nucleus "Np / Nn", one circle per shell, electrons spaced evenly.</li>
+</ul></div>
+<p>Next: <a href="10_isotopes_isobars.html">Isotopes, isobars &amp; isotones ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Structure of the Atom · Class 9 Chemistry", "icon": "⚛️", "key": "chemistry_ch1_progress", "pages": [["index.html", "Home"], ["01_matter_elements_molecules.html", "1 · Matter, Elements, Atoms & Molecules"], ["02_charges_and_electricity.html", "2 · Charges, Electrodes & Low-pressure Gases"], ["03_tiny_numbers_units.html", "3 · Tiny Numbers, Sizes & Units"], ["04_inside_atom_electron.html", "4 · Inside the Atom: Discharge Tube & the Electron"], ["05_proton_thomson_model.html", "5 · Canal Rays, the Proton & Thomson's Model"], ["06_rutherford_model_neutron.html", "6 · Rutherford's Gold Foil Experiment & the Neutron"], ["07_bohr_model_particles.html", "7 · Bohr's Model & the Three Particles"], ["08_atomic_mass_number.html", "8 · Atomic Number & Mass Number"], ["09_electron_configuration.html", "9 · Electron Configuration & Shell Diagrams"], ["10_isotopes_isobars.html", "10 · Isotopes, Isobars & Isotones"], ["11_intext_questions_solutions.html", "11 · In-text Questions – Solutions"], ["12_assess_solutions.html", "12 · Let Us Assess & Extended Activities – Solutions"], ["13_applications_explore.html", "13 · Applications & Explore Online"], ["14_summary_revision.html", "14 · Summary & Quick Quiz"], ["15_model_test_paper.html", "15 · Model Test Paper"], ["16_model_test_solutions.html", "16 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ==== common helpers (same code on pages 08–11) ==== */
+const {P, el} = K;
+const $id = id => document.getElementById(id);
+const C = c => (c === 'none' ? 'none' : ((c.charAt(0) === '#' || c.startsWith('url') || c.startsWith('rgb')) ? c : `var(--${c === 'amber' ? 'accent' : c})`));
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const TAU = Math.PI * 2;
+/* plain line with its own stroke (the kit's .ln class would override stroke attributes on seg()) */
+function line(svg, a, b, color = 'text', w = 2, extra = {}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: C(color), 'stroke-width': w, 'stroke-linecap': 'round', ...extra}, svg); }
+function arrow(svg, a, b, color = 'red', w = 2.5, head = 10, extra = {}){ const L = K.dist(a, b); if (L < 2) return; const u = K.unit(a, b), hh = Math.min(head, L); const hb = P(b.x - u.x * hh, b.y - u.y * hh);
+  el('line', {x1: a.x, y1: a.y, x2: hb.x, y2: hb.y, stroke: C(color), 'stroke-width': w, 'stroke-linecap': 'round', ...extra}, svg);
+  el('polygon', {points: `${b.x},${b.y} ${hb.x + u.y * hh * .55},${hb.y - u.x * hh * .55} ${hb.x - u.y * hh * .55},${hb.y + u.x * hh * .55}`, fill: C(color), ...extra}, svg); }
+function tx(svg, x, y, str, cls = '', anchor = 'middle', extra = {}){ return K.text(svg, P(x, y), str, {class: ('lbl ' + cls).trim(), 'text-anchor': anchor, ...extra}); }
+function box(svg, x, y, w, h, fill = 'surface2', stroke = 'text', sw = 1.5, extra = {}){ return el('rect', {x, y, width: w, height: h, fill: C(fill), stroke: C(stroke), 'stroke-width': sw, ...extra}, svg); }
+function circ(svg, x, y, r, fill = 'none', stroke = 'text', sw = 1.5, extra = {}){ return el('circle', {cx: x, cy: y, r: Math.max(0, r), fill: C(fill), stroke: C(stroke), 'stroke-width': sw, ...extra}, svg); }
+
+/* elements Z = 1–20: [symbol, English name, Malayalam name as printed in the textbook ('' if the book does not print it), mass number of the commonest atom] */
+const ELS = [null, ['H', 'Hydrogen', 'ഹൈഡ്രജൻ', 1], ['He', 'Helium', '', 4], ['Li', 'Lithium', '', 7], ['Be', 'Beryllium', '', 9], ['B', 'Boron', 'ബോറോൺ', 11],
+  ['C', 'Carbon', 'കാർബൺ', 12], ['N', 'Nitrogen', '', 14], ['O', 'Oxygen', 'ഓക്സിജൻ', 16], ['F', 'Fluorine', '', 19], ['Ne', 'Neon', '', 20],
+  ['Na', 'Sodium', 'സോഡിയം', 23], ['Mg', 'Magnesium', '', 24], ['Al', 'Aluminium', '', 27], ['Si', 'Silicon', '', 28], ['P', 'Phosphorus', '', 31],
+  ['S', 'Sulphur', '', 32], ['Cl', 'Chlorine', 'ക്ലോറിൻ', 35], ['Ar', 'Argon', 'ആർഗൺ', 40], ['K', 'Potassium', 'പൊട്ടാസ്യം', 39], ['Ca', 'Calcium', 'കാൽസ്യം', 40]];
+/* electron configuration for 0–20 electrons: K ≤ 2, L ≤ 8, M ≤ 8 (outermost shell ≤ 8), then N – as in the textbook (K = 2, 8, 8, 1; Ca = 2, 8, 8, 2) */
+function conf(z){ const out = []; for (const cap of [2, 8, 8, 2]){ if (z <= 0) break; const t = Math.min(cap, z); out.push(t); z -= t; } return out; }
+const confStr = arr => arr.join(', ');
+const SHELL = ['K', 'L', 'M', 'N', 'O'];
+/* nuclide symbol in HTML: mass number on top, atomic number below, both on the left of the symbol */
+const nucHTML = (A, Z, sym, cls = '') => `<span class="nuc ${cls}"><span class="az"><span>${A}</span><span>${Z}</span></span><span class="sy">${sym}</span></span>`;
+/* nuclide symbol in SVG: (x, y) = left edge / middle of the element symbol */
+function nucSvg(svg, x, y, A, Z, sym, fs = 22, color = 'text'){ const g = K.group(svg), f = C(color), fsm = Math.round(fs * .56);
+  el('text', {x: x, y: y, 'dominant-baseline': 'middle', class: 'lbl', style: `font-size:${fs}px;font-weight:700;fill:${f}`, text: sym}, g);
+  el('text', {x: x - 2, y: y - fs * .42, 'text-anchor': 'end', 'dominant-baseline': 'middle', class: 'lbl', style: `font-size:${fsm}px;font-weight:600;fill:${f}`, text: String(A)}, g);
+  el('text', {x: x - 2, y: y + fs * .46, 'text-anchor': 'end', 'dominant-baseline': 'middle', class: 'lbl', style: `font-size:${fsm}px;font-weight:600;fill:${f}`, text: String(Z)}, g);
+  return g; }
+
+/* ---- orbit (shell) diagram drawer ----
+   orbit(svg, cx, cy, {p, n, shells: [2, 8, 3], gap, nucR, style: 'book' | 'plain', rot, eR, label, names, rings, hl, eFill, eLabel, nucFill, ringColor})
+   book style = like Fig 1.8 / 1.9 / 1.12: orange bands, red ring lines, dark-red nucleus with "Np / Nn", green electrons evenly spaced on each ring */
+let ORB_N = 0;
+function orbDefs(svg){ const old = svg.querySelector('defs.orbdefs'); if (old) return old.getAttribute('data-id');
+  const id = 'orb' + (++ORB_N) + 'x'; const d = el('defs', {class: 'orbdefs', 'data-id': id}, svg);
+  const g1 = el('radialGradient', {id: id + 'b', cx: '50%', cy: '50%', r: '50%'}, d);
+  el('stop', {offset: '0%', 'stop-color': '#fff4d6'}, g1); el('stop', {offset: '62%', 'stop-color': '#fcd581'}, g1); el('stop', {offset: '100%', 'stop-color': '#f39a1e'}, g1);
+  const g2 = el('radialGradient', {id: id + 'e', cx: '35%', cy: '32%', r: '70%'}, d);
+  el('stop', {offset: '0%', 'stop-color': '#e9fde9'}, g2); el('stop', {offset: '55%', 'stop-color': '#5fd16b'}, g2); el('stop', {offset: '100%', 'stop-color': '#15803d'}, g2);
+  const g3 = el('radialGradient', {id: id + 'n', cx: '40%', cy: '35%', r: '70%'}, d);
+  el('stop', {offset: '0%', 'stop-color': '#a3243b'}, g3); el('stop', {offset: '100%', 'stop-color': '#5a0e1e'}, g3);
+  return id; }
+function orbit(svg, cx, cy, o = {}){
+  const {p = 1, n = 0, shells = [1], gap = 24, nucR = 22, style = 'book', rot = 0, eR = null, label = true, names = false, rings = 0, hl = -1,
+    eFill = null, eLabel = '', nucFill = '#f9a8d4', nucText = '#831843', ringColor = 'muted'} = o;
+  const id = orbDefs(svg), g = K.group(svg);
+  const nr = Math.max(shells.length, rings), rr = k => nucR + gap * (k + 1), er = eR ?? clamp(gap * .3, 3, 8);
+  if (style === 'book'){
+    for (let k = nr - 1; k >= 0; k--) circ(g, cx, cy, rr(k) + gap * .42, `url(#${id}b)`, 'none', 0);
+    for (let k = 0; k < nr; k++) circ(g, cx, cy, rr(k), 'none', k === hl ? '#15803d' : '#d9381e', k === hl ? 3 : 1.3);
+    circ(g, cx, cy, nucR, `url(#${id}n)`, '#fde7b0', 1.5);
+  } else {
+    for (let k = 0; k < nr; k++) circ(g, cx, cy, rr(k), 'none', k === hl ? 'green' : ringColor, k === hl ? 3 : 1.5);
+    circ(g, cx, cy, nucR, nucFill, nucText, 1.2);
+  }
+  if (names) for (let k = 0; k < nr; k++){ const a = K.rad(-112), r = rr(k) - gap * .5; el('text', {x: cx + r * Math.cos(a), y: cy + r * Math.sin(a), 'text-anchor': 'middle', 'dominant-baseline': 'middle', style: `font-size:${clamp(gap * .5, 9, 13)}px;font-weight:700;fill:${style === 'book' ? '#7c2d12' : 'var(--muted)'}`, text: SHELL[k]}, g); }
+  if (label){ const fs = clamp(nucR * .6, 7, 18), col = style === 'book' ? '#ffffff' : nucText;
+    el('text', {x: cx, y: cy - fs * .52, 'text-anchor': 'middle', 'dominant-baseline': 'middle', style: `font-size:${fs}px;font-weight:700;fill:${col};font-family:Segoe UI,Roboto,Arial,sans-serif`, text: p + 'p'}, g);
+    el('text', {x: cx, y: cy + fs * .58, 'text-anchor': 'middle', 'dominant-baseline': 'middle', style: `font-size:${fs}px;font-weight:700;fill:${col};font-family:Segoe UI,Roboto,Arial,sans-serif`, text: n + 'n'}, g); }
+  const pts = [];
+  shells.forEach((m, k) => { const r = rr(k); for (let j = 0; j < m; j++){ const a = K.rad(-90 + 360 * j / m + rot * 40 / (k + 1)); const q = P(cx + r * Math.cos(a), cy + r * Math.sin(a)); pts.push(q);
+    if (style === 'book' && !eFill) circ(g, q.x, q.y, er, `url(#${id}e)`, '#14532d', .9);
+    else circ(g, q.x, q.y, er, eFill || '#22c55e', '#1e293b', .9);
+    if (eLabel) el('text', {x: q.x, y: q.y + .5, 'text-anchor': 'middle', 'dominant-baseline': 'middle', style: `font-size:${er * 1.15}px;font-weight:700;fill:#fff`, text: eLabel}, g); } });
+  return {g, rr, pts};
+}
+
+/* ---- interactive fill-in table ----
+   fillTable(id, {head: [html...], rows: [[cell...]...], wide: [colIndex...]}); cell = 'given text' | {a: 'answer', alt: [...], blank: true (an empty / '–' answer is right)} */
+const norm = s => String(s).trim().toLowerCase().replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/,+/g, ',');
+function fillTable(id, spec){
+  const root = $id(id); let N = 0;
+  const cell = (c, ci) => { if (c && typeof c === 'object'){ N++; return `<td><input type="text" autocomplete="off" spellcheck="false" ${spec.wide && spec.wide.includes(ci) ? 'class="wide"' : 'inputmode="numeric"'} data-a="${c.a}" data-alt="${(c.alt || []).join('|')}" data-blank="${c.blank ? 1 : ''}" aria-label="${(spec.labels && spec.labels[ci]) || 'answer'}"></td>`; } return `<td class="given">${c}</td>`; };
+  root.insertAdjacentHTML('beforeend', `<div class="tw"><table class="ft"><thead><tr>${spec.head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${spec.rows.map(r => `<tr>${r.map(cell).join('')}</tr>`).join('')}</tbody></table></div>
+    <div class="controls"><button class="btn primary" data-f="check">✔ Check my answers</button><button class="btn ghost" data-f="clear">⟲ Clear</button><button class="btn" data-f="show">💡 Show answers</button></div><p class="score"></p>`);
+  const ins = K.$$('input[data-a]', root), score = root.querySelector('.score');
+  const right = inp => { const v = norm(inp.value); if (inp.dataset.blank && (v === '' || v === '-' || v === '0')) return true; return v !== '' && (v === norm(inp.dataset.a) || inp.dataset.alt.split('|').filter(Boolean).some(a => norm(a) === v)); };
+  root.addEventListener('click', e => { const b = e.target.closest('button[data-f]'); if (!b) return; const f = b.dataset.f;
+    if (f === 'check'){ let ok = 0; ins.forEach(i => { const r = right(i); i.classList.toggle('ok', r); i.classList.toggle('bad', !r); if (r) ok++; });
+      score.textContent = ok === ins.length ? `🎉 All ${ins.length} correct!` : `${ok} of ${ins.length} correct – the red boxes need another look.` + (spec.hint ? ' ' + spec.hint : ''); }
+    else if (f === 'show'){ ins.forEach(i => { i.value = i.dataset.blank && !i.dataset.a ? '–' : i.dataset.a; i.classList.add('ok'); i.classList.remove('bad'); }); score.textContent = 'All answers filled in (green). Cover them and try again tomorrow!'; }
+    else { ins.forEach(i => { i.value = ''; i.classList.remove('ok', 'bad'); }); score.textContent = ''; } });
+  root.addEventListener('input', e => { if (e.target.matches('input[data-a]')) e.target.classList.remove('ok', 'bad'); });
+}
+
+/* shared animation clock: runs only while a lab is on screen and was used in the last 25 s */
+const ANIM = []; let animOn = false, animLast = 0;
+function animLoop(now){ const dt = Math.min(.05, Math.max(0, (now - animLast) / 1000)); animLast = now; let any = false;
+  for (const it of ANIM){ if (it.vis && now < it.until){ it.t += dt; try { it.fn(it.t, dt); } catch (e){ it.until = 0; throw e; } any = true; } }
+  if (any) requestAnimationFrame(animLoop); else animOn = false; }
+function animStart(){ if (!animOn){ animOn = true; animLast = performance.now(); requestAnimationFrame(animLoop); } }
+function anim(elm, fn){ const it = {elm, fn, t: 0, until: 0, vis: true}; ANIM.push(it);
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(e => { it.vis = e.isIntersecting; if (it.vis) wake(it); })).observe(elm);
+  it.fn(0, 0); wake(it); return it; }
+function wake(it){ it.until = performance.now() + 25000; animStart(); }
+/* choice buttons: <span class="yn" data-ans="1" data-why="..."><button class="btn">…</button>…</span> followed by a <div class="why"> */
+function choices(root = document){ K.$$('.yn[data-ans]', root).forEach(bx => { const ans = +bx.dataset.ans, why = bx.parentElement.querySelector('.why');
+  K.$$('button', bx).forEach((b, k) => b.addEventListener('click', () => { K.$$('button', bx).forEach(x => x.classList.remove('ok', 'bad')); b.classList.add(k === ans ? 'ok' : 'bad');
+    if (why){ why.innerHTML = k === ans ? '✅ ' + (bx.dataset.why || 'Correct.') : '❌ ' + (bx.dataset.hint || 'Not quite – think again.'); why.style.color = k === ans ? 'var(--green)' : 'var(--red)'; } })); }); }
+/* ==== end common ==== */
+
+
+/* ---------- Fig 1.7 shells ---------- */
+(function(){ const svg = $id('shSvg'), c = P(112, 228);
+  SHELL.forEach((s, k) => { const r = 42 + k * 40;
+    el('path', {d: `M${c.x},${c.y - r} A${r},${r} 0 0,1 ${c.x + r},${c.y}`, fill: 'none', stroke: 'var(--blue)', 'stroke-width': 2}, svg);
+    tx(svg, c.x - 8, c.y - r, `${s} (n = ${k + 1})`, 'sm blue', 'end'); });
+  circ(svg, c.x, c.y, 16, 'red', 'none', 0); tx(svg, c.x, c.y, '+', 'big', 'middle', {style: 'fill:#fff;stroke:none'});
+  arrow(svg, P(350, 200), P(560, 200), 'accent', 3); tx(svg, 455, 182, 'energy increases outward', 'amber', 'middle');
+  tx(svg, 600, 70, 'n = 1 → K', '', 'start'); tx(svg, 600, 96, 'n = 2 → L', '', 'start'); tx(svg, 600, 122, 'n = 3 → M', '', 'start'); tx(svg, 600, 148, 'n = 4 → N', '', 'start'); tx(svg, 600, 174, 'n = 5 → O', '', 'start');
+})();
+
+/* ---------- Table 1.3 ---------- */
+fillTable('t13', {head: ['Orbit number (n) <span class="ml">ഓർബിറ്റ് നമ്പർ</span>', 'Name <span class="ml">പേര്</span>', 'Maximum number of electrons (2n²) <span class="ml">ഉൾക്കൊള്ളാവുന്ന പരമാവധി ഇലക്ട്രോണുകളുടെ എണ്ണം</span>'],
+  labels: ['', '', 'maximum electrons'],
+  rows: [[1, 'K', '2 × 1² = 2'], [2, 'L', '2 × 2² = 8'], [3, 'M', {a: 18, alt: ['2×3²=18', '2x3²=18', '2x9=18', '2×9=18']}], [4, 'N', {a: 32, alt: ['2×4²=32', '2x4²=32', '2x16=32', '2×16=32']}]],
+  hint: 'M: 2 × 3² = 2 × 9; N: 2 × 4² = 2 × 16.'});
+
+/* ---------- Table 1.4 ---------- */
+(function(){
+  /* [Z, which of Z / electrons the book prints ('z' | 'e'), book prints K L M ?] */
+  const B = [[1, 'z', 1], [2, 'z', 1], [3, 'z', 1], [4, 'z'], [5, 'z'], [6, 'z'], [7, 'e'], [8, 'z'], [9, 'e'], [10, 'z'], [11, 'e'], [12, 'z'], [13, 'z', 1], [14, 'e'], [15, 'e'], [16, 'e'], [17, 'e'], [18, 'z', 1]];
+  const rows = B.map(([z, g, given]) => { const c = conf(z);
+    const sh = [0, 1, 2].map(k => given ? (c[k] ? String(c[k]) : '') : (c[k] ? {a: c[k]} : {a: '', blank: true}));
+    return [ELS[z][0], g === 'z' ? z : {a: z}, g === 'e' ? z : {a: z}, ...sh]; });
+  fillTable('t14box', {head: ['Element <span class="ml">മൂലകം</span>', 'Atomic number <span class="ml">അറ്റോമിക നമ്പർ</span>', 'Number of electrons <span class="ml">ഇലക്ട്രോണുകളുടെ എണ്ണം</span>', 'K', 'L', 'M'],
+    labels: ['', 'atomic number', 'electrons', 'K shell', 'L shell', 'M shell'], rows, hint: 'Electrons = atomic number; K takes 2, then L up to 8, then M.'});
+})();
+
+/* ---------- Figs 1.8, 1.9 ---------- */
+(function(){ const svg = $id('figSvg');
+  orbit(svg, 200, 140, {p: 1, n: 0, shells: [1], gap: 62, nucR: 36});
+  orbit(svg, 590, 140, {p: 5, n: 6, shells: [2, 3], gap: 38, nucR: 32, names: true});
+  tx(svg, 200, 284, 'Fig 1.8  hydrogen', 'big', 'middle'); nucSvg(svg, 175, 310, 1, 1, 'H', 20); tx(svg, 195, 310, ': 1 electron', 'sm', 'start');
+  tx(svg, 590, 284, 'Fig 1.9  boron', 'big', 'middle'); nucSvg(svg, 560, 310, 11, 5, 'B', 20); tx(svg, 578, 310, ': 2, 3', 'sm', 'start');
+})();
+
+/* ---------- Al-27 stepper ---------- */
+(function(){
+  const rows = [[0, 'Read ²⁷₁₃Al:  A = 27,  Z = 13', 'blue'], [1, 'protons = 13,  electrons = 13', ''], [1, 'neutrons = 27 − 13 = 14', ''],
+    [2, 'K: 2 (full)  L: 8 (full)  M: 13 − 10 = 3', 'purple'], [2, 'configuration: 2, 8, 3', 'green big']];
+  new K.Stepper('#alStep', {steps: [
+    '<b>Read the symbol.</b> <span class="nuc"><span class="az"><span>27</span><span>13</span></span><span class="sy">Al</span></span>: mass number A = 27, atomic number Z = 13.',
+    '<b>Count the particles.</b> Protons = Z = 13; electrons = 13 (neutral atom); neutrons = A − Z = 27 − 13 = 14.',
+    '<b>Write the configuration.</b> K takes 2 (2 × 1²) and is full; L takes 8 (2 × 2²) and is full; that is 10, so the remaining 13 − 10 = 3 go to M → <b>2, 8, 3</b>.',
+    '<b>Draw the nucleus</b> and write <b>13p / 14n</b> inside it.',
+    '<b>Draw three circles</b> – one each for K, L and M.',
+    '<b>Place 2 electrons on K</b>, opposite each other.',
+    '<b>Place 8 electrons on L</b>, evenly spaced.',
+    '<b>Place 3 electrons on M</b>, evenly spaced. Done – this is the orbit diagram of aluminium. Count: 2 + 8 + 3 = 13 ✔.'], ms: 900, draw(svg, i, t){
+    let y = 40; rows.forEach(([k, s, c]) => { if (k > i) return; tx(svg, 20, y, s, c, 'start', {opacity: k === i ? t : 1}); y += 36; });
+    if (i >= 3){ const sh = i >= 7 ? [2, 8, 3] : i >= 6 ? [2, 8] : i >= 5 ? [2] : [];
+      orbit(svg, 610, 165, {p: 13, n: 14, shells: sh, rings: i >= 4 ? 3 : 0, gap: 36, nucR: 32, names: i >= 4});
+      if (i >= 7) nucSvg(svg, 470, 312, 27, 13, 'Al', 22, 'primary'); }
+  }});
+})();
+
+/* ---------- the 18p 22n question ---------- */
+(function(){ const svg = $id('arSvg');
+  orbit(svg, 170, 150, {p: 18, n: 22, shells: [2, 8, 8], gap: 34, nucR: 30});
+  tx(svg, 360, 60, 'Count the protons and neutrons in the nucleus,', '', 'start');
+  tx(svg, 360, 86, 'then count the dots ring by ring (inner → outer).', '', 'start');
+  tx(svg, 360, 130, 'atomic number = protons', 'sm muted', 'start'); tx(svg, 360, 154, 'mass number = protons + neutrons', 'sm muted', 'start');
+  tx(svg, 360, 178, 'electrons = number of dots', 'sm muted', 'start');
+  fillTable('t18', {head: ['Atomic number <span class="ml">അറ്റോമിക നമ്പർ</span>', 'Mass number <span class="ml">മാസ് നമ്പർ</span>', 'Number of protons <span class="ml">പ്രോട്ടോണുകളുടെ എണ്ണം</span>', 'Number of neutrons <span class="ml">ന്യൂട്രോണുകളുടെ എണ്ണം</span>', 'Electron configuration <span class="ml">ഇലക്ട്രോൺ വിന്യാസം</span>'],
+    labels: ['atomic number', 'mass number', 'protons', 'neutrons', 'configuration'], wide: [4],
+    rows: [[{a: 18}, {a: 40}, {a: 18}, {a: 22}, {a: '2, 8, 8'}]], hint: 'Type the configuration as 2, 8, 8.'});
+})();
+
+/* ---------- shell filler ---------- */
+(function(){
+  const svg = $id('fillSvg'), out = $id('fillOut'); let Z = 11, placed = 11, running = false, tAt = 0, T = 0;
+  const CAP = [2, 8, 18, 32], STEP = .75;
+  function msg(i){ /* message for electron number i (1-based) */
+    const c = conf(i), k = c.length - 1, m = c[k];
+    if (k === 0) return `Electron ${i} → K shell (n = 1). K holds at most 2 × 1² = 2.`;
+    if (m === 1){ if (k === 3) return `Electron ${i}: K, L full and M already has 8. For elements up to Z = 20 the outermost shell holds at most 8, so electron ${i} starts the N shell.`;
+      return `Electron ${i}: ${SHELL[k - 1]} is full (${conf(i - 1)[k - 1]} = 2 × ${k}²) → it starts the ${SHELL[k]} shell (n = ${k + 1}).`; }
+    return `Electron ${i} → ${SHELL[k]} shell, now ${m} electron${m > 1 ? 's' : ''} there (max 2n² = ${CAP[k]}${k === 2 ? ', outermost ≤ 8' : ''}).`;
+  }
+  function draw(){
+    K.clear(svg); const c = conf(placed), E = ELS[Z];
+    const o = orbit(svg, 185, 180, {p: Z, n: E[3] - Z, shells: c, rings: 4, gap: 32, nucR: 28, names: true, hl: placed ? c.length - 1 : -1});
+    if (placed && running){ const q = o.pts[o.pts.length - 1], f = clamp((T - tAt) / STEP % 1, 0, 1); circ(svg, q.x, q.y, 8 + f * 14, 'none', 'accent', 3, {opacity: (1 - f).toFixed(2)}); }
+    tx(svg, 430, 30, `${E[1]} (${E[0]}), Z = ${Z}`, 'big', 'start');
+    for (let k = 0; k < 4; k++){ const y0 = 64 + k * 68; tx(svg, 430, y0, `${SHELL[k]} (n = ${k + 1})`, 'sm', 'start'); tx(svg, 790, y0, `${c[k] || 0} / ${CAP[k]}`, 'sm ' + (c[k] ? 'green' : 'muted'), 'end');
+      for (let s = 0; s < CAP[k]; s++){ const x = 430 + (s % 16) * 22, y = y0 + 12 + Math.floor(s / 16) * 20; box(svg, x, y, 17, 15, s < (c[k] || 0) ? '#22c55e' : 'none', s < (c[k] || 0) ? '#15803d' : 'border', 1.2, {rx: 3}); } }
+    tx(svg, 430, 342, 'configuration: ' + (c.length ? confStr(c) : '–'), 'big green', 'start');
+  }
+  function text(){ const lines = []; for (let i = Math.max(1, placed - 2); i <= placed; i++) lines.push(msg(i));
+    out.textContent = `Z = ${Z} → ${Z} electrons. Placed so far: ${placed}.\n` + lines.join('\n') + (placed === Z ? `\n✔ Electron configuration of ${ELS[Z][1].toLowerCase()}: ${confStr(conf(Z))}` : ''); }
+  const it = anim(svg, (t) => { T = t; if (running){ const want = Math.min(Z, 1 + Math.floor((t - tAt) / STEP)); if (want !== placed){ placed = want; text(); } if (placed >= Z && t - tAt > Z * STEP + .6){ running = false; text(); } } draw(); });
+  K.slider('#zS', v => { Z = v; placed = v; running = false; text(); wake(it); draw(); }, 0);
+  $id('fillGo').addEventListener('click', () => { placed = 1; running = true; tAt = T; text(); draw(); wake(it); });
+  $id('fillAll').addEventListener('click', () => { placed = Z; running = false; text(); wake(it); draw(); });
+})();
+
+/* ---------- gallery ---------- */
+(function(){ const svg = $id('galSvg');
+  for (let z = 1; z <= 20; z++){ const col = (z - 1) % 4, row = Math.floor((z - 1) / 4), x0 = col * 200, y0 = row * 222, E = ELS[z], c = conf(z);
+    box(svg, x0 + 4, y0 + 4, 192, 214, 'none', 'border', 1, {rx: 10});
+    tx(svg, x0 + 100, y0 + 19, `${z}. ${E[1]}`, 'sm', 'middle');
+    const gap = c.length >= 4 ? 14 : c.length === 3 ? 18 : c.length === 2 ? 24 : 32;
+    orbit(svg, x0 + 100, y0 + 112, {p: z, n: E[3] - z, shells: c, gap, nucR: 17, eR: c.length >= 3 ? 3.6 : 4.5});
+    nucSvg(svg, x0 + 52, y0 + 200, E[3], z, E[0], 18); tx(svg, x0 + 82 + E[0].length * 6, y0 + 201, confStr(c), 'sm green', 'start'); }
+})();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'The maximum number of electrons the L shell (n = 2) can hold is…', options: ['2', '4', '8', '18'], answer: 2, explain: '2n² = 2 × 2² = 8.', hint: 'Use 2n² with n = 2.'});
+K.mcq('#q2', {q: 'The electron configuration of magnesium (Z = 12) is…', options: ['2, 10', '2, 8, 2', '8, 2, 2', '2, 2, 8'], answer: 1, explain: 'K 2, L 8, then the remaining 2 go to M.', hint: 'Fill K (2), then L (8), then M.'});
+K.mcq('#q3', {q: 'An atom has the configuration 2, 8, 7. Its atomic number is…', options: ['7', '15', '17', '10'], answer: 2, explain: '2 + 8 + 7 = 17 electrons = 17 protons → chlorine.', hint: 'Add up the electrons.'});
+K.numq('#q4', {q: 'Using 2n², how many electrons at most can the M shell (n = 3) hold?', answer: 18, tol: 0, unit: 'electrons', explain: '2 × 3² = 2 × 9 = 18.', hint: '2 × n × n with n = 3.'});
+K.mcq('#q5', {q: 'Potassium has 19 electrons. Its configuration is 2, 8, 8, 1 and not 2, 8, 9 because…', options: ['K holds only 1 electron', 'the outermost shell can hold at most 8 electrons', 'M can hold only 8 in every atom', 'electrons fill the outer shell first'], answer: 1, explain: 'Rule 3: the outermost shell holds at most 8, so the 19th electron starts the N shell (Fig 1.12).', hint: 'Think of rule 3.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

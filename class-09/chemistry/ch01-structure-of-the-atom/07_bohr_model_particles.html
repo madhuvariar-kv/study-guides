@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bohr's Atom Model</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.qa{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.6rem 1rem;margin:.7rem 0;box-shadow:var(--shadow)}
+.qa p{margin:.25em 0}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.bubbles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.7rem;margin:.8rem 0}
+.bubble{background:var(--surface);border:2px solid var(--purple);border-radius:18px;padding:.6rem .9rem;font-size:.95rem}
+.bubble .ml{display:block;font-weight:600;margin-bottom:.2rem}
+.obs td,.obs th{vertical-align:middle}
+.tw{overflow-x:auto}
+.diary{background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:.7rem 1rem;margin:1rem 0}
+.diary h3{margin:.1rem 0 .4rem;color:var(--accent-ink)}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;padding:.05rem .45rem;border-radius:6px;background:var(--surface2);color:var(--muted);margin-left:.3rem}
+.yn{display:inline-flex;gap:.3rem;flex-wrap:wrap}
+.yn .btn{padding:.25rem .6rem;font-size:.88rem}
+.btn.ok{background:var(--green-soft);border-color:var(--green);color:var(--text)}
+.btn.bad{background:var(--red-soft);border-color:var(--red);color:var(--text)}
+.why{font-size:.9rem;margin-top:.25rem}
+.btn.primary .ml{color:#fff}
+.sci{float:right;width:178px;margin:.3rem 0 .8rem 1rem;border:3px dotted var(--accent);background:var(--surface2);border-radius:10px;padding:.5rem .4rem;text-align:center;font-size:.85rem;line-height:1.35}
+.sci svg{width:64px;height:64px;display:block;margin:0 auto .2rem}
+.sci .nm{font-weight:700;color:var(--primary-ink)}
+.sci .yr{color:var(--muted);font-weight:600}
+.sci .ml{display:block}
+.sci .note{font-size:.8rem;margin-top:.2rem}
+@media(max-width:600px){.sci{float:none;width:auto;margin:.6rem 0}}
+.clr{clear:both}
+.nuc{display:inline-flex;align-items:center;white-space:nowrap}
+.nuc .az{display:inline-grid;grid-template-rows:auto auto;font-size:.68em;line-height:1.05;text-align:right;margin-right:.06em}
+.fc-in{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:10rem}
+select.sel{padding:.3rem .4rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem}
+</style>
+<style>
+.sorter .item{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .6rem;padding:.45rem .6rem;border:1px solid var(--border);border-radius:8px;margin:.35rem 0;background:var(--surface2)}
+.sorter .item .t{flex:1 1 220px}
+.sorter .why{flex-basis:100%;margin:0}
+.score{font-weight:700;color:var(--primary-ink);margin:.4rem 0 0}
+.t2 select{max-width:100%}
+.t2 select.right{border-color:var(--green);background:var(--green-soft)}
+.t2 select.wrong{border-color:var(--red);background:var(--red-soft)}
+.given{color:var(--muted)}
+</style>
+</head>
+<body data-page="07_bohr_model_particles">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 1 · Section 4</span><span class="chip amber">Textbook pages 13–14</span>
+<h1>Bohr's Atom Model and the Three Particles <span class="ml">നീൽസ് ബോറിന്റെ ആറ്റം മാതൃക</span></h1>
+<p class="lead">Rutherford's atom should have collapsed in a flash – yet atoms last for ever. In 1913 a young Danish scientist, Niels Bohr, fixed the problem with a bold rule: electrons may only travel in certain orbits, each with a fixed energy, like the steps of a ladder. On this page you climb that energy ladder, meet the shells K, L, M, N, complete the table of the three subatomic particles, balance one proton against a heap of electrons, and peek inside the proton at its quarks.</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 3, 5 and 6 of this guide)</div>
+<ul style="margin:0">
+<li>Rutherford's model: tiny positive nucleus, electrons revolving round it – but it could not explain the <b>stability</b> of the atom (page 6).</li>
+<li>Proton (+, in the nucleus), electron (−), neutron (no charge, in the nucleus) (pages 4–6).</li>
+<li>u is the unit used for the mass of atoms; fractions like 1/1837 (page 3).</li>
+</ul></div>
+
+<h2 id="bohr">1. Niels Bohr's atom model (1913)</h2>
+<div class="sci" data-name="Niels Bohr" data-ml="നീൽസ് ബോർ" data-years="1885 – 1962" data-note="Danish physicist; atom model with fixed orbits, 1913; Nobel Prize in Physics 1922"></div>
+<p>To overcome the <b>limitations</b> (<span class="ml">പരിമിതികൾ</span>) of Rutherford's model, the Danish scientist <b>Niels Bohr</b> put forward a new model in <b>1913</b> – the <b>Bohr atom model</b> (<span class="ml">ബോർ ആറ്റം മാതൃക</span>).</p>
+<div class="clr"></div>
+<div class="callout key"><div class="title">⭐ Key idea – main ideas of the Bohr model (textbook page 13)</div>
+<ul class="ml" style="margin:.2rem 0 .4rem">
+<li>ആറ്റത്തിന്റെ ന്യൂക്ലിയസിനു ചുറ്റും ഇലക്ട്രോൺ പ്രദക്ഷിണം ചെയ്യുന്നത് നിശ്ചിത ഓർബിറ്റുകളിൽ ആണ്.</li>
+<li>ഓരോ ഓർബിറ്റിലെയും ഇലക്ട്രോണിന് ഒരു നിശ്ചിത ഊർജമുണ്ട്. അതിനാൽ ഓർബിറ്റുകളെ ഊർജനിലകൾ (energy levels) എന്നു പറയുന്നു.</li>
+<li>ഒരു നിശ്ചിത ഓർബിറ്റിൽ പ്രദക്ഷിണം ചെയ്യുന്നിടത്തോളം ഇലക്ട്രോണിന്റെ ഊർജം കൂടുകയോ കുറയുകയോ ചെയ്യുന്നില്ല. അതിനാൽ ഓർബിറ്റുകൾ സ്ഥിരോർജനിലകൾ എന്നും അറിയപ്പെടുന്നു.</li>
+<li>ന്യൂക്ലിയസിൽ നിന്നുള്ള അകലം കൂടുംതോറും ഓർബിറ്റുകളുടെ ഊർജവും കൂടുന്നു.</li>
+<li>ഊർജം കൂടിയ ഓർബിറ്റിൽ നിന്നും ഊർജം കുറഞ്ഞ ഓർബിറ്റിലേക്ക് ഇലക്ട്രോൺ മാറുമ്പോൾ ഊർജം പുറത്തേക്ക് വിടുന്നു. ഊർജം കുറഞ്ഞ ഓർബിറ്റുകളിൽ നിന്നും ഊർജം കൂടിയ ഓർബിറ്റുകളിലേക്ക് ഇലക്ട്രോൺ മാറുമ്പോൾ ഊർജം ആഗിരണം ചെയ്യുന്നു.</li>
+<li>ഓർബിറ്റുകൾക്ക് 1, 2, 3, 4, 5... എന്നിങ്ങനെ സംഖ്യകൾ നൽകി സൂചിപ്പിക്കാവുന്നതാണ്.</li>
+</ul>
+<ol style="margin:0">
+<li>Electrons revolve around the nucleus only in <b>definite orbits</b> (<span class="ml">ഓർബിറ്റ്</span>).</li>
+<li>An electron in each orbit has a <b>definite energy</b>, so the orbits are called <b>energy levels</b> (<span class="ml">ഊർജനിലകൾ</span>).</li>
+<li>As long as an electron revolves in a particular orbit, its energy neither increases nor decreases; so the orbits are also called <b>stationary energy levels</b> (<span class="ml">സ്ഥിരോർജനിലകൾ</span>).</li>
+<li>The energy of the orbits <b>increases with distance</b> from the nucleus.</li>
+<li>When an electron moves from a higher-energy orbit to a lower-energy orbit it <b>gives out (emits) energy</b> (<span class="ml">ഊർജം പുറത്തേക്ക് വിടുന്നു</span>); when it moves from a lower to a higher orbit it <b>absorbs energy</b> (<span class="ml">ഊർജം ആഗിരണം ചെയ്യുന്നു</span>).</li>
+<li>The orbits can be numbered <b>1, 2, 3, 4, 5…</b></li>
+</ol></div>
+<div class="lab">
+  <div class="lab-title">🎬 The six ideas, one at a time</div>
+  <div id="bhStep"><svg viewBox="0 0 800 300" role="img" aria-label="Bohr's atom: a nucleus with numbered circular orbits; each step highlights one of Bohr's six main ideas"></svg></div>
+</div>
+<div class="callout think"><div class="title">💡 How does this solve Rutherford's problem?</div>
+<p>Rutherford's electron lost energy <i>all the time</i>, so it had to spiral in. Bohr simply said: in an allowed orbit the electron's energy does <b>not</b> change (idea 3). It gives out energy <b>only</b> when it jumps down to a lower orbit – and the lowest orbit has no orbit below it. So the electron cannot fall into the nucleus, and the atom is <b>stable</b>.</p></div>
+
+<h2 id="ladder">2. Virtual lab: the energy ladder</h2>
+<div class="lab">
+  <div class="lab-title">🧪 Move the electron between the orbits</div>
+  <svg id="elSvg" viewBox="0 0 800 360" role="img" aria-label="Left: an atom with orbits K, L, M, N and one electron; right: an energy ladder; moving out absorbs energy, moving in gives out energy"></svg>
+  <div class="controls"><span class="small muted">Send the electron to:</span><button class="btn primary" id="elK">K (1)</button><button class="btn" id="elL">L (2)</button><button class="btn" id="elM">M (3)</button><button class="btn" id="elN">N (4)</button></div>
+  <div class="readout" id="elOut"></div>
+  <p class="hint">Not to scale: the energy ladder only shows the order of the levels (the higher, the more energy) – the gaps really get smaller as you go up. In a real atom the energy is absorbed from heat, light or electricity, and given out as light (going further – this is how fireworks and neon signs get their colours).</p>
+</div>
+<div class="callout real"><div class="title">🌴 Kerala connection – colours in the sky</div>
+<p>When the fireworks burst over Thrissur Pooram, the heat gives energy to the electrons of metal atoms in the powder – they jump to higher orbits. As they fall back to lower orbits they <b>give out</b> that energy as light. Different metals have different gaps between their energy levels, so they glow in different colours (strontium red, copper blue-green, sodium yellow – going further). Take it as an analogy for Bohr's idea 5; the details are for higher classes.</p></div>
+
+<h2 id="shells">3. Shells K, L, M, N (Fig 1.7)</h2>
+<p><span class="ml">തുടർന്ന് വന്ന ചില പഠനങ്ങളിൽ ഊർജനിലകളെ ഷെല്ലുകളെന്നും വിളിച്ചിരുന്നു.</span> – In later studies the energy levels were also called <b>shells</b> (<span class="ml">ഷെല്ലുകൾ</span>). The energy levels 1, 2, 3, 4, … are taken as the shells <b>K, L, M, N</b>, … in that order (Fig 1.7 – <span class="ml">ഊർജനിലകളുടെ ക്രമീകരണം</span>, arrangement of energy levels).</p>
+<div class="lab">
+  <div class="lab-title">🔍 Fig 1.7 – arrangement of energy levels</div>
+  <svg id="shSvg" viewBox="0 0 800 312" role="img" aria-label="Five concentric circles round a positive nucleus labelled K, L, M, N and O shells from the inside out"></svg>
+  <div class="controls"><button class="btn primary" id="shTog">🔢 Show the numbers 1–5</button></div>
+</div>
+<div class="tw"><table>
+<thead><tr><th>Energy level (orbit number)</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr></thead>
+<tbody><tr><th>Shell</th><td><b>K</b></td><td><b>L</b></td><td><b>M</b></td><td><b>N</b></td><td><b>O</b></td></tr>
+<tr><th>Energy</th><td colspan="5">lowest (K, nearest the nucleus) → higher and higher → (O, farther out)</td></tr></tbody></table></div>
+
+<h2 id="table">4. The three subatomic particles (Table 1.2)</h2>
+<p><span class="ml">സബ്അറ്റോമിക കണങ്ങളായ ഇലക്ട്രോൺ, പ്രോട്ടോൺ, ന്യൂട്രോൺ എന്നിവയുടെ ചില സവിശേഷതകൾ പട്ടിക 1.2-ൽ കൊടുത്തിരിക്കുന്നു. വിട്ടുപോയ ഭാഗം പൂരിപ്പിച്ച് സയൻസ് ഡയറിയിൽ രേഖപ്പെടുത്തുക.</span> – Some properties of the subatomic particles are given in Table 1.2. Fill in the missing parts and record them in your <b>science diary</b> (<span class="ml">സയൻസ് ഡയറി</span>).</p>
+<div class="lab t2">
+  <div class="lab-title">📝 Table 1.2 – fill in the blanks</div>
+  <div class="tw"><table>
+  <thead><tr><th>Particle <span class="ml">കണത്തിന്റെ പേര്</span></th><th>Place in the atom <span class="ml">ആറ്റത്തിലെ സ്ഥാനം</span></th><th>Charge <span class="ml">ചാർജ്</span></th><th>Mass <span class="ml">മാസ്</span></th><th>Mass used in practice <span class="ml">പ്രായോഗിക ആവശ്യങ്ങൾക്കുപയോഗിക്കുന്ന മാസ്</span></th></tr></thead>
+  <tbody>
+  <tr><td>proton <span class="ml">പ്രോട്ടോൺ</span></td><td><select class="sel" data-ans="nuc"><option value="">……</option><option value="orb">orbits (shells) round the nucleus</option><option value="nuc">nucleus</option></select></td><td><select class="sel" data-ans="p"><option value="">……</option><option value="n">−1 (negative)</option><option value="z">0 (no charge)</option><option value="p">+1 (positive)</option></select></td><td class="given">1.00727 u</td><td class="given">1 u</td></tr>
+  <tr><td>electron <span class="ml">ഇലക്ട്രോൺ</span></td><td><select class="sel" data-ans="orb"><option value="">……</option><option value="nuc">nucleus</option><option value="orb">orbits (shells) round the nucleus</option></select></td><td><select class="sel" data-ans="n"><option value="">……</option><option value="p">+1 (positive)</option><option value="z">0 (no charge)</option><option value="n">−1 (negative)</option></select></td><td class="given">0.000548 u</td><td class="given">0</td></tr>
+  <tr><td><select class="sel" data-ans="neu"><option value="">……</option><option value="pro">proton</option><option value="ele">electron</option><option value="neu">neutron</option></select></td><td class="given">nucleus <span class="ml">ന്യൂക്ലിയസ്</span></td><td><select class="sel" data-ans="z"><option value="">……</option><option value="p">+1 (positive)</option><option value="n">−1 (negative)</option><option value="z">0 (no charge)</option></select></td><td class="given">1.00866 u</td><td class="given">1 u</td></tr>
+  </tbody></table></div>
+  <div class="controls"><button class="btn primary" id="t2Check">✔ Check my table</button><button class="btn" id="t2Fill">📝 Fill in the answers</button></div>
+  <div class="readout" id="t2Out">Choose an answer in each blank, then press “Check my table”. (Grey entries are given in the textbook.)</div>
+</div>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 13)</div>
+<p class="ml" style="margin:.2rem 0 .4rem">ആറ്റങ്ങളുടെ മാസ് പ്രസ്താവിക്കുന്ന യൂണിറ്റാണ് യൂണിഫൈഡ് അറ്റോമിക് മാസ് യൂണിറ്റ് (u)</p>
+<p>The <b>unified atomic mass unit</b> (<span class="ml">യൂണിഫൈഡ് അറ്റോമിക് മാസ് യൂണിറ്റ് (u)</span>) is the unit used to state the masses of atoms. (Going further: 1 u is one-twelfth of the mass of a carbon-12 atom, about 1.66 × 10⁻²⁷ kg.)</p></div>
+<div class="callout think"><div class="title">💡 Why is the electron's mass taken as 0?</div>
+<p>0.000548 u is so tiny next to the 1 u of a proton or a neutron that, when we add up the mass of an atom, the electrons make almost no difference. So in practice the proton and the neutron are counted as 1 u each, the electron as 0 – which is why the mass of an atom is decided by its nucleus.</p></div>
+
+<h3>One electron = 1/1837 of a proton</h3>
+<p><span class="ml">ഒരു ഇലക്ട്രോണിന്റെ മാസ് പ്രോട്ടോണിന്റെ മാസിന്റെ 1/1837 ഭാഗം ആണ്.</span> – The mass of an electron is <span class="frac"><span>1</span><span>1837</span></span> of the mass of a proton. In other words, you would need about <b>1837 electrons</b> to balance <b>one proton</b>. Try it!</p>
+<div class="lab">
+  <div class="lab-title">⚖ Virtual lab: balance one proton with electrons</div>
+  <svg id="baSvg" viewBox="0 0 800 290" role="img" aria-label="A balance with one proton on the left pan and a chosen number of electrons on the right pan; it levels at about 1837 electrons"></svg>
+  <div class="controls"><label>electrons on the right pan <input id="baN" type="range" min="0" max="2500" step="1" value="1"><output></output></label>
+  <button class="btn" id="baM100">− 100</button><button class="btn" id="baM1">− 1</button><button class="btn" id="baP1">+ 1</button><button class="btn" id="baP100">+ 100</button></div>
+  <div class="readout" id="baOut"></div>
+  <p class="hint">The balance uses the more precise masses, proton 1.007276 u and electron 0.00054858 u, so it levels at about 1836–1837 electrons (the textbook rounds this to 1/1837; dividing the rounded table values 1.00727 ÷ 0.000548 gives about 1838). Only a few electrons are drawn on the pan.</p>
+</div>
+<p>You have now met several atom models. They helped to make many ideas in chemistry simple. Later, scientists put forward many more atom models – you will study them in higher classes.</p>
+
+<h2 id="gallery">5. Atom-model gallery – the same atom, four pictures</h2>
+<div class="lab">
+  <div class="lab-title">🖼 One lithium atom, as each scientist would have drawn it</div>
+  <div class="controls"><button class="btn" id="agD">Dalton (1808)</button><button class="btn" id="agT">Thomson (1904)</button><button class="btn" id="agR">Rutherford (1911)</button><button class="btn primary" id="agB">Bohr (1913)</button></div>
+  <svg id="agSvg" viewBox="0 0 800 320" role="img" aria-label="A lithium atom drawn as a solid ball (Dalton), a plum pudding (Thomson), a tiny nucleus with orbiting electrons (Rutherford) and a nucleus with electrons in fixed shells (Bohr)"></svg>
+  <div class="readout" id="agOut"></div>
+  <p class="hint">Dalton's and Thomson's years are going further (not in the textbook). Lithium has 3 protons, 4 neutrons and 3 electrons; the neutrons were discovered only in 1932, so Bohr's 1913 drawing shows the nucleus as we know it today.</p>
+</div>
+
+<h2 id="qs">6. Questions and activity (page 14)</h2>
+<div class="qa"><p><b>Q.</b> <span class="ml">ചില പ്രസ്താവനകൾ നൽകിയിരിക്കുന്നു. ഇവയിൽ ജെ. ജെ. തോംസണുമായി ബന്ധപ്പെട്ട പ്രസ്താവനകൾ ഏതെല്ലാം?</span> – Some statements are given. Which of them are connected with J. J. Thomson?</p>
+<div class="tw"><table class="obs"><tbody>
+<tr><td>a) <span class="ml">ഓർബിറ്റ് എന്ന ആശയം മുന്നോട്ടുവച്ചു.</span> Put forward the idea of orbits.</td><td><span class="yn" data-ans="1" data-why="Not Thomson – fixed orbits were Bohr's idea (1913)."><button class="btn">✔ Thomson</button><button class="btn">✘ not Thomson</button></span><div class="why"></div></td></tr>
+<tr><td>b) <span class="ml">ഡിസ്ചാർജ് ട്യൂബ് പരീക്ഷണങ്ങൾ നടത്തി.</span> Did discharge tube experiments.</td><td><span class="yn" data-ans="0" data-why="Thomson – his discharge tube experiments on cathode rays gave the e/m ratio."><button class="btn">✔ Thomson</button><button class="btn">✘ not Thomson</button></span><div class="why"></div></td></tr>
+<tr><td>c) <span class="ml">ന്യൂട്രോണിനെ കണ്ടെത്തി.</span> Discovered the neutron.</td><td><span class="yn" data-ans="1" data-why="Not Thomson – James Chadwick discovered the neutron in 1932."><button class="btn">✔ Thomson</button><button class="btn">✘ not Thomson</button></span><div class="why"></div></td></tr>
+<tr><td>d) <span class="ml">ഇലക്ട്രോണിനെ കണ്ടെത്തി.</span> Discovered the electron.</td><td><span class="yn" data-ans="0" data-why="Thomson – he showed cathode rays are particles smaller than atoms: electrons."><button class="btn">✔ Thomson</button><button class="btn">✘ not Thomson</button></span><div class="why"></div></td></tr>
+<tr><td>e) <span class="ml">പ്ലം പുഡിങ് മാതൃക മുന്നോട്ടുവച്ചു.</span> Proposed the plum pudding model.</td><td><span class="yn" data-ans="0" data-why="Thomson – the plum pudding model is his."><button class="btn">✔ Thomson</button><button class="btn">✘ not Thomson</button></span><div class="why"></div></td></tr>
+</tbody></table></div>
+<div class="reveal" data-btn="Show answer"><div class="answer">Statements <b>b, d and e</b> are connected with J. J. Thomson. (a – Bohr; c – Chadwick.)</div></div></div>
+<div class="diary"><h3>📒 Activity – a quiz on scientists and their ideas</h3>
+<p style="margin-top:0"><span class="ml">ആറ്റം ഘടനയെക്കുറിച്ച് ഗവേഷണം നടത്തിയ ശാസ്ത്രജ്ഞർ, അവരുടെ സംഭാവനകൾ എന്നിവയെ സംബന്ധിച്ച് ചോദ്യാവലി തയ്യാറാക്കി ക്ലാസിൽ ഒരു ക്വിസ് മത്സരം സംഘടിപ്പിക്കുക.</span> – Prepare a set of questions on the scientists who studied atomic structure and their contributions, and hold a quiz in class. Warm up with this one: who did it?</p>
+<div id="sqBox"></div>
+<p class="small muted" style="margin-bottom:0">A ready-made class quiz with more questions is on page 11.</p></div>
+
+<h2 id="quarks">7. Fundamental particles (box, page 14)</h2>
+<div class="callout book"><div class="title">📦 Box – Fundamental particles (<span class="ml">മൗലിക കണങ്ങൾ</span>)</div>
+<p>You have learnt that an atom can be divided and that it contains protons, neutrons and electrons. Can these be divided again? An <b>electron</b> cannot be divided further, so it is a <b>fundamental particle</b> (<span class="ml">മൗലിക കണങ്ങൾ</span>). But protons and neutrons are each made of <b>3 quarks</b> (<span class="ml">ക്വാർക്കുകൾ</span>) joined together, so they are <b>not</b> considered fundamental particles.</p></div>
+<div class="lab">
+  <div class="lab-title">🔬 Inside a proton and a neutron</div>
+  <svg id="qkSvg" viewBox="0 0 800 260" role="img" aria-label="A proton made of three quarks (up, up, down), a neutron made of three quarks (up, down, down), and an electron which is not made of anything smaller"></svg>
+  <div class="controls"><button class="btn" id="qkCh">➕ Show the quark charges (going further)</button></div>
+  <div class="readout" id="qkOut">The proton and the neutron are each made of three quarks. The electron is not made of anything smaller – it is fundamental.</div>
+</div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://phet.colorado.edu/en/simulations/rutherford-scattering" target="_blank" rel="noopener noreferrer">🧪 Rutherford Scattering (PhET simulation)</a> <span class="src">PhET, University of Colorado Boulder</span><br><span class="note">Fire alpha particles at a gold atom: compare a plum-pudding atom with a tiny nucleus and watch which particles bounce back.</span></li><li><a href="https://phet.colorado.edu/en/simulations/models-of-the-hydrogen-atom" target="_blank" rel="noopener noreferrer">🧪 Models of the Hydrogen Atom (PhET simulation)</a> <span class="src">PhET, University of Colorado Boulder</span><br><span class="note">Try the plum pudding, Rutherford (classical solar system) and Bohr models one after another and see what each can and cannot explain.</span></li><li><a href="https://en.wikipedia.org/wiki/Rutherford_scattering_experiments" target="_blank" rel="noopener noreferrer">📄 Rutherford scattering experiments</a> <span class="src">Wikipedia</span><br><span class="note">The 1909–1913 experiments of Geiger and Marsden under Rutherford, with drawings of the apparatus and how the nucleus was discovered.</span></li><li><a href="https://www.nobelprize.org/prizes/physics/1922/bohr/biographical/" target="_blank" rel="noopener noreferrer">📄 Niels Bohr – Biographical</a> <span class="src">The Nobel Prize</span><br><span class="note">The life of the Danish scientist who gave the atom fixed energy levels (Nobel Prize in Physics 1922).</span></li><li><a href="https://www.sciencehistory.org/education/scientific-biographies/joseph-john-j-j-thomson/" target="_blank" rel="noopener noreferrer">📄 Joseph John “J. J.” Thomson</a> <span class="src">Science History Institute</span><br><span class="note">A short, readable biography of the scientist who identified the electron and proposed the plum pudding model.</span></li><li><a href="https://en.wikipedia.org/wiki/Oil_drop_experiment" target="_blank" rel="noopener noreferrer">📄 Oil drop experiment</a> <span class="src">Wikipedia</span><br><span class="note">How Robert Millikan measured the charge of the electron (about 1.6 × 10⁻¹⁹ C) using tiny charged oil drops.</span></li><li><a href="https://www.nobelprize.org/prizes/physics/1935/chadwick/biographical/" target="_blank" rel="noopener noreferrer">📄 James Chadwick – Biographical</a> <span class="src">The Nobel Prize</span><br><span class="note">The discoverer of the neutron (1932) and his Nobel Prize in Physics 1935.</span></li></ul></div>
+
+<h2 id="check">8. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li><b>Bohr (1913)</b>: electrons revolve only in <b>definite orbits</b> with definite energy (<b>energy levels</b>); no energy change while in an orbit (<b>stationary energy levels</b>); energy increases with distance from the nucleus; jumping <b>out absorbs</b> energy, jumping <b>in emits</b> energy; orbits 1, 2, 3, 4, 5 = shells <b>K, L, M, N, O</b>.</li>
+<li>Table 1.2: proton – nucleus, +1, 1 u; electron – orbits, −1, ≈ 0 (0.000548 u); neutron – nucleus, 0, 1 u. Mass of an electron = 1/1837 of a proton.</li>
+<li>The <b>unified atomic mass unit (u)</b> is used for the masses of atoms.</li>
+<li>The electron is a <b>fundamental particle</b>; protons and neutrons are made of 3 quarks each.</li>
+</ul></div>
+<p>Next: <a href="08_atomic_mass_number.html">Atomic number and mass number ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Structure of the Atom · Class 9 Chemistry", "icon": "⚛️", "key": "chemistry_ch1_progress", "pages": [["index.html", "Home"], ["01_matter_elements_molecules.html", "1 · Matter, Elements, Atoms & Molecules"], ["02_charges_and_electricity.html", "2 · Charges, Electrodes & Low-pressure Gases"], ["03_tiny_numbers_units.html", "3 · Tiny Numbers, Sizes & Units"], ["04_inside_atom_electron.html", "4 · Inside the Atom: Discharge Tube & the Electron"], ["05_proton_thomson_model.html", "5 · Canal Rays, the Proton & Thomson's Model"], ["06_rutherford_model_neutron.html", "6 · Rutherford's Gold Foil Experiment & the Neutron"], ["07_bohr_model_particles.html", "7 · Bohr's Model & the Three Particles"], ["08_atomic_mass_number.html", "8 · Atomic Number & Mass Number"], ["09_electron_configuration.html", "9 · Electron Configuration & Shell Diagrams"], ["10_isotopes_isobars.html", "10 · Isotopes, Isobars & Isotones"], ["11_intext_questions_solutions.html", "11 · In-text Questions – Solutions"], ["12_assess_solutions.html", "12 · Let Us Assess & Extended Activities – Solutions"], ["13_applications_explore.html", "13 · Applications & Explore Online"], ["14_summary_revision.html", "14 · Summary & Quick Quiz"], ["15_model_test_paper.html", "15 · Model Test Paper"], ["16_model_test_solutions.html", "16 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ==== common helpers (same on pages 04–07) ==== */
+const {P, el} = K;
+const $id = id => document.getElementById(id);
+const CV = c => (c[0] === '#' || c.startsWith('var(') || c.startsWith('rgb')) ? c : 'var(--' + (c === 'amber' ? 'accent' : c) + ')';
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const rnd = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const TAU = 2 * Math.PI;
+function ln(svg, a, b, c='text', w=2, extra=''){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, style: `stroke:${CV(c)};stroke-width:${w};stroke-linecap:round;${extra}`}, svg); }
+function arrow(svg, a, b, c='red', w=3, head=11){ const L = K.dist(a, b); if (L < 2) return; const hh = Math.min(head, L * .6); const u = K.unit(a, b), n = P(-u.y, u.x), base = P(b.x - u.x * hh, b.y - u.y * hh); ln(svg, a, base, c, w); K.polygon(svg, [b, P(base.x + n.x * hh * .55, base.y + n.y * hh * .55), P(base.x - n.x * hh * .55, base.y - n.y * hh * .55)], {style: `fill:${CV(c)}`}); }
+function rect(svg, x, y, w, h, style, rx=0){ return el('rect', {x, y, width: w, height: h, rx, style}, svg); }
+function circ(svg, c, r, style){ return el('circle', {cx: c.x, cy: c.y, r, style}, svg); }
+function ell(svg, c, rx, ry, style){ return el('ellipse', {cx: c.x, cy: c.y, rx, ry, style}, svg); }
+function path(svg, d, style){ return el('path', {d, style}, svg); }
+function tx(svg, x, y, s, cls='lbl', anchor='start', extra={}){ return K.text(svg, P(x, y), s, {class: cls, 'text-anchor': anchor, ...extra}); }
+function poly(svg, pts, style){ return K.polyline(svg, pts, {style}); }
+const ANIM = []; let animOn = false, animLast = 0;
+function animLoop(now){ const dt = Math.min(.05, Math.max(0, (now - animLast) / 1000)); animLast = now; let any = false;
+  for (const it of ANIM){ if (it.vis && now < it.until){ it.t += dt; try { it.fn(it.t, dt); } catch (e){ it.until = 0; throw e; } any = true; } }
+  if (any) requestAnimationFrame(animLoop); else animOn = false; }
+function animStart(){ if (!animOn){ animOn = true; animLast = performance.now(); requestAnimationFrame(animLoop); } }
+function anim(elm, fn){ const it = {elm, fn, t: 0, until: 0, vis: true}; ANIM.push(it);
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(e => { it.vis = e.isIntersecting; if (it.vis) wake(it); })).observe(elm);
+  it.fn(0, 0); wake(it); return it; }
+function wake(it){ it.until = performance.now() + 25000; animStart(); }
+function radio(ids, onPick){ const els = ids.map(id => $id(id)); const set = k => { els.forEach((b, i) => b.classList.toggle('primary', i === k)); onPick(k); }; els.forEach((b, i) => b.addEventListener('click', () => set(i))); return set; }
+function choices(root=document){ K.$$('.yn[data-ans]', root).forEach(box => { const ans = +box.dataset.ans, why = box.parentElement.querySelector('.why');
+  K.$$('button', box).forEach((b, k) => b.addEventListener('click', () => { K.$$('button', box).forEach(x => x.classList.remove('ok', 'bad')); b.classList.add(k === ans ? 'ok' : 'bad');
+    if (why){ why.innerHTML = k === ans ? '✅ ' + (box.dataset.why || 'Correct.') : '❌ ' + (box.dataset.hint || 'Look at the lab again and try another option.'); why.style.color = k === ans ? 'var(--green)' : 'var(--red)'; } })); }); }
+/* scientist name cards (simple drawings, never photos) */
+function sciCards(){ K.$$('.sci[data-name]').forEach(d => { d.innerHTML = `<svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="38" style="fill:var(--surface);stroke:var(--border);stroke-width:2"/><circle cx="40" cy="31" r="13" style="fill:var(--muted)"/><path d="M15,70 C17,51 63,51 65,70 Z" style="fill:var(--muted)"/></svg><div class="nm">${d.dataset.name}</div><span class="ml">${d.dataset.ml}</span><div class="yr">${d.dataset.years}</div>` + (d.dataset.note ? `<div class="note">${d.dataset.note}</div>` : ''); }); }
+const wrap = (s, n) => (s.match(new RegExp('.{1,' + n + '}(\\s|$)', 'g')) || [s]).map(x => x.trim());
+/* ==== end common ==== */
+sciCards();
+function sorter(id, labels, items){ const box = $id(id); box.classList.add('sorter'); let right = 0; const done = new Set();
+  box.innerHTML = items.map((it, i) => `<div class="item"><span class="t">${it.t}</span><span class="yn">${labels.map((l, k) => `<button class="btn" data-i="${i}" data-k="${k}">${l}</button>`).join('')}</span><div class="why"></div></div>`).join('') + '<p class="score"></p>';
+  const score = box.querySelector('.score'); const upd = () => { score.textContent = `Answered correctly: ${right} of ${items.length}` + (right === items.length ? ' – well done!' : ''); }; upd();
+  box.addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (!b) return; const i = +b.dataset.i, k = +b.dataset.k, it = items[i], row = b.closest('.item');
+    K.$$('button', row).forEach(x => x.classList.remove('ok', 'bad')); b.classList.add(k === it.a ? 'ok' : 'bad');
+    const w = row.querySelector('.why'); w.innerHTML = (k === it.a ? '✅ ' : '❌ Not quite – ') + it.why; w.style.color = k === it.a ? 'var(--green)' : 'var(--red)';
+    if (k === it.a && !done.has(i)){ done.add(i); right++; } else if (k !== it.a && done.has(i)){ done.delete(i); right--; } upd(); }); }
+function nucleusDisc(svg, c, r, label){ circ(svg, c, r, 'fill:#991b1b;stroke:var(--text);stroke-width:1.2'); if (label) label.split('\n').forEach((s, k, a) => tx(svg, c.x, c.y + (k - (a.length - 1) / 2) * 14, s, 'lbl sm', 'middle', {style: 'fill:#fff;stroke:none;font-weight:700'})); }
+function eDot(svg, p, r=6){ circ(svg, p, r, 'fill:#16a34a;stroke:var(--text);stroke-width:1'); }
+
+/* ---------- 1. six-point stepper ---------- */
+(function(){
+  const C = P(180, 150), RR = [34, 60, 86, 112, 138], SH = ['K', 'L', 'M', 'N', 'O'];
+  const TXT = [
+    ['1. Definite orbits', 'Electrons go round the nucleus only in', 'certain fixed circular orbits – never', 'in between.'],
+    ['2. Each orbit has a definite energy', 'An electron in a given orbit has a fixed', 'energy, so the orbits are called', 'ENERGY LEVELS (ഊർജനിലകൾ).'],
+    ['3. No change while in an orbit', 'While it stays in one orbit the electron', 'neither gains nor loses energy:', 'STATIONARY energy levels (സ്ഥിരോർജനിലകൾ).'],
+    ['4. Farther out = more energy', 'The farther an orbit is from the', 'nucleus, the higher its energy.', ''],
+    ['5. Jumps', 'Lower → higher orbit: ABSORBS energy.', 'Higher → lower orbit: EMITS energy.', '(ആഗിരണം ചെയ്യുന്നു / പുറത്തേക്ക് വിടുന്നു)'],
+    ['6. Numbered orbits', 'The orbits are numbered 1, 2, 3, 4, 5…', 'Later they were called the shells', 'K, L, M, N, O.']];
+  new K.Stepper('#bhStep', {ms: 900, gap: 3600, steps: [
+    'Electrons revolve round the nucleus in <b>definite orbits</b> (<span class="ml">ഓർബിറ്റ്</span>).',
+    'Each orbit has a <b>definite energy</b> – the orbits are <b>energy levels</b> (<span class="ml">ഊർജനിലകൾ</span>).',
+    'In a given orbit the energy of the electron does <b>not</b> change – <b>stationary energy levels</b> (<span class="ml">സ്ഥിരോർജനിലകൾ</span>).',
+    'The energy of the orbits <b>increases with distance</b> from the nucleus.',
+    'Higher → lower orbit: energy is <b>emitted</b>. Lower → higher orbit: energy is <b>absorbed</b>.',
+    'The orbits are numbered <b>1, 2, 3, 4, 5…</b> – later called the shells <b>K, L, M, N, O</b>.'],
+    draw: (svg, i, t) => {
+      const n = i === 5 ? 5 : 4;
+      for (let k = 0; k < n; k++) circ(svg, C, RR[k], `fill:none;stroke:${i === 3 ? ['#fde68a', '#fbbf24', '#f59e0b', '#d97706', '#b45309'][k] : 'var(--accent)'};stroke-width:${i === 0 ? 2.6 : 1.8}`);
+      nucleusDisc(svg, C, 14, '+');
+      if (i === 1) for (let k = 0; k < 4; k++) tx(svg, C.x + RR[k] * .72, C.y - RR[k] * .72, `E${'₁₂₃₄'[k]}`, 'lbl sm amber', 'middle');
+      if (i === 3){ arrow(svg, P(C.x + 18, C.y + 18), P(C.x + 125, C.y + 125), 'red', 2.5, 10); tx(svg, C.x + 60, C.y + 112, 'more energy →', 'lbl sm red', 'start', {transform: `rotate(45 ${C.x + 60} ${C.y + 112})`}); }
+      if (i === 4){ const a = t; const up = P(C.x + RR[0] + (RR[2] - RR[0]) * Math.min(1, a * 1.5), C.y); eDot(svg, up); arrow(svg, P(C.x + RR[0], C.y - 8), P(C.x + RR[2], C.y - 8), 'blue', 2, 8); tx(svg, C.x + 60, C.y - 22, 'absorbs', 'lbl sm blue', 'middle');
+        const dn = P(C.x - RR[3] + (RR[3] - RR[1]) * Math.min(1, a * 1.5), C.y); eDot(svg, dn); arrow(svg, P(C.x - RR[3], C.y + 10), P(C.x - RR[1], C.y + 10), 'green', 2, 8); tx(svg, C.x - 86, C.y + 28, 'emits', 'lbl sm green', 'middle'); }
+      if (i === 5) for (let k = 0; k < 5; k++){ const y = C.y - RR[k] * Math.sin(K.rad(30)), x = C.x + RR[k] * Math.cos(K.rad(30)); ln(svg, P(x, y), P(360, 18 + k * 22), 'muted', 1); tx(svg, 364, 18 + k * 22, `${k + 1} → ${SH[k]} shell`, 'lbl sm', 'start'); }
+      if (i <= 2){ const a = TAU * .2 * (i + 1) + t * 1.2; eDot(svg, P(C.x + RR[1] * Math.cos(a), C.y + RR[1] * Math.sin(a))); }
+      if (i === 2){ rect(svg, 440, 230, 220, 14, 'fill:var(--surface2);stroke:var(--border)', 3); rect(svg, 440, 230, 120, 14, 'fill:var(--accent)', 3); tx(svg, 440, 222, 'energy of the electron: steady', 'lbl sm', 'start'); }
+      const L = TXT[i]; const X = i === 5 ? 520 : 440;
+      tx(svg, X, i === 5 ? 150 : 50, L[0], 'lbl big', 'start'); L.slice(1).forEach((s, k) => tx(svg, X, (i === 5 ? 180 : 86) + k * 24, s, 'lbl', 'start'));
+    }});
+})();
+
+/* ---------- 2. energy ladder ---------- */
+(function(){
+  const svg = $id('elSvg'), out = $id('elOut'); const C = P(185, 185), RR = [45, 80, 115, 150], LY = [320, 200, 135, 95], SH = ['K', 'L', 'M', 'N'];
+  let lvl = 0, from = 0, t0 = -9, phi = 0, last = '';
+  function wavy(a, b, c){ const u = K.unit(a, b), n = P(-u.y, u.x), L = K.dist(a, b), pts = []; for (let s = 0; s <= L - 10; s += 3){ const w = 5 * Math.sin(s / 5); pts.push(P(a.x + u.x * s + n.x * w, a.y + u.y * s + n.y * w)); } poly(svg, pts, `fill:none;stroke:${c};stroke-width:2.2`); const e = pts[pts.length - 1] || a; arrow(svg, e, b, c, 2.2, 9); }
+  function draw(t, dt){
+    K.clear(svg); const f = clamp((t - t0) / .9, 0, 1), moving = f < 1;
+    const r = moving ? K.lerp(RR[from], RR[lvl], K.ease(f)) : RR[lvl]; phi += dt * (2.6 / (1 + lvl * .5));
+    RR.forEach((R, k) => { circ(svg, C, R, `fill:none;stroke:var(--accent);stroke-width:${k === lvl && !moving ? 2.6 : 1.5}`); tx(svg, C.x + R * Math.cos(K.rad(-62)) + 4, C.y + R * Math.sin(K.rad(-62)) - 6, SH[k], 'lbl sm amber', 'start'); });
+    nucleusDisc(svg, C, 15, '+');
+    const e = P(C.x + r * Math.cos(phi), C.y + r * Math.sin(phi)); eDot(svg, e, 7);
+    /* ladder */
+    const X0 = 470, X1 = 690; ln(svg, P(730, 335), P(730, 70), 'muted', 2); arrow(svg, P(730, 90), P(730, 62), 'muted', 2, 9); tx(svg, 742, 72, 'energy', 'lbl sm', 'start');
+    LY.forEach((y, k) => { ln(svg, P(X0, y), P(X1, y), 'amber', k === lvl ? 4 : 2.5); tx(svg, X0 - 8, y, `${SH[k]} (${k + 1})`, 'lbl sm', 'end'); });
+    const ey = moving ? K.lerp(LY[from], LY[lvl], K.ease(f)) : LY[lvl]; eDot(svg, P(580, ey - 8), 7);
+    if (t - t0 < 3 && from !== lvl){ const up = lvl > from;
+      arrow(svg, P(620, LY[from]), P(620, LY[lvl]), up ? 'blue' : 'green', 3, 11);
+      tx(svg, 632, (LY[from] + LY[lvl]) / 2, up ? 'absorbs energy' : 'emits energy', `lbl sm ${up ? 'blue' : 'green'}`, 'start');
+      tx(svg, 632, (LY[from] + LY[lvl]) / 2 + 16, up ? 'ആഗിരണം ചെയ്യുന്നു' : 'പുറത്തേക്ക് വിടുന്നു', 'lbl sm purple', 'start');
+      const wa = up ? 'var(--blue)' : 'var(--green)', k = clamp((t - t0) / 1.2, 0, 1);
+      if (up){ const s = P(420 - 60 * (1 - k), 40); wavy(s, P(e.x + 10 * (s.x - e.x) / K.dist(s, e), e.y + 10 * (s.y - e.y) / K.dist(s, e)), wa); }
+      else { const d = K.unit(C, e); wavy(P(e.x + d.x * 10, e.y + d.y * 10), P(e.x + d.x * (40 + 90 * k), e.y + d.y * (40 + 90 * k)), wa); } }
+    tx(svg, 20, 24, `electron in the ${SH[lvl]} shell (orbit ${lvl + 1})`, 'lbl', 'start', {style: 'font-weight:700'});
+    tx(svg, 20, 348, moving ? 'jumping…' : 'revolving: energy constant (stationary level)', 'lbl sm muted', 'start');
+  }
+  const it = anim(svg, (t, dt) => draw(t, dt));
+  radio(['elK', 'elL', 'elM', 'elN'], k => { from = lvl; lvl = k; t0 = it.t; wake(it);
+    out.textContent = from === lvl ? `The electron stays in the ${SH[lvl]} shell. While it revolves there its energy does not change – a stationary energy level (സ്ഥിരോർജനില).`
+      : lvl > from ? `${SH[from]} → ${SH[lvl]}: the electron moved to an orbit FARTHER from the nucleus, which has MORE energy. It ABSORBED energy (ഊർജം ആഗിരണം ചെയ്യുന്നു) – exactly the difference between the two levels.`
+      : `${SH[from]} → ${SH[lvl]}: the electron moved to an orbit NEARER the nucleus, which has LESS energy. It GAVE OUT (emitted) energy (ഊർജം പുറത്തേക്ക് വിടുന്നു) – exactly the difference between the two levels.`; });
+  out.textContent = 'The electron is in the K shell, the lowest energy level. Click a shell to make it jump.';
+})();
+
+/* ---------- 3. Fig 1.7 ---------- */
+(function(){
+  const svg = $id('shSvg'); let nums = false; const C = P(230, 150), RR = [30, 56, 82, 108, 134], SH = ['K', 'L', 'M', 'N', 'O'];
+  function draw(){ K.clear(svg);
+    RR.forEach((R, k) => { circ(svg, C, R, 'fill:none;stroke:#0284c7;stroke-width:2'); const ly = C.y - 20 - k * 24; const p = P(C.x + Math.sqrt(R * R - (ly - C.y) ** 2), ly);
+      ln(svg, p, P(460, ly), 'muted', 1); circ(svg, p, 2.5, 'fill:var(--muted)'); tx(svg, 466, ly, nums ? `energy level ${k + 1}` : `${SH[k]} shell`, 'lbl', 'start'); tx(svg, 600, ly, nums ? `= ${SH[k]} shell` : `(energy level ${k + 1})`, 'lbl sm muted', 'start'); });
+    circ(svg, C, 11, 'fill:#dc2626;stroke:var(--text);stroke-width:1'); tx(svg, C.x, C.y + 1, '+', 'lbl sm', 'middle', {style: 'fill:#fff;stroke:none;font-weight:700'});
+    tx(svg, 466, 160, 'nucleus (+) at the centre', 'lbl sm', 'start'); tx(svg, 466, 200, 'energy: K < L < M < N < O', 'lbl amber', 'start'); tx(svg, 466, 226, '(increases away from the nucleus)', 'lbl sm muted', 'start');
+    tx(svg, C.x, 304, 'Fig 1.7 – ഊർജനിലകളുടെ ക്രമീകരണം', 'lbl sm', 'middle'); }
+  draw();
+  $id('shTog').addEventListener('click', () => { nums = !nums; $id('shTog').textContent = nums ? '🔤 Show the shell letters' : '🔢 Show the numbers 1–5'; draw(); });
+})();
+
+/* ---------- 4. Table 1.2 ---------- */
+(function(){
+  const sels = K.$$('.t2 select'), out = $id('t2Out');
+  function check(){ let ok = 0, blank = 0; sels.forEach(s => { s.classList.remove('right', 'wrong'); if (!s.value){ blank++; return; } if (s.value === s.dataset.ans){ ok++; s.classList.add('right'); } else s.classList.add('wrong'); });
+    out.textContent = `${ok} of ${sels.length} correct` + (blank ? `, ${blank} still blank` : '') + '.' + (ok === sels.length ? '\n✅ Table complete: protons (+1) and neutrons (0) are in the nucleus; electrons (−1) are in the orbits (shells) round the nucleus. Copy it into your science diary.' : '\nHint: which particle has no charge? Which particles make up the tiny nucleus?'); }
+  sels.forEach(s => s.addEventListener('change', () => s.classList.remove('right', 'wrong')));
+  $id('t2Check').addEventListener('click', check);
+  $id('t2Fill').addEventListener('click', () => { sels.forEach(s => { s.value = s.dataset.ans; }); check(); });
+})();
+
+/* ---------- 5. balance ---------- */
+(function(){
+  const svg = $id('baSvg'), out = $id('baOut'), inp = $id('baN'); const MP = 1.007276, ME = 0.00054858;
+  function draw(n){ K.clear(svg); const d = n * ME - MP; const ang = clamp(d / MP * 30, -14, 14); const bal = Math.abs(d) <= ME;
+    const O = P(400, 70), L = 250; const a = K.rad(ang); const lp = P(O.x - L * Math.cos(a), O.y - L * Math.sin(a)), rp = P(O.x + L * Math.cos(a), O.y + L * Math.sin(a));
+    K.polygon(svg, [P(400, 70), P(370, 250), P(430, 250)], {style: 'fill:var(--surface2);stroke:var(--text);stroke-width:1.5'}); rect(svg, 330, 250, 140, 12, 'fill:var(--muted)', 3);
+    ln(svg, lp, rp, 'text', 6); circ(svg, O, 7, 'fill:var(--accent);stroke:var(--text);stroke-width:1.5');
+    [lp, rp].forEach(p => { ln(svg, p, P(p.x - 40, p.y + 70), 'muted', 1.5); ln(svg, p, P(p.x + 40, p.y + 70), 'muted', 1.5); path(svg, `M${p.x - 55},${p.y + 70} Q${p.x},${p.y + 100} ${p.x + 55},${p.y + 70} Z`, 'fill:var(--surface2);stroke:var(--text);stroke-width:1.5'); });
+    circ(svg, P(lp.x, lp.y + 60), 14, 'fill:var(--red);stroke:var(--text);stroke-width:1'); tx(svg, lp.x, lp.y + 61, 'p⁺', 'lbl sm', 'middle', {style: 'fill:#fff;stroke:none;font-weight:700'});
+    const shown = Math.min(n, 40); for (let k = 0; k < shown; k++){ const row = Math.floor(k / 10), col = k % 10; circ(svg, P(rp.x - 45 + col * 10, rp.y + 66 - row * 9), 3.5, 'fill:#16a34a;stroke:var(--text);stroke-width:.6'); }
+    tx(svg, lp.x, lp.y + 122, '1 proton', 'lbl', 'middle'); tx(svg, rp.x, rp.y + 122, `${n} electron${n === 1 ? '' : 's'}`, 'lbl', 'middle');
+    tx(svg, 400, 24, bal ? '⚖ BALANCED!' : d < 0 ? 'the proton is heavier' : 'the electrons are heavier', 'lbl big ' + (bal ? 'green' : 'amber'), 'middle');
+    out.textContent = `Left: 1 proton = ${MP} u.   Right: ${n} × ${ME} u = ${(n * ME).toFixed(5)} u.\n` + (bal ? `Balanced: about ${n} electrons have the same mass as one proton. So one electron ≈ 1/1837 of the mass of a proton (textbook) – tiny!` : d < 0 ? (n ? `The proton is still ${(MP / (n * ME)).toFixed(2)} times heavier. Add electrons – you will need close to 1837.` : 'No electrons on the pan yet. Add some!') : 'Too many electrons – take some off.'); }
+  const run = K.slider(inp, v => draw(v), 0);
+  [['baM100', -100], ['baM1', -1], ['baP1', 1], ['baP100', 100]].forEach(([id, d]) => $id(id).addEventListener('click', () => { inp.value = clamp(+inp.value + d, 0, 2500); run(); }));
+})();
+
+/* ---------- 6. atom-model gallery ---------- */
+(function(){
+  const svg = $id('agSvg'), out = $id('agOut'); let m = 3; const C = P(200, 165);
+  const INFO = [
+    ['Dalton (1808 – going further)', ['A tiny, solid, indivisible ball.', '✔ explains why elements combine', '   in fixed ratios (earlier classes)', '✘ no electrons, protons or neutrons –', '   cannot explain cathode rays']],
+    ['Thomson (1904 – going further)', ['Sphere of positive charge with', 'electrons embedded (plum pudding).', '✔ atom is neutral; contains electrons', '✘ cannot explain the gold foil', '   result (α particles bouncing back)']],
+    ['Rutherford (1911)', ['Tiny, heavy, positive nucleus;', 'electrons revolve round it.', '✔ explains the gold foil experiment', '✘ cannot explain the stability:', '   electrons should spiral inwards']],
+    ['Bohr (1913)', ['Nucleus (3p, 4n); electrons in fixed', 'orbits with fixed energy: K 2, L 1.', '✔ explains the stability of atoms', '   and energy given out as light', '(later models – higher classes)']]];
+  function draw(t){ K.clear(svg);
+    if (m === 0){ el('defs', {html: '<radialGradient id="agG" cx="35%" cy="35%" r="70%"><stop offset="0%" stop-color="#e2e8f0"/><stop offset="100%" stop-color="#475569"/></radialGradient>'}, svg); circ(svg, C, 110, 'fill:url(#agG);stroke:var(--text);stroke-width:1.5'); }
+    if (m === 1){ circ(svg, C, 120, 'fill:#f472b6;fill-opacity:.35;stroke:#db2777;stroke-width:2.5'); [[-50, -40], [60, -10], [-10, 60]].forEach(([dx, dy], k) => { const p = P(C.x + dx + 2 * Math.sin(t * 2 + k), C.y + dy); circ(svg, p, 11, 'fill:#e0f2fe;stroke:#1d4ed8;stroke-width:1.5'); tx(svg, p.x, p.y + 1, '−', 'lbl', 'middle', {style: 'fill:#1d4ed8;stroke:none;font-weight:700'}); });
+      [[-80, 10], [10, -80], [30, 40], [-30, 100], [80, 60], [-90, -60]].forEach(([dx, dy]) => tx(svg, C.x + dx, C.y + dy, '+', 'lbl big', 'middle', {style: 'fill:var(--red);stroke:none'})); }
+    if (m === 2){ [[110, 50, 20], [120, 45, -40], [95, 60, 75]].forEach(([rx, ry, rot], k) => { el('ellipse', {cx: C.x, cy: C.y, rx, ry, transform: `rotate(${rot} ${C.x} ${C.y})`, style: 'fill:none;stroke:var(--muted);stroke-width:1.2'}, svg);
+        const a = t * (2 + k * .4) + k * 2; const x = rx * Math.cos(a), y = ry * Math.sin(a), r = K.rad(rot); eDot(svg, P(C.x + x * Math.cos(r) - y * Math.sin(r), C.y + x * Math.sin(r) + y * Math.cos(r))); });
+      circ(svg, C, 8, 'fill:#dc2626;stroke:var(--text);stroke-width:1'); tx(svg, C.x + 16, C.y + 22, 'nucleus +3', 'lbl sm red', 'start'); }
+    if (m === 3){ [55, 100].forEach((R, k) => circ(svg, C, R, 'fill:none;stroke:var(--accent);stroke-width:2')); nucleusDisc(svg, C, 26, '3p\n4n');
+      [0, 1].forEach(j => { const a = t * 1.6 + j * Math.PI; eDot(svg, P(C.x + 55 * Math.cos(a), C.y + 55 * Math.sin(a))); }); const a2 = -t * 1.1; eDot(svg, P(C.x + 100 * Math.cos(a2), C.y + 100 * Math.sin(a2)));
+      tx(svg, C.x + 40, C.y - 50, 'K', 'lbl sm amber', 'middle'); tx(svg, C.x + 74, C.y - 80, 'L', 'lbl sm amber', 'middle'); }
+    tx(svg, C.x, 310, 'lithium atom', 'lbl sm muted', 'middle');
+    const X = 430; tx(svg, X, 40, INFO[m][0], 'lbl big', 'start'); INFO[m][1].forEach((s, k) => tx(svg, X, 84 + k * 28, s, 'lbl ' + (s.startsWith('✔') ? 'green' : s.startsWith('✘') ? 'red' : ''), 'start'));
+    out.textContent = ['Dalton: the atom is a solid ball that cannot be divided. The discharge tube experiments (page 4) proved this wrong – atoms contain electrons.', 'Thomson: electrons sit in a sphere of positive charge; equal + and −. Set aside after the gold foil experiment.', 'Rutherford: almost all the mass and all the + charge in a tiny nucleus; electrons revolve round it. Could not explain why atoms are stable.', 'Bohr: electrons only in fixed orbits (shells) with fixed energy, so they do not spiral in. Lithium: nucleus with 3 protons and 4 neutrons; 2 electrons in K, 1 in L.'][m];
+  }
+  const it = anim(svg, t => draw(t));
+  radio(['agD', 'agT', 'agR', 'agB'], k => { m = k; wake(it); draw(it.t); });
+})();
+
+/* ---------- 7. scientists quiz ---------- */
+sorter('sqBox', ['Crookes', 'Thomson', 'Goldstein', 'Rutherford', 'Chadwick', 'Bohr'], [
+  {t: 'High-voltage discharge tube experiments in 1875', a: 0, why: 'William Crookes (1875).'},
+  {t: 'Measured the e/m ratio of the electron', a: 1, why: 'J. J. Thomson – Nobel Prize 1906.'},
+  {t: 'Found canal rays using a perforated cathode', a: 2, why: 'Eugen Goldstein (1886).'},
+  {t: 'Named the proton', a: 3, why: 'Ernest Rutherford.'},
+  {t: 'Gold foil experiment and the nucleus', a: 3, why: 'Rutherford, with Geiger and Marsden (1911).'},
+  {t: 'Discovered the neutron', a: 4, why: 'James Chadwick (1932).'},
+  {t: 'Plum pudding model', a: 1, why: 'J. J. Thomson.'},
+  {t: 'Electrons in fixed orbits with fixed energy', a: 5, why: 'Niels Bohr (1913).'}]);
+
+/* ---------- 8. quarks ---------- */
+(function(){
+  const svg = $id('qkSvg'), out = $id('qkOut'); let ch = false;
+  function particle(c, name, ml, qs){ circ(svg, c, 72, `fill:${name === 'proton' ? 'var(--red-soft)' : 'var(--surface2)'};stroke:${name === 'proton' ? 'var(--red)' : 'var(--muted)'};stroke-width:2`);
+    const pos = [P(-26, -20), P(26, -20), P(0, 26)]; qs.forEach((q, k) => { const p = P(c.x + pos[k].x, c.y + pos[k].y); circ(svg, p, 18, `fill:${q === 'u' ? '#f59e0b' : '#6366f1'};stroke:var(--text);stroke-width:1`); tx(svg, p.x, p.y + 1, q, 'lbl', 'middle', {style: 'fill:#fff;stroke:none;font-weight:700'}); if (ch) tx(svg, p.x, p.y + 30, q === 'u' ? '+2/3' : '−1/3', 'lbl sm', 'middle'); });
+    tx(svg, c.x, c.y + 98, name, 'lbl', 'middle', {style: 'font-weight:700'}); tx(svg, c.x, c.y + 116, ml, 'lbl sm purple', 'middle'); }
+  function draw(){ K.clear(svg); particle(P(150, 110), 'proton', 'പ്രോട്ടോൺ · 3 quarks', ['u', 'u', 'd']); particle(P(400, 110), 'neutron', 'ന്യൂട്രോൺ · 3 quarks', ['u', 'd', 'd']);
+    circ(svg, P(640, 110), 9, 'fill:#16a34a;stroke:var(--text);stroke-width:1'); tx(svg, 640, 208, 'electron', 'lbl', 'middle', {style: 'font-weight:700'}); tx(svg, 640, 226, 'fundamental (മൗലിക കണം)', 'lbl sm purple', 'middle'); tx(svg, 640, 150, 'not made of', 'lbl sm muted', 'middle'); tx(svg, 640, 166, 'anything smaller', 'lbl sm muted', 'middle');
+    tx(svg, 20, 248, 'u = "up" quark, d = "down" quark (names: going further)', 'lbl sm muted', 'start');
+    out.textContent = ch ? 'Going further – quark charges: up = +2/3, down = −1/3.\nProton (u u d): +2/3 + 2/3 − 1/3 = +1 ✔.   Neutron (u d d): +2/3 − 1/3 − 1/3 = 0 ✔.' : 'The proton and the neutron are each made of three quarks, so they are not fundamental particles. The electron is not made of anything smaller – it is fundamental.'; }
+  draw();
+  $id('qkCh').addEventListener('click', () => { ch = !ch; $id('qkCh').textContent = ch ? '➖ Hide the quark charges' : '➕ Show the quark charges (going further)'; draw(); });
+})();
+
+choices();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'According to Bohr, while an electron revolves in a particular orbit, its energy…', options: ['keeps decreasing', 'keeps increasing', 'does not change', 'becomes zero'], answer: 2, explain: 'That is why orbits are called stationary energy levels (സ്ഥിരോർജനിലകൾ).', hint: 'Idea 3 of the Bohr model.'});
+K.mcq('#q2', {q: 'An electron jumps from the M shell to the K shell. It…', options: ['absorbs energy', 'gives out (emits) energy', 'neither absorbs nor emits energy', 'leaves the atom'], answer: 1, explain: 'K is nearer the nucleus and has lower energy – moving down, the electron gives out the difference.', hint: 'Which shell has more energy, M or K?'});
+K.mcq('#q3', {q: 'Which shell has the highest energy?', options: ['K', 'L', 'M', 'N'], answer: 3, explain: 'Energy increases with distance from the nucleus: K < L < M < N.', hint: 'Which is farthest from the nucleus?'});
+K.mcq('#q4', {q: 'The neutron is found in … and its charge is …', options: ['the orbits, −1', 'the nucleus, +1', 'the nucleus, 0', 'the orbits, 0'], answer: 2, explain: 'Table 1.2: neutron – nucleus – no charge – 1.00866 u (1 u in practice).', hint: 'Its name tells you the charge.'});
+K.mcq('#q5', {q: 'Which of these is a fundamental particle?', options: ['proton', 'neutron', 'electron', 'all three'], answer: 2, explain: 'The electron cannot be divided; protons and neutrons are each made of 3 quarks.', hint: 'Which one is NOT made of quarks?'});
+K.mcq('#q6', {q: 'Which statements are connected with J. J. Thomson? (a) idea of orbits (b) discharge tube experiments (c) discovered the neutron (d) discovered the electron (e) plum pudding model', options: ['a, b, c', 'b, d, e', 'a, d, e', 'c, d, e'], answer: 1, explain: 'b, d and e. (a – Bohr, c – Chadwick.)', hint: 'Who discovered the neutron? Who gave the orbits?'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

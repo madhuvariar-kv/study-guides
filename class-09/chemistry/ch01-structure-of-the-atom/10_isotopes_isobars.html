@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Isotopes and Isobars</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+/* ==== common styles (same on pages 08–11) ==== */
+.qa,.qbox{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.7rem 1rem;margin:.8rem 0;box-shadow:var(--shadow)}
+.qa p,.qbox p{margin:.3em 0}
+.qbox ol,.qbox ul{margin:.3rem 0}
+.mlq{display:block;font-weight:500;margin:.2rem 0 .4rem}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.tw{overflow-x:auto}
+.nuc{display:inline-flex;align-items:center;white-space:nowrap;vertical-align:middle;line-height:1;margin:0 .05em}
+.nuc .az{display:inline-grid;grid-template-rows:auto auto;font-size:.62em;line-height:1.12;text-align:right;margin-right:.08em}
+.nuc .sy{font-weight:600}
+.nuc.big{font-size:1.5em}
+.ft{width:auto;min-width:min(100%,560px)}
+.ft td,.ft th{text-align:center;vertical-align:middle;padding:.35rem .45rem}
+.ft th{font-size:.88rem;line-height:1.3}
+.ft th .ml{display:block;font-size:.85em}
+.ft input{width:3.6em;padding:.25rem .3rem;border-radius:6px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;text-align:center}
+.ft input.wide{width:6.5em}
+.ft input.ok{border-color:var(--green);background:var(--green-soft)}
+.ft input.bad{border-color:var(--red);background:var(--red-soft)}
+.ft td.given{font-weight:600}
+.score{font-weight:700;color:var(--primary-ink);margin:.4rem 0 0;min-height:1.3em}
+td.fill{font-weight:700;color:var(--green)}
+.ans-tab td,.ans-tab th{text-align:center;vertical-align:middle}
+.further{border-left:6px solid var(--purple);background:var(--purple-soft);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+.further .title{font-weight:700;color:var(--purple);margin-bottom:.3rem}
+.yn{display:inline-flex;gap:.3rem;flex-wrap:wrap}
+.yn .btn{padding:.25rem .6rem;font-size:.88rem}
+.btn.ok{background:var(--green-soft);border-color:var(--green);color:var(--text)}
+.btn.bad{background:var(--red-soft);border-color:var(--red);color:var(--text)}
+.btn.sel{background:var(--accent-soft);border-color:var(--accent);color:var(--text)}
+.why{font-size:.92rem;margin-top:.3rem}
+.btn.primary .ml{color:#fff}
+.counter{display:flex;align-items:center;gap:.5rem;margin:.35rem 0;flex-wrap:wrap}
+.counter .btn{min-width:2.5rem;font-weight:700;font-size:1.05rem;padding:.3rem .6rem}
+.counter .v{min-width:2.2ch;text-align:center;font-size:1.25rem;font-weight:800}
+.counter .nm{min-width:7.5rem;font-weight:600}
+.dotp,.dotn,.dote{display:inline-block;width:.85em;height:.85em;border-radius:50%;vertical-align:-.08em;margin-right:.25em;border:1px solid rgba(0,0,0,.35)}
+.dotp{background:#dc2626}.dotn{background:#94a3b8}.dote{background:#22c55e}
+.keyml{display:block;margin:.2rem 0 .4rem}
+.cards3{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.8rem;margin:.8rem 0}
+.cards3 .card{margin:0}
+.bigsym{font-size:1.7rem;margin:.2rem 0 .3rem}
+
+.use .ml{display:block;font-weight:500;font-size:.92em;margin:.15rem 0}
+.use .n{font-size:.88rem;color:var(--muted)}
+.pool{display:flex;flex-wrap:wrap;gap:.4rem;margin:.4rem 0 .6rem}
+.pool .btn{font-size:1.05rem;padding:.35rem .6rem;min-width:3.6rem}
+.pair{display:flex;flex-wrap:wrap;gap:.4rem 1.5rem;align-items:center;font-size:1.05rem;margin:.3rem 0}
+.cmp td,.cmp th{text-align:center;vertical-align:middle}
+.cmp td:first-child,.cmp th:first-child{text-align:left}
+</style>
+</head>
+<body data-page="10_isotopes_isobars">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 1 · Isotopes &amp; isobars</span><span class="chip amber">Textbook pages 18–20</span>
+<h1>Isotopes, Isobars and Isotones <span class="ml">ഐസോടോപ്പുകൾ · ഐസോബാറുകൾ</span></h1>
+<p class="lead">Can two atoms of the same element have different masses? Can atoms of different elements have the same mass number? Yes to both! Here you meet the three hydrogen atoms protium, deuterium and tritium, the carbon atoms used to date fossils, the radioactive isotopes used in hospitals and power stations, and the "same-mass" atoms argon, potassium and calcium. Then sort atom pairs yourself.</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 8–9 of this guide)</div>
+<ul style="margin:0">
+<li>Atomic number Z = protons = electrons; mass number A = protons + neutrons; neutrons = A − Z (<a href="08_atomic_mass_number.html">page 8</a>).</li>
+<li>Symbol notation <span class="nuc"><span class="az"><span>35</span><span>17</span></span><span class="sy">Cl</span></span>: A on top, Z below. Orbit diagrams: nucleus "Np / Nn", electrons on rings (<a href="09_electron_configuration.html">page 9</a>).</li></ul></div>
+
+<h2 id="decide">1. Which particle decides the element?</h2>
+<div class="qa"><p><b>Question (page 18).</b> <span class="ml mlq">ഒരു മൂലകം ഏതാണെന്ന് നിശ്ചയിക്കുന്നത് അതിലെ ഏതു സബ് അറ്റോമിക കണങ്ങളുടെ എണ്ണമാണ്? (പ്രോട്ടോൺ/ന്യൂട്രോൺ)</span> The number of which subatomic particle decides which element an atom is? (proton / neutron)</p>
+<p><span class="yn" data-ans="0" data-why="The number of protons (the atomic number) decides the element." data-hint="Neutrons can change without changing the element – watch the hydrogen atoms below."><button class="btn">proton</button><button class="btn">neutron</button></span></p><div class="why"></div></div>
+
+<h2 id="hydrogen">2. The three hydrogen atoms (Fig 1.10, Table 1.5)</h2>
+<div class="lab"><div class="lab-title">🖼 Fig 1.10 – protium, deuterium and tritium</div>
+<svg id="hSvg" viewBox="0 0 800 320" role="img" aria-label="Three hydrogen atoms: protium with 1 proton and 0 neutrons, deuterium with 1 proton and 1 neutron, tritium with 1 proton and 2 neutrons; each has one electron"></svg></div>
+<p><span class="ml">ഈ ആറ്റങ്ങളെ സംബന്ധിച്ചുള്ള പട്ടിക 1.5 പൂർത്തിയാക്കാമോ?</span> – Can you complete Table 1.5 about these atoms?</p>
+<div class="lab" id="t15"><div class="lab-title">✍ Table 1.5 – fill in and check</div></div>
+<div class="qa"><p><b>Questions (page 18).</b></p>
+<ol style="margin:.2rem 0">
+<li><span class="ml mlq">ഈ ആറ്റങ്ങളുടെ അറ്റോമിക നമ്പർ എത്രയാണ്?</span> What is the atomic number of these atoms?</li>
+<li><span class="ml mlq">അറ്റോമിക നമ്പർ 1 ഉള്ള മൂലകം ഏതാണ്?</span> Which element has atomic number 1? <span class="ml">(എങ്കിൽ ഇവ മൂന്നും ഹൈഡ്രജൻ ആറ്റങ്ങൾ ആണല്ലോ.)</span> – so all three are hydrogen atoms.</li>
+<li><span class="ml mlq">ഈ ആറ്റങ്ങൾ തമ്മിൽ ഏത് കണത്തിന്റെ എണ്ണത്തിലാണ് വ്യത്യാസം?</span> In the number of which particle do these atoms differ?</li>
+<li><span class="ml mlq">ഇവയുടെ മാസ് നമ്പർ ഒരുപോലെയാണോ?</span> Are their mass numbers the same?</li>
+<li><span class="ml mlq">ഇവയിൽ ന്യൂക്ലിയസിൽ ന്യൂട്രോൺ ഇല്ലാത്ത ആറ്റമേത്?</span> Which of these atoms has no neutron in its nucleus?</li></ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">1. All three have atomic number <b>1</b>.<br>2. Atomic number 1 is <b>hydrogen</b>.<br>3. They differ in the number of <b>neutrons</b> (0, 1, 2).<br>4. <b>No</b> – the mass numbers are 1, 2 and 3.<br>5. <b>Protium</b> <span class="nuc"><span class="az"><span>1</span><span>1</span></span><span class="sy">H</span></span> has no neutron.</div></div></div>
+<div class="callout key"><div class="title">⭐ Key idea – isotopes (textbook page 19)</div>
+<p class="ml keyml">ഒരേ അറ്റോമിക നമ്പറും വ്യത്യസ്ത മാസ് നമ്പറുമുള്ള ഒരേ മൂലകത്തിന്റെ വ്യത്യസ്ത ആറ്റങ്ങളാണ് ഐസോടോപ്പുകൾ.</p>
+<p><b>Isotopes</b> <span class="ml">ഐസോടോപ്പുകൾ</span> are different atoms of the <b>same element</b> having the <b>same atomic number</b> and <b>different mass numbers</b>. (Same protons, different neutrons.) Protium <span class="ml">പ്രോട്ടിയം</span>, deuterium <span class="ml">ഡ്യൂറ്റീരിയം</span> and tritium <span class="ml">ട്രിഷിയം</span> are the isotopes of hydrogen.</p></div>
+
+<h2 id="props">3. Properties of isotopes and heavy water</h2>
+<p><span class="ml">ഐസോടോപ്പുകൾ ഒരേ രാസസ്വഭാവം കാണിക്കുന്നു. എന്നാൽ ഭൗതിക സ്വഭാവങ്ങളിൽ ചെറിയ വ്യത്യാസങ്ങൾ കാണിക്കുന്നു.</span> – Isotopes show the <b>same chemical properties</b> <span class="ml">രാസസ്വഭാവം</span> (they have the same number of electrons, arranged the same way), but <b>small differences in physical properties</b> <span class="ml">ഭൗതിക സ്വഭാവങ്ങൾ</span> such as mass and density (their nuclei have different masses).</p>
+<div class="callout real"><div class="title">💧 Heavy water <span class="ml">ഘനജലം</span></div>
+<p><span class="ml">ഘനജലം (Heavy water) ഹൈഡ്രജന്റെ ഐസോടോപ്പായ ഡ്യൂറ്റീരിയത്തിന്റെ ഓക്സൈഡാണ്. ഘനജലം ആണവ നിലയങ്ങളിൽ ഉപയോഗിക്കുന്നു.</span> Heavy water is the <b>oxide of deuterium</b>, D₂O (each molecule has two ²H atoms instead of two ¹H atoms). It is used in <b>nuclear power stations</b> <span class="ml">ആണവ നിലയങ്ങൾ</span>.</p>
+<p><i>Go further:</i> it looks like ordinary water and takes part in the same chemical reactions, but it is about 11 % denser (≈ 1.11 g/cm³), freezes at about 3.8 °C and boils at about 101.4 °C – a small difference in physical properties. India's pressurised heavy-water reactors, for example at Kaiga in Karnataka, use it to slow down neutrons.</p></div>
+
+<h2 id="carbon">4. Isotopes of carbon (Fig 1.11)</h2>
+<p><span class="ml">ഹൈഡ്രജന് മാത്രമാണോ ഐസോടോപ്പുകൾ ഉള്ളതെന്നു നോക്കാം.</span> – Let us see whether only hydrogen has isotopes. Look at Fig 1.11 and fill in the protons, electrons and neutrons of each atom.</p>
+<div class="lab" id="t11"><div class="lab-title">🖼 Fig 1.11 – three carbon atoms</div>
+<svg id="cSvg" viewBox="0 0 800 300" role="img" aria-label="Three carbon atoms, each with 6 protons and 6 electrons arranged 2, 4; the nuclei have 6, 7 and 8 neutrons"></svg></div>
+<p><span class="ml">¹²C, ¹³C, ¹⁴C എന്നിവ കാർബണിന്റെ പ്രകൃതിദത്ത ഐസോടോപ്പുകളാണ്.</span> <span class="nuc"><span class="az"><span>12</span><span>6</span></span><span class="sy">C</span></span>, <span class="nuc"><span class="az"><span>13</span><span>6</span></span><span class="sy">C</span></span> and <span class="nuc"><span class="az"><span>14</span><span>6</span></span><span class="sy">C</span></span> are the natural isotopes of carbon.</p>
+<ul>
+<li><b>¹²C</b> is the most stable and the most abundant carbon isotope.</li>
+<li><b>¹³C</b> is only about <b>1.1 %</b> of all carbon. It is used to study the life processes in plants and animals.</li>
+<li><b>¹⁴C</b> is a <b>radioactive isotope</b> <span class="ml">റേഡിയോ ആക്ടീവ് ഐസോടോപ്പ്</span>. It is used to find the <b>age of fossils</b> <span class="ml">ഫോസിലുകളുടെ കാലപ്പഴക്കം</span>.</li>
+<li>Only the isotopes of <b>hydrogen</b> have special names. Others are named by mass number: carbon-12, carbon-13, carbon-14.</li></ul>
+<div class="lab"><div class="lab-title">📊 Virtual lab: how much of each carbon isotope?</div>
+<svg id="cbSvg" viewBox="0 0 800 432" role="img" aria-label="A bar showing natural carbon: about 98.9 percent carbon-12 and 1.1 percent carbon-13, with only a trace of carbon-14; below, a sample of 1000 carbon atoms as dots"></svg>
+<div class="controls"><button class="btn primary" id="cbGo">🎲 Take another sample of 1000 carbon atoms</button></div>
+<div class="readout" id="cbOut"></div>
+<p class="hint">Values are approximate. ¹⁴C is so rare (about 1 atom in a million million, 10¹²) that you would almost never find one in a sample of 1000 – yet it is enough for dating.</p></div>
+<div class="callout real"><div class="title">🏺 Kerala connection – dating the past</div>
+<p>When a plant or animal dies it stops taking in carbon, and the ¹⁴C in it slowly decays (go further: half of it in about 5730 years). By measuring how much ¹⁴C is left in bones, wood or charcoal, scientists find their age. Carbon dating is used for fossils and at archaeological sites like the Pattanam excavations near Kodungallur.</p></div>
+
+<h2 id="uses">5. Uses of isotopes (Table 1.6)</h2>
+<p><span class="ml">മറ്റ് ചില ഐസോടോപ്പുകളും അവയുടെ ഉപയോഗങ്ങളും പട്ടിക 1.6-ൽ നൽകിയിരിക്കുന്നു.</span> – Some other isotopes and their uses are given in Table 1.6.</p>
+<div class="cards3">
+<div class="card use"><div class="bigsym"><span class="nuc"><span class="az"><span>131</span><span>53</span></span><span class="sy">I</span></span></div><b>Iodine-131</b> <span class="ml">അയോഡിൻ-131</span>Study and treatment of the <b>thyroid gland</b>.<span class="ml">തൈറോയ്ഡ് ഗ്രന്ഥിയുടെ പ്രവർത്തനങ്ങളുടെ പഠനത്തിനും ചികിത്സയ്ക്കും</span><span class="n">53 p, 78 n</span></div>
+<div class="card use"><div class="bigsym"><span class="nuc"><span class="az"><span>235</span><span>92</span></span><span class="sy">U</span></span></div><b>Uranium-235</b> <span class="ml">യുറേനിയം - 235</span><b>Fuel</b> in nuclear power stations.<span class="ml">ആണവ നിലയങ്ങളിൽ ഇന്ധനം</span><span class="n">92 p, 143 n</span></div>
+<div class="card use"><div class="bigsym"><span class="nuc"><span class="az"><span>60</span><span>27</span></span><span class="sy">Co</span></span></div><b>Cobalt-60</b> <span class="ml">കൊബാൾട്ട് - 60</span>For <b>cancer treatment</b> (radiotherapy).<span class="ml">കാൻസർ ചികിത്സക്ക്</span><span class="n">27 p, 33 n</span></div>
+<div class="card use"><div class="bigsym"><span class="nuc"><span class="az"><span>24</span><span>11</span></span><span class="sy">Na</span></span></div><b>Sodium-24</b> <span class="ml">സോഡിയം - 24</span>Detecting <b>leaks</b> in industrial pipelines.<span class="ml">വ്യാവസായിക പൈപ്പ് ലൈനുകളിലെ ചോർച്ച കണ്ടെത്തൽ</span><span class="n">11 p, 13 n</span></div>
+<div class="card use"><div class="bigsym"><span class="nuc"><span class="az"><span>59</span><span>26</span></span><span class="sy">Fe</span></span></div><b>Iron-59</b> <span class="ml">അയൺ - 59</span>Diagnosing <b>anaemia</b>.<span class="ml">അനീമിയ നിർണയിക്കൽ</span><span class="n">26 p, 33 n</span></div>
+</div>
+<div class="safety">☢ Radioactive isotopes give out harmful radiation. They are handled only by trained people, with shielding and special tongs, in hospitals, laboratories and power stations. If you ever see the radiation symbol (☢), stay away and do not touch anything there.</div>
+
+<h2 id="isobars">6. Isobars – argon, potassium and calcium (Fig 1.12, Table 1.7)</h2>
+<p><span class="ml">ആർഗൺ (Ar), പൊട്ടാസ്യം (K), കാൽസ്യം (Ca) എന്നീ ആറ്റങ്ങളുടെ ഓർബിറ്റ് ഇലക്ട്രോൺ വിന്യാസം നൽകിയിരിക്കുന്നത് ശ്രദ്ധിക്കൂ (ചിത്രം 1.12). ചിത്രം വിശകലനം ചെയ്ത് പട്ടിക 1.7 പൂർത്തിയാക്കി സയൻസ് ഡയറിയിൽ രേഖപ്പെടുത്തുക.</span> – Look at the orbit diagrams of argon, potassium and calcium (Fig 1.12). Analyse them and complete Table 1.7.</p>
+<div class="lab"><div class="lab-title">🖼 Fig 1.12 – argon-40, potassium-40, calcium-40</div>
+<svg id="ibSvg" viewBox="0 0 800 340" role="img" aria-label="Orbit diagrams of argon 18p 22n with 2, 8, 8 electrons, potassium 19p 21n with 2, 8, 8, 1 and calcium 20p 20n with 2, 8, 8, 2"></svg></div>
+<div class="lab" id="t17"><div class="lab-title">✍ Table 1.7 – fill in and check</div></div>
+<div class="qa"><p><b>Questions (page 20).</b></p>
+<ol style="margin:.2rem 0"><li><span class="ml mlq">ഈ മൂലകങ്ങളുടെ മാസ് നമ്പറിന്റെ പ്രത്യേകത എന്താണ്?</span> What is special about the mass numbers of these elements?</li>
+<li><span class="ml mlq">അറ്റോമിക നമ്പർ തുല്യമാണോ?</span> Are the atomic numbers equal?</li></ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">1. All three have the <b>same mass number, 40</b> (18 + 22 = 19 + 21 = 20 + 20 = 40).<br>2. <b>No</b> – the atomic numbers are 18, 19 and 20, so they are three <b>different elements</b>.</div></div></div>
+<div class="callout key"><div class="title">⭐ Key idea – isobars (textbook page 20)</div>
+<p class="ml keyml">ഒരേ മാസ് നമ്പറും വ്യത്യസ്ത അറ്റോമിക നമ്പറുമുള്ള ആറ്റങ്ങളാണ് ഐസോബാറുകൾ.</p>
+<p><b>Isobars</b> <span class="ml">ഐസോബാറുകൾ</span> are atoms having the <b>same mass number</b> and <b>different atomic numbers</b>. They are atoms of <b>different elements</b> with the same total number of particles in the nucleus (protons + neutrons).</p></div>
+<div class="further"><div class="title">📘 Side box – isotones <span class="ml">ഐസോടോണുകൾ</span></div>
+<p><span class="ml">ന്യൂട്രോണുകളുടെ എണ്ണം തുല്യമായ ആറ്റങ്ങൾ ഐസോടോണുകൾ എന്നറിയപ്പെടുന്നു.</span> Atoms with the <b>same number of neutrons</b> are called <b>isotones</b>. Example: <span class="nuc"><span class="az"><span>15</span><span>7</span></span><span class="sy">N</span></span> (15 − 7 = 8 neutrons) and <span class="nuc"><span class="az"><span>14</span><span>6</span></span><span class="sy">C</span></span> (14 − 6 = 8 neutrons).</p></div>
+<div class="tw"><table class="cmp"><thead><tr><th></th><th>Isotopes</th><th>Isobars</th><th>Isotones</th></tr></thead><tbody>
+<tr><td>Atomic number Z (protons)</td><td><b>same</b></td><td>different</td><td>different</td></tr>
+<tr><td>Mass number A</td><td>different</td><td><b>same</b></td><td>different</td></tr>
+<tr><td>Neutrons (A − Z)</td><td>different</td><td>different</td><td><b>same</b></td></tr>
+<tr><td>Element</td><td>same element</td><td>different elements</td><td>different elements</td></tr>
+<tr><td>Example</td><td><span class="nuc"><span class="az"><span>12</span><span>6</span></span><span class="sy">C</span></span>, <span class="nuc"><span class="az"><span>14</span><span>6</span></span><span class="sy">C</span></span></td><td><span class="nuc"><span class="az"><span>40</span><span>18</span></span><span class="sy">Ar</span></span>, <span class="nuc"><span class="az"><span>40</span><span>20</span></span><span class="sy">Ca</span></span></td><td><span class="nuc"><span class="az"><span>15</span><span>7</span></span><span class="sy">N</span></span>, <span class="nuc"><span class="az"><span>14</span><span>6</span></span><span class="sy">C</span></span></td></tr></tbody></table></div>
+<p class="small muted">Memory trick: isoto<b>P</b>es – same <b>P</b>rotons; isoto<b>N</b>es – same <b>N</b>eutrons; isob<b>A</b>rs – same m<b>A</b>ss number.</p>
+
+<h2 id="sorter">7. Virtual lab: the isotope / isobar / isotone sorter</h2>
+<div class="lab" id="clsStep"><div class="lab-title">🎬 Worked example: isotopes, isobars or isotones?</div>
+<svg viewBox="0 0 800 270" role="img" aria-label="Comparing two pairs of nuclei: carbon-14 with nitrogen-14, and carbon-14 with nitrogen-15, by their protons, mass numbers and neutrons"></svg></div>
+<p>Pick any <b>two</b> atoms from the pool, decide what the pair is, and press your answer. Or let the lab pick a pair for you.</p>
+<div class="lab"><div class="lab-title">🧩 Sort the pair</div>
+<div class="pool" id="pool"></div>
+<div class="pair" id="pairShow"></div>
+<div class="controls"><span class="yn" id="cats"><button class="btn" data-c="0">Isotopes</button><button class="btn" data-c="1">Isobars</button><button class="btn" data-c="2">Isotones</button><button class="btn" data-c="3">None of these</button></span><button class="btn ghost" id="randPair">🎲 Random pair</button></div>
+<div class="why" id="sortWhy"></div>
+<p class="score" id="sortScore"></p></div>
+
+<div class="callout warn"><div class="title">⚠️ Common mistakes</div>
+<ul style="margin:0">
+<li>"Isotopes are different elements" ✗ – isotopes are atoms of the <b>same</b> element; isobars are different elements.</li>
+<li>"Isotopes have different chemical properties" ✗ – their chemical properties are the same; only physical properties differ slightly.</li>
+<li>Writing deuterium as <span class="nuc"><span class="az"><span>2</span><span>2</span></span><span class="sy">H</span></span> ✗ – hydrogen always has Z = 1: <span class="nuc"><span class="az"><span>2</span><span>1</span></span><span class="sy">H</span></span>.</li></ul></div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://phet.colorado.edu/en/simulations/isotopes-and-atomic-mass" target="_blank" rel="noopener noreferrer">🧪 Isotopes and Atomic Mass (PhET simulation)</a> <span class="src">PhET, University of Colorado Boulder</span><br><span class="note">Add neutrons to an atom to make its isotopes and see which ones are stable and how common each is in nature.</span></li><li><a href="https://en.wikipedia.org/wiki/Isotopes_of_hydrogen" target="_blank" rel="noopener noreferrer">📄 Isotopes of hydrogen</a> <span class="src">Wikipedia</span><br><span class="note">Protium, deuterium and tritium: the only isotopes with their own names.</span></li><li><a href="https://en.wikipedia.org/wiki/Isobar_(nuclide)" target="_blank" rel="noopener noreferrer">📄 Isobar (nuclide)</a> <span class="src">Wikipedia</span><br><span class="note">Atoms of different elements with the same mass number, such as argon-40, potassium-40 and calcium-40.</span></li><li><a href="https://world-nuclear.org/information-library/non-power-nuclear-applications/radioisotopes-research/radioisotopes-in-medicine" target="_blank" rel="noopener noreferrer">📄 Radioisotopes in Medicine</a> <span class="src">World Nuclear Association</span><br><span class="note">How iodine-131, cobalt-60, technetium-99m and other isotopes are used to find and treat disease.</span></li><li><a href="https://www.britatom.gov.in/" target="_blank" rel="noopener noreferrer">📄 Board of Radiation &amp; Isotope Technology (BRIT)</a> <span class="src">BRIT, Department of Atomic Energy, India</span><br><span class="note">The Indian government unit in Navi Mumbai that makes radioisotopes for hospitals, industry and agriculture.</span></li><li><a href="https://en.wikipedia.org/wiki/Radiocarbon_dating" target="_blank" rel="noopener noreferrer">📄 Radiocarbon dating</a> <span class="src">Wikipedia</span><br><span class="note">How carbon-14 in old wood, bones and charcoal tells archaeologists their age.</span></li><li><a href="https://en.wikipedia.org/wiki/Cobalt-60" target="_blank" rel="noopener noreferrer">📄 Cobalt-60</a> <span class="src">Wikipedia</span><br><span class="note">The isotope used in radiotherapy machines for cancer treatment and to sterilise medical equipment.</span></li></ul></div>
+
+<h2 id="check">8. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li><b>Isotopes</b>: same element, same Z, different A (different neutrons) – ¹H, ²H, ³H; ¹²C, ¹³C, ¹⁴C. Same chemical properties, slightly different physical properties.</li>
+<li>Heavy water = D₂O, used in nuclear power stations. ¹³C ≈ 1.1 % of carbon (life processes); ¹⁴C is radioactive (age of fossils).</li>
+<li>Uses: I-131 thyroid, U-235 fuel, Co-60 cancer treatment, Na-24 pipeline leaks, Fe-59 anaemia.</li>
+<li><b>Isobars</b>: same A, different Z – ⁴⁰Ar, ⁴⁰K, ⁴⁰Ca. <b>Isotones</b>: same number of neutrons – ¹⁵N and ¹⁴C.</li>
+</ul></div>
+<p>Next: <a href="11_intext_questions_solutions.html">In-text questions – solutions ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Structure of the Atom · Class 9 Chemistry", "icon": "⚛️", "key": "chemistry_ch1_progress", "pages": [["index.html", "Home"], ["01_matter_elements_molecules.html", "1 · Matter, Elements, Atoms & Molecules"], ["02_charges_and_electricity.html", "2 · Charges, Electrodes & Low-pressure Gases"], ["03_tiny_numbers_units.html", "3 · Tiny Numbers, Sizes & Units"], ["04_inside_atom_electron.html", "4 · Inside the Atom: Discharge Tube & the Electron"], ["05_proton_thomson_model.html", "5 · Canal Rays, the Proton & Thomson's Model"], ["06_rutherford_model_neutron.html", "6 · Rutherford's Gold Foil Experiment & the Neutron"], ["07_bohr_model_particles.html", "7 · Bohr's Model & the Three Particles"], ["08_atomic_mass_number.html", "8 · Atomic Number & Mass Number"], ["09_electron_configuration.html", "9 · Electron Configuration & Shell Diagrams"], ["10_isotopes_isobars.html", "10 · Isotopes, Isobars & Isotones"], ["11_intext_questions_solutions.html", "11 · In-text Questions – Solutions"], ["12_assess_solutions.html", "12 · Let Us Assess & Extended Activities – Solutions"], ["13_applications_explore.html", "13 · Applications & Explore Online"], ["14_summary_revision.html", "14 · Summary & Quick Quiz"], ["15_model_test_paper.html", "15 · Model Test Paper"], ["16_model_test_solutions.html", "16 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ==== common helpers (same code on pages 08–11) ==== */
+const {P, el} = K;
+const $id = id => document.getElementById(id);
+const C = c => (c === 'none' ? 'none' : ((c.charAt(0) === '#' || c.startsWith('url') || c.startsWith('rgb')) ? c : `var(--${c === 'amber' ? 'accent' : c})`));
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const TAU = Math.PI * 2;
+/* plain line with its own stroke (the kit's .ln class would override stroke attributes on seg()) */
+function line(svg, a, b, color = 'text', w = 2, extra = {}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: C(color), 'stroke-width': w, 'stroke-linecap': 'round', ...extra}, svg); }
+function arrow(svg, a, b, color = 'red', w = 2.5, head = 10, extra = {}){ const L = K.dist(a, b); if (L < 2) return; const u = K.unit(a, b), hh = Math.min(head, L); const hb = P(b.x - u.x * hh, b.y - u.y * hh);
+  el('line', {x1: a.x, y1: a.y, x2: hb.x, y2: hb.y, stroke: C(color), 'stroke-width': w, 'stroke-linecap': 'round', ...extra}, svg);
+  el('polygon', {points: `${b.x},${b.y} ${hb.x + u.y * hh * .55},${hb.y - u.x * hh * .55} ${hb.x - u.y * hh * .55},${hb.y + u.x * hh * .55}`, fill: C(color), ...extra}, svg); }
+function tx(svg, x, y, str, cls = '', anchor = 'middle', extra = {}){ return K.text(svg, P(x, y), str, {class: ('lbl ' + cls).trim(), 'text-anchor': anchor, ...extra}); }
+function box(svg, x, y, w, h, fill = 'surface2', stroke = 'text', sw = 1.5, extra = {}){ return el('rect', {x, y, width: w, height: h, fill: C(fill), stroke: C(stroke), 'stroke-width': sw, ...extra}, svg); }
+function circ(svg, x, y, r, fill = 'none', stroke = 'text', sw = 1.5, extra = {}){ return el('circle', {cx: x, cy: y, r: Math.max(0, r), fill: C(fill), stroke: C(stroke), 'stroke-width': sw, ...extra}, svg); }
+
+/* elements Z = 1–20: [symbol, English name, Malayalam name as printed in the textbook ('' if the book does not print it), mass number of the commonest atom] */
+const ELS = [null, ['H', 'Hydrogen', 'ഹൈഡ്രജൻ', 1], ['He', 'Helium', '', 4], ['Li', 'Lithium', '', 7], ['Be', 'Beryllium', '', 9], ['B', 'Boron', 'ബോറോൺ', 11],
+  ['C', 'Carbon', 'കാർബൺ', 12], ['N', 'Nitrogen', '', 14], ['O', 'Oxygen', 'ഓക്സിജൻ', 16], ['F', 'Fluorine', '', 19], ['Ne', 'Neon', '', 20],
+  ['Na', 'Sodium', 'സോഡിയം', 23], ['Mg', 'Magnesium', '', 24], ['Al', 'Aluminium', '', 27], ['Si', 'Silicon', '', 28], ['P', 'Phosphorus', '', 31],
+  ['S', 'Sulphur', '', 32], ['Cl', 'Chlorine', 'ക്ലോറിൻ', 35], ['Ar', 'Argon', 'ആർഗൺ', 40], ['K', 'Potassium', 'പൊട്ടാസ്യം', 39], ['Ca', 'Calcium', 'കാൽസ്യം', 40]];
+/* electron configuration for 0–20 electrons: K ≤ 2, L ≤ 8, M ≤ 8 (outermost shell ≤ 8), then N – as in the textbook (K = 2, 8, 8, 1; Ca = 2, 8, 8, 2) */
+function conf(z){ const out = []; for (const cap of [2, 8, 8, 2]){ if (z <= 0) break; const t = Math.min(cap, z); out.push(t); z -= t; } return out; }
+const confStr = arr => arr.join(', ');
+const SHELL = ['K', 'L', 'M', 'N', 'O'];
+/* nuclide symbol in HTML: mass number on top, atomic number below, both on the left of the symbol */
+const nucHTML = (A, Z, sym, cls = '') => `<span class="nuc ${cls}"><span class="az"><span>${A}</span><span>${Z}</span></span><span class="sy">${sym}</span></span>`;
+/* nuclide symbol in SVG: (x, y) = left edge / middle of the element symbol */
+function nucSvg(svg, x, y, A, Z, sym, fs = 22, color = 'text'){ const g = K.group(svg), f = C(color), fsm = Math.round(fs * .56);
+  el('text', {x: x, y: y, 'dominant-baseline': 'middle', class: 'lbl', style: `font-size:${fs}px;font-weight:700;fill:${f}`, text: sym}, g);
+  el('text', {x: x - 2, y: y - fs * .42, 'text-anchor': 'end', 'dominant-baseline': 'middle', class: 'lbl', style: `font-size:${fsm}px;font-weight:600;fill:${f}`, text: String(A)}, g);
+  el('text', {x: x - 2, y: y + fs * .46, 'text-anchor': 'end', 'dominant-baseline': 'middle', class: 'lbl', style: `font-size:${fsm}px;font-weight:600;fill:${f}`, text: String(Z)}, g);
+  return g; }
+
+/* ---- orbit (shell) diagram drawer ----
+   orbit(svg, cx, cy, {p, n, shells: [2, 8, 3], gap, nucR, style: 'book' | 'plain', rot, eR, label, names, rings, hl, eFill, eLabel, nucFill, ringColor})
+   book style = like Fig 1.8 / 1.9 / 1.12: orange bands, red ring lines, dark-red nucleus with "Np / Nn", green electrons evenly spaced on each ring */
+let ORB_N = 0;
+function orbDefs(svg){ const old = svg.querySelector('defs.orbdefs'); if (old) return old.getAttribute('data-id');
+  const id = 'orb' + (++ORB_N) + 'x'; const d = el('defs', {class: 'orbdefs', 'data-id': id}, svg);
+  const g1 = el('radialGradient', {id: id + 'b', cx: '50%', cy: '50%', r: '50%'}, d);
+  el('stop', {offset: '0%', 'stop-color': '#fff4d6'}, g1); el('stop', {offset: '62%', 'stop-color': '#fcd581'}, g1); el('stop', {offset: '100%', 'stop-color': '#f39a1e'}, g1);
+  const g2 = el('radialGradient', {id: id + 'e', cx: '35%', cy: '32%', r: '70%'}, d);
+  el('stop', {offset: '0%', 'stop-color': '#e9fde9'}, g2); el('stop', {offset: '55%', 'stop-color': '#5fd16b'}, g2); el('stop', {offset: '100%', 'stop-color': '#15803d'}, g2);
+  const g3 = el('radialGradient', {id: id + 'n', cx: '40%', cy: '35%', r: '70%'}, d);
+  el('stop', {offset: '0%', 'stop-color': '#a3243b'}, g3); el('stop', {offset: '100%', 'stop-color': '#5a0e1e'}, g3);
+  return id; }
+function orbit(svg, cx, cy, o = {}){
+  const {p = 1, n = 0, shells = [1], gap = 24, nucR = 22, style = 'book', rot = 0, eR = null, label = true, names = false, rings = 0, hl = -1,
+    eFill = null, eLabel = '', nucFill = '#f9a8d4', nucText = '#831843', ringColor = 'muted'} = o;
+  const id = orbDefs(svg), g = K.group(svg);
+  const nr = Math.max(shells.length, rings), rr = k => nucR + gap * (k + 1), er = eR ?? clamp(gap * .3, 3, 8);
+  if (style === 'book'){
+    for (let k = nr - 1; k >= 0; k--) circ(g, cx, cy, rr(k) + gap * .42, `url(#${id}b)`, 'none', 0);
+    for (let k = 0; k < nr; k++) circ(g, cx, cy, rr(k), 'none', k === hl ? '#15803d' : '#d9381e', k === hl ? 3 : 1.3);
+    circ(g, cx, cy, nucR, `url(#${id}n)`, '#fde7b0', 1.5);
+  } else {
+    for (let k = 0; k < nr; k++) circ(g, cx, cy, rr(k), 'none', k === hl ? 'green' : ringColor, k === hl ? 3 : 1.5);
+    circ(g, cx, cy, nucR, nucFill, nucText, 1.2);
+  }
+  if (names) for (let k = 0; k < nr; k++){ const a = K.rad(-112), r = rr(k) - gap * .5; el('text', {x: cx + r * Math.cos(a), y: cy + r * Math.sin(a), 'text-anchor': 'middle', 'dominant-baseline': 'middle', style: `font-size:${clamp(gap * .5, 9, 13)}px;font-weight:700;fill:${style === 'book' ? '#7c2d12' : 'var(--muted)'}`, text: SHELL[k]}, g); }
+  if (label){ const fs = clamp(nucR * .6, 7, 18), col = style === 'book' ? '#ffffff' : nucText;
+    el('text', {x: cx, y: cy - fs * .52, 'text-anchor': 'middle', 'dominant-baseline': 'middle', style: `font-size:${fs}px;font-weight:700;fill:${col};font-family:Segoe UI,Roboto,Arial,sans-serif`, text: p + 'p'}, g);
+    el('text', {x: cx, y: cy + fs * .58, 'text-anchor': 'middle', 'dominant-baseline': 'middle', style: `font-size:${fs}px;font-weight:700;fill:${col};font-family:Segoe UI,Roboto,Arial,sans-serif`, text: n + 'n'}, g); }
+  const pts = [];
+  shells.forEach((m, k) => { const r = rr(k); for (let j = 0; j < m; j++){ const a = K.rad(-90 + 360 * j / m + rot * 40 / (k + 1)); const q = P(cx + r * Math.cos(a), cy + r * Math.sin(a)); pts.push(q);
+    if (style === 'book' && !eFill) circ(g, q.x, q.y, er, `url(#${id}e)`, '#14532d', .9);
+    else circ(g, q.x, q.y, er, eFill || '#22c55e', '#1e293b', .9);
+    if (eLabel) el('text', {x: q.x, y: q.y + .5, 'text-anchor': 'middle', 'dominant-baseline': 'middle', style: `font-size:${er * 1.15}px;font-weight:700;fill:#fff`, text: eLabel}, g); } });
+  return {g, rr, pts};
+}
+
+/* ---- interactive fill-in table ----
+   fillTable(id, {head: [html...], rows: [[cell...]...], wide: [colIndex...]}); cell = 'given text' | {a: 'answer', alt: [...], blank: true (an empty / '–' answer is right)} */
+const norm = s => String(s).trim().toLowerCase().replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/,+/g, ',');
+function fillTable(id, spec){
+  const root = $id(id); let N = 0;
+  const cell = (c, ci) => { if (c && typeof c === 'object'){ N++; return `<td><input type="text" autocomplete="off" spellcheck="false" ${spec.wide && spec.wide.includes(ci) ? 'class="wide"' : 'inputmode="numeric"'} data-a="${c.a}" data-alt="${(c.alt || []).join('|')}" data-blank="${c.blank ? 1 : ''}" aria-label="${(spec.labels && spec.labels[ci]) || 'answer'}"></td>`; } return `<td class="given">${c}</td>`; };
+  root.insertAdjacentHTML('beforeend', `<div class="tw"><table class="ft"><thead><tr>${spec.head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${spec.rows.map(r => `<tr>${r.map(cell).join('')}</tr>`).join('')}</tbody></table></div>
+    <div class="controls"><button class="btn primary" data-f="check">✔ Check my answers</button><button class="btn ghost" data-f="clear">⟲ Clear</button><button class="btn" data-f="show">💡 Show answers</button></div><p class="score"></p>`);
+  const ins = K.$$('input[data-a]', root), score = root.querySelector('.score');
+  const right = inp => { const v = norm(inp.value); if (inp.dataset.blank && (v === '' || v === '-' || v === '0')) return true; return v !== '' && (v === norm(inp.dataset.a) || inp.dataset.alt.split('|').filter(Boolean).some(a => norm(a) === v)); };
+  root.addEventListener('click', e => { const b = e.target.closest('button[data-f]'); if (!b) return; const f = b.dataset.f;
+    if (f === 'check'){ let ok = 0; ins.forEach(i => { const r = right(i); i.classList.toggle('ok', r); i.classList.toggle('bad', !r); if (r) ok++; });
+      score.textContent = ok === ins.length ? `🎉 All ${ins.length} correct!` : `${ok} of ${ins.length} correct – the red boxes need another look.` + (spec.hint ? ' ' + spec.hint : ''); }
+    else if (f === 'show'){ ins.forEach(i => { i.value = i.dataset.blank && !i.dataset.a ? '–' : i.dataset.a; i.classList.add('ok'); i.classList.remove('bad'); }); score.textContent = 'All answers filled in (green). Cover them and try again tomorrow!'; }
+    else { ins.forEach(i => { i.value = ''; i.classList.remove('ok', 'bad'); }); score.textContent = ''; } });
+  root.addEventListener('input', e => { if (e.target.matches('input[data-a]')) e.target.classList.remove('ok', 'bad'); });
+}
+
+/* shared animation clock: runs only while a lab is on screen and was used in the last 25 s */
+const ANIM = []; let animOn = false, animLast = 0;
+function animLoop(now){ const dt = Math.min(.05, Math.max(0, (now - animLast) / 1000)); animLast = now; let any = false;
+  for (const it of ANIM){ if (it.vis && now < it.until){ it.t += dt; try { it.fn(it.t, dt); } catch (e){ it.until = 0; throw e; } any = true; } }
+  if (any) requestAnimationFrame(animLoop); else animOn = false; }
+function animStart(){ if (!animOn){ animOn = true; animLast = performance.now(); requestAnimationFrame(animLoop); } }
+function anim(elm, fn){ const it = {elm, fn, t: 0, until: 0, vis: true}; ANIM.push(it);
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(e => { it.vis = e.isIntersecting; if (it.vis) wake(it); })).observe(elm);
+  it.fn(0, 0); wake(it); return it; }
+function wake(it){ it.until = performance.now() + 25000; animStart(); }
+/* choice buttons: <span class="yn" data-ans="1" data-why="..."><button class="btn">…</button>…</span> followed by a <div class="why"> */
+function choices(root = document){ K.$$('.yn[data-ans]', root).forEach(bx => { const ans = +bx.dataset.ans, why = bx.parentElement.querySelector('.why');
+  K.$$('button', bx).forEach((b, k) => b.addEventListener('click', () => { K.$$('button', bx).forEach(x => x.classList.remove('ok', 'bad')); b.classList.add(k === ans ? 'ok' : 'bad');
+    if (why){ why.innerHTML = k === ans ? '✅ ' + (bx.dataset.why || 'Correct.') : '❌ ' + (bx.dataset.hint || 'Not quite – think again.'); why.style.color = k === ans ? 'var(--green)' : 'var(--red)'; } })); }); }
+/* ==== end common ==== */
+
+choices();
+
+/* ---------- Fig 1.10 ---------- */
+(function(){ const svg = $id('hSvg');
+  [[1, '#e11d48', 'Protium', 'പ്രോട്ടിയം'], [2, '#db2777', 'Deuterium', 'ഡ്യൂറ്റീരിയം'], [3, '#16a34a', 'Tritium', 'ട്രിഷിയം']].forEach(([A, col, nm, ml], k) => {
+    const x = 140 + k * 260;
+    orbit(svg, x, 118, {p: 1, n: A - 1, shells: [1], gap: 68, nucR: 26, style: 'plain', eFill: '#e11d48', eLabel: 'e', eR: 11, nucFill: '#fbcfe8', nucText: '#831843'});
+    nucSvg(svg, x - 8, 240, A, 1, 'H', 34, col);
+    tx(svg, x, 280, nm, 'big', 'middle'); el('text', {x, y: 306, 'text-anchor': 'middle', 'dominant-baseline': 'middle', style: 'font-size:15px;font-weight:600;fill:var(--purple)', text: ml}, svg); });
+})();
+
+/* ---------- Table 1.5 ---------- */
+fillTable('t15', {head: ['Name of the atom <span class="ml">ആറ്റത്തിന്റെ പേര്</span>', 'Protons <span class="ml">പ്രോട്ടോൺ</span>', 'Neutrons <span class="ml">ന്യൂട്രോൺ</span>', 'Electrons <span class="ml">ഇലക്ട്രോൺ</span>', 'Atomic number <span class="ml">അറ്റോമിക നമ്പർ</span>', 'Mass number <span class="ml">മാസ് നമ്പർ</span>'],
+  labels: ['', 'protons', 'neutrons', 'electrons', 'atomic number', 'mass number'],
+  rows: [['Protium <span class="ml">പ്രോട്ടിയം</span>', 1, {a: 0}, {a: 1}, {a: 1}, {a: 1}], ['Deuterium <span class="ml">ഡ്യൂറ്റീരിയം</span>', {a: 1}, 1, {a: 1}, {a: 1}, {a: 2}], ['Tritium <span class="ml">ട്രിഷിയം</span>', {a: 1}, {a: 2}, 1, {a: 1}, {a: 3}]],
+  hint: 'Count the p and n in each nucleus of Fig 1.10; each atom has one electron.'});
+
+/* ---------- Fig 1.11 + fill-in ---------- */
+(function(){ const svg = $id('cSvg');
+  [12, 13, 14].forEach((A, k) => { const x = 140 + k * 260;
+    orbit(svg, x, 125, {p: 6, n: A - 6, shells: [2, 4], gap: 40, nucR: 27, style: 'plain', eFill: '#93c5fd', eR: 7, nucFill: '#db2777', nucText: '#ffffff', ringColor: 'muted'});
+    nucSvg(svg, x - 6, 268, A, 6, 'C', 30, 'primary'); });
+  fillTable('t11', {head: ['', nucHTML(12, 6, 'C', 'big'), nucHTML(13, 6, 'C', 'big'), nucHTML(14, 6, 'C', 'big')], labels: ['', 'carbon-12', 'carbon-13', 'carbon-14'],
+    rows: [['protons <span class="ml">പ്രോട്ടോൺ</span>', {a: 6}, {a: 6}, {a: 6}], ['electrons <span class="ml">ഇലക്ട്രോൺ</span>', {a: 6}, {a: 6}, {a: 6}], ['neutrons <span class="ml">ന്യൂട്രോൺ</span>', {a: 6}, {a: 7}, {a: 8}]],
+    hint: 'Carbon always has 6 protons; neutrons = A − 6.'});
+})();
+
+/* ---------- carbon abundance ---------- */
+(function(){ const svg = $id('cbSvg'), out = $id('cbOut'); let seed = 7;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const X0 = 40, W = 720, P13 = .011;
+  function draw(){ K.clear(svg);
+    tx(svg, X0, 22, 'Natural carbon (approx.)', 'sm', 'start');
+    box(svg, X0, 34, W * .989, 40, '#64748b', 'text', 1); box(svg, X0 + W * .989, 34, W * .011, 40, '#f59e0b', 'text', 1);
+    tx(svg, X0 + W * .45, 54, '¹²C ≈ 98.9 %', 'big', 'middle', {style: 'fill:#fff;stroke:none'});
+    arrow(svg, P(X0 + W - 60, 98), P(X0 + W - 4, 76), 'accent', 2); tx(svg, X0 + W - 64, 102, '¹³C ≈ 1.1 %', 'sm amber', 'end');
+    tx(svg, X0 + W - 64, 122, '¹⁴C: a trace (≈ 1 atom in 10¹²) – too small to draw', 'sm red', 'end');
+    let n12 = 0, n13 = 0;
+    for (let r = 0; r < 20; r++) for (let c = 0; c < 50; c++){ const is13 = rnd() < P13; if (is13) n13++; else n12++;
+      circ(svg, X0 + 8 + c * 14.4, 162 + r * 13.4, 5, is13 ? '#f59e0b' : '#94a3b8', is13 ? '#92400e' : 'none', is13 ? 1.2 : 0); }
+    tx(svg, X0, 140, 'A sample of 1000 carbon atoms:', 'sm', 'start');
+    out.textContent = `In this sample: ¹²C = ${n12}, ¹³C = ${n13} (${K.fmt(n13 / 10, 1)} %), ¹⁴C = 0.\nExpected on average: about 989 ¹²C and 11 ¹³C. Take more samples – the ¹³C count jumps around 11 but is never far from it.`; }
+  $id('cbGo').addEventListener('click', () => { seed = Math.floor(Math.random() * 2147483646) + 1; draw(); });
+  draw();
+})();
+
+/* ---------- Fig 1.12 ---------- */
+(function(){ const svg = $id('ibSvg');
+  [[18, 'Ar', 140, 24], [19, 'K', 400, 22], [20, 'Ca', 660, 22]].forEach(([z, s, x, gap]) => {
+    orbit(svg, x, 158, {p: z, n: 40 - z, shells: conf(z), gap, nucR: 26});
+    nucSvg(svg, x - 16, 312, 40, z, s, 28, 'text'); tx(svg, x + 30, 314, confStr(conf(z)), 'sm green', 'start'); });
+})();
+
+/* ---------- Table 1.7 ---------- */
+fillTable('t17', {head: ['Element <span class="ml">മൂലകം</span>', 'Protons <span class="ml">പ്രോട്ടോൺ</span>', 'Electrons <span class="ml">ഇലക്ട്രോൺ</span>', 'Neutrons <span class="ml">ന്യൂട്രോൺ</span>', 'Atomic number <span class="ml">അറ്റോമിക നമ്പർ</span>', 'Mass number <span class="ml">മാസ് നമ്പർ</span>'],
+  labels: ['', 'protons', 'electrons', 'neutrons', 'atomic number', 'mass number'],
+  rows: [['Ar', 18, {a: 18}, {a: 22}, {a: 18}, {a: 40}], ['K', {a: 19}, 19, {a: 21}, {a: 19}, {a: 40}], ['Ca', {a: 20}, {a: 20}, 20, {a: 20}, {a: 40}]],
+  hint: 'Read p and n from each nucleus in Fig 1.12; A = p + n.'});
+
+/* ---------- worked example stepper ---------- */
+(function(){
+  const PAIRS = [[[14, 6, 'C'], [14, 7, 'N']], [[14, 6, 'C'], [15, 7, 'N']]];
+  const ROWS = ['protons (Z)', 'mass number (A)', 'neutrons (A − Z)'];
+  new K.Stepper('#clsStep', {steps: [
+    '<b>Pair 1:</b> ' + nucHTML(14, 6, 'C') + ' and ' + nucHTML(14, 7, 'N') + '. Write down Z, A and n = A − Z for both atoms.',
+    '<b>Compare Z:</b> 6 and 7 – different, so they are atoms of <b>different elements</b>. They cannot be isotopes.',
+    '<b>Compare A:</b> 14 and 14 – the same. Same mass number, different atomic numbers → <b>isobars</b>.',
+    '<b>Pair 2:</b> ' + nucHTML(14, 6, 'C') + ' and ' + nucHTML(15, 7, 'N') + '. Z: 6 and 7 (different); A: 14 and 15 (different).',
+    '<b>Compare neutrons:</b> 14 − 6 = 8 and 15 − 7 = 8 – the same → <b>isotones</b> (the textbook side-box example).'], ms: 800, draw(svg, i, t){
+    const pr = i >= 3 ? PAIRS[1] : PAIRS[0], hl = i >= 3 ? (i === 3 ? 1 : 2) : i;
+    pr.forEach(([A, Z, s], k) => { const x = 110 + k * 220; orbit(svg, x, 95, {p: Z, n: A - Z, shells: conf(Z), gap: 26, nucR: 24}); nucSvg(svg, x - 12, 218, A, Z, s, 28, 'primary'); });
+    ROWS.forEach((r, k) => { const y = 60 + k * 50, v = pr.map(([A, Z]) => [Z, A, A - Z][k]), same = v[0] === v[1], on = k <= hl && !(i === 0);
+      tx(svg, 450, y, r, on ? '' : 'muted', 'start');
+      tx(svg, 640, y, `${v[0]}`, 'big', 'middle'); tx(svg, 700, y, `${v[1]}`, 'big', 'middle');
+      if (on && (i !== 3 || k < 2)) tx(svg, 770, y, same ? '= same' : '≠', same ? 'green' : 'red', 'middle', {opacity: k === hl ? t : 1}); });
+    const verdict = i === 2 ? 'isobars' : i === 4 ? 'isotones' : '';
+    if (verdict) tx(svg, 600, 230, '→ ' + verdict, 'big green', 'middle', {opacity: t, style: 'font-size:26px'});
+    tx(svg, 220, 258, i >= 3 ? 'Pair 2' : 'Pair 1', 'sm muted', 'middle');
+  }});
+})();
+
+/* ---------- sorter ---------- */
+(function(){
+  const N = [[1, 1, 'H'], [2, 1, 'H'], [3, 1, 'H'], [12, 6, 'C'], [13, 6, 'C'], [14, 6, 'C'], [14, 7, 'N'], [15, 7, 'N'], [16, 8, 'O'], [23, 11, 'Na'], [24, 11, 'Na'], [24, 12, 'Mg'], [35, 17, 'Cl'], [37, 17, 'Cl'], [40, 18, 'Ar'], [39, 19, 'K'], [40, 19, 'K'], [40, 20, 'Ca']];
+  const pool = $id('pool'), show = $id('pairShow'), why = $id('sortWhy'), score = $id('sortScore'); let sel = [], done = new Set(), tries = 0;
+  pool.innerHTML = N.map(([A, Z, s], i) => `<button class="btn" data-i="${i}" aria-label="${s}-${A}">${nucHTML(A, Z, s)}</button>`).join('');
+  const desc = i => { const [A, Z, s] = N[i]; return `${nucHTML(A, Z, s, 'big')} <span class="small">${Z} p, ${A - Z} n</span>`; };
+  const kind = (a, b) => { const [A1, Z1] = N[a], [A2, Z2] = N[b]; if (Z1 === Z2) return 0; if (A1 === A2) return 1; if (A1 - Z1 === A2 - Z2) return 2; return 3; };
+  const NAMES = ['isotopes', 'isobars', 'isotones', 'none of these'];
+  function reason(a, b){ const [A1, Z1, s1] = N[a], [A2, Z2, s2] = N[b], n1 = A1 - Z1, n2 = A2 - Z2;
+    return `Z: ${Z1} and ${Z2} (${Z1 === Z2 ? 'same' : 'different'}); A: ${A1} and ${A2} (${A1 === A2 ? 'same' : 'different'}); neutrons: ${n1} and ${n2} (${n1 === n2 ? 'same' : 'different'}).`; }
+  function upd(){ K.$$('button', pool).forEach(b => b.classList.toggle('sel', sel.includes(+b.dataset.i)));
+    show.innerHTML = sel.length === 0 ? '<span class="muted">Pick two atoms from the pool.</span>' : sel.map(desc).join(' <b>and</b> ') + (sel.length === 1 ? ' <span class="muted">… pick one more</span>' : '');
+    K.$$('#cats button').forEach(b => b.classList.remove('ok', 'bad')); why.textContent = '';
+    score.textContent = `Pairs sorted correctly: ${done.size}` + (tries ? ` (answers tried: ${tries})` : ''); }
+  pool.addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (!b) return; const i = +b.dataset.i;
+    if (sel.includes(i)) sel = sel.filter(x => x !== i); else sel = sel.length >= 2 ? [i] : sel.concat(i); upd(); });
+  $id('cats').addEventListener('click', e => { const b = e.target.closest('button[data-c]'); if (!b) return;
+    if (sel.length < 2){ why.textContent = 'Pick two atoms first.'; why.style.color = 'var(--red)'; return; }
+    const k = +b.dataset.c, ans = kind(sel[0], sel[1]); tries++; K.$$('#cats button').forEach(x => x.classList.remove('ok', 'bad')); b.classList.add(k === ans ? 'ok' : 'bad');
+    why.innerHTML = (k === ans ? '✅ Right – they are <b>' + NAMES[ans] + '</b>. ' : '❌ Not quite – look again. ') + reason(sel[0], sel[1]) + (k === ans ? (ans === 0 ? ' Same element, different mass.' : ans === 1 ? ' Different elements, same mass number.' : ans === 2 ? ' Different elements, same number of neutrons.' : ' Nothing matches.') : '');
+    why.style.color = k === ans ? 'var(--green)' : 'var(--red)';
+    if (k === ans) done.add([...sel].sort((x, y) => x - y).join('-'));
+    score.textContent = `Pairs sorted correctly: ${done.size} (answers tried: ${tries})` + (done.size >= 8 ? ' – excellent sorting!' : ''); });
+  $id('randPair').addEventListener('click', () => { const want = Math.floor(Math.random() * 4); let a, b, guard = 0;
+    do { a = Math.floor(Math.random() * N.length); b = Math.floor(Math.random() * N.length); guard++; } while ((a === b || kind(a, b) !== want) && guard < 500);
+    if (a === b) b = (a + 1) % N.length; sel = [a, b]; upd(); });
+  sel = [5, 7]; upd();
+})();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'Isotopes of an element have the same…', options: ['mass number', 'number of neutrons', 'atomic number', 'physical properties'], answer: 2, explain: 'Same atomic number (protons), different mass numbers.', hint: 'They are atoms of the same element.'});
+K.mcq('#q2', {q: 'Which isotope of hydrogen has no neutron?', options: ['protium', 'deuterium', 'tritium', 'all of them'], answer: 0, explain: 'Protium ' + nucHTML(1, 1, 'H') + ': 1 proton, 0 neutrons.', hint: 'Look at Fig 1.10.'});
+K.mcq('#q3', {q: 'Heavy water is…', options: ['water with dissolved salts', 'the oxide of deuterium, D₂O', 'the oxide of tritium', 'ice'], answer: 1, explain: 'Heavy water is deuterium oxide; it is used in nuclear power stations.', hint: 'Which hydrogen isotope has mass number 2?'});
+K.mcq('#q4', {q: 'Which isotope is used to find the age of fossils?', options: ['carbon-12', 'carbon-13', 'carbon-14', 'cobalt-60'], answer: 2, explain: '¹⁴C is radioactive and is used for dating fossils.', hint: 'It is the radioactive isotope of carbon.'});
+K.mcq('#q5', {q: nucHTML(40, 18, 'Ar') + ', ' + nucHTML(40, 19, 'K') + ' and ' + nucHTML(40, 20, 'Ca') + ' are…', options: ['isotopes', 'isobars', 'isotones', 'the same element'], answer: 1, explain: 'Same mass number 40, different atomic numbers → isobars.', hint: 'Compare the top numbers.'});
+K.mcq('#q6', {q: 'Cobalt-60 is used for…', options: ['fuel in power stations', 'detecting pipeline leaks', 'cancer treatment', 'diagnosing anaemia'], answer: 2, explain: 'Table 1.6: cobalt-60 – cancer treatment.', hint: 'Look at Table 1.6.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>
