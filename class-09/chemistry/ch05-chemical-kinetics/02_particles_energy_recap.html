@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Particles in Motion, Energy and Concentration – Chemical Kinetics</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+/* ==== common styles (same on index and pages 01–03) ==== */
+.qa,.qbox{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.7rem 1rem;margin:.8rem 0;box-shadow:var(--shadow)}
+.qa p,.qbox p{margin:.3em 0}
+.qbox ol,.qbox ul,.qa ol,.qa ul{margin:.3rem 0}
+.mlq{display:block;font-weight:500;margin:.2rem 0 .4rem}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.tw,.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.svgscroll{overflow-x:auto;border-radius:10px}
+.svgscroll svg{min-width:620px}
+.ft{width:auto;min-width:min(100%,560px)}
+.ft td,.ft th{text-align:center;vertical-align:middle;padding:.35rem .45rem}
+.ft th{font-size:.88rem;line-height:1.3}
+.ft th .ml{display:block;font-size:.85em}
+.ft td .ml{display:block;font-size:.85em;font-weight:500}
+.ft input{width:3.6em;padding:.25rem .3rem;border-radius:6px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;text-align:center}
+.ft input.wide{width:6.5em}
+.ft input.ok{border-color:var(--green);background:var(--green-soft)}
+.ft input.bad{border-color:var(--red);background:var(--red-soft)}
+.ft td.given{font-weight:600}
+.score{font-weight:700;color:var(--primary-ink);margin:.4rem 0 0;min-height:1.3em}
+.further{border-left:6px solid var(--purple);background:var(--purple-soft);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+.further .title{font-weight:700;color:var(--purple);margin-bottom:.3rem}
+.yn{display:inline-flex;gap:.3rem;flex-wrap:wrap}
+.yn .btn{padding:.25rem .6rem;font-size:.88rem}
+.btn.ok{background:var(--green-soft);border-color:var(--green);color:var(--text)}
+.btn.bad{background:var(--red-soft);border-color:var(--red);color:var(--text)}
+.btn.sel,.btn.on{background:var(--accent-soft);border-color:var(--accent);color:var(--text);font-weight:700}
+.why{font-size:.92rem;margin-top:.3rem}
+.keyml{display:block;margin:.2rem 0 .4rem}
+.rx{display:grid;grid-template-columns:minmax(9rem,auto) 1fr;gap:.35rem .8rem;align-items:center;margin:.4rem 0}
+.rx .lbl2{font-weight:600}
+.rx .why{grid-column:1 / -1;margin:0 0 .3rem}
+@media(max-width:600px){.rx{grid-template-columns:1fr}}
+.atoms{display:flex;flex-wrap:wrap;gap:.35rem;margin:.4rem 0}
+.atoms .btn{font-weight:700;min-width:3.2rem}
+.controls select{padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;max-width:100%}
+.controls input[type=text]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:10rem}
+svg .hx{font-family:"Segoe UI",Roboto,Arial,sans-serif;font-weight:800}
+svg .panel{fill:var(--surface2);stroke:var(--border);stroke-width:1.2}
+svg .note{fill:var(--surface);stroke:var(--border);stroke-width:1.5}
+.coef{color:var(--red);font-weight:800}
+.chem{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.08em;white-space:nowrap}
+.onx{display:inline-flex;flex-direction:column;align-items:center;line-height:1.05;vertical-align:bottom}
+.onx>.on{font-size:.62em;font-weight:800;color:var(--red)}
+.demo{border:2px solid var(--red);border-radius:12px;padding:.2rem .6rem .5rem;margin:1rem 0}
+.demo>.tag{display:inline-block;background:var(--red);color:#fff;font-weight:700;font-size:.82rem;border-radius:0 0 8px 8px;padding:.1rem .6rem;margin:-.2rem 0 .3rem}
+.controls label{max-width:100%;flex-wrap:wrap}
+.controls select{max-width:calc(100vw - 76px)}
+/* ==== end common ==== */
+
+/* page 02 */
+.ft input{width:4.2em}
+</style>
+</head>
+<body data-page="02_particles_energy_recap">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 5 · Prerequisite 2 of 2</span><span class="chip amber">Basics for textbook pages 102–109</span><span class="chip blue">Moving particles · kinetic energy · concentration · surface area</span>
+<h1>Particles in Motion, Energy &amp; Concentration <span class="ml">ഗതികോർജം · ഗാഢത</span></h1>
+<p class="lead">The second half of this chapter explains <b>why</b> some reactions are fast and others slow. The explanation, <b>collision theory</b>, is built from four simple ideas. Particles are <b>always moving</b>. A moving particle has <b>kinetic energy</b>, and a higher <b>temperature</b> means faster particles. <b>Concentration</b> tells us how many particles are packed into each unit volume. And cutting a solid into small pieces <b>increases its surface area</b>. This page explains each idea with a lab, so that pages 6–8 will feel easy.</p>
+
+<div class="callout book"><div class="title">📖 What you need</div>
+<ul style="margin:0"><li>Matter is made of tiny particles: atoms, molecules or ions (Class 8).</li>
+<li>Solid, liquid and gas, and how to find the area of a square (side × side).</li></ul></div>
+
+<h2 id="moving">1. Particles are always moving</h2>
+<p>Every substance is made of particles, and they never stop moving. In a <b>solid</b> they are packed tightly and only <b>vibrate</b> about fixed places. In a <b>liquid</b> they are close together but <b>slide past</b> one another. In a <b>gas</b> they are far apart and <b>fly about fast</b> in all directions, bumping into each other and into the walls. This is why you can smell a curry from the next room: the smell molecules move through the air (the book's opening picture, page 95).</p>
+<div class="lab" id="stLab">
+  <div class="lab-title">🧊💧💨 Particles in a solid, a liquid and a gas</div>
+  <div class="svgscroll"><svg id="stSvg" viewBox="0 0 800 260" role="img" aria-label="Three boxes. Solid: particles in neat rows, vibrating on the spot. Liquid: particles close together at the bottom, sliding past each other. Gas: a few particles far apart, flying fast and bouncing off the walls and each other."></svg></div>
+  <p class="hint">The particles of all three move faster when they are heated.</p>
+</div>
+
+<h2 id="ke">2. Kinetic energy and temperature</h2>
+<p>Anything that moves has <b>kinetic energy</b> (<span class="ml">ഗതികോർജം</span>): the energy of motion. A fast cricket ball hurts more than a slow one, and a heavy ball more than a light one at the same speed. Particles are the same: <b>the faster a particle moves, the more kinetic energy it has</b>.</p>
+<p><b>Temperature</b> (<span class="ml">താപനില</span>) is a measure of how fast the particles move on average. When we <b>heat</b> a substance, its particles move <b>faster</b>, gain kinetic energy, and collide <b>more often</b> and <b>harder</b>. When we cool it (in a fridge, for example), the particles slow down. Not all particles have the same speed: at any temperature a few are slow, most are medium and a few are very fast.</p>
+<div class="lab" id="pbLab">
+  <div class="lab-title">🎱 Particle box – change the temperature and the number of particles</div>
+  <div class="svgscroll"><svg id="pbSvg" viewBox="0 0 800 340" role="img" aria-label="A box of moving particles divided by faint lines into six unit volumes. Faster particles are drawn in orange, slower ones in blue. A ring flashes at each collision. On the right: the temperature, the number of particles, particles per unit volume, collisions per second and an average-speed bar."></svg></div>
+  <div class="controls"><label>temperature <input id="pbT" type="range" min="0" max="4" step="1" value="2" data-fmt="{v}"><output></output></label>
+    <label>particles <input id="pbN" type="range" min="6" max="48" step="6" value="18"><output></output></label></div>
+  <div class="readout" id="pbOut"></div>
+  <p class="hint">Watch the collision counter. More particles in the same box → more collisions. Hotter → faster particles → more collisions every second, and harder ones. The speeds are exaggerated so that you can see the change; in real life, doubling the speed of the particles needs a very large rise in temperature.</p>
+</div>
+
+<h2 id="conc">3. Concentration: particles per unit volume</h2>
+<p>Imagine the box above cut into equal small boxes, each of the same size, called a <b>unit volume</b> (<span class="ml">യൂണിറ്റ് വ്യാപ്തം</span>), for example 1 mL or 1 L. The <b>concentration</b> (<span class="ml">ഗാഢത</span>) of a substance is the <b>number of its particles (molecules) in a unit volume</b>. A <b>concentrated</b> (<span class="ml">ഗാഢ</span>) solution has many particles in each unit volume; a <b>dilute</b> (<span class="ml">നേർപ്പിച്ച</span>) solution has few. Adding water to an acid does not remove any acid particles. It spreads them through more volume, so each unit volume holds fewer of them: the acid becomes dilute.</p>
+<div class="lab" id="cnLab">
+  <div class="lab-title">🧮 Dilute or concentrated? Count the particles in each unit volume</div>
+  <div class="svgscroll"><svg id="cnSvg" viewBox="0 0 800 260" role="img" aria-label="Two beakers of acid, each divided into four unit volumes. The dilute acid has 2 acid particles in each unit volume; the concentrated acid has 6 in each. Water particles fill the rest."></svg></div>
+  <div class="controls"><button class="btn primary" id="cnAdd">💧 Add an equal volume of water to the concentrated acid</button><button class="btn ghost" id="cnReset">⟲ Reset</button></div>
+  <div class="readout" id="cnOut"></div>
+</div>
+<div class="lab" id="tcn"><div class="lab-title">✍ Fill in – particles per unit volume</div></div>
+
+<h2 id="surface">4. Cutting a solid increases its surface area</h2>
+<p>Only the particles on the <b>outside</b> of a solid can be hit by the particles of a liquid or gas around it. The total area of the outside is the <b>surface area</b> (<span class="ml">പ്രതലപരപ്പളവ്</span>). A cube has 6 square faces, so its surface area = 6 × side × side. Watch what happens when one cube of side 2 cm is cut into small cubes of side 1 cm:</p>
+<div class="lab" id="saStep"><div class="lab-title">🎬 Step by step · one cube of 2 cm → eight cubes of 1 cm</div>
+<svg viewBox="0 0 800 300" role="img" aria-label="A cube of side 2 centimetres with its surface area worked out as 6 times 2 times 2 equals 24 square centimetres. It is cut into eight cubes of side 1 centimetre that move apart; each has an area of 6 square centimetres, so the total is 48 square centimetres, twice as much. The new inside faces are coloured yellow."></svg></div>
+<div class="lab" id="saLab">
+  <div class="lab-title">🔪 Cube cutter – cut the 2 cm cube into smaller and smaller cubes</div>
+  <div class="svgscroll"><svg id="saSvg" viewBox="0 0 800 300" role="img" aria-label="The cube cut into smaller cubes, pulled slightly apart, with the number of cubes, the area of one cube and the total surface area. The total surface area grows each time the cubes are cut smaller, while the total volume stays 8 cubic centimetres."></svg></div>
+  <div class="controls"><label>pieces per edge <input id="saN" type="range" min="1" max="4" step="1" value="1"><output></output></label></div>
+  <div class="readout" id="saOut"></div>
+</div>
+<div class="lab" id="tsa"><div class="lab-title">✍ Fill in – surface area of a 2 cm cube cut into smaller cubes</div></div>
+<p>The amount of solid is the same (8 cm³), but much more of it is now on the outside. This is why a <b>powder</b> reacts faster than a lump (marble powder in acid, page 7), why <b>split firewood</b> catches fire more easily than a log, and why we <b>chew</b> food well.</p>
+
+<div class="callout key"><div class="title">⭐ Key ideas</div>
+<ul style="margin:0"><li>Particles are always moving: they vibrate in solids, slide in liquids and fly about in gases.</li>
+<li>A moving particle has <b>kinetic energy</b> (<span class="ml">ഗതികോർജം</span>). Higher <b>temperature</b> (<span class="ml">താപനില</span>) → faster particles → more and harder collisions.</li>
+<li><b>Concentration</b> (<span class="ml">ഗാഢത</span>) = the number of particles in a unit volume. Concentrated: many; dilute: few.</li>
+<li>Cutting a solid into smaller pieces increases its <b>surface area</b> (<span class="ml">പ്രതലപരപ്പളവ്</span>): one 2 cm cube has 24 cm², eight 1 cm cubes have 48 cm².</li></ul></div>
+
+<h2 id="check">5. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div>
+<p>Next: <a href="03_identifying_chemical_change.html">Signs of a chemical change (textbook pages 95–97) ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Chemical Kinetics · Class 9 Chemistry", "icon": "⏱️", "key": "chemistry_ch5_progress", "pages": [["index.html", "Home"], ["01_physical_chemical_changes.html", "1 · Physical & Chemical Changes, Equations Recap"], ["02_particles_energy_recap.html", "2 · Particles in Motion, Energy & Concentration"], ["03_identifying_chemical_change.html", "3 · Signs of a Chemical Change"], ["04_combination_decomposition.html", "4 · Combination & Decomposition Reactions"], ["05_double_decomposition_displacement.html", "5 · Double Decomposition & Displacement Reactions"], ["06_rate_collision_theory.html", "6 · Rate of Reaction & Collision Theory"], ["07_nature_concentration_surface.html", "7 · Nature, Concentration & Surface Area"], ["08_temperature_catalysts.html", "8 · Temperature, Catalysts & Enzymes"], ["09_intext_questions_solutions.html", "9 · In-text Questions – Solutions"], ["10_assess_solutions.html", "10 · Let Us Assess & Extended Activities – Solutions"], ["11_applications_explore.html", "11 · Applications & Explore Online"], ["12_summary_revision.html", "12 · Summary & Quick Quiz"], ["13_model_test_paper.html", "13 · Model Test Paper"], ["14_model_test_solutions.html", "14 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ==== common helpers (same code on index and pages 01–03) ==== */
+const {P, el} = K;
+const $id = id => document.getElementById(id);
+const C = c => (c === 'none' ? 'none' : ((c.charAt(0) === '#' || c.startsWith('url') || c.startsWith('rgb') || c.startsWith('var(')) ? c : `var(--${c === 'amber' ? 'accent' : c})`));
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+function tx(svg, x, y, str, cls = '', anchor = 'middle', extra = {}){ return K.text(svg, P(x, y), str, {class: ('lbl ' + cls).trim(), 'text-anchor': anchor, ...extra}); }
+function box(svg, x, y, w, h, fill = 'surface2', stroke = 'text', sw = 1.5, extra = {}){ return el('rect', {x, y, width: w, height: h, fill: C(fill), stroke: C(stroke), 'stroke-width': sw, ...extra}, svg); }
+function circ(svg, x, y, r, fill = 'none', stroke = 'text', sw = 1.5, extra = {}){ return el('circle', {cx: x, cy: y, r: Math.max(0, r), fill: C(fill), stroke: C(stroke), 'stroke-width': sw, ...extra}, svg); }
+const sline = (svg, a, b, attrs = {}) => el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+const SUBD = '₀₁₂₃₄₅₆₇₈₉', SUPD = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+const subStr = n => String(n).split('').map(d => SUBD[+d]).join('');
+/* 'H2O' → 'H₂O', '2H2O' → '2H₂O' (a leading coefficient stays big), 'Ca(OH)2' → 'Ca(OH)₂' */
+const fsub = f => String(f).replace(/([A-Za-z)])(\d+)/g, (m, a, d) => a + subStr(d));
+const H = (en, ml) => `${en} <span class="ml">${ml}</span>`;
+const mix = (a, b, u) => `rgb(${a.map((v, i) => Math.round(K.lerp(v, b[i], clamp(u, 0, 1)))).join(',')})`;
+/* small seeded random numbers (the same picture every time) */
+function rng(seed){ let s = seed >>> 0; return () => { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; }; }
+
+/* ---- one shared animation clock: runs only while a lab is on screen and was used in the last 40 s ---- */
+const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const ANIM = []; let animOn = false, animLast = 0;
+function animLoop(now){ const dt = Math.min(.05, Math.max(0, (now - animLast) / 1000)); animLast = now; let any = false;
+  for (const it of ANIM){ if (it.vis && now < it.until){ it.t += dt; try { it.fn(it.t, dt); } catch (e){ it.until = 0; throw e; } any = true; } }
+  if (any) requestAnimationFrame(animLoop); else animOn = false; }
+function animStart(){ if (!animOn){ animOn = true; animLast = performance.now(); requestAnimationFrame(animLoop); } }
+function wake(it){ if (reduce){ it.fn(it.t, 0); return; } it.until = performance.now() + 40000; animStart(); }
+function anim(elm, fn){ const it = {el: elm, fn, t: 0, until: 0, vis: true}; ANIM.push(it);
+  if ('IntersectionObserver' in window){ new IntersectionObserver(es => es.forEach(e => { it.vis = e.isIntersecting; if (it.vis) wake(it); })).observe(elm); }
+  ['click', 'input', 'change'].forEach(ev => elm.addEventListener(ev, () => setTimeout(() => wake(it), 0)));
+  it.fn(0, 0); wake(it); return it; }
+
+/* ---- interactive fill-in table ----
+   fillTable(id, {head, rows, wide: [col...], labels, hint}); cell = 'given html' | {a, alt: [...], kw: [...], wide, label} | [text, {a}, text …]
+   kw: the answer is accepted if it contains any of these key words (for answers written in your own words) */
+const norm = s => String(s).trim().toLowerCase().replace(/[₀-₉]/g, c => SUBD.indexOf(c)).replace(/[⁰-⁹]/g, c => SUPD.indexOf(c)).replace(/[⁺]/g, '+').replace(/[⁻−–—]/g, '-').replace(/[·.*]/g, '').replace(/\s+/g, '').replace(/,+/g, ',');
+function fillTable(id, spec){
+  const root = $id(id);
+  const inp = (c, ci) => { const wide = (spec.wide && spec.wide.includes(ci)) || c.wide; return `<input type="text" autocomplete="off" spellcheck="false" ${wide ? 'class="wide"' : 'inputmode="numeric"'} data-a="${c.a}" data-alt="${(c.alt || []).join('|')}" data-kw="${(c.kw || []).join('|')}" aria-label="${c.label || (spec.labels && spec.labels[ci]) || 'answer'}">`; };
+  const cell = (c, ci) => { if (Array.isArray(c)) return `<td>${c.map(q => (q && typeof q === 'object') ? inp(q, ci) : q).join('')}</td>`; if (c && typeof c === 'object') return `<td>${inp(c, ci)}</td>`; return `<td class="given">${c}</td>`; };
+  root.insertAdjacentHTML('beforeend', `<div class="tw"><table class="ft"><thead><tr>${spec.head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${spec.rows.map(r => `<tr>${r.map(cell).join('')}</tr>`).join('')}</tbody></table></div>
+    <div class="controls"><button class="btn primary" data-f="check">✔ Check my answers</button><button class="btn ghost" data-f="clear">⟲ Clear</button><button class="btn" data-f="show">💡 Show answers</button></div><p class="score"></p>`);
+  const ins = K.$$('input[data-a]', root), score = root.querySelector('.score');
+  const right = inp => { const v = norm(inp.value); if (v === '') return false;
+    if (v === norm(inp.dataset.a) || inp.dataset.alt.split('|').filter(Boolean).some(a => norm(a) === v)) return true;
+    return inp.dataset.kw.split('|').filter(Boolean).some(k => v.includes(norm(k))); };
+  root.addEventListener('click', e => { const b = e.target.closest('button[data-f]'); if (!b) return; const f = b.dataset.f;
+    if (f === 'check'){ let ok = 0; ins.forEach(i => { const r = right(i); i.classList.toggle('ok', r); i.classList.toggle('bad', !r); if (r) ok++; });
+      score.textContent = ok === ins.length ? `🎉 All ${ins.length} correct!` : `${ok} of ${ins.length} correct – the red boxes need another look.` + (spec.hint ? ' ' + spec.hint : ''); }
+    else if (f === 'show'){ ins.forEach(i => { i.value = i.dataset.a; i.classList.add('ok'); i.classList.remove('bad'); }); score.textContent = 'All answers filled in (green). Cover them and try again tomorrow!'; }
+    else { ins.forEach(i => { i.value = ''; i.classList.remove('ok', 'bad'); }); score.textContent = ''; } });
+  root.addEventListener('input', e => { if (e.target.matches('input[data-a]')) e.target.classList.remove('ok', 'bad'); });
+}
+/* choice buttons: <span class="yn" data-ans="k" data-why=".." data-hint=".."><button>…</button>…</span><div class="why"></div> (data-ans may list several: "1,2") */
+function choices(root = document){ K.$$('.yn[data-ans]', root).forEach(bx => { const ans = bx.dataset.ans.split(',').map(Number), why = bx.parentElement.querySelector('.why');
+  K.$$('button', bx).forEach((b, k) => b.addEventListener('click', () => { K.$$('button', bx).forEach(x => x.classList.remove('ok', 'bad')); const ok = ans.includes(k); b.classList.add(ok ? 'ok' : 'bad');
+    if (why){ why.innerHTML = ok ? '✅ ' + (bx.dataset.why || 'Correct.') : '❌ ' + (bx.dataset.hint || 'Not quite – think again.'); why.style.color = ok ? 'var(--green)' : 'var(--red)'; } })); }); }
+
+/* ---- atom balls (same colours as Chapter 4) ---- */
+const BALL = {H: ['#f3fff3', '#9ee29f', '#3d8b40'], O: ['#ffd6d6', '#ee3b30', '#8f1313'], C: ['#ddd3e4', '#6f5c7d', '#34263f'], N: ['#dbeafe', '#3b82f6', '#1e3a8a'],
+  Na: ['#efe9ff', '#a78bfa', '#5b21b6'], Cl: ['#e3fbe9', '#34c167', '#14532d'], Mg: ['#f8fafc', '#cbd5e1', '#64748b'], Zn: ['#f1f5f9', '#94a3b8', '#334155'],
+  S: ['#fefce8', '#facc15', '#a16207'], Ca: ['#fafaf9', '#d6d3d1', '#78716c'], Fe: ['#fde7d4', '#c2703d', '#7c2d12'], Cu: ['#ffedd5', '#d97736', '#7c2d12'],
+  Pb: ['#e5e7eb', '#6b7280', '#1f2937'], K: ['#f3e8ff', '#9b6cf0', '#4c1d95'], I: ['#ede9fe', '#7c3aed', '#3b0764'],
+  A: ['#dbeafe', '#60a5fa', '#1e40af'], B: ['#fee2e2', '#f87171', '#991b1b'], X: ['#f1f5f9', '#cbd5e1', '#64748b']};
+const BALL_INK = {Pb: '#fff', K: '#fff', I: '#fff', O: '#fff', C: '#fff', N: '#fff', Na: '#fff', Fe: '#fff', Cu: '#fff', A: '#fff', B: '#fff'};
+let BALL_N = 0;
+function ballDefs(svg){ const root = svg.ownerSVGElement || svg; const old = root.querySelector('defs.balldefs'); if (old) return old.getAttribute('data-id');
+  const id = 'bl' + (++BALL_N) + 'x', d = el('defs', {class: 'balldefs', 'data-id': id}, root);
+  for (const [s, c] of Object.entries(BALL)){ const g = el('radialGradient', {id: id + s, cx: '38%', cy: '34%', r: '72%'}, d);
+    el('stop', {offset: '0%', 'stop-color': c[0]}, g); el('stop', {offset: '62%', 'stop-color': c[1]}, g); el('stop', {offset: '100%', 'stop-color': c[2]}, g); }
+  return id; }
+/* ball(svg, x, y, r, sym, label) – a shaded atom ball with a label */
+function ball(svg, x, y, r, sym, label = sym, o = {}){ const id = ballDefs(svg), k = BALL[sym] ? sym : 'X', g = K.group(svg, o.opacity !== undefined ? {opacity: (+o.opacity).toFixed(3)} : {});
+  circ(g, x, y, r, `url(#${id}${k})`, BALL[k][2], 1.2);
+  if (label) el('text', {x, y: y + 1, 'text-anchor': 'middle', 'dominant-baseline': 'middle', style: `font-size:${o.fs || clamp(r * .62, 8, 18)}px;font-weight:700;fill:${BALL_INK[k] || '#0f172a'};font-family:Segoe UI,Roboto,Arial,sans-serif`, text: label}, g);
+  return g; }
+/* little bubbles rising between yBottom and yTop around x (phase-shifted by t) */
+function bubbles(svg, x, w, yBottom, yTop, t, n = 10, speed = 40, r = 3){ const g = K.group(svg);
+  for (let k = 0; k < n; k++){ const ph = (t * speed / (yBottom - yTop) + k / n) % 1, xx = x + (((k * 37) % 17) / 17 - .5) * w + 2 * Math.sin(t * 6 + k);
+    circ(g, xx, yBottom - ph * (yBottom - yTop), r * (.7 + .5 * ((k * 7) % 3) / 2), 'none', '#64748b', 1, {opacity: (1 - ph * .6).toFixed(2)}); }
+  return g; }
+/* a test tube (open top at y0, round bottom at y1) filled to `level` (0–1) */
+function tube(svg, cx, y0, y1, w, level, fill, o = {}){ const g = K.group(svg), r = w / 2, top = y0 + (y1 - y0) * (1 - level);
+  if (level > 0){ const ly = Math.min(top, y1 - r); el('path', {d: `M${cx - r + 2},${ly} L${cx - r + 2},${y1 - r} A${r - 2},${r - 2} 0 0 0 ${cx + r - 2},${y1 - r} L${cx + r - 2},${ly} Z`, fill, opacity: o.op ?? .9}, g); }
+  el('path', {d: `M${cx - r - 3},${y0 - 3} L${cx - r},${y0} L${cx - r},${y1 - r} A${r},${r} 0 0 0 ${cx + r},${y1 - r} L${cx + r},${y0} L${cx + r + 3},${y0 - 3}`, fill: 'none', stroke: 'var(--text)', 'stroke-width': 2}, g);
+  return {g, top}; }
+
+/* ---- a box of moving particles (hard discs that bounce elastically) ----
+   new Gas({w, h, seed}); add(kind, n, r, kT); step(dt) → list of collisions {a, b, e} (e = collision energy along the line of centres) */
+class Gas{
+  constructor(o){ this.w = o.w; this.h = o.h; this.R = rng(o.seed || 7); this.p = []; this.kT = o.kT || 1; }
+  speed(kT){ const u = Math.max(1e-6, this.R()); return Math.sqrt(-2 * kT * Math.log(u)); }   /* 2-D (Rayleigh) speeds */
+  add(kind, n, r, kT = this.kT){ for (let k = 0; k < n; k++){ let x, y, tries = 0;
+      do { x = r + this.R() * (this.w - 2 * r); y = r + this.R() * (this.h - 2 * r); tries++; } while (tries < 60 && this.p.some(q => Math.hypot(q.x - x, q.y - y) < q.r + r + 2));
+      const v = this.speed(kT), a = this.R() * 2 * Math.PI; this.p.push({kind, r, x, y, vx: v * Math.cos(a), vy: v * Math.sin(a), m: 1, flash: 0}); } }
+  remove(n){ this.p.splice(this.p.length - n, n); }
+  scaleTo(kT){ const now = this.meanKE(); if (now <= 0) return; const f = Math.sqrt(kT / now); this.p.forEach(q => { q.vx *= f; q.vy *= f; }); this.kT = kT; }
+  meanKE(){ return this.p.length ? this.p.reduce((s, q) => s + .5 * q.m * (q.vx * q.vx + q.vy * q.vy), 0) / this.p.length : 0; }
+  step(dt){ const hits = [], p = this.p;
+    for (const q of p){ q.x += q.vx * dt; q.y += q.vy * dt; if (q.flash > 0) q.flash -= dt;
+      if (q.x < q.r){ q.x = q.r; q.vx = Math.abs(q.vx); } else if (q.x > this.w - q.r){ q.x = this.w - q.r; q.vx = -Math.abs(q.vx); }
+      if (q.y < q.r){ q.y = q.r; q.vy = Math.abs(q.vy); } else if (q.y > this.h - q.r){ q.y = this.h - q.r; q.vy = -Math.abs(q.vy); } }
+    for (let i = 0; i < p.length; i++) for (let j = i + 1; j < p.length; j++){ const a = p[i], b = p[j], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy), md = a.r + b.r;
+      if (d < md && d > 1e-6){ const nx = dx / d, ny = dy / d, vrel = (a.vx - b.vx) * nx + (a.vy - b.vy) * ny;
+        if (vrel > 0){ const mu = a.m * b.m / (a.m + b.m), e = .5 * mu * vrel * vrel * 2, J = 2 * mu * vrel;
+          a.vx -= J / a.m * nx; a.vy -= J / a.m * ny; b.vx += J / b.m * nx; b.vy += J / b.m * ny; hits.push({a, b, e}); }
+        const push = (md - d) / 2; a.x -= nx * push; a.y -= ny * push; b.x += nx * push; b.y += ny * push; } }
+    return hits; }
+}
+/* ==== end common ==== */
+
+/* ---------- 1. solid, liquid, gas ---------- */
+(function(){ const svg = $id('stSvg'), gas = new Gas({w: 230, h: 180, seed: 11}); gas.add('A', 9, 9, 9000);
+  function draw(t, dt){ K.clear(svg); if (dt) gas.step(Math.min(dt, 1 / 30));
+    ['Solid – vibrate', 'Liquid – slide past', 'Gas – fly about'].forEach((n, k) => { box(svg, 20 + k * 262, 40, 240, 190, 'surface2', 'border', 1.2, {rx: 10}); tx(svg, 140 + k * 262, 22, n, 'blue', 'middle', {style: 'font-size:15px', 'font-weight': 800}); });
+    for (let r = 0; r < 5; r++) for (let c = 0; c < 6; c++){ const k = r * 6 + c; ball(svg, 52 + c * 35 + 1.6 * Math.sin(t * 17 + k * 2.1), 70 + r * 34 + 1.6 * Math.cos(t * 15 + k * 1.3), 15, 'A', ''); }
+    for (let k = 0; k < 24; k++){ const r = Math.floor(k / 6), c = k % 6, x = 318 + c * 34 + 5 * Math.sin(t * .9 + k * 1.7) + (r % 2) * 12, y = 206 - r * 31 + 3 * Math.sin(t * 1.3 + k);
+      ball(svg, clamp(x, 302, 502), y, 13, 'A', ''); }
+    const g = K.group(svg, {transform: 'translate(544,45)'}); gas.p.forEach(q => ball(g, q.x, q.y, q.r, 'A', ''));
+    tx(svg, 400, 250, 'the same kind of particle in all three – only the spacing and the motion differ', 'sm muted', 'middle', {style: 'font-size:12px', 'font-weight': 700}); }
+  anim($id('stLab'), draw); })();
+
+/* ---------- 2. particle box ---------- */
+(function(){ const svg = $id('pbSvg'), out = $id('pbOut'), W = 500, H = 300, BASE = 5000;
+  const LV = [['cold', .35], ['cool', .65], ['room temperature', 1], ['warm', 1.6], ['hot', 2.4]];
+  const gas = new Gas({w: W, h: H, seed: 21}); let lvl = 2, n = 18, hits = [], flashes = [], clock = 0;
+  gas.add('A', n, 11, BASE);
+  function draw(t, dt){ K.clear(svg);
+    if (dt){ const steps = Math.ceil(dt / (1 / 60)); for (let s = 0; s < steps; s++){ clock += dt / steps; gas.step(dt / steps).forEach(h => { hits.push(clock); flashes.push({x: (h.a.x + h.b.x) / 2, y: (h.a.y + h.b.y) / 2, t: clock}); }); } }
+    hits = hits.filter(h => clock - h < 3); flashes = flashes.filter(f => clock - f.t < .35);
+    const hot = LV[lvl][1];
+    box(svg, 16, 16, W + 8, H + 8, mix([219, 234, 254], [254, 215, 170], (hot - .35) / 2.05), mix([37, 99, 235], [234, 88, 12], (hot - .35) / 2.05), 2.5, {rx: 8, 'fill-opacity': .35});
+    for (let c = 1; c < 3; c++) sline(svg, P(20 + c * W / 3, 20), P(20 + c * W / 3, 20 + H), {stroke: 'var(--muted)', 'stroke-width': 1, 'stroke-dasharray': '4 5', opacity: .6});
+    sline(svg, P(20, 20 + H / 2), P(20 + W, 20 + H / 2), {stroke: 'var(--muted)', 'stroke-width': 1, 'stroke-dasharray': '4 5', opacity: .6});
+    const g = K.group(svg, {transform: 'translate(20,20)'}), vref = Math.sqrt(2 * BASE);
+    gas.p.forEach(q => { const v = Math.hypot(q.vx, q.vy); ball(g, q.x, q.y, q.r, v > 1.5 * vref ? 'B' : 'A', ''); });
+    flashes.forEach(f => circ(g, f.x, f.y, 8 + 30 * (clock - f.t), 'none', '#f59e0b', 2, {opacity: (1 - (clock - f.t) / .35).toFixed(2)}));
+    const X0 = 545; box(svg, X0, 16, 240, 308, 'surface2', 'border', 1.2, {rx: 12});
+    const avg = gas.p.reduce((s, q) => s + Math.hypot(q.vx, q.vy), 0) / gas.p.length, rate = hits.length / Math.min(3, Math.max(.5, clock));
+    tx(svg, X0 + 14, 46, `temperature: ${LV[lvl][0]}`, '', 'start', {style: 'font-size:14px', 'font-weight': 800});
+    tx(svg, X0 + 14, 76, `particles: ${n}`, '', 'start', {style: 'font-size:14px', 'font-weight': 700});
+    tx(svg, X0 + 14, 100, `per unit volume: ${n / 6}`, 'purple', 'start', {style: 'font-size:14px', 'font-weight': 800});
+    tx(svg, X0 + 14, 120, '(the box has 6 unit volumes)', 'sm muted', 'start', {style: 'font-size:11px'});
+    tx(svg, X0 + 14, 156, `collisions per second: ${clock < .5 ? '…' : Math.round(rate)}`, 'amber', 'start', {style: 'font-size:14px', 'font-weight': 800});
+    tx(svg, X0 + 14, 192, 'average speed', 'sm', 'start', {style: 'font-size:12px', 'font-weight': 700});
+    box(svg, X0 + 14, 200, 210, 16, 'surface', 'border', 1, {rx: 4}); box(svg, X0 + 14, 200, clamp(210 * avg / (vref * 2.4), 2, 210), 16, 'amber', 'none', 0, {rx: 4});
+    ball(svg, X0 + 24, 250, 9, 'A', ''); tx(svg, X0 + 40, 250, 'slower particle', 'sm', 'start', {style: 'font-size:12px'});
+    ball(svg, X0 + 24, 276, 9, 'B', ''); tx(svg, X0 + 40, 276, 'fast particle (high kinetic energy)', 'sm', 'start', {style: 'font-size:11px'});
+    tx(svg, X0 + 120, 308, 'ring = a collision', 'sm amber', 'middle', {style: 'font-size:11px', 'font-weight': 700}); }
+  const it = anim($id('pbLab'), draw);
+  const say = () => { out.textContent = `${LV[lvl][0]}, ${n} particles (${n / 6} per unit volume). ` + (lvl >= 3 ? 'The particles move fast: many collisions, and hard ones.' : lvl <= 1 ? 'The particles move slowly: fewer, gentler collisions.' : 'Raise the temperature or add particles and watch the collisions per second.'); };
+  K.slider($id('pbT'), v => { lvl = v; $id('pbT').parentElement.querySelector('output').textContent = LV[v][0]; gas.scaleTo(BASE * LV[v][1]); hits = []; clock = 0; say(); draw(it.t, 0); }, 0);
+  K.slider($id('pbN'), v => { if (v > n) gas.add('A', v - n, 11, BASE * LV[lvl][1]); else if (v < n) gas.remove(n - v); n = v; hits = []; clock = 0; say(); draw(it.t, 0); }, 0);
+  say(); })();
+
+/* ---------- 3. dilute and concentrated ---------- */
+(function(){ const svg = $id('cnSvg'), out = $id('cnOut'); let added = false;
+  function beaker(x, y, w, h, perCell, rows, label, seed){ const R = rng(seed);
+    K.polyline(svg, [P(x - 5, y - h - 18), P(x, y - h - 12), P(x, y), P(x + w, y), P(x + w, y - h - 12), P(x + w + 5, y - h - 18)], {stroke: 'var(--text)', 'stroke-width': 2});
+    box(svg, x + 2, y - h, w - 4, h - 2, '#dbeafe', 'none', 0, {opacity: .7});
+    const cw = (w - 4) / 2, ch = h / rows;
+    for (let r = 0; r < rows; r++) for (let c = 0; c < 2; c++){ const cx = x + 2 + c * cw, cy = y - h + r * ch;
+      box(svg, cx, cy, cw, ch, 'none', 'var(--muted)', 1, {'stroke-dasharray': '4 4'});
+      const nc = perCell <= 2 ? 2 : 3, nr = Math.ceil(perCell / nc); for (let k = 0; k < perCell; k++){ const gc = k % nc, gr = Math.floor(k / nc); ball(svg, cx + cw * (gc + .5) / nc + (R() - .5) * 10, cy + ch * (gr + .5) / nr + (perCell === 2 && gc === 1 ? ch * .2 : 0) + (R() - .5) * 8, 7, 'B', ''); }
+      for (let k = 0; k < 4; k++) circ(svg, cx + 10 + R() * (cw - 20), cy + 8 + R() * (ch - 16), 3, '#93c5fd', 'none', 0); }
+    tx(svg, x + w / 2, y + 18, label, '', 'middle', {style: 'font-size:14px', 'font-weight': 800}); }
+  function draw(){ K.clear(svg);
+    beaker(60, 220, 200, 160, 2, 2, 'dilute acid: 2 per unit volume', 3);
+    if (!added) beaker(440, 220, 200, 160, 6, 2, 'concentrated acid: 6 per unit volume', 5);
+    else beaker(440, 220, 200, 160, 3, 2, 'after adding water: 3 per unit volume', 5);
+    tx(svg, 400, 26, added ? 'the same 24 acid particles now fill twice the volume (only half is shown)' : 'red = acid particles · small blue dots = water · dashed squares = unit volumes', 'sm muted', 'middle', {style: 'font-size:12px', 'font-weight': 700});
+    out.textContent = added ? 'Adding an equal volume of water spreads the 24 acid particles over 8 unit volumes instead of 4: 3 per unit volume. No acid was removed, but the acid is now more dilute.' : 'Dilute: 8 acid particles in 4 unit volumes = 2 per unit volume. Concentrated: 24 in 4 = 6 per unit volume. The concentrated acid has three times the concentration.'; }
+  $id('cnAdd').addEventListener('click', () => { added = true; draw(); }); $id('cnReset').addEventListener('click', () => { added = false; draw(); }); draw(); })();
+fillTable('tcn', {head: ['Particles of the substance', 'Volume', 'Particles per unit volume', 'Dilute or concentrated?'], labels: ['', '', 'particles per unit volume', 'dilute or concentrated'], wide: [3],
+  rows: [['12', '6 mL', {a: 2}, {a: 'dilute', alt: ['d']}], ['60', '6 mL', {a: 10}, {a: 'concentrated', alt: ['c', 'conc']}], ['40', '20 mL', {a: 2}, {a: 'dilute', alt: ['d']}], ['30', '3 mL', {a: 10}, {a: 'concentrated', alt: ['c', 'conc']}]],
+  hint: 'Divide the number of particles by the volume.'});
+
+/* ---------- 4. surface area: stepper and cube cutter ---------- */
+/* draw n×n×n small cubes of a cube with side S px, front-bottom-left corner at (x, y), pulled apart by gap px */
+function cutCube(svg, x, y, S, n, gap){ const s = S / n, k = .5, dx = Math.cos(K.rad(30)) * k, dy = -Math.sin(K.rad(30)) * k;
+  for (let d = n - 1; d >= 0; d--) for (let lv = 0; lv < n; lv++) for (let c = 0; c < n; c++){
+    const ox = x + c * (s + gap) + d * (s + gap) * dx, oy = y - lv * (s + gap) + d * (s + gap) * dy;
+    K.cuboid(svg, P(ox, oy), s, s, s, {cls: [d === 0 ? 'fill-blue' : 'fill-amber', lv === n - 1 ? 'fill-blue' : 'fill-amber', c === n - 1 ? 'fill-green' : 'fill-amber']}); } }
+(function(){
+  const STEPS = ['One cube of side <b>2 cm</b>. Each face is 2 cm × 2 cm = 4 cm², and a cube has 6 faces: surface area = 6 × 4 = <b>24 cm²</b>.',
+    'Cut it in half: <b>two new faces</b> appear where the knife went. The amount of solid has not changed.',
+    'Cut it into <b>8 cubes of side 1 cm</b> and pull them apart. The yellow faces were inside the big cube before.',
+    'Each small cube: 6 × (1 cm × 1 cm) = 6 cm². Eight of them: 8 × 6 = <b>48 cm²</b> – <b>twice</b> the surface area of the big cube, from the same 8 cm³ of solid.',
+    'More surface means more particles on the outside where they can be hit, so a powder or small pieces react faster (page 7).'];
+  new K.Stepper('#saStep', {steps: STEPS, ms: 900, draw(svg, i, t){ const u = i === 2 ? K.ease(t) : 1;
+    if (i === 0) K.cuboid(svg, P(150, 250), 160, 160, 160, {cls: ['fill-blue', 'fill-blue', 'fill-green']});
+    else if (i === 1){ const sp = 18 * K.ease(t); K.cuboid(svg, P(150, 250), 80, 160, 160, {cls: ['fill-blue', 'fill-blue', 'fill-amber']}); K.cuboid(svg, P(230 + sp, 250), 80, 160, 160, {cls: ['fill-blue', 'fill-blue', 'fill-green']}); }
+    else cutCube(svg, 150, 250, 160, 2, 24 * u);
+    tx(svg, 600, 70, i === 0 ? '1 cube · side 2 cm' : i === 1 ? '2 pieces' : '8 cubes · side 1 cm', 'big', 'middle', {style: 'font-size:20px'});
+    tx(svg, 600, 120, i === 0 ? '6 × 2 × 2 = 24 cm²' : i === 1 ? '24 cm² + 2 new faces of 4 cm²' : (i >= 3 ? '8 × (6 × 1 × 1) = 48 cm²' : 'each cube: 6 × 1 × 1 = 6 cm²'), i >= 3 ? 'red' : 'blue', 'middle', {style: 'font-size:18px', 'font-weight': 800});
+    if (i === 1) tx(svg, 600, 150, '= 32 cm²', 'blue', 'middle', {style: 'font-size:18px', 'font-weight': 800});
+    if (i >= 3) tx(svg, 600, 160, 'volume still 8 cm³ · area doubled', 'green', 'middle', {style: 'font-size:16px', 'font-weight': 800});
+    if (i === 4) tx(svg, 600, 210, 'more surface → more collisions', 'amber', 'middle', {style: 'font-size:17px', 'font-weight': 800}); }}); })();
+(function(){ const svg = $id('saSvg'), out = $id('saOut');
+  K.slider($id('saN'), n => { K.clear(svg); const S = 150, gap = n === 1 ? 0 : 36 / n;
+    cutCube(svg, 70, 260, S, n, gap);
+    const e = 2 / n, num = n ** 3, one = 6 * e * e, tot = num * one;
+    box(svg, 440, 30, 345, 240, 'surface2', 'border', 1.2, {rx: 12});
+    tx(svg, 460, 64, `pieces per edge: ${n}`, '', 'start', {style: 'font-size:15px', 'font-weight': 700});
+    tx(svg, 460, 94, `side of each cube: ${K.fmt(e, 2)} cm`, '', 'start', {style: 'font-size:15px', 'font-weight': 700});
+    tx(svg, 460, 124, `number of cubes: ${n} × ${n} × ${n} = ${num}`, '', 'start', {style: 'font-size:15px', 'font-weight': 700});
+    tx(svg, 460, 154, `area of one: 6 × ${K.fmt(e, 2)} × ${K.fmt(e, 2)} = ${K.fmt(one, 3)} cm²`, 'blue', 'start', {style: 'font-size:15px', 'font-weight': 700});
+    tx(svg, 460, 190, `total area: ${K.fmt(tot, 2)} cm²`, 'red', 'start', {style: 'font-size:20px', 'font-weight': 800});
+    tx(svg, 460, 220, 'total volume: 8 cm³ (unchanged)', 'green', 'start', {style: 'font-size:14px', 'font-weight': 700});
+    box(svg, 460, 238, 300, 14, 'surface', 'border', 1, {rx: 4}); box(svg, 460, 238, 300 * tot / 96, 14, 'red', 'none', 0, {rx: 4, opacity: .8});
+    out.textContent = `${num} cube${num > 1 ? 's' : ''} of side ${K.fmt(e, 2)} cm: total surface area ${K.fmt(tot, 2)} cm² = ${n} × 24 cm². Each time the pieces per edge go up, the surface area goes up in the same ratio.`; }, 0); })();
+fillTable('tsa', {head: ['Pieces per edge', 'Side of one cube (cm)', 'Number of cubes', 'Area of one cube (cm²)', 'Total surface area (cm²)'], labels: ['', 'side', 'number', 'area of one', 'total'],
+  rows: [['1', '2', '1', {a: 24}, {a: 24}], ['2', {a: 1}, {a: 8}, {a: 6}, {a: 48}], ['4', {a: 0.5, alt: ['.5', '1/2', '½']}, {a: 64}, {a: 1.5, alt: ['3/2']}, {a: 96}]],
+  hint: 'Area of one cube = 6 × side × side; total = number × area of one.'});
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'When a gas is heated, its particles', options: ['stop moving', 'move more slowly', 'move faster and gain kinetic energy', 'become bigger'], answer: 2, explain: 'Higher temperature = faster particles = more kinetic energy (ഗതികോർജം).'});
+K.mcq('#q2', {q: 'Concentration means', options: ['the size of the particles', 'the number of particles in a unit volume', 'the temperature of a solution', 'the colour of a solution'], answer: 1, explain: 'Concentration (ഗാഢത) = particles per unit volume.'});
+K.numq('#q3', {q: '36 acid particles are spread through 4 mL. How many are there in each mL?', answer: 9, tol: 0, unit: 'per mL', explain: '36 ÷ 4 = 9 particles per unit volume.', hint: 'Divide the particles by the volume.'});
+K.numq('#q4', {q: 'A cube of side 2 cm is cut into 8 cubes of side 1 cm. What is their total surface area?', answer: 48, tol: 0, unit: 'cm²', explain: '8 × 6 × 1 × 1 = 48 cm², twice the 24 cm² of the big cube.', hint: 'One small cube has 6 faces of 1 cm².'});
+K.mcq('#q5', {q: 'In a box at the same temperature, doubling the number of gas particles will', options: ['reduce the collisions', 'not change the collisions', 'increase the number of collisions', 'stop the particles'], answer: 2, explain: 'More particles per unit volume → they meet more often → more collisions.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

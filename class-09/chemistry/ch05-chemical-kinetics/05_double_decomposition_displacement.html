@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Double Decomposition and Displacement Reactions</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+/* ==== common styles (same on pages 04–06) ==== */
+.qa,.qbox{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.7rem 1rem;margin:.8rem 0;box-shadow:var(--shadow)}
+.qa p,.qbox p{margin:.3em 0}
+.qbox ol,.qbox ul,.qa ol,.qa ul{margin:.3rem 0}
+.mlq{display:block;font-weight:500;margin:.2rem 0 .4rem}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ft{width:auto;min-width:min(100%,560px)}
+.ft td,.ft th{text-align:center;vertical-align:middle;padding:.35rem .45rem}
+.ft th{font-size:.88rem;line-height:1.3}
+.ft th .ml{display:block;font-size:.85em}
+.ft td .ml{display:block;font-size:.85em;font-weight:500}
+.ft input{width:3.6em;padding:.25rem .3rem;border-radius:6px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;text-align:center}
+.ft input.wide{width:9em}
+.ft input.cfg{width:6.2em}
+.ft input.fm{width:6.4em;font-family:ui-monospace,Menlo,Consolas,monospace}
+.ft input.hq{width:11em;font-family:ui-monospace,Menlo,Consolas,monospace}
+.ft input.ok{border-color:var(--green);background:var(--green-soft)}
+.ft input.bad{border-color:var(--red);background:var(--red-soft)}
+.ft td.given{font-weight:600}
+.ft .pv{display:block;min-height:1.3em;font-size:1.05rem;font-weight:700;color:var(--primary-ink)}
+.score{font-weight:700;color:var(--primary-ink);margin:.4rem 0 0;min-height:1.3em}
+.further{border-left:6px solid var(--purple);background:var(--purple-soft);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+.further .title{font-weight:700;color:var(--purple);margin-bottom:.3rem}
+.yn{display:inline-flex;gap:.3rem;flex-wrap:wrap}
+.yn .btn{padding:.25rem .6rem;font-size:.88rem}
+.btn.ok{background:var(--green-soft);border-color:var(--green);color:var(--text)}
+.btn.bad{background:var(--red-soft);border-color:var(--red);color:var(--text)}
+.btn.sel{background:var(--accent-soft);border-color:var(--accent);color:var(--text)}
+.why{font-size:.92rem;margin-top:.3rem}
+.keyml{display:block;margin:.2rem 0 .4rem}
+.rx{display:grid;grid-template-columns:minmax(9rem,1fr) auto;gap:.35rem .8rem;align-items:center;margin:.4rem 0}
+.rx .lbl2{font-weight:600}
+.rx .why{grid-column:1 / -1;margin:0 0 .3rem}
+@media(max-width:600px){.rx{grid-template-columns:1fr}}
+.ex{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center;font-size:.9rem;margin:.3rem 0}
+.ex .btn{padding:.25rem .55rem;font-size:.88rem}
+.lab select{padding:.3rem .4rem;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:.92rem;max-width:100%}
+.chem{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.15em;white-space:nowrap}
+.eqs{display:grid;gap:.3rem;margin:.6rem 0;padding:.6rem .9rem;background:var(--surface2);border-radius:10px;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.15rem}
+.eqs>div{display:block}
+.eqs .st{display:inline-block;font-family:"Segoe UI",Roboto,Arial,sans-serif;font-size:.85rem;font-weight:700;color:var(--muted);min-width:4.6rem;margin-right:.6rem}
+.rc{color:var(--red);font-weight:800;text-decoration:underline}
+.bt{width:auto;min-width:min(100%,520px)}
+.bt td{text-align:center}
+.bt td:first-child{text-align:left;font-weight:600}
+.bt td .ml{display:block;font-size:.85em;font-weight:500}
+.svgscroll{overflow-x:auto;border-radius:10px}
+.svgscroll svg{min-width:620px}
+.lab.demo{border:2px solid var(--red)}
+.pred{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center;margin:.5rem 0}
+.pred .lbl2{font-weight:600;margin-right:.3rem}
+.typechip{display:inline-block;padding:.05rem .5rem;border-radius:999px;font-size:.85rem;font-weight:700}
+.typechip.comb{background:var(--red-soft);color:var(--red)}.typechip.dec{background:var(--blue-soft);color:var(--blue)}
+.typechip.dd{background:var(--accent-soft);color:var(--accent-ink)}.typechip.disp{background:var(--green-soft);color:var(--green)}
+
+/* page 05 */
+.t53 select{padding:.3rem .4rem;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:.92rem;max-width:100%;width:100%}
+.t53 select.ok{border-color:var(--green);background:var(--green-soft)}.t53 select.bad{border-color:var(--red);background:var(--red-soft)}
+.t53 td:first-child{text-align:left;font-weight:600;white-space:nowrap}
+.t54 th{width:25%}.t54 td{height:3.2em}.t54 td{vertical-align:top;text-align:left;min-height:4em;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1rem}
+.t54 td div{margin:.15rem 0;padding:.1rem .3rem;border-radius:6px;background:var(--surface2)}
+.t54 td div.ext{color:var(--muted);font-style:italic}
+.rx54{display:grid;grid-template-columns:minmax(12rem,1fr) auto;gap:.3rem .8rem;align-items:center;margin:.35rem 0;padding:.3rem 0;border-bottom:1px dashed var(--border)}
+.rx54 .chem{font-size:1.1rem}
+.rx54 .why{grid-column:1 / -1;margin:0}
+@media(max-width:600px){.rx54{grid-template-columns:1fr}}
+.cl-eq{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.5rem;text-align:center;padding:.8rem;background:var(--surface2);border-radius:10px;margin:.4rem 0}
+</style>
+</head>
+<body data-page="05_double_decomposition_displacement">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 5 · Types of reactions (2)</span><span class="chip amber">Textbook pages 99–102</span>
+<h1>Double Decomposition and Displacement Reactions <span class="ml">ദ്വിവിഘടന രാസപ്രവർത്തനം · ആദേശ രാസപ്രവർത്തനം</span></h1>
+<p class="lead">Two more families of reactions. In a <b>double decomposition</b> two compounds <b>swap partners</b> – their ions change places, like two dancing couples exchanging partners. In a <b>displacement</b> reaction an element <b>pushes another element out</b> of its compound and takes its place. You will make a white precipitate, follow the ions as they swap, hear (virtually!) the “pop” of hydrogen, weld a rail with thermite, fill in Tables 5.3 and 5.4 and then test yourself in the classifier.</p>
+
+<div class="callout book"><div class="title">📖 What you need</div>
+<ul style="margin:0">
+<li>Combination (A + B → AB) and decomposition (AB → A + B) – <a href="04_combination_decomposition.html">page 4</a>.</li>
+<li>Ionic compounds are made of <b>ions</b>: NaCl = Na<sup>+</sup> and Cl<sup>−</sup>; AgNO<sub>3</sub> = Ag<sup>+</sup> and NO<sub>3</sub><sup>−</sup>; H<sub>2</sub>SO<sub>4</sub> = 2H<sup>+</sup> and SO<sub>4</sub><sup>2−</sup> (Chemistry Chapter 4, ions and valency).</li>
+<li>↓ after a formula = a <b>precipitate</b> <span class="ml">അവക്ഷിപ്തം</span> (an insoluble solid that separates out); ↑ = a gas given off.</li></ul></div>
+
+<h2 id="agcl">1. Sodium chloride + silver nitrate (Fig 5.4)</h2>
+<p><span class="ml">ഒരു ടെസ്റ്റ് ട്യൂബിൽ 2-3 mL സോഡിയം ക്ലോറൈഡ് (NaCl) ലായനി എടുക്കുക. അതിലേക്ക് 2-3 mL സിൽവർ നൈട്രേറ്റ് (AgNO₃) ലായനി ചേർക്കുക. എന്താണ് നിരീക്ഷിച്ചത്?</span> – Take 2–3 mL of sodium chloride (NaCl) solution in a test tube. Add 2–3 mL of silver nitrate (AgNO<sub>3</sub>) solution. What do you observe?</p>
+<div class="safety">⚠ Silver nitrate stains skin and clothes black and harms the eyes. Use only a few drops, under your teacher's supervision, with goggles; wash your hands afterwards.</div>
+<div class="lab" id="agLab"><div class="lab-title">🧪 Virtual lab · adding silver nitrate to salt solution</div>
+<div class="svgscroll"><svg id="agSvg" viewBox="0 0 800 340" role="img" aria-label="A test tube of clear sodium chloride solution. Drops of silver nitrate solution fall in from a dropper; at once a white cloud forms, and white solid particles slowly settle at the bottom of the tube, as in Figure 5.4. A checklist on the right ticks off each observation."></svg></div>
+<div class="controls"><button class="btn primary" id="agGo">💧 Add the silver nitrate</button><button class="btn ghost" id="agReset">⟲ Reset</button></div></div>
+<div class="qa"><p><b>Question (page 99).</b> <span class="ml mlq">എന്താണ് നിരീക്ഷിച്ചത്?</span> What did you observe?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">The clear solution at once turns <b>milky white</b>; a <b>white precipitate</b> forms and slowly settles at the bottom of the test tube (Fig 5.4).</div></div></div>
+<p><span class="ml">ഈ പ്രവർത്തനത്തിന്റെ രാസസമവാക്യം ചുവടെ നൽകിയിരിക്കുന്നത് പരിശോധിക്കുക.</span> – Examine the chemical equation of this reaction given below.</p>
+<p class="eq">NaCl + AgNO<sub>3</sub> → AgCl↓ + NaNO<sub>3</sub></p>
+<div class="qa"><p><b>Questions (pages 99–100).</b></p>
+<div class="rx"><span class="lbl2"><span class="ml mlq">പ്രവർത്തനഫലമായി ലഭിച്ച അവക്ഷിപ്തം (precipitate) ഏത് ഉൽപന്നത്തിന്റേതാണെന്ന് പറയാമോ? (ചിത്രം 5.4)</span> Which product is the precipitate formed in the reaction? (Fig 5.4)</span><span class="yn" data-ans="0" data-why="AgCl, silver chloride – the ↓ in the equation marks it. Sodium nitrate stays dissolved." data-hint="Look for the ↓ in the equation."><button class="btn">silver chloride, AgCl</button><button class="btn">sodium nitrate, NaNO₃</button></span><div class="why"></div></div>
+<div class="rx"><span class="lbl2"><span class="ml mlq">അഭികാരകങ്ങളിലൊന്നായ സോഡിയം ക്ലോറൈഡിൽ, സോഡിയം അയോണുമായി ചേർന്നിരിക്കുന്ന അയോൺ ഏതാണ്?</span> In the reactant sodium chloride, which ion is joined to the sodium ion?</span><span class="yn" data-ans="1" data-why="The chloride ion, Cl⁻ (NaCl = Na⁺ + Cl⁻)." data-hint="NaCl is made of two ions: Na⁺ and …"><button class="btn">nitrate ion, NO₃⁻</button><button class="btn">chloride ion, Cl⁻</button><button class="btn">silver ion, Ag⁺</button></span><div class="why"></div></div>
+<div class="rx"><span class="lbl2"><span class="ml mlq">ഉണ്ടായ ഉൽപന്നങ്ങളിൽ ഏത് ലോഹ അയോണുമായാണ് ക്ലോറൈഡ് അയോൺ ചേർന്നിരിക്കുന്നത്?</span> In the products, the chloride ion is joined to which metal ion?</span><span class="yn" data-ans="0" data-why="The silver ion, Ag⁺ – in AgCl." data-hint="Find Cl on the right side of the arrow."><button class="btn">silver ion, Ag⁺</button><button class="btn">sodium ion, Na⁺</button></span><div class="why"></div></div>
+<div class="rx"><span class="lbl2"><span class="ml mlq">രണ്ടാമത്തെ അഭികാരകമായ സിൽവർ നൈട്രേറ്റിലെ നൈട്രേറ്റ് അയോൺ ഉൽപന്നത്തിൽ ഏത് ലോഹ അയോണിനോടൊപ്പമാണ് ചേർന്നിരിക്കുന്നത്?</span> The nitrate ion of the second reactant, silver nitrate, is joined to which metal ion in the product?</span><span class="yn" data-ans="1" data-why="The sodium ion, Na⁺ – in NaNO₃." data-hint="Find NO₃ on the right side of the arrow."><button class="btn">silver ion, Ag⁺</button><button class="btn">sodium ion, Na⁺</button></span><div class="why"></div></div>
+<div class="reveal" data-btn="Show all answers"><div class="answer">1. The precipitate is <b>silver chloride, AgCl</b> (white).<br>2. In NaCl the sodium ion is joined to the <b>chloride ion, Cl<sup>−</sup></b>.<br>3. In the products the chloride ion is joined to the <b>silver ion, Ag<sup>+</sup></b> (AgCl).<br>4. The nitrate ion of silver nitrate is joined to the <b>sodium ion, Na<sup>+</sup></b> (NaNO<sub>3</sub>).<br>
+<span class="ml">സോഡിയം ക്ലോറൈഡും സിൽവർ നൈട്രേറ്റും തമ്മിലുള്ള പ്രവർത്തനത്തിൽ അയോണുകളെ പരസ്പരം വച്ചു മാറുകയാണ് ചെയ്തത്.</span> – In the reaction between sodium chloride and silver nitrate the ions were <b>exchanged</b>.</div></div></div>
+<div class="lab" id="isLab"><div class="lab-title">💃 Ion-swap viewer – watch the partners change</div>
+<div class="controls"><label>Reaction <select id="isSel" aria-label="choose a double decomposition reaction"></select></label><button class="btn primary" id="isGo">🔄 Swap the partners</button><button class="btn ghost" id="isReset">⟲ Back to the reactants</button></div>
+<div class="svgscroll"><svg id="isSvg" viewBox="0 0 800 340" role="img" aria-label="Each reactant is drawn as a row of coloured ion tiles, positive ions and negative ions side by side. When the button is pressed the ions travel down and pair up with new partners to form the two products."></svg></div>
+<div class="readout" id="isOut"></div></div>
+<div class="callout key"><div class="title">⭐ Key idea 3 (textbook page 100)</div>
+<p class="ml keyml">രണ്ട് സംയുക്തങ്ങൾ തമ്മിൽ പ്രവർത്തിക്കുമ്പോൾ അയോണുകളെ പരസ്പരം വച്ചുമാറി പുതിയ രണ്ട് സംയുക്തങ്ങൾ ഉണ്ടാകുന്ന തരം പ്രവർത്തനത്തെ ദ്വിവിഘടന രാസപ്രവർത്തനം (double decomposition reaction) എന്ന് പറയുന്നു.</p>
+<p>When two compounds react, the type of reaction in which they <b>exchange ions</b> to form <b>two new compounds</b> is called a <b>double decomposition reaction</b> <span class="ml">ദ്വിവിഘടന രാസപ്രവർത്തനം</span>. Pattern: <b>AB + CD → AD + CB</b>.</p></div>
+
+<div class="callout book"><div class="title"><span>📚 Three kinds of double decomposition (side box, page 100) <span class="ml">ദ്വിവിഘടന രാസപ്രവർത്തനങ്ങളെ മൂന്നു വിധത്തിൽ തരംതിരിക്കാം.</span></span></div>
+<ol style="margin:.2rem 0">
+<li><b>Precipitation reactions</b> <span class="ml">അവക്ഷിപ്തരൂപീകരണ രാസപ്രവർത്തനങ്ങൾ</span> – <span class="ml">ലായനിയിൽ നിന്ന് വേർതിരിച്ചെടുക്കാനാകുന്ന അലേയ (insoluble) സംയുക്തങ്ങൾ ആണ് അവക്ഷിപ്തങ്ങൾ.</span> Precipitates are <b>insoluble</b> compounds that can be separated from the solution.
+<div class="eq" style="background:var(--surface)">MgCl<sub>2</sub> + H<sub>2</sub>SO<sub>4</sub> → MgSO<sub>4</sub>↓ + 2HCl</div></li>
+<li><b>Gas-forming reactions</b> <span class="ml">വാതകരൂപീകരണ രാസപ്രവർത്തനങ്ങൾ</span> – a gas is one of the products.
+<div class="eq" style="background:var(--surface)">CaCO<sub>3</sub> + 2HCl → CaCl<sub>2</sub> + H<sub>2</sub>O + CO<sub>2</sub>↑</div></li>
+<li>Reactions in which at least one product is a compound that <b>does not separate into ions</b> <span class="ml">ഉൽപന്നങ്ങളിൽ, ഒന്നെങ്കിലും അയോണുകളായി വേർതിരിക്കപ്പെടാത്ത സംയുക്തം ഉണ്ടാകുന്ന പ്രവർത്തനങ്ങൾ.</span> <b>Neutralisation</b> <span class="ml">നിർവീരീകരണം</span> – an acid and a metal hydroxide base react to give water and a salt – is an example.
+<div class="eq" style="background:var(--surface)">HCl + NaOH → NaCl + H<sub>2</sub>O</div></li></ol>
+<div class="further" style="margin:.4rem 0 0"><div class="title">🔭 Go further</div>Write the book's example in the exam. In a real laboratory, magnesium sulphate dissolves quite well in water, so a precipitate appears only from very concentrated solutions. Silver chloride (AgCl), barium sulphate (BaSO<sub>4</sub>) and lead iodide (PbI<sub>2</sub>) are precipitates you can always see. In the gas-forming reaction the ions first give H<sub>2</sub>CO<sub>3</sub>, which at once breaks up into H<sub>2</sub>O and CO<sub>2</sub>.</div></div>
+
+<h2 id="bacl2">2. Which ions change partners?</h2>
+<p><span class="ml">ചുവടെ നൽകിയിരിക്കുന്ന രാസസമവാക്യം പരിശോധിച്ച് ഏതൊക്കെ അയോണുകളാണ് സംയുക്തങ്ങൾ പരസ്പരം വച്ചുമാറുന്നതെന്ന് തിരിച്ചറിയുക.</span> – Examine the equation below and identify which ions the compounds exchange.</p>
+<p class="eq">BaCl<sub>2</sub> + H<sub>2</sub>SO<sub>4</sub> → BaSO<sub>4</sub>↓ + 2HCl</p>
+<div class="qa"><div class="rx"><span class="lbl2">The positive ions that swap partners are…</span><span class="yn" data-ans="2" data-why="Ba²⁺ (from BaCl₂) and H⁺ (from H₂SO₄) change places: Ba²⁺ joins SO₄²⁻, and the two H⁺ join the two Cl⁻." data-hint="Find the metal ion and the hydrogen ion on each side."><button class="btn">Cl⁻ and SO₄²⁻ only</button><button class="btn">Ba²⁺ and Cl⁻</button><button class="btn">Ba²⁺ and H⁺</button></span><div class="why"></div></div>
+<div class="reveal" data-btn="Show answer"><div class="answer">BaCl<sub>2</sub> = Ba<sup>2+</sup> + 2Cl<sup>−</sup>; H<sub>2</sub>SO<sub>4</sub> = 2H<sup>+</sup> + SO<sub>4</sub><sup>2−</sup>. The <b>barium ion (Ba<sup>2+</sup>)</b> and the <b>hydrogen ions (H<sup>+</sup>)</b> exchange their partners: Ba<sup>2+</sup> goes with the <b>sulphate ion</b> (BaSO<sub>4</sub>, a white precipitate) and the H<sup>+</sup> go with the <b>chloride ions</b> (2HCl). Seen the other way: the Cl<sup>−</sup> and SO<sub>4</sub><sup>2−</sup> ions change partners. Choose this reaction in the ion-swap viewer above to watch it.</div></div></div>
+<div class="qa"><p><b>Question (page 100).</b> <span class="ml mlq">ദ്വിവിഘടന രാസപ്രവർത്തനത്തിന് കൂടുതൽ ഉദാഹരണങ്ങൾ കണ്ടെത്താമോ?</span> Can you find more examples of double decomposition reactions?</p>
+<div class="reveal" data-btn="Show examples"><div class="answer"><div class="eqs" style="background:transparent;padding:0">
+<div>Pb(NO<sub>3</sub>)<sub>2</sub> + 2KI → PbI<sub>2</sub>↓ + 2KNO<sub>3</sub> <span class="small muted">(bright yellow precipitate – the lead experiment of page 3, teacher only)</span></div>
+<div>BaCl<sub>2</sub> + Na<sub>2</sub>SO<sub>4</sub> → BaSO<sub>4</sub>↓ + 2NaCl <span class="small muted">(white precipitate)</span></div>
+<div>KOH + HNO<sub>3</sub> → KNO<sub>3</sub> + H<sub>2</sub>O <span class="small muted">(neutralisation)</span></div>
+<div>Cu(NO<sub>3</sub>)<sub>2</sub> + Na<sub>2</sub>S → CuS↓ + 2NaNO<sub>3</sub> <span class="small muted">(black precipitate – Table 5.4)</span></div>
+<div>CuSO<sub>4</sub> + 2NaOH → Cu(OH)<sub>2</sub>↓ + Na<sub>2</sub>SO<sub>4</sub> <span class="small muted">(pale blue precipitate – go further)</span></div></div></div></div></div>
+
+<h2 id="zn">3. Zinc and dilute hydrochloric acid – the pop test (Fig 5.5)</h2>
+<p><span class="ml">ഒരു ടെസ്റ്റ് ട്യൂബിൽ 5 mL നേർപ്പിച്ച ഹൈഡ്രോക്ലോറിക് ആസിഡ് എടുത്ത് അതിൽ അല്പം സിങ്ക് (Zn) തരികൾ ഇട്ടതിനുശേഷം ടെസ്റ്റ് ട്യൂബിന്റെ വായ്ഭാഗത്ത് കത്തിച്ച തീപ്പെട്ടിക്കൊള്ളി കൊണ്ടുവരിക. എന്താണ് നിരീക്ഷിച്ചത്? (ചിത്രം 5.5)</span> – Take 5 mL of dilute hydrochloric acid in a test tube, drop in a few granules of zinc (Zn) and bring a burning matchstick to the mouth of the test tube. What do you observe? (Fig 5.5)</p>
+<div class="safety">⚠ Use only <b>dilute</b> acid, with goggles, under your teacher's supervision. Hydrogen catches fire easily: bring the flame only to the mouth of a <b>small</b> test tube, and never near a large flask or bottle of the gas.</div>
+<div class="lab" id="znLab"><div class="lab-title">🧪 Virtual lab · zinc in dilute HCl and the burning splinter (Fig 5.5)</div>
+<div class="svgscroll"><svg id="znSvg" viewBox="0 0 800 360" role="img" aria-label="Figure 5.5 redrawn: a test tube held in a stand contains dilute hydrochloric acid with zinc granules at the bottom. Bubbles of gas rise from the zinc. A burning splinter is brought to the mouth of the tube and the gas burns with a pop. A checklist on the right ticks off the observations."></svg></div>
+<div class="controls"><button class="btn primary" id="znGo">▶ Drop in the zinc, then bring the flame</button><button class="btn ghost" id="znReset">⟲ Reset</button></div></div>
+<div class="qa"><p><b>Questions (pages 100–101).</b></p>
+<p><span class="ml mlq">എന്താണ് നിരീക്ഷിച്ചത്?</span> What did you observe? <span class="small muted">(answer below)</span></p>
+<div class="rx"><span class="lbl2"><span class="ml mlq">പോപ്പ് (pop) ശബ്ദത്തോടെ കത്തുന്ന വാതകം ഏതാണ്?</span> Which gas burns with a “pop” sound?</span><span class="yn" data-ans="1" data-why="Hydrogen – the pop is a tiny explosion of hydrogen burning with the oxygen of the air (it gives water)." data-hint="Which element was in the acid and is now set free?"><button class="btn">oxygen</button><button class="btn">hydrogen</button><button class="btn">chlorine</button><button class="btn">carbon dioxide</button></span><div class="why"></div></div>
+<div class="reveal" data-btn="Show answers"><div class="answer">Bubbles of a colourless gas rise from the zinc granules (the tube becomes slightly warm). When the burning matchstick is brought to the mouth of the tube, the gas burns with a <b>“pop” sound</b>. This gas is <b>hydrogen (H<sub>2</sub>)</b> – the pop test is the test for hydrogen.</div></div></div>
+<p><span class="ml">ഈ രാസപ്രവർത്തനത്തിന്റെ സമീകരിച്ച രാസസമവാക്യം ചുവടെ നൽകിയിരിക്കുന്നത് ശ്രദ്ധിക്കൂ.</span> – Look at the balanced chemical equation of this reaction:</p>
+<p class="eq">Zn + 2HCl → ZnCl<sub>2</sub> + H<sub>2</sub>↑</p>
+<div class="qa"><div class="rx"><span class="lbl2"><span class="ml mlq">രാസപ്രവർത്തനഫലമായി HCl എന്ന അഭികാരകത്തിലെ ഹൈഡ്രജനു പകരം ഉൽപന്നത്തിൽ വന്നു ചേർന്ന ആറ്റമേതാണ്?</span> In the product, which atom has come in place of the hydrogen of the reactant HCl?</span><span class="yn" data-ans="0" data-why="Zinc. HCl has become ZnCl₂: zinc took hydrogen's place beside chlorine." data-hint="Compare HCl on the left with the chloride on the right."><button class="btn">zinc</button><button class="btn">chlorine</button><button class="btn">oxygen</button></span><div class="why"></div></div>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>Zinc.</b> <span class="ml">ഹൈഡ്രോക്ലോറിക് ആസിഡ് എന്ന സംയുക്തത്തിലെ ഹൈഡ്രജൻ ആറ്റത്തെ മാറ്റി ആ സ്ഥാനത്തേക്ക് സിങ്ക് ആറ്റം വന്നു ചേർന്നു.</span> – The zinc atom removed the hydrogen of hydrochloric acid and took its place; the hydrogen is set free as H<sub>2</sub> gas.</div></div></div>
+<div class="lab" id="sDisp"><div class="lab-title">🎬 Zn + 2HCl → ZnCl₂ + H₂, particle by particle</div>
+<svg viewBox="0 0 800 300" role="img" aria-label="Particle picture: a zinc atom and two HCl molecules; the zinc atom takes the place of the hydrogen atoms beside the chlorine atoms, forming ZnCl2, and the two hydrogen atoms pair up as H2"></svg></div>
+<div class="callout key"><div class="title">⭐ Key idea 4 (textbook page 101)</div>
+<p class="ml keyml">സംയുക്തത്തിലെ ഒരു മൂലകത്തെ മറ്റൊരു മൂലകം ആദേശം ചെയ്യുന്ന രാസപ്രവർത്തനങ്ങളെ ആദേശ രാസപ്രവർത്തനങ്ങൾ (displacement reactions) എന്ന് വിളിക്കുന്നു.</p>
+<p>Reactions in which <b>one element in a compound is replaced by another element</b> are called <b>displacement reactions</b> <span class="ml">ആദേശ രാസപ്രവർത്തനം</span>. Pattern: <b>A + BC → AC + B</b>.</p></div>
+<div class="qa"><p><b>Question (page 101).</b> <span class="ml mlq">ആദേശ രാസപ്രവർത്തനങ്ങൾക്ക് കൂടുതൽ ഉദാഹരണങ്ങൾ കണ്ടെത്തുക.</span> Find more examples of displacement reactions.</p>
+<div class="reveal" data-btn="Show examples"><div class="answer"><div class="eqs" style="background:transparent;padding:0">
+<div>Fe + CuSO<sub>4</sub> → FeSO<sub>4</sub> + Cu <span class="small muted">(an iron nail in blue copper sulphate solution gets a brown-red coat of copper; the blue colour fades)</span></div>
+<div>Mg + 2HCl → MgCl<sub>2</sub> + H<sub>2</sub>↑ <span class="small muted">(magnesium ribbon fizzes in dilute acid)</span></div>
+<div>Zn + CuSO<sub>4</sub> → ZnSO<sub>4</sub> + Cu</div>
+<div>Zn + 2AgNO<sub>3</sub> → Zn(NO<sub>3</sub>)<sub>2</sub> + 2Ag <span class="small muted">(Table 5.4)</span></div>
+<div>Fe<sub>2</sub>O<sub>3</sub> + 2Al → 2Fe + Al<sub>2</sub>O<sub>3</sub> <span class="small muted">(thermite – box below)</span></div></div>
+In each one a <b>more reactive</b> element pushes a less reactive one out of its compound (you will meet reactivity again on page 7).</div></div></div>
+
+<div class="callout book"><div class="title"><span>🛤️ Thermite <span class="ml">തെർമൈറ്റ്</span> (side box, page 101)</span></div>
+<p><span class="ml">ഒരു ലോഹപ്പൊടിയുടേയും മറ്റൊരു ലോഹ ഓക്സൈഡിന്റെയും പൈറോടെക്നിക് മിശ്രിതമാണ് തെർമൈറ്റ്. ഏറ്റവും സാധാരണമായ ഒരു തെർമൈറ്റ് മിശ്രിതമാണ് അയൺ തെർമൈറ്റ്.</span></p>
+<p><b>Thermite</b> is a pyrotechnic mixture of a metal powder and the oxide of another metal. The most common one, <b>iron thermite</b>, is a mixture of <b>iron oxide</b> and <b>aluminium powder</b>. When the mixture is heated (ignited), aluminium <b>displaces</b> iron from iron oxide. So much heat is released that the iron formed comes out <b>molten</b>. Small cracks and joints in railway tracks are repaired (welded) by the thermite process.</p>
+<p class="eq" style="background:var(--surface)">Fe<sub>2</sub>O<sub>3</sub> + 2Al → 2Fe + Al<sub>2</sub>O<sub>3</sub></p>
+<div class="safety">⚠ Thermite burns at well over 2000 °C and cannot be put out with water. Only trained railway workers use it, with full protective gear. Never try to make it.</div>
+<div class="lab" id="thLab" style="margin-bottom:0"><div class="lab-title">🎬 Welding a rail joint with thermite</div>
+<div class="svgscroll"><svg id="thSvg" viewBox="0 0 800 320" role="img" aria-label="Two rail ends with a gap between them inside a sand mould. Above them a crucible of thermite mixture is ignited; it glows white hot, and molten iron pours down into the gap, then cools from yellow to red to grey, joining the rails."></svg></div>
+<div class="controls"><button class="btn primary" id="thGo">🔥 Ignite the thermite</button><button class="btn ghost" id="thReset">⟲ Reset</button></div></div></div>
+
+<h2 id="t53">4. Table 5.3 – the four types side by side</h2>
+<p><span class="ml">നാല് വ്യത്യസ്ത തരം രാസപ്രവർത്തനങ്ങൾ നിങ്ങൾ പരിചയപ്പെട്ടു. ഇവയുടെ പ്രത്യേകതകൾ പട്ടികപ്പെടുത്തുക.</span> – You have met four different types of chemical reactions. List their special features. Choose the right feature for each row, then check.</p>
+<div class="lab" id="t53Lab"><div class="lab-title">✍ Table 5.3 <span class="ml">പട്ടിക 5.3</span></div><div id="t53Box"></div></div>
+
+<h2 id="t54">5. Table 5.4 – classify and extend (? box, page 101)</h2>
+<div class="qbox"><p><span class="ml mlq">ചുവടെ നൽകിയിരിക്കുന്ന രാസപ്രവർത്തനങ്ങളെ സംയോജന രാസപ്രവർത്തനം, വിഘടന രാസപ്രവർത്തനം, ദ്വിവിഘടന രാസപ്രവർത്തനം, ആദേശ രാസപ്രവർത്തനം എന്ന് പട്ടികപ്പെടുത്തുക. കൂടുതൽ ഉദാഹരണങ്ങൾ ഉൾപ്പെടുത്തി പട്ടിക 5.4 വിപുലീകരിക്കുക.</span> Classify the reactions given below as combination, decomposition, double decomposition and displacement reactions. Extend Table 5.4 by including more examples.</p></div>
+<div class="lab" id="t54Lab"><div class="lab-title">🗂️ Classify – each correct answer is written into Table 5.4</div>
+<div id="t54Rows"></div>
+<div class="tw"><table class="ft t54" id="t54Grid"></table></div>
+<div class="controls"><button class="btn" id="t54Ext">➕ Extend the table with more examples</button><button class="btn ghost" id="t54Clr">⟲ Clear the table</button></div>
+<p class="score" id="t54Score"></p></div>
+<div class="reveal" data-btn="Show the completed Table 5.4"><div class="answer">
+1. Zn + 2AgNO<sub>3</sub> → Zn(NO<sub>3</sub>)<sub>2</sub> + 2Ag – <b>displacement</b> (zinc replaces silver).<br>
+2. CaCO<sub>3</sub> → CaO + CO<sub>2</sub> – <b>decomposition</b> (one compound → two substances).<br>
+3. 2HI → H<sub>2</sub> + I<sub>2</sub> – <b>decomposition</b>.<br>
+4. Cu(NO<sub>3</sub>)<sub>2</sub> + Na<sub>2</sub>S → CuS + 2NaNO<sub>3</sub> – <b>double decomposition</b> (Cu<sup>2+</sup> and Na<sup>+</sup> swap partners; CuS is a black precipitate).<br>
+5. SO<sub>2</sub> + H<sub>2</sub>O → H<sub>2</sub>SO<sub>3</sub> – <b>combination</b> (one product, sulphurous acid).<br>
+More examples: combination – CaO + H<sub>2</sub>O → Ca(OH)<sub>2</sub>, N<sub>2</sub> + 3H<sub>2</sub> → 2NH<sub>3</sub>; decomposition – (NH<sub>4</sub>)<sub>2</sub>Cr<sub>2</sub>O<sub>7</sub> → Cr<sub>2</sub>O<sub>3</sub> + 4H<sub>2</sub>O + N<sub>2</sub>, CuCO<sub>3</sub> → CuO + CO<sub>2</sub>; double decomposition – NaCl + AgNO<sub>3</sub> → AgCl + NaNO<sub>3</sub>, BaCl<sub>2</sub> + H<sub>2</sub>SO<sub>4</sub> → BaSO<sub>4</sub> + 2HCl; displacement – Zn + 2HCl → ZnCl<sub>2</sub> + H<sub>2</sub>, Fe<sub>2</sub>O<sub>3</sub> + 2Al → 2Fe + Al<sub>2</sub>O<sub>3</sub>.</div></div>
+
+<div class="callout think"><div class="title">🧠 A quick way to decide</div>
+<ol style="margin:0">
+<li>Count the <b>reactants</b>. Only one? → <span class="typechip dec">decomposition</span>.</li>
+<li>Count the <b>products</b>. Only one? → <span class="typechip comb">combination</span>.</li>
+<li>Is one reactant a lone <b>element</b> (Zn, Fe, Al, Mg…) and one product a lone element? → <span class="typechip disp">displacement</span>.</li>
+<li>Two compounds → two new compounds by swapping ions? → <span class="typechip dd">double decomposition</span>.</li></ol></div>
+
+<h2 id="lab">6. Virtual lab: the reaction-type machine (all four types)</h2>
+<p>Predict the type, then watch the atoms regroup. The general pattern below the picture is drawn with the letters A, B, C, D.</p>
+<div class="lab" id="rmLab"><div class="lab-title">⚙️ Reaction-type machine</div>
+<div class="controls"><label>Reaction <select aria-label="choose a reaction"></select></label><button class="btn primary" data-m="run">▶ Run the reaction</button><button class="btn" data-m="next">Next reaction ▶</button></div>
+<div class="pred"></div>
+<svg viewBox="0 0 800 400" role="img" aria-label="Particle picture of the chosen reaction: atoms drawn as coloured balls move from the reactant molecules to the product molecules; below, coloured letters A, B, C and D do the same in the general pattern"></svg>
+<div class="readout"></div><p class="score"></p>
+<p class="hint">Every equation is balanced – the number of balls of each colour never changes. “Go further” reactions are not in the textbook.</p></div>
+
+<h2 id="classify">7. The classifier – how fast can you sort?</h2>
+<div class="lab" id="clLab"><div class="lab-title">🏁 Quick-fire classifier (Table 5.4, “Let us assess” Q1 and more)</div>
+<div class="cl-eq" id="clEq"></div>
+<div class="pred" id="clBtns"></div>
+<div class="why" id="clFb"></div>
+<div class="controls"><button class="btn primary" id="clNext">Next equation ▶</button><button class="btn ghost" id="clRestart">⟲ Start again</button></div>
+<p class="score" id="clScore"></p></div>
+
+<div class="callout warn"><div class="title">⚠️ Common mistakes</div>
+<ul style="margin:0">
+<li>Mixing up <b>decomposition</b> (one reactant breaks up) and <b>double decomposition</b> (two compounds exchange ions).</li>
+<li>Calling Zn + 2HCl → ZnCl<sub>2</sub> + H<sub>2</sub> a combination ✗ – there are two products; zinc <b>displaces</b> hydrogen.</li>
+<li>Thinking the ↓ product is a gas ✗ – ↓ is a precipitate (solid), ↑ is a gas.</li>
+<li>In double decomposition, swapping the <b>positive</b> ion with a <b>positive</b> ion of the same compound ✗ – the metal (or H<sup>+</sup>) ion of one compound goes with the negative ion of the <b>other</b>.</li></ul></div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://en.wikipedia.org/wiki/Exothermic_reaction" target="_blank" rel="noopener noreferrer">📄 Exothermic reaction</a> <span class="src">Wikipedia</span><br><span class="note">Reactions that give out heat, like quicklime with water.</span></li><li><a href="https://en.wikipedia.org/wiki/Decomposition_(chemistry)" target="_blank" rel="noopener noreferrer">📄 Chemical decomposition</a> <span class="src">Wikipedia</span><br><span class="note">One compound breaks into two or more substances.</span></li><li><a href="https://en.wikipedia.org/wiki/Single_displacement_reaction" target="_blank" rel="noopener noreferrer">📄 Single displacement reaction</a> <span class="src">Wikipedia</span><br><span class="note">One element takes the place of another in a compound.</span></li><li><a href="https://en.wikipedia.org/wiki/Salt_metathesis_reaction" target="_blank" rel="noopener noreferrer">📄 Salt metathesis (double decomposition) reaction</a> <span class="src">Wikipedia</span><br><span class="note">Two compounds swap their ions.</span></li><li><a href="https://en.wikipedia.org/wiki/Precipitation_(chemistry)" target="_blank" rel="noopener noreferrer">📄 Precipitation (chemistry)</a> <span class="src">Wikipedia</span><br><span class="note">How an insoluble solid forms from two solutions.</span></li><li><a href="https://en.wikipedia.org/wiki/Airbag" target="_blank" rel="noopener noreferrer">📄 Airbag</a> <span class="src">Wikipedia</span><br><span class="note">Air bags fill with nitrogen from a very fast decomposition reaction.</span></li><li><a href="https://en.wikipedia.org/wiki/Thermite" target="_blank" rel="noopener noreferrer">📄 Thermite</a> <span class="src">Wikipedia</span><br><span class="note">Aluminium displaces iron from iron oxide – used to weld rails.</span></li></ul></div>
+<h2 id="check">8. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li><b>Double decomposition</b> <span class="ml">ദ്വിവിഘടന രാസപ്രവർത്തനം</span>: two compounds exchange ions → two new compounds. NaCl + AgNO<sub>3</sub> → AgCl↓ + NaNO<sub>3</sub> · BaCl<sub>2</sub> + H<sub>2</sub>SO<sub>4</sub> → BaSO<sub>4</sub>↓ + 2HCl.</li>
+<li>Three kinds: <b>precipitation</b> (MgCl<sub>2</sub> + H<sub>2</sub>SO<sub>4</sub> → MgSO<sub>4</sub>↓ + 2HCl), <b>gas-forming</b> (CaCO<sub>3</sub> + 2HCl → CaCl<sub>2</sub> + H<sub>2</sub>O + CO<sub>2</sub>↑), product not split into ions – <b>neutralisation</b> (HCl + NaOH → NaCl + H<sub>2</sub>O).</li>
+<li><b>Displacement</b> <span class="ml">ആദേശ രാസപ്രവർത്തനം</span>: an element replaces another element in a compound. Zn + 2HCl → ZnCl<sub>2</sub> + H<sub>2</sub>↑ (hydrogen burns with a pop) · thermite Fe<sub>2</sub>O<sub>3</sub> + 2Al → 2Fe + Al<sub>2</sub>O<sub>3</sub> (molten iron welds rails).</li>
+<li>Four types: A + B → AB · AB → A + B · AB + CD → AD + CB · A + BC → AC + B.</li></ul></div>
+<p>Next: <a href="06_rate_collision_theory.html">Rate of reaction &amp; collision theory ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Chemical Kinetics · Class 9 Chemistry", "icon": "⏱️", "key": "chemistry_ch5_progress", "pages": [["index.html", "Home"], ["01_physical_chemical_changes.html", "1 · Physical & Chemical Changes, Equations Recap"], ["02_particles_energy_recap.html", "2 · Particles in Motion, Energy & Concentration"], ["03_identifying_chemical_change.html", "3 · Signs of a Chemical Change"], ["04_combination_decomposition.html", "4 · Combination & Decomposition Reactions"], ["05_double_decomposition_displacement.html", "5 · Double Decomposition & Displacement Reactions"], ["06_rate_collision_theory.html", "6 · Rate of Reaction & Collision Theory"], ["07_nature_concentration_surface.html", "7 · Nature, Concentration & Surface Area"], ["08_temperature_catalysts.html", "8 · Temperature, Catalysts & Enzymes"], ["09_intext_questions_solutions.html", "9 · In-text Questions – Solutions"], ["10_assess_solutions.html", "10 · Let Us Assess & Extended Activities – Solutions"], ["11_applications_explore.html", "11 · Applications & Explore Online"], ["12_summary_revision.html", "12 · Summary & Quick Quiz"], ["13_model_test_paper.html", "13 · Model Test Paper"], ["14_model_test_solutions.html", "14 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ==== common helpers (same code on pages 04–06) ==== */
+const {P, el} = K;
+const $id = id => document.getElementById(id);
+const C = c => (c === 'none' ? 'none' : ((c.charAt(0) === '#' || c.startsWith('url') || c.startsWith('rgb') || c.startsWith('var(')) ? c : `var(--${c === 'amber' ? 'accent' : c})`));
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+function tx(svg, x, y, str, cls = '', anchor = 'middle', extra = {}){ return K.text(svg, P(x, y), str, {class: ('lbl ' + cls).trim(), 'text-anchor': anchor, ...extra}); }
+function box(svg, x, y, w, h, fill = 'surface2', stroke = 'text', sw = 1.5, extra = {}){ return el('rect', {x, y, width: Math.max(0, w), height: Math.max(0, h), fill: C(fill), stroke: C(stroke), 'stroke-width': sw, ...extra}, svg); }
+function circ(svg, x, y, r, fill = 'none', stroke = 'text', sw = 1.5, extra = {}){ return el('circle', {cx: x, cy: y, r: Math.max(0, r), fill: C(fill), stroke: C(stroke), 'stroke-width': sw, ...extra}, svg); }
+function line(svg, x1, y1, x2, y2, stroke = 'text', sw = 1.5, extra = {}){ return el('line', {x1, y1, x2, y2, stroke: C(stroke), 'stroke-width': sw, 'stroke-linecap': 'round', ...extra}, svg); }
+function path(svg, d, fill = 'none', stroke = 'text', sw = 1.5, extra = {}){ return el('path', {d, fill: C(fill), stroke: C(stroke), 'stroke-width': sw, 'stroke-linejoin': 'round', 'stroke-linecap': 'round', ...extra}, svg); }
+function arrow(svg, a, b, col = 'text', sw = 2, extra = {}){ const g = K.group(svg, extra); line(g, a.x, a.y, b.x, b.y, col, sw); const u = K.unit(a, b), s = 9;
+  el('polygon', {points: `${b.x},${b.y} ${b.x - u.x * s - u.y * s * .55},${b.y - u.y * s + u.x * s * .55} ${b.x - u.x * s + u.y * s * .55},${b.y - u.y * s - u.x * s * .55}`, fill: C(col)}, g); return g; }
+/* formulae with true subscripts / superscripts: 'Al2O3' → Al₂O₃, 'Cu^2+' → Cu²⁺ */
+const SUBC = '₀₁₂₃₄₅₆₇₈₉', SUPC = {0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹', '+': '⁺', '-': '⁻', '−': '⁻'};
+function segs(str){ if (Array.isArray(str)) return str; const out = []; let i = 0, prev = ''; str = String(str);
+  while (i < str.length){ const ch = str[i];
+    if (ch === '^'){ const m = str.slice(i + 1).match(/^\d*[+\-−]/); const s = m ? m[0] : ''; out.push({t: s.replace('-', '−'), k: 'p'}); i += 1 + s.length; prev = '^'; continue; }
+    const sub = /\d/.test(ch) && (/[A-Za-z)\]]/.test(prev) || (/\d/.test(prev) && out.length > 0 && out[out.length - 1].k === 'b'));
+    const k = sub ? 'b' : 'n'; if (out.length && out[out.length - 1].k === k && !out[out.length - 1].fill) out[out.length - 1].t += ch; else out.push({t: ch, k}); prev = ch; i++; }
+  return out; }
+const fHtml = s => segs(s).map(g => g.k === 'b' ? `<sub>${g.t}</sub>` : g.k === 'p' ? `<sup>${g.t}</sup>` : g.t).join('');
+const fUni = s => segs(s).map(g => g.k === 'b' ? g.t.replace(/\d/g, d => SUBC[+d]) : g.k === 'p' ? g.t.split('').map(c => SUPC[c] || c).join('') : g.t).join('');
+function fSvg(svg, x, y, s, fs = 28, o = {}){
+  const t = el('text', {x, y, class: 'lbl', 'text-anchor': o.anchor || 'middle', 'dominant-baseline': 'middle', style: `font-size:${fs}px;font-weight:${o.w || 700};fill:${o.fill || 'var(--text)'}`, ...(o.attrs || {})}, svg); let off = 0;
+  segs(s).forEach(g => { const want = g.k === 'b' ? fs * .3 : g.k === 'p' ? -fs * .42 : 0; const sp = el('tspan', {dy: (want - off).toFixed(1)}, t);
+    const fill = g.fill || null;
+    if (g.k !== 'n') sp.setAttribute('style', `font-size:${(fs * .62).toFixed(1)}px` + (fill ? `;fill:${fill}` : ''));
+    else if (fill) sp.setAttribute('style', `fill:${fill}`);
+    sp.textContent = g.t; off = want; });
+  return t; }
+const estW = (s, fs) => segs(s).reduce((w, g) => w + g.t.split('').reduce((a, c) => a + fs * (g.k === 'n' ? 1 : .62) * (/[A-Z]/.test(c) ? .68 : /[a-z]/.test(c) ? .52 : /[()\[\]]/.test(c) ? .34 : /[+−\-]/.test(c) ? .6 : /[→↑↓]/.test(c) ? 1 : /\s/.test(c) ? .3 : .56), 0), 0);
+const fnorm = s => String(s).trim().replace(/[₀-₉]/g, c => SUBC.indexOf(c)).replace(/\s+/g, '').replace(/[\[{]/g, '(').replace(/[\]}]/g, ')');
+const tnorm = s => String(s).trim().toLowerCase().replace(/[−–—]/g, '-').replace(/\s+/g, ' ').replace(/[.!]+$/, '');
+const nnorm = s => String(s).trim().toLowerCase().replace(/[₀-₉]/g, c => SUBC.indexOf(c)).replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/,+/g, ',');
+/* whole equations typed by a student: 'CuCO3 -> CuO + CO2', 'CuCO₃ → CO₂ + CuO' and '2H2 + O2 = 2H2O' compare species by species */
+function eqnorm(s){ s = String(s).replace(/[₀-₉]/g, c => SUBC.indexOf(c)).replace(/[↑↓]/g, '').replace(/\((s|l|g|aq)\)/gi, '').replace(/[\[{]/g, '(').replace(/[\]}]/g, ')').replace(/\s+/g, '');
+  s = s.replace(/-+>|=+>|→|⟶|=/g, '>'); const sides = s.split('>'); if (sides.length !== 2) return '?' + s;
+  return sides.map(sd => sd.split('+').filter(Boolean).sort().join('+')).join('>'); }
+const ePrev = s => fHtml(esc(String(s).replace(/-+>|=+>|=/g, '→').replace(/[₀-₉]/g, c => SUBC.indexOf(c))));
+/* ---- interactive fill-in table ----
+   cell = 'given html' | {g, rs, cs} | null (covered by a rowspan) |
+   {a, alt: [...], k: 'n' number · 't' text · 'f' formula (live preview) · 'e' whole equation (live preview) · 'w' words (any listed keyword), lab, pre} */
+function fillTable(id, spec){
+  const root = $id(id);
+  const cell = (c, ci) => { if (c === null) return '';
+    if (c && typeof c === 'object' && 'g' in c) return `<td class="given"${c.rs ? ` rowspan="${c.rs}"` : ''}${c.cs ? ` colspan="${c.cs}"` : ''}>${c.g}</td>`;
+    if (c && typeof c === 'object'){ const k = c.k || 'n', cls = k === 'f' ? 'fm' : k === 'e' ? 'hq' : (k === 't' || k === 'w') ? 'wide' : '';
+      return `<td>${c.pre || ''}<input type="text" autocomplete="off" spellcheck="false" autocapitalize="off" ${cls ? `class="${cls}"` : ''} ${k === 'n' ? 'inputmode="numeric"' : ''} data-k="${k}" data-a="${esc(c.a)}" data-alt="${esc((c.alt || []).join('|'))}" aria-label="${esc(c.lab || (spec.labels && spec.labels[ci]) || 'answer')}">${k === 'f' || k === 'e' ? '<span class="pv"></span>' : ''}</td>`; }
+    return ci === 0 && spec.th0 ? `<th>${c}</th>` : `<td class="given">${c}</td>`; };
+  const head = spec.thead || (spec.head ? `<tr>${spec.head.map(h => `<th>${h}</th>`).join('')}</tr>` : '');
+  root.insertAdjacentHTML('beforeend', `<div class="tw"><table class="ft">${head ? `<thead>${head}</thead>` : ''}<tbody>${spec.rows.map(r => `<tr>${r.map(cell).join('')}</tr>`).join('')}</tbody></table></div>
+    <div class="controls"><button class="btn primary" data-f="check">✔ Check my answers</button><button class="btn ghost" data-f="clear">⟲ Clear</button><button class="btn" data-f="show">💡 Show answers</button></div><p class="score"></p>`);
+  const ins = K.$$('input[data-a]', root), score = root.querySelector('.score');
+  const N = {n: nnorm, t: tnorm, f: fnorm, e: eqnorm};
+  const right = inp => { const k = inp.dataset.k, v = inp.value; if (v.trim() === '') return false; const alts = [inp.dataset.a, ...inp.dataset.alt.split('|').filter(Boolean)];
+    if (k === 'w'){ const t = tnorm(v); return alts.some(a => t.includes(tnorm(a))); }
+    const f = N[k] || nnorm; return alts.some(a => f(a) === f(v)); };
+  const pv = inp => { const p = inp.parentElement.querySelector('.pv'); if (!p) return; p.innerHTML = inp.dataset.k === 'e' ? ePrev(inp.value) : fHtml(fnorm(inp.value).replace(/[^A-Za-z0-9()]/g, '')); };
+  root.addEventListener('click', e => { const b = e.target.closest('button[data-f]'); if (!b) return; const f = b.dataset.f;
+    if (f === 'check'){ let ok = 0; ins.forEach(i => { const r = right(i); i.classList.toggle('ok', r); i.classList.toggle('bad', !r); if (r) ok++; });
+      score.textContent = ok === ins.length ? `🎉 All ${ins.length} correct!` : `${ok} of ${ins.length} correct – the red boxes need another look.` + (spec.hint ? ' ' + spec.hint : ''); }
+    else if (f === 'show'){ ins.forEach(i => { i.value = i.dataset.a; i.classList.add('ok'); i.classList.remove('bad'); pv(i); }); score.textContent = 'All answers filled in (green). Cover them and try again tomorrow!'; }
+    else { ins.forEach(i => { i.value = ''; i.classList.remove('ok', 'bad'); pv(i); }); score.textContent = ''; } });
+  root.addEventListener('input', e => { if (e.target.matches('input[data-a]')){ e.target.classList.remove('ok', 'bad'); pv(e.target); } });
+}
+/* yes/no style choice buttons: <span class="yn" data-ans="1" data-why="…"> + <div class="why"> */
+function choices(root = document){ K.$$('.yn[data-ans]', root).forEach(bx => { if (bx.dataset.wired) return; bx.dataset.wired = 1; const ans = +bx.dataset.ans, why = bx.parentElement.querySelector('.why');
+  K.$$('button', bx).forEach((b, k) => b.addEventListener('click', () => { K.$$('button', bx).forEach(x => x.classList.remove('ok', 'bad')); b.classList.add(k === ans ? 'ok' : 'bad');
+    if (why){ why.innerHTML = k === ans ? '✅ ' + (bx.dataset.why || 'Correct.') : '❌ ' + (bx.dataset.hint || 'Not quite – think again.'); why.style.color = k === ans ? 'var(--green)' : 'var(--red)'; }
+    bx.dispatchEvent(new CustomEvent('picked', {detail: {k, ok: k === ans}})); })); }); }
+const H = (en, ml) => `${en} <span class="ml">${ml}</span>`;
+/* atom colours for particle pictures: [fill, stroke, text] (fixed colours, readable in both themes). Xa–Xd are the letters A–D of the general patterns */
+const ECOL = {H: ['#dcfce7', '#16a34a', '#14532d'], O: ['#ef4444', '#991b1b', '#ffffff'], C: ['#57534e', '#1c1917', '#ffffff'], N: ['#3b82f6', '#1e3a8a', '#ffffff'], Cl: ['#0d9488', '#134e4a', '#ffffff'],
+  Mg: ['#a8a29e', '#44403c', '#1c1917'], Zn: ['#94a3b8', '#334155', '#0f172a'], Al: ['#e2e8f0', '#64748b', '#0f172a'], Na: ['#a855f7', '#581c87', '#ffffff'], K: ['#8b5cf6', '#4c1d95', '#ffffff'],
+  I: ['#7e22ce', '#3b0764', '#ffffff'], Fe: ['#b45309', '#78350f', '#ffffff'], S: ['#facc15', '#a16207', '#422006'], Ca: ['#fde68a', '#a16207', '#422006'], Ba: ['#f59e0b', '#92400e', '#ffffff'],
+  Cu: ['#ea580c', '#7c2d12', '#ffffff'], Ag: ['#cbd5e1', '#475569', '#0f172a'], Cr: ['#22c55e', '#14532d', '#ffffff'], Pb: ['#475569', '#1e293b', '#ffffff'], Hg: ['#d1d5db', '#4b5563', '#111827'],
+  Xa: ['#f87171', '#991b1b', '#ffffff'], Xb: ['#60a5fa', '#1e3a8a', '#ffffff'], Xc: ['#fbbf24', '#92400e', '#422006'], Xd: ['#4ade80', '#166534', '#052e16']};
+const DISP = {Xa: 'A', Xb: 'B', Xc: 'C', Xd: 'D'};
+const ENAME = {H: 'hydrogen', O: 'oxygen', C: 'carbon', N: 'nitrogen', Cl: 'chlorine', Mg: 'magnesium', Zn: 'zinc', Al: 'aluminium', Na: 'sodium', K: 'potassium', I: 'iodine', Fe: 'iron', S: 'sulphur', Ca: 'calcium', Ba: 'barium', Cu: 'copper', Ag: 'silver', Cr: 'chromium', Pb: 'lead', Hg: 'mercury'};
+function ball(svg, x, y, r, s, op = 1){ const c = ECOL[s] || ['#e5e7eb', '#475569', '#0f172a'], g = K.group(svg, op < 1 ? {opacity: op.toFixed(2)} : {}), lab = DISP[s] || s;
+  circ(g, x, y, r, c[0], c[1], Math.max(1, r * .12)); circ(g, x - r * .32, y - r * .34, r * .28, '#ffffff', 'none', 0, {opacity: .35});
+  if (r >= 7) el('text', {x, y: y + 1, 'text-anchor': 'middle', 'dominant-baseline': 'middle', style: `font-size:${(r * (lab.length > 1 ? .78 : .95)).toFixed(1)}px;font-weight:800;fill:${c[2]};font-family:Segoe UI,Roboto,Arial,sans-serif`, text: lab}, g);
+  return g; }
+/* ---------- atom counting and molecule sprites ---------- */
+function atomsOf(f){ const stack = [{}], order = []; let i = 0; f = String(f).replace(/\^.*$/, '');
+  while (i < f.length){ const ch = f[i];
+    if (ch === '('){ stack.push({}); i++; }
+    else if (ch === ')'){ i++; const m = f.slice(i).match(/^\d+/), n = m ? +m[0] : 1; if (m) i += m[0].length; const top = stack.pop(), dst = stack[stack.length - 1]; for (const s in top){ dst[s] = (dst[s] || 0) + top[s] * n; if (!order.includes(s)) order.push(s); } }
+    else { const m = f.slice(i).match(/^([A-Z][a-z]?)(\d*)/); if (!m){ i++; continue; } const s = m[1], n = m[2] ? +m[2] : 1; if (!order.includes(s)) order.push(s); stack[stack.length - 1][s] = (stack[stack.length - 1][s] || 0) + n; i += m[0].length; } }
+  return {cnt: stack[0], order}; }
+function molLayout(f){ const A = atomsOf(f), list = []; A.order.forEach(s => { for (let k = 0; k < A.cnt[s]; k++) list.push(s); });
+  const n = list.length, d = 1.55, kinds = A.order, single = kinds.length === 2 ? kinds.find(s => A.cnt[s] === 1) : null, other = single ? kinds.find(s => s !== single) : null; let pts;
+  if (n === 1) pts = [[0, 0, list[0]]];
+  else if (n === 2) pts = [[-d / 2, 0, list[0]], [d / 2, 0, list[1]]];
+  else if (n === 3 && single) pts = [[-d, 0, other], [d, 0, other], [0, 0, single]];
+  else if ((n === 4 || n === 5) && single){ pts = []; for (let j = 0; j < n - 1; j++){ const a = K.rad(n === 4 ? -90 + 120 * j : 45 + 90 * j); pts.push([d * Math.cos(a), d * Math.sin(a), other]); } pts.push([0, 0, single]); }
+  else if (n <= 5){ let seq = list;
+    if (kinds.length === 2 && Math.abs(A.cnt[kinds[0]] - A.cnt[kinds[1]]) <= 1){ const [a, b] = A.cnt[kinds[0]] >= A.cnt[kinds[1]] ? kinds : [kinds[1], kinds[0]]; seq = list.map((_, j) => j % 2 ? b : a); }
+    pts = seq.map((s, j) => [(j - (n - 1) / 2) * d * .9, j % 2 ? .5 : -.5, s]); }
+  else { const cols = n > 12 ? 4 : 3, rows = Math.ceil(n / cols); pts = list.map((s, j) => [(j % cols - (cols - 1) / 2) * d, (Math.floor(j / cols) - (rows - 1) / 2) * d, s]); }
+  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  return {pts, w: x1 - x0 + 2, h: y1 - y0 + 2, cx: (x0 + x1) / 2, cy: (y0 + y1) / 2}; }
+function drawMol(svg, x, y, f, r, op = 1){ const M = molLayout(f); const g = K.group(svg, op < 1 ? {opacity: op.toFixed(2)} : {}); M.pts.forEach(([px, py, s]) => ball(g, x + (px - M.cx) * r, y + (py - M.cy) * r, r, s)); return g; }
+
+/* ---- one shared animation clock: runs only while a lab is on screen and was used in the last 40 s ---- */
+const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const ANIM = []; let animOn = false, animLast = 0;
+function animLoop(now){ const dt = Math.min(.05, Math.max(0, (now - animLast) / 1000)); animLast = now; let any = false;
+  for (const it of ANIM){ if (it.vis && now < it.until){ it.t += dt; try { it.fn(it.t, dt); } catch (e){ it.until = 0; throw e; } any = true; } }
+  if (any) requestAnimationFrame(animLoop); else animOn = false; }
+function animStart(){ if (!animOn){ animOn = true; animLast = performance.now(); requestAnimationFrame(animLoop); } }
+function wake(it){ if (reduce){ it.fn(it.t, 0); return; } it.until = performance.now() + 40000; animStart(); }
+function anim(elm, fn){ const it = {el: elm, fn, t: 0, until: 0, vis: true}; ANIM.push(it);
+  if ('IntersectionObserver' in window){ new IntersectionObserver(es => es.forEach(e => { it.vis = e.isIntersecting; if (it.vis) wake(it); })).observe(elm); }
+  ['click', 'input', 'change'].forEach(ev => elm.addEventListener(ev, () => setTimeout(() => wake(it), 0)));
+  it.fn(0, 0); wake(it); return it; }
+/* ---- lab glassware ---- */
+function bubbles(svg, x, w, yBottom, yTop, t, n = 10, speed = 40, r = 3){ const g = K.group(svg);
+  for (let k = 0; k < n; k++){ const ph = (t * speed / (yBottom - yTop) + k / n) % 1, xx = x + (((k * 37) % 17) / 17 - .5) * w + 2 * Math.sin(t * 6 + k);
+    circ(g, xx, yBottom - ph * (yBottom - yTop), r * (.7 + .5 * ((k * 7) % 3) / 2), 'none', '#64748b', 1, {opacity: (1 - ph * .6).toFixed(2)}); }
+  return g; }
+/* test tube: centre x, top y, height h, width w; level 0..1 of liquid with colour fill */
+function tube(svg, x, y, w, h, level = 0, fill = '#bfdbfe', o = {}){ const g = K.group(svg, o.attrs || {}), r = w / 2, b = y + h;
+  if (level > 0){ const ly = b - r - (h - r) * level; path(g, `M${x - r + 2},${ly} L${x - r + 2},${b - r} A${r - 2},${r - 2} 0 0 0 ${x + r - 2},${b - r} L${x + r - 2},${ly} Z`, fill, 'none', 0, {opacity: o.op ?? .9}); }
+  path(g, `M${x - r - 3},${y - 3} L${x - r},${y} L${x - r},${b - r} A${r},${r} 0 0 0 ${x + r},${b - r} L${x + r},${y} L${x + r + 3},${y - 3}`, 'none', 'text', 2);
+  return g; }
+/* small flame (candle / spirit lamp style) at x, y = base */
+function flame(svg, x, y, s, t){ const f = 1 + .12 * Math.sin(t * 17) + .06 * Math.sin(t * 29);
+  path(svg, `M${x - 9 * s},${y} Q${x - 12 * s},${y - 22 * s * f} ${x},${y - 40 * s * f} Q${x + 12 * s},${y - 22 * s * f} ${x + 9 * s},${y} Z`, '#f97316', 'none', 0, {opacity: .9});
+  path(svg, `M${x - 5 * s},${y} Q${x - 6 * s},${y - 14 * s} ${x},${y - 26 * s * f} Q${x + 6 * s},${y - 14 * s} ${x + 5 * s},${y} Z`, '#fde047', 'none', 0, {opacity: .95}); }
+/* spirit lamp: x centre, y = top of the wick */
+function lamp(svg, x, y, lit, t){ path(svg, `M${x - 30},${y + 52} L${x - 24},${y + 14} Q${x},${y + 4} ${x + 24},${y + 14} L${x + 30},${y + 52} Z`, '#bae6fd', 'text', 2, {'fill-opacity': .6});
+  box(svg, x - 5, y, 10, 10, '#94a3b8', 'text', 1.2); if (lit) flame(svg, x, y, 1, t); }
+/* observation checklist panel */
+function checklist(svg, x, y, w, h, title, items, s){ box(svg, x, y, w, h, 'surface2', 'border', 1.2, {rx: 12});
+  tx(svg, x + 14, y + 26, title, '', 'start', {style: 'font-size:15px;font-weight:800'});
+  items.forEach(([at, t], k) => { const on = s >= at; tx(svg, x + 14, y + 58 + k * 30, (on ? '✔ ' : '· ') + t, on ? 'green' : 'muted', 'start', {style: `font-size:13px;font-weight:${on ? 700 : 400}`}); }); }
+/* ==== end common ==== */
+
+/* ---------- reaction-type machine (same code on pages 04 and 05) ---------- */
+/* TYPES: name, Malayalam, general pattern (reactants, products) in the letters A–D, feature */
+const TYPES = {
+  comb: ['Combination', 'സംയോജന രാസപ്രവർത്തനം', ['Xa', 'Xb'], ['XaXb'], 'two or more substances join to give <b>one</b> new compound', 'A + B → AB'],
+  dec: ['Decomposition', 'വിഘടന രാസപ്രവർത്തനം', ['XaXb'], ['Xa', 'Xb'], '<b>one</b> compound breaks down into two or more substances', 'AB → A + B'],
+  dd: ['Double decomposition', 'ദ്വിവിഘടന രാസപ്രവർത്തനം', ['XaXb', 'XcXd'], ['XaXd', 'XcXb'], 'two compounds <b>exchange ions</b> (swap partners) to give two new compounds', 'AB + CD → AD + CB'],
+  disp: ['Displacement', 'ആദേശ രാസപ്രവർത്തനം', ['Xa', 'XbXc'], ['XaXc', 'Xb'], 'one element <b>takes the place</b> of another element in a compound', 'A + BC → AC + B']};
+const strip = f => String(f).replace(/[↑↓]/g, '');
+/* place c[k] copies of each formula side by side between x0 and x1 around height yc; r = ball radius (null → largest that fits) */
+function layoutSide(list, co, x0, x1, yc, hMax, rFix, rMax = 15){
+  const n = list.length, opW = 30, Ms = list.map(f => molLayout(strip(f)));
+  const wts = Ms.map((M, k) => Math.sqrt(M.w * M.h * co[k]) + 1.2), tot = wts.reduce((a, b) => a + b, 0), avail = x1 - x0 - (n - 1) * opW, bws = wts.map(w => avail * w / tot);
+  const fit = (M, c, bw) => { let best = 0; for (let cols = 1; cols <= c; cols++){ const rows = Math.ceil(c / cols); best = Math.max(best, Math.min((bw - 6) / (cols * (M.w + .6)), (hMax - 6) / (rows * (M.h + .6)))); } return best; };
+  const r = rFix || Math.min(rMax, ...Ms.map((M, k) => fit(M, co[k], bws[k])));
+  const atoms = [], slots = [], ops = []; let x = x0;
+  list.forEach((f, k) => { const M = Ms[k], bw = bws[k], cw = (M.w + .6) * r, ch = (M.h + .6) * r; let cols = 1;
+    cols = Math.max(1, Math.min(co[k], Math.floor((bw - 4) / cw)));
+    const rows = Math.ceil(co[k] / cols);
+    for (let j = 0; j < co[k]; j++){ const row = Math.floor(j / cols), inRow = Math.min(cols, co[k] - row * cols), mx = x + bw / 2 + ((j % cols) - (inRow - 1) / 2) * cw, my = yc + (row - (rows - 1) / 2) * ch;
+      M.pts.forEach(([px, py, s]) => atoms.push({s, x: mx + (px - M.cx) * r, y: my + (py - M.cy) * r, sp: k})); }
+    slots.push({x: x + bw / 2, h: rows * ch}); if (k < n - 1) ops.push(x + bw + opW / 2); x += bw + opW; });
+  return {r, atoms, slots, ops}; }
+/* pair every reactant atom with a product atom of the same element (left-to-right order) */
+function pairAtoms(A, B){ const out = [], by = {}; B.atoms.forEach(a => (by[a.s] = by[a.s] || []).push(a)); for (const s in by) by[s].sort((p, q) => p.x - q.x);
+  const left = {}; A.atoms.forEach(a => (left[a.s] = left[a.s] || []).push(a)); for (const s in left){ left[s].sort((p, q) => p.x - q.x); left[s].forEach((a, i) => out.push({s, a, b: (by[s] || [])[i] || a})); }
+  return out; }
+function stage(L, R, cL, cR, x0, x1, yc, hMax, rMax){ const A0 = layoutSide(L, cL, x0, x1, yc, hMax, null, rMax), B0 = layoutSide(R, cR, x0, x1, yc, hMax, null, rMax), r = Math.min(A0.r, B0.r);
+  const A = layoutSide(L, cL, x0, x1, yc, hMax, r), B = layoutSide(R, cR, x0, x1, yc, hMax, r); return {A, B, r, pairs: pairAtoms(A, B)}; }
+/* draw a stage at progress t (0 = reactants, 1 = products) */
+function drawStage(svg, S, L, R, cL, cR, t, o = {}){ const mv = K.ease(K.sub01(t, .18, .8)), shake = t > 0 && t < .2 ? 2.2 * Math.sin(t * 160) : 0, lift = o.lift ?? 34;
+  S.pairs.forEach((p, i) => { const x = K.lerp(p.a.x, p.b.x, mv), y = K.lerp(p.a.y, p.b.y, mv) - lift * Math.sin(Math.PI * mv) * (i % 2 ? 1 : -.6); ball(svg, x + (i % 2 ? shake : -shake), y, S.r, p.s); });
+  const fs = o.fs || 20, ly = o.ly, opL = 1 - K.sub01(t, .12, .3), opR = K.sub01(t, .78, .95);
+  const lab = (f, c) => [...(c > 1 ? [{t: String(c), k: 'n'}] : []), ...segs(String(f).replace(/X([a-d])/g, (m, q) => q.toUpperCase()))];
+  if (opL > 0){ S.A.slots.forEach((s, k) => fSvg(svg, s.x, ly, lab(L[k], cL[k]), fs, {attrs: {opacity: opL.toFixed(2)}})); S.A.ops.forEach(x => tx(svg, x, ly, '+', '', 'middle', {style: `font-size:${fs}px;font-weight:700`, opacity: opL.toFixed(2)})); }
+  if (opR > 0){ S.B.slots.forEach((s, k) => fSvg(svg, s.x, ly, lab(R[k], cR[k]), fs, {attrs: {opacity: opR.toFixed(2)}, fill: o.pcol || 'var(--text)'})); S.B.ops.forEach(x => tx(svg, x, ly, '+', '', 'middle', {style: `font-size:${fs}px;font-weight:700`, opacity: opR.toFixed(2)})); } }
+function machine(rootId, BANK, typeKeys){
+  const root = $id(rootId), sel = root.querySelector('select'), svg = root.querySelector('svg'), pred = root.querySelector('.pred'), out = root.querySelector('.readout'), score = root.querySelector('.score');
+  let cur = 0, stop = null, S = null, G = null, guessed = false, shown = false; const got = new Set();
+  sel.innerHTML = BANK.map((b, k) => `<option value="${k}">${k + 1}. ${fUni(eqStr(b))}${b.src ? '  (' + b.src + ')' : ''}</option>`).join('');
+  pred.innerHTML = '<span class="lbl2">First predict – what type is it?</span> ' + typeKeys.map(k => `<button class="btn" data-t="${k}">${TYPES[k][0]}</button>`).join('');
+  function draw(t){ const b = BANK[cur], T = TYPES[b.type]; K.clear(svg);
+    fSvg(svg, 400, 26, eqStr(b), 24);
+    box(svg, 14, 46, 772, 208, 'none', 'border', 1.2, {rx: 14});
+    tx(svg, 28, 64, t < .5 ? 'reactants  അഭികാരകങ്ങൾ' : 'products  ഉൽപന്നങ്ങൾ', t < .5 ? 'blue' : 'green', 'start', {style: 'font-size:13px;font-weight:800'});
+    drawStage(svg, S, b.L, b.R, b.cL, b.cR, t, {ly: 236, fs: 20, rMax: 15});
+    /* the general pattern */
+    box(svg, 14, 266, 772, 122, 'surface2', 'border', 1, {rx: 14});
+    tx(svg, 30, 288, shown ? `${T[0]} – the general pattern` : 'the general pattern (shown after you run it)', shown ? 'purple' : 'muted', 'start', {style: 'font-size:14px;font-weight:800'});
+    if (shown){ const P2 = TYPES[b.type]; drawStage(svg, G, P2[2], P2[3], P2[2].map(() => 1), P2[3].map(() => 1), t, {ly: 372, fs: 18, lift: 18, pcol: 'var(--purple)'});
+      tx(svg, 770, 288, T[1], 'purple', 'end', {style: 'font-size:14px;font-weight:700'}); }
+    else tx(svg, 400, 334, '?', 'muted', 'middle', {style: 'font-size:40px;font-weight:800'}); }
+  function report(){ const b = BANK[cur], T = TYPES[b.type];
+    out.innerHTML = shown ? `<b>${T[0]}</b> <span class="ml">${T[1]}</span> – ${T[4]}. Pattern: <b>${T[5]}</b>.${b.note ? '<br>' + b.note : ''}` : 'Pick the type you expect, then press ▶ Run the reaction.';
+    score.textContent = `Types found correctly at the first try: ${got.size} of ${BANK.length}`; }
+  function load(k){ if (stop){ stop(); stop = null; } cur = k; sel.value = k; const b = BANK[cur];
+    S = stage(b.L, b.R, b.cL, b.cR, 40, 760, 150, 150, 21); const T = TYPES[b.type]; G = stage(T[2], T[3], T[2].map(() => 1), T[3].map(() => 1), 200, 600, 330, 64, 17);
+    guessed = false; shown = false; K.$$('button[data-t]', pred).forEach(x => x.classList.remove('ok', 'bad')); draw(0); report(); }
+  function run(){ if (stop) stop(); shown = true; report(); stop = K.animate(2600, (e, t) => draw(t), () => { stop = null; draw(1); }); }
+  pred.addEventListener('click', e => { const bt = e.target.closest('button[data-t]'); if (!bt) return; const b = BANK[cur], ok = bt.dataset.t === b.type;
+    K.$$('button[data-t]', pred).forEach(x => x.classList.remove('ok', 'bad')); bt.classList.add(ok ? 'ok' : 'bad');
+    if (!guessed && ok) got.add(cur); guessed = true; run(); });
+  root.querySelector('[data-m=run]').addEventListener('click', run);
+  root.querySelector('[data-m=next]').addEventListener('click', () => load((cur + 1) % BANK.length));
+  sel.addEventListener('change', () => load(+sel.value));
+  load(0); }
+const eqStr = b => b.L.map((f, k) => (b.cL[k] > 1 ? b.cL[k] : '') + f).join(' + ') + ' → ' + b.R.map((f, k) => (b.cR[k] > 1 ? b.cR[k] : '') + f).join(' + ');
+
+const hx = c => [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16));
+const mix = (a, b, p) => { const A = hx(a), B = hx(b); return `rgb(${A.map((v, i) => Math.round(K.lerp(v, B[i], clamp(p, 0, 1)))).join(',')})`; };
+const TN = k => TYPES[k][0].toLowerCase();
+
+/* ---------- 1. NaCl + AgNO₃ (Fig 5.4) ---------- */
+(function(){ const svg = $id('agSvg'); let t0 = -1;
+  const OBS = [[.8, 'drops of silver nitrate fall in'], [1.4, 'at once the liquid turns cloudy white'], [2.8, 'white solid particles: a precipitate'], [4.4, 'they settle at the bottom of the tube'], [5.6, 'the precipitate is AgCl (silver chloride)']];
+  const PT = Array.from({length: 46}, (_, k) => [((k * 37) % 100) / 100, ((k * 61) % 100) / 100]);
+  function draw(t){ K.clear(svg); const s = t0 < 0 ? -1 : t - t0, TX = 240, TOP = 90, TH = 220, TW = 58, BOT = TOP + TH, LV = .5;
+    box(svg, 10, 10, 470, 320, 'surface2', 'border', 1.2, {rx: 12});
+    const cloud = s < 0 ? 0 : clamp((s - .9) / 1.2, 0, 1), settle = s < 0 ? 0 : K.ease(clamp((s - 2.8) / 3, 0, 1)), ly = BOT - TW / 2 - (TH - TW / 2) * LV;
+    tube(svg, TX, TOP, TW, TH, LV, mix('#bfdbfe', '#e2e8f0', cloud * (1 - settle * .7)), {op: .8});
+    if (cloud > 0) PT.forEach(([a, b], k) => { const x = TX - TW / 2 + 7 + a * (TW - 14), y0 = ly + 6 + b * (BOT - ly - 18), y1 = BOT - 8 - (k % 5) * 3 - Math.abs(a - .5) * 10, y = K.lerp(y0, y1, settle);
+      circ(svg, x + Math.sin(t * 2 + k) * (1 - settle) * 2, y, 2.8, '#ffffff', '#64748b', .9, {opacity: cloud.toFixed(2)}); });
+    /* dropper */
+    if (s < 2.2){ const o = s < 0 ? 1 : clamp((2.2 - s) / .4, 0, 1), g = K.group(svg, {opacity: o.toFixed(2)});
+      el('ellipse', {cx: TX, cy: 34, rx: 13, ry: 16, fill: '#475569'}, g); box(g, TX - 5, 46, 10, 34, '#e0f2fe', 'text', 1.2); path(g, `M${TX - 5},80 L${TX},90 L${TX + 5},80`, '#e0f2fe', 'text', 1.2);
+      if (s >= 0) for (let k = 0; k < 3; k++){ const ph = (s * 1.6 + k / 3) % 1; if (s < 1.8) circ(svg, TX, 92 + ph * (ly - 92), 3, '#bae6fd', '#0284c7', .8); } }
+    tx(svg, TX + TW / 2 + 12, ly + 20, s < 0 ? 'NaCl solution' : settle > .5 ? 'white precipitate AgCl↓' : 'cloudy white', settle > .5 ? 'blue' : '', 'start', {style: 'font-size:14px;font-weight:700'});
+    if (settle > .5) tx(svg, TX + TW / 2 + 12, BOT - 10, '← settled at the bottom', 'muted', 'start', {style: 'font-size:12px;font-weight:700'});
+    if (s < 2.2) tx(svg, TX - TW / 2 - 12, 40, 'AgNO₃ solution', 'muted', 'end', {style: 'font-size:13px;font-weight:700'});
+    checklist(svg, 490, 10, 300, 320, 'What do we observe?', OBS, s);
+    if (s > 5.6) fSvg(svg, 640, 300, 'NaCl + AgNO3 → AgCl↓ + NaNO3', 15, {fill: 'var(--blue)'}); }
+  const it = anim($id('agLab'), draw);
+  $id('agGo').addEventListener('click', () => { t0 = reduce ? it.t - 10 : it.t; if (reduce) it.fn(it.t, 0); });
+  $id('agReset').addEventListener('click', () => { t0 = -1; draw(it.t); });
+})();
+
+/* ---------- ion-swap viewer ---------- */
+/* A, B = positive ions of compound 1 and 2; X, Y = their negative ions; counts include the coefficients. Products: list of [formula, ions] */
+/* IONX-START (verified by script) */
+const IONX = [
+  {r: ['NaCl', 'AgNO3'], A: ['Na^+', 1], X: ['Cl^-', 1], B: ['Ag^+', 1], Y: ['NO3^-', 1], p: [['AgCl↓', 'BX'], ['NaNO3', 'AY']], eq: 'NaCl + AgNO3 → AgCl↓ + NaNO3', kind: 'precipitation – white silver chloride', src: 'book'},
+  {r: ['BaCl2', 'H2SO4'], A: ['Ba^2+', 1], X: ['Cl^-', 2], B: ['H^+', 2], Y: ['SO4^2-', 1], p: [['BaSO4↓', 'AY'], ['2HCl', 'BX']], eq: 'BaCl2 + H2SO4 → BaSO4↓ + 2HCl', kind: 'precipitation – white barium sulphate', src: 'book'},
+  {r: ['MgCl2', 'H2SO4'], A: ['Mg^2+', 1], X: ['Cl^-', 2], B: ['H^+', 2], Y: ['SO4^2-', 1], p: [['MgSO4↓', 'AY'], ['2HCl', 'BX']], eq: 'MgCl2 + H2SO4 → MgSO4↓ + 2HCl', kind: 'precipitation (the book\'s example in the side box)', src: 'book'},
+  {r: ['CaCO3', '2HCl'], A: ['Ca^2+', 1], X: ['CO3^2-', 1], B: ['H^+', 2], Y: ['Cl^-', 2], p: [['CaCl2', 'AY'], ['H2O + CO2↑', 'BX']], eq: 'CaCO3 + 2HCl → CaCl2 + H2O + CO2↑', kind: 'gas-forming – the 2H⁺ + CO₃²⁻ give H₂O and CO₂ gas', src: 'book'},
+  {r: ['HCl', 'NaOH'], A: ['H^+', 1], X: ['Cl^-', 1], B: ['Na^+', 1], Y: ['OH^-', 1], p: [['NaCl', 'BX'], ['H2O', 'AY']], eq: 'HCl + NaOH → NaCl + H2O', kind: 'neutralisation – water does not split into ions', src: 'book'},
+  {r: ['Pb(NO3)2', '2KI'], A: ['Pb^2+', 1], X: ['NO3^-', 2], B: ['K^+', 2], Y: ['I^-', 2], p: [['PbI2↓', 'AY'], ['2KNO3', 'BX']], eq: 'Pb(NO3)2 + 2KI → PbI2↓ + 2KNO3', kind: 'precipitation – bright yellow lead iodide (teacher only)', src: 'more example'},
+  {r: ['Cu(NO3)2', 'Na2S'], A: ['Cu^2+', 1], X: ['NO3^-', 2], B: ['Na^+', 2], Y: ['S^2-', 1], p: [['CuS↓', 'AY'], ['2NaNO3', 'BX']], eq: 'Cu(NO3)2 + Na2S → CuS↓ + 2NaNO3', kind: 'precipitation – black copper sulphide', src: 'Table 5.4'},
+  {r: ['KOH', 'HNO3'], A: ['K^+', 1], X: ['OH^-', 1], B: ['H^+', 1], Y: ['NO3^-', 1], p: [['KNO3', 'AY'], ['H2O', 'BX']], eq: 'KOH + HNO3 → KNO3 + H2O', kind: 'neutralisation', src: 'more example'},
+  {r: ['CuSO4', '2NaOH'], A: ['Cu^2+', 1], X: ['SO4^2-', 1], B: ['Na^+', 2], Y: ['OH^-', 2], p: [['Cu(OH)2↓', 'AY'], ['Na2SO4', 'BX']], eq: 'CuSO4 + 2NaOH → Cu(OH)2↓ + Na2SO4', kind: 'precipitation – pale blue copper hydroxide', src: 'go further'}];
+/* IONX-END */
+(function(){ const svg = $id('isSvg'), sel = $id('isSel'), out = $id('isOut'); let cur = 0, stop = null, last = 0;
+  const COL = {A: ['#fee2e2', '#dc2626'], B: ['#fef3c7', '#d97706'], X: ['#ccfbf1', '#0d9488'], Y: ['#ede9fe', '#7c3aed']};
+  sel.innerHTML = IONX.map((r, k) => `<option value="${k}">${fUni(r.eq)}  (${r.src})</option>`).join('');
+  const cw = s => 20 + 11 * fUni(s).length, H2 = 34;
+  function row(list, cx){ const ws = list.map(q => cw(q.s)), tot = ws.reduce((a, b) => a + b, 0) + 6 * (list.length - 1); let x = cx - tot / 2; return list.map((q, i) => { const p = {x: x + ws[i] / 2, w: ws[i]}; x += ws[i] + 6; return p; }); }
+  function layout(R){ const chips = []; const mk = (key) => { const [s, n] = R[key]; const arr = []; for (let k = 0; k < n; k++) arr.push({key, s}); return arr; };
+    const c1 = [...mk('A'), ...mk('X')], c2 = [...mk('B'), ...mk('Y')];
+    row(c1, 210).forEach((p, i) => { c1[i].x0 = p.x; c1[i].y0 = 110; c1[i].w = p.w; }); row(c2, 590).forEach((p, i) => { c2[i].x0 = p.x; c2[i].y0 = 110; c2[i].w = p.w; });
+    const all = [...c1, ...c2], used = new Set();
+    R.p.forEach(([f, keys], j) => { const cx = j ? 590 : 210, mem = [];
+      [...keys].forEach(key => all.forEach((c, i) => { if (c.key === key && !used.has(i)){ used.add(i); mem.push(c); } }));
+      mem.sort((a, b) => (a.key === 'A' || a.key === 'B' ? 0 : 1) - (b.key === 'A' || b.key === 'B' ? 0 : 1));
+      row(mem, cx).forEach((p, i) => { mem[i].x1 = p.x; mem[i].y1 = 250; }); });
+    return all; }
+  function draw(t){ const R = IONX[cur], all = layout(R), mv = K.ease(clamp(t, 0, 1)); K.clear(svg);
+    box(svg, 14, 14, 772, 312, 'none', 'border', 1.2, {rx: 14});
+    tx(svg, 30, 36, 'reactants', 'blue', 'start', {style: 'font-size:13px;font-weight:800'}); tx(svg, 30, 304, 'products', 'green', 'start', {style: 'font-size:13px;font-weight:800'});
+    fSvg(svg, 210, 64, R.r[0], 22, {attrs: {opacity: (1 - .6 * mv).toFixed(2)}}); fSvg(svg, 590, 64, R.r[1], 22, {attrs: {opacity: (1 - .6 * mv).toFixed(2)}}); tx(svg, 400, 64, '+', '', 'middle', {style: 'font-size:22px;font-weight:700'});
+    if (mv > .05) all.forEach(c => { if (Math.abs(c.x1 - c.x0) > 60) path(svg, `M${c.x0},${c.y0 + 18} C${c.x0},180 ${c.x1},180 ${c.x1},${c.y1 - 18}`, 'none', COL[c.key][1], 1.4, {'stroke-dasharray': '4 4', opacity: (.5 * mv).toFixed(2)}); });
+    all.forEach((c, i) => { const x = K.lerp(c.x0, c.x1, mv), y = K.lerp(c.y0, c.y1, mv) + Math.sin(Math.PI * mv) * (c.key === 'A' || c.key === 'B' ? -18 : 18);
+      box(svg, x - c.w / 2, y - H2 / 2, c.w, H2, COL[c.key][0], COL[c.key][1], 2, {rx: 10}); fSvg(svg, x, y + 1, c.s, 17, {fill: '#111827'}); });
+    if (mv > .9){ R.p.forEach(([f], j) => fSvg(svg, j ? 590 : 210, 292, f, 22, {fill: 'var(--green)'})); tx(svg, 400, 292, '+', '', 'middle', {style: 'font-size:22px;font-weight:700'}); }
+    tx(svg, 400, 150, mv > .5 ? 'new partners' : '↓ exchange ions ↓', 'muted', 'middle', {style: 'font-size:13px;font-weight:700'}); }
+  function report(done){ const R = IONX[cur], u = q => fUni(q[0]);
+    out.innerHTML = done ? `${fHtml(R.eq).replace(/→/, '→')}\nPositive ions ${u(R.A)} and ${u(R.B)} exchange their partners: ${u(R.A)} goes with ${u(R.Y)}, ${u(R.B)} goes with ${u(R.X)}.\nKind: ${R.kind}.` : 'Press “Swap the partners”. Each colour is one kind of ion – follow it.'; }
+  function load(k){ if (stop){ stop(); stop = null; } cur = k; sel.value = k; last = 0; draw(0); report(false); }
+  sel.addEventListener('change', () => load(+sel.value));
+  $id('isGo').addEventListener('click', () => { if (stop) stop(); stop = K.animate(2200, (e, t) => draw(t), () => { stop = null; draw(1); report(true); }); });
+  $id('isReset').addEventListener('click', () => load(cur));
+  load(0);
+})();
+
+/* ---------- Zn + HCl, pop test (Fig 5.5) ---------- */
+(function(){ const svg = $id('znSvg'); let t0 = -1;
+  const OBS = [[1.1, 'bubbles of gas rise from the zinc'], [2.2, 'the tube gets slightly warm'], [3, 'a burning splinter is brought near'], [4.6, 'the gas burns with a “POP” → hydrogen'], [5.8, 'the zinc granules slowly get smaller']];
+  const GR = [[-14, 0], [0, 3], [13, -1], [-6, -6], [8, -7]];
+  function draw(t){ K.clear(svg); const s = t0 < 0 ? -1 : t - t0, TX = 250, TOP = 80, TH = 210, TW = 50, BOT = TOP + TH;
+    box(svg, 10, 10, 470, 340, 'surface2', 'border', 1.2, {rx: 12});
+    el('ellipse', {cx: 150, cy: 330, rx: 110, ry: 12, fill: '#cbd5e1', stroke: '#64748b', 'stroke-width': 1.5}, svg); line(svg, 90, 40, 90, 328, '#64748b', 5);
+    line(svg, 90, 120, TX - TW / 2, 120, '#64748b', 4); box(svg, TX - TW / 2 - 5, 112, TW + 10, 16, 'none', '#64748b', 3, {rx: 4});
+    const fall = s < 0 ? 0 : K.ease(clamp(s / .8, 0, 1)), shrink = s < 0 ? 1 : 1 - .3 * clamp((s - 1) / 6, 0, 1);
+    tube(svg, TX, TOP, TW, TH, .5, '#dbeafe');
+    if (s > 1) bubbles(svg, TX, 30, BOT - 22, BOT - TW / 2 - (TH - TW / 2) * .5 + 4, t, 12, 45, 2.6);
+    GR.forEach(([dx, dy]) => { const y = s < 0 ? 50 + dy : K.lerp(50 + dy, BOT - 14 + dy * .4, fall); if (s >= 0 || true){ const sc = 6 * shrink; K.polygon(svg, [P(TX + dx - sc, y + 3), P(TX + dx - sc * .4, y - sc * .8), P(TX + dx + sc, y - sc * .4), P(TX + dx + sc * .7, y + sc * .7)], {fill: '#94a3b8', stroke: '#334155', 'stroke-width': 1}); } });
+    tx(svg, TX + TW / 2 + 10, BOT - 60, 'dilute HCl', '', 'start', {style: 'font-size:13px;font-weight:700'}); tx(svg, TX + TW / 2 + 10, BOT - 14, 'Zn granules', '', 'start', {style: 'font-size:13px;font-weight:700'});
+    /* splinter */
+    if (s > 3){ const a = K.ease(clamp((s - 3) / 1.5, 0, 1)), tip = P(K.lerp(440, TX + 6, a), K.lerp(40, TOP - 8, a)), popped = s > 4.5;
+      line(svg, tip.x, tip.y, tip.x + 120, tip.y - 30, '#a16207', 5);
+      if (!popped) flame(svg, tip.x, tip.y + 4, .45, t);
+      if (popped && s < 5.6){ const q = clamp((s - 4.5) / 1.1, 0, 1); circ(svg, TX, TOP - 6, 10 + 40 * q, '#fde047', 'none', 0, {opacity: (.8 * (1 - q)).toFixed(2)});
+        tx(svg, TX - 70, TOP - 30, 'POP!', 'red', 'middle', {style: `font-size:${(22 + 14 * (1 - q)).toFixed(0)}px;font-weight:900`}); }
+      if (popped && s >= 5.6) tx(svg, TX - 70, TOP - 30, 'pop!', 'red', 'middle', {style: 'font-size:18px;font-weight:800'}); }
+    if (s < 0) tx(svg, 245, 30, 'press ▶ to begin', 'muted', 'middle', {style: 'font-size:13px;font-weight:700'});
+    checklist(svg, 490, 10, 300, 340, 'What do we observe?', OBS, s);
+    if (s > 5) fSvg(svg, 640, 320, 'Zn + 2HCl → ZnCl2 + H2↑', 16, {fill: 'var(--blue)'}); }
+  const it = anim($id('znLab'), draw);
+  $id('znGo').addEventListener('click', () => { t0 = reduce ? it.t - 10 : it.t; if (reduce) it.fn(it.t, 0); });
+  $id('znReset').addEventListener('click', () => { t0 = -1; draw(it.t); });
+})();
+
+/* particle stepper for Zn + 2HCl */
+(function(){ const r = {type: 'disp', L: ['Zn', 'HCl'], cL: [1, 2], R: ['ZnCl2', 'H2↑'], cR: [1, 1]}, S = stage(r.L, r.R, r.cL, r.cR, 60, 740, 140, 150, 24);
+  const st = [['<b>Zn + 2HCl.</b> A zinc atom (element) and two hydrogen chloride units (compound).', 0], ['<b>→ ZnCl<sub>2</sub> + H<sub>2</sub>↑.</b> Zinc takes the place of hydrogen beside the chlorine; the hydrogen atoms are pushed out and pair up as H<sub>2</sub> gas. An element replaced an element – <b>displacement</b>.', 1]];
+  new K.Stepper('#sDisp', {steps: st.map(q => q[0]), ms: 2200, gap: 3600, draw(svg, i, t){ fSvg(svg, 400, 24, eqStr(r), 22); box(svg, 14, 44, 772, 196, 'none', 'border', 1.2, {rx: 14});
+    drawStage(svg, S, r.L, r.R, r.cL, r.cR, st[i][1] ? t : 0, {ly: 266, fs: 20}); tx(svg, 400, 290, st[i][1] ? 'A + BC → AC + B' : 'element + compound', st[i][1] ? 'green' : 'muted', 'middle', {style: 'font-size:13px;font-weight:700'}); }}); })();
+
+/* ---------- thermite ---------- */
+(function(){ const svg = $id('thSvg'); let t0 = -1;
+  function rail(g, x0, x1, col){ box(g, x0, 196, x1 - x0, 16, col, '#334155', 1.5); box(g, x0 + (x1 > 400 ? 0 : 0), 212, x1 - x0, 30, col, '#334155', 1.2, {opacity: .9}); box(g, x0, 242, x1 - x0, 12, col, '#334155', 1.5); }
+  function draw(t){ K.clear(svg); const s = t0 < 0 ? -1 : t - t0;
+    box(svg, 10, 10, 780, 300, 'surface2', 'border', 1.2, {rx: 12});
+    box(svg, 340, 180, 120, 90, '#e7d8b8', '#a16207', 1.5, {rx: 6}); tx(svg, 400, 284, 'sand mould', 'sm muted', 'middle', {style: 'font-size:12px;font-weight:700'});
+    rail(svg, 40, 388, '#94a3b8'); rail(svg, 412, 760, '#94a3b8');
+    const pour = s < 0 ? 0 : clamp((s - 3) / 1.6, 0, 1), cool = s < 0 ? 0 : clamp((s - 4.8) / 3, 0, 1), hot = s > .6 && s < 4.6;
+    /* crucible */
+    path(svg, 'M356,60 L444,60 L418,150 L382,150 Z', '#57534e', '#1c1917', 2);
+    if (pour < 1) path(svg, `M362,${70 + 60 * pour} L438,${70 + 60 * pour} L418,148 L382,148 Z`, hot ? mix('#fde68a', '#ffffff', .5 + .5 * Math.sin(t * 20)) : '#9a3412', 'none', 0, {opacity: .95});
+    if (hot) for (let k = 0; k < 14; k++){ const ph = (t * 1.3 + k / 14) % 1, a = -Math.PI / 2 + (((k * 37) % 100) / 100 - .5) * 2.2; circ(svg, 400 + Math.cos(a) * ph * 120, 66 + Math.sin(a) * ph * 60 + ph * ph * 50, 2.4, ph < .5 ? '#fef9c3' : '#f97316', 'none', 0, {opacity: (1 - ph).toFixed(2)}); }
+    /* molten stream and weld */
+    if (pour > 0 && pour < 1) box(svg, 395, 150, 10, 46, '#fde047', '#f97316', 1);
+    if (pour > 0){ const col = cool > 0 ? (cool < .5 ? mix('#fde047', '#dc2626', cool * 2) : mix('#dc2626', '#94a3b8', (cool - .5) * 2)) : '#fde047'; const h = 58 * pour;
+      box(svg, 386, 254 - h, 28, h, col, 'none', 0); }
+    if (s > .5 && s < 1) tx(svg, 470, 60, 'igniting…', 'amber', 'start', {style: 'font-size:14px;font-weight:800'});
+    const msg = s < 0 ? 'Two rail ends with a gap, a crucible of thermite (Fe₂O₃ + Al powder) above' : s < 3 ? 'Fe₂O₃ + 2Al → 2Fe + Al₂O₃ : aluminium displaces iron – white hot!' : s < 4.8 ? 'molten iron runs down into the gap' : cool < 1 ? 'the iron cools: yellow → red → grey' : '✔ the two rails are welded into one';
+    tx(svg, 30, 32, msg, s < 0 ? 'muted' : 'blue', 'start', {style: 'font-size:14px;font-weight:800'});
+    tx(svg, 470, 110, s > 1 ? 'over 2000 °C' : '', 'red', 'start', {style: 'font-size:14px;font-weight:800'}); }
+  const it = anim($id('thLab'), draw);
+  $id('thGo').addEventListener('click', () => { t0 = reduce ? it.t - 10 : it.t; if (reduce) it.fn(it.t, 0); });
+  $id('thReset').addEventListener('click', () => { t0 = -1; draw(it.t); });
+})();
+
+/* ---------- Table 5.3 ---------- */
+(function(){ const root = $id('t53Box'), keys = ['comb', 'dec', 'dd', 'disp'];
+  const FEAT = {comb: 'Two or more substances combine to form ONE new compound', dec: 'ONE compound breaks down to form two or more substances', dd: 'Two compounds EXCHANGE IONS to form two new compounds', disp: 'An element REPLACES another element in a compound'};
+  const order = ['dd', 'comb', 'disp', 'dec'];
+  root.innerHTML = `<div class="tw"><table class="ft t53"><thead><tr><th>${H('Chemical reaction', 'രാസപ്രവർത്തനം')}</th><th>${H('Special feature', 'സവിശേഷത')}</th></tr></thead><tbody>${keys.map(k => `<tr><td>${TYPES[k][0]} reaction<span class="ml">${TYPES[k][1]}</span></td><td><select data-k="${k}" aria-label="feature of ${TYPES[k][0]}"><option value="">– choose the feature –</option>${order.map(o => `<option value="${o}">${FEAT[o]}</option>`).join('')}</select></td></tr>`).join('')}</tbody></table></div>
+    <div class="controls"><button class="btn primary" data-f="check">✔ Check my answers</button><button class="btn ghost" data-f="clear">⟲ Clear</button><button class="btn" data-f="show">💡 Show answers</button></div><p class="score"></p>`;
+  const sels = K.$$('select', root), sc = root.querySelector('.score');
+  root.addEventListener('click', e => { const b = e.target.closest('button[data-f]'); if (!b) return; const f = b.dataset.f;
+    if (f === 'check'){ let ok = 0; sels.forEach(x => { const r = x.value === x.dataset.k; x.classList.toggle('ok', r); x.classList.toggle('bad', !r); if (r) ok++; }); sc.textContent = ok === 4 ? '🎉 All 4 correct! Table 5.3 is complete.' : `${ok} of 4 correct – count the reactants and the products of each type.`; }
+    else if (f === 'show'){ sels.forEach(x => { x.value = x.dataset.k; x.classList.add('ok'); x.classList.remove('bad'); }); sc.textContent = 'Table 5.3 filled in (green).'; }
+    else { sels.forEach(x => { x.value = ''; x.classList.remove('ok', 'bad'); }); sc.textContent = ''; } });
+  root.addEventListener('change', e => e.target.classList.remove('ok', 'bad'));
+})();
+
+/* ---------- Table 5.4 ---------- */
+/* T54-START (verified by script) */
+const T54 = [['Zn + 2AgNO3 → Zn(NO3)2 + 2Ag', 'disp'], ['CaCO3 → CaO + CO2', 'dec'], ['2HI → H2 + I2', 'dec'], ['Cu(NO3)2 + Na2S → CuS + 2NaNO3', 'dd'], ['SO2 + H2O → H2SO3', 'comb']];
+const T54X = [['CaO + H2O → Ca(OH)2', 'comb'], ['N2 + 3H2 → 2NH3', 'comb'], ['2SO2 + O2 → 2SO3', 'comb'], ['(NH4)2Cr2O7 → Cr2O3 + 4H2O + N2', 'dec'], ['CuCO3 → CuO + CO2', 'dec'], ['2Pb(NO3)2 → 2PbO + 4NO2 + O2', 'dec'],
+  ['NaCl + AgNO3 → AgCl + NaNO3', 'dd'], ['BaCl2 + H2SO4 → BaSO4 + 2HCl', 'dd'], ['HCl + NaOH → NaCl + H2O', 'dd'], ['Zn + 2HCl → ZnCl2 + H2', 'disp'], ['Fe + CuSO4 → FeSO4 + Cu', 'disp'], ['Fe2O3 + 2Al → 2Fe + Al2O3', 'disp']];
+/* T54-END */
+(function(){ const rows = $id('t54Rows'), grid = $id('t54Grid'), score = $id('t54Score'), keys = ['comb', 'dec', 'dd', 'disp']; let placed = new Set(), ext = false;
+  rows.innerHTML = T54.map(([eq, k], i) => `<div class="rx54"><span class="chem">${i + 1}. ${fHtml(eq)}</span><span class="yn" data-ans="${keys.indexOf(k)}" data-why="${esc(TYPES[k][0] + ': ' + TYPES[k][4].replace(/<\/?b>/g, ''))}." data-hint="Count the reactants and products; look for lone elements and swapped ions." data-i="${i}">${keys.map(q => `<button class="btn">${TYPES[q][0]}</button>`).join('')}</span><div class="why"></div></div>`).join('');
+  function render(){ grid.innerHTML = `<thead><tr>${keys.map(k => `<th>${TYPES[k][0]}<span class="ml">${TYPES[k][1]}</span></th>`).join('')}</tr></thead><tbody><tr>${keys.map(k => `<td>${T54.map(([eq, q], i) => q === k && placed.has(i) ? `<div>${i + 1}. ${fHtml(eq)}</div>` : '').join('')}${ext ? T54X.filter(x => x[1] === k).map(x => `<div class="ext">${fHtml(x[0])}</div>`).join('') : ''}</td>`).join('')}</tr></tbody>`;
+    score.textContent = placed.size === T54.length ? `🎉 All 5 classified!${ext ? '' : ' Now press “Extend the table”.'}` : `Classified correctly: ${placed.size} of 5`; }
+  choices(rows);
+  K.$$('.yn', rows).forEach(bx => bx.addEventListener('picked', e => { if (e.detail.ok){ placed.add(+bx.dataset.i); render(); } }));
+  $id('t54Ext').addEventListener('click', () => { ext = true; render(); });
+  $id('t54Clr').addEventListener('click', () => { placed = new Set(); ext = false; K.$$('.yn button', rows).forEach(b => b.classList.remove('ok', 'bad')); K.$$('.why', rows).forEach(w => { w.innerHTML = ''; }); render(); });
+  render();
+})();
+
+/* ---------- the reaction-type machine (all four types) ---------- */
+/* BANK-START (verified by script) */
+const BANK = [
+  {type: 'dd', L: ['NaCl', 'AgNO3'], cL: [1, 1], R: ['AgCl↓', 'NaNO3'], cR: [1, 1], src: 'book', note: 'White precipitate of silver chloride (Fig 5.4).'},
+  {type: 'disp', L: ['Zn', 'HCl'], cL: [1, 2], R: ['ZnCl2', 'H2↑'], cR: [1, 1], src: 'book', note: 'Zinc displaces hydrogen; the hydrogen burns with a pop (Fig 5.5).'},
+  {type: 'comb', L: ['SO2', 'H2O'], cL: [1, 1], R: ['H2SO3'], cR: [1], src: 'Table 5.4', note: 'Sulphur dioxide dissolves in water to give sulphurous acid.'},
+  {type: 'dd', L: ['BaCl2', 'H2SO4'], cL: [1, 1], R: ['BaSO4↓', 'HCl'], cR: [1, 2], src: 'book', note: 'Ba²⁺ and H⁺ swap partners; white BaSO₄.'},
+  {type: 'dec', L: ['HI'], cL: [2], R: ['H2', 'I2'], cR: [1, 1], src: 'Table 5.4', note: 'Hydrogen iodide breaks down into hydrogen and violet iodine.'},
+  {type: 'disp', L: ['Zn', 'AgNO3'], cL: [1, 2], R: ['Zn(NO3)2', 'Ag'], cR: [1, 2], src: 'Table 5.4', note: 'Zinc displaces silver from silver nitrate.'},
+  {type: 'dd', L: ['Cu(NO3)2', 'Na2S'], cL: [1, 1], R: ['CuS↓', 'NaNO3'], cR: [1, 2], src: 'Table 5.4', note: 'Cu²⁺ and Na⁺ swap partners; black CuS precipitate.'},
+  {type: 'dec', L: ['CaCO3'], cL: [1], R: ['CaO', 'CO2↑'], cR: [1, 1], src: 'Table 5.4', note: 'Thermal decomposition of limestone / shells.'},
+  {type: 'disp', L: ['Fe2O3', 'Al'], cL: [1, 2], R: ['Fe', 'Al2O3'], cR: [2, 1], src: 'thermite', note: 'Aluminium displaces iron – molten iron for welding rails.'},
+  {type: 'dd', L: ['HCl', 'NaOH'], cL: [1, 1], R: ['NaCl', 'H2O'], cR: [1, 1], src: 'book', note: 'Neutralisation: water does not split into ions.'},
+  {type: 'comb', L: ['N2', 'H2'], cL: [1, 3], R: ['NH3'], cR: [2], src: 'book', note: 'Ammonia.'},
+  {type: 'disp', L: ['Fe', 'CuSO4'], cL: [1, 1], R: ['FeSO4', 'Cu'], cR: [1, 1], src: 'more example', note: 'An iron nail in copper sulphate gets coated with copper.'},
+  {type: 'dd', L: ['CaCO3', 'HCl'], cL: [1, 2], R: ['CaCl2', 'H2O', 'CO2↑'], cR: [1, 1, 1], src: 'book', note: 'Gas-forming double decomposition.'},
+  {type: 'dec', L: ['(NH4)2Cr2O7'], cL: [1], R: ['Cr2O3', 'H2O', 'N2↑'], cR: [1, 4, 1], src: 'book', note: 'The ammonium dichromate volcano.'},
+  {type: 'disp', L: ['Mg', 'HCl'], cL: [1, 2], R: ['MgCl2', 'H2↑'], cR: [1, 1], src: 'more example', note: 'Magnesium fizzes in dilute acid.'},
+  {type: 'dd', L: ['Pb(NO3)2', 'KI'], cL: [1, 2], R: ['PbI2↓', 'KNO3'], cR: [1, 2], src: 'more example', note: 'Yellow lead iodide (teacher only – lead is poisonous).'},
+  {type: 'comb', L: ['CaO', 'H2O'], cL: [1, 1], R: ['Ca(OH)2'], cR: [1], src: 'book', note: 'Exothermic.'},
+  {type: 'disp', L: ['Zn', 'CuSO4'], cL: [1, 1], R: ['ZnSO4', 'Cu'], cR: [1, 1], src: 'more example', note: 'Zinc displaces copper; the blue colour fades.'},
+  {type: 'dd', L: ['CuSO4', 'NaOH'], cL: [1, 2], R: ['Cu(OH)2↓', 'Na2SO4'], cR: [1, 1], src: 'go further', note: 'Pale blue copper hydroxide precipitate.'},
+  {type: 'dec', L: ['CuCO3'], cL: [1], R: ['CuO', 'CO2↑'], cR: [1, 1], src: '? box', note: 'Green → black.'}];
+/* BANK-END */
+machine('rmLab', BANK, ['comb', 'dec', 'dd', 'disp']);
+
+/* ---------- quick-fire classifier ---------- */
+/* CL-START (verified by script) */
+const CL = [...T54, ['Zn + FeSO4 → ZnSO4 + Fe', 'disp'], ['NaCl + AgNO3 → NaNO3 + AgCl', 'dd'], ['2Pb(NO3)2 → 2PbO + 4NO2 + O2', 'dec'], ['H2 + I2 → 2HI', 'comb'], ['Pb(NO3)2 + 2KI → PbI2 + 2KNO3', 'dd'], ['NH4NO2 → 2H2O + N2', 'dec'],
+  ['2Mg + O2 → 2MgO', 'comb'], ['Mg + 2HCl → MgCl2 + H2', 'disp'], ['KOH + HNO3 → KNO3 + H2O', 'dd'], ['2NaN3 → 2Na + 3N2', 'dec'], ['C + O2 → CO2', 'comb'], ['Fe2O3 + 2Al → 2Fe + Al2O3', 'disp']];
+/* CL-END */
+(function(){ const eqEl = $id('clEq'), btns = $id('clBtns'), fb = $id('clFb'), sc = $id('clScore'), keys = ['comb', 'dec', 'dd', 'disp'];
+  let order = [], pos = 0, right = 0, tried = 0, streak = 0, best = 0, answered = false;
+  btns.innerHTML = keys.map(k => `<button class="btn" data-t="${k}">${TYPES[k][0]}</button>`).join('');
+  function shuffle(){ order = CL.map((_, i) => i); for (let i = order.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; } pos = 0; right = 0; tried = 0; streak = 0; }
+  function show(){ const q = CL[order[pos]]; eqEl.innerHTML = fHtml(q[0]); fb.innerHTML = ''; answered = false; K.$$('button', btns).forEach(b => b.classList.remove('ok', 'bad'));
+    sc.textContent = `Question ${pos + 1} of ${CL.length} · score ${right} / ${tried} · streak ${streak} (best ${best})`; }
+  btns.addEventListener('click', e => { const b = e.target.closest('button[data-t]'); if (!b || answered) return; answered = true; const q = CL[order[pos]], ok = b.dataset.t === q[1];
+    tried++; if (ok){ right++; streak++; best = Math.max(best, streak); } else streak = 0;
+    b.classList.add(ok ? 'ok' : 'bad'); if (!ok) btns.querySelector(`[data-t=${q[1]}]`).classList.add('ok');
+    fb.innerHTML = (ok ? '✅ ' : '❌ It is ') + `<b>${TYPES[q[1]][0]}</b> – ${TYPES[q[1]][4]} (${TYPES[q[1]][5]}).`; fb.style.color = ok ? 'var(--green)' : 'var(--red)';
+    sc.textContent = `Question ${pos + 1} of ${CL.length} · score ${right} / ${tried} · streak ${streak} (best ${best})` + (pos === CL.length - 1 ? ' · 🏁 finished! Press “Start again”.' : ''); });
+  $id('clNext').addEventListener('click', () => { if (pos < CL.length - 1){ pos++; show(); } });
+  $id('clRestart').addEventListener('click', () => { shuffle(); show(); });
+  shuffle(); show();
+})();
+
+choices();
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'NaCl + AgNO₃ → AgCl↓ + NaNO₃ is a…', options: ['combination reaction', 'decomposition reaction', 'double decomposition reaction', 'displacement reaction'], answer: 2, explain: 'Two compounds exchange ions (Na⁺ and Ag⁺ swap partners).', hint: 'Two compounds in, two compounds out.'});
+K.mcq('#q2', {q: 'The white precipitate formed in that reaction is…', options: ['sodium nitrate', 'silver chloride', 'sodium chloride', 'silver nitrate'], answer: 1, explain: 'AgCl↓ – the ↓ marks the precipitate.', hint: 'Look for ↓.'});
+K.mcq('#q3', {q: 'In BaCl₂ + H₂SO₄ → BaSO₄↓ + 2HCl, the ions that exchange partners are…', options: ['Ba²⁺ and Cl⁻', 'Ba²⁺ and H⁺', 'H⁺ and SO₄²⁻', 'Cl⁻ and H⁺'], answer: 1, explain: 'The two positive ions swap: Ba²⁺ goes to SO₄²⁻, H⁺ goes to Cl⁻.', hint: 'Which positive ion is in each reactant?'});
+K.mcq('#q4', {q: 'Zinc in dilute HCl gives a gas that burns with a “pop”. The gas and the reaction type are…', options: ['oxygen – decomposition', 'hydrogen – displacement', 'chlorine – combination', 'carbon dioxide – double decomposition'], answer: 1, explain: 'Zn + 2HCl → ZnCl₂ + H₂↑; zinc displaces hydrogen.', hint: 'Which element leaves the acid?'});
+K.mcq('#q5', {q: 'In the thermite reaction Fe₂O₃ + 2Al → 2Fe + Al₂O₃…', options: ['iron displaces aluminium', 'aluminium displaces iron and a lot of heat melts the iron', 'two compounds exchange ions', 'iron oxide decomposes on its own'], answer: 1, explain: 'Aluminium takes the oxygen from iron oxide; the iron comes out molten.', hint: 'Which element is alone on the left?'});
+K.mcq('#q6', {q: 'HCl + NaOH → NaCl + H₂O belongs to which kind of double decomposition?', options: ['precipitation', 'gas-forming', 'a product that does not separate into ions (neutralisation)', 'it is not double decomposition'], answer: 2, explain: 'Water hardly separates into ions – neutralisation, kind 3 in the side box.', hint: 'Is there a ↓ or ↑?'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

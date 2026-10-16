@@ -820,10 +820,10 @@ function bubbles(svg, x, w, yBottom, yTop, t, n = 10, speed = 40, r = 3){ const 
 const f2 = v => v.toFixed(2);
 
 /* ---------- 1. sodium in water (virtual teacher demo) ---------- */
-(function(){ const svg = $id('naSvg'); let t0 = -1;
+(function(){ const svg = $id('naSvg'); let t0 = -1e9;
   const OBS = [[1.2, 'sodium darts about on the surface'], [1.8, 'fizzing – a gas (hydrogen) is given off'], [3, 'the water turns pink – an alkali forms'], [4, 'heat is given out (the dish gets warm)'], [5, 'it may catch fire with a yellow flame'], [7, 'the sodium gets smaller …'], [9, '… and disappears (used up)']];
   const pinkOf = p => `rgb(${Math.round(K.lerp(224, 249, p))},${Math.round(K.lerp(242, 168, p))},${Math.round(K.lerp(254, 212, p))})`;
-  function draw(t){ K.clear(svg); const s = t0 < 0 ? -1 : t - t0, X0 = 70, X1 = 450, WY = 190, BOT = 285;
+  function draw(t){ K.clear(svg); const s = t0 < -1e8 ? -1 : t - t0, X0 = 70, X1 = 450, WY = 190, BOT = 285;
     box(svg, 10, 10, 470, 320, 'surface2', 'border', 1.2, {rx: 12});
     /* the dish (side view) with water */
     const pink = clamp((s - 2.2) / 5, 0, 1);
@@ -863,7 +863,7 @@ const f2 = v => v.toFixed(2);
     if (s > 9.5) tx(svg, 640, 318, 'chemical change + energy change', 'red', 'middle', {style: 'font-size:13px', 'font-weight': 800}); }
   const it = anim($id('naLab'), draw);
   $id('naGo').addEventListener('click', () => { t0 = reduce ? it.t - 12 : it.t; if (reduce) it.fn(it.t, 0); });
-  $id('naReset').addEventListener('click', () => { t0 = -1; draw(it.t); });
+  $id('naReset').addEventListener('click', () => { t0 = -1e9; draw(it.t); });
 })();
 
 /* ---------- 2. electronic balance: experiments 1 and 2 ---------- */
@@ -896,8 +896,8 @@ function beaker(g, x, y, w, h, level, fill, label, o = {}){ /* x,y = bottom-left
   if (level > 0) box(g, x + 2, y - h * level, w - 4, h * level - 2, fill, 'none', 0, {opacity: .9});
   K.polyline(g, [P(x - 4, y - h - 4), P(x, y - h), P(x, y), P(x + w, y), P(x + w, y - h), P(x + w + 4, y - h - 4)], {stroke: 'var(--text)', 'stroke-width': 2});
   if (label) tx(g, x + w / 2, y - 16, label, '', 'middle', {style: `font-size:${o.fs || 14}px`, 'font-weight': 700}); }
-(function(){ const svg = $id('mbSvg'), sel = $id('mbSel'), out = $id('mbOut'); let t0 = -1;
-  function draw(t){ K.clear(svg); const e = +sel.value, s = t0 < 0 ? -1 : t - t0, CX = 240;
+(function(){ const svg = $id('mbSvg'), sel = $id('mbSel'), out = $id('mbOut'); let t0 = -1e9;
+  function draw(t){ K.clear(svg); const e = +sel.value, s = t0 < -1e8 ? -1 : t - t0, CX = 240;
     box(svg, 10, 10, 460, 320, 'surface2', 'border', 1.2, {rx: 12});
     let r0, rn, seen = [], eq;
     if (e === 0){ r0 = 92.95; rn = 92.95; eq = 'BaCl₂ + Na₂SO₄ → BaSO₄↓ + 2NaCl';
@@ -928,16 +928,16 @@ function beaker(g, x, y, w, h, level, fill, label, o = {}){ /* x,y = bottom-left
       : (e === 0 ? 'A white precipitate of barium sulphate forms, but nothing has entered or left the beakers – the reading stays 92.95 g.' : e === 1 ? 'Hydrogen is produced, but it is caught in the balloon. Nothing has left, so the reading stays 94.55 g.' : 'The hydrogen escapes into the air, so the balance no longer weighs it and the reading falls a little (by about 0.03 g here). The mass is not destroyed – it has left the flask. That is why the balloon is needed.'); }
   const it = anim($id('mbLab'), draw);
   $id('mbGo').addEventListener('click', () => { t0 = reduce ? it.t - 12 : it.t; if (reduce) it.fn(it.t, 0); });
-  $id('mbReset').addEventListener('click', () => { t0 = -1; draw(it.t); });
-  sel.addEventListener('change', () => { t0 = -1; draw(it.t); });
+  $id('mbReset').addEventListener('click', () => { t0 = -1e9; draw(it.t); });
+  sel.addEventListener('change', () => { t0 = -1e9; draw(it.t); });
 })();
 
 /* ---------- 3. burning paper: open dish or closed jar ---------- */
 function miniMol(g, x, y, kind, op){ const o = {opacity: op};
   if (kind === 'CO2'){ ball(g, x - 9, y, 5.5, 'O', '', o); ball(g, x + 9, y, 5.5, 'O', '', o); ball(g, x, y, 6, 'C', '', o); }
   else { ball(g, x, y, 6, 'O', '', o); ball(g, x - 7, y + 5, 4, 'H', '', o); ball(g, x + 7, y + 5, 4, 'H', '', o); } }
-(function(){ const svg = $id('bpSvg'), out = $id('bpOut'), modeB = $id('bpMode'); let mode = 0, t0 = -1;
-  function draw(t){ K.clear(svg); const s = t0 < 0 ? -1 : t - t0, CX = 240, closed = mode === 1;
+(function(){ const svg = $id('bpSvg'), out = $id('bpOut'), modeB = $id('bpMode'); let mode = 0, t0 = -1e9;
+  function draw(t){ K.clear(svg); const s = t0 < -1e8 ? -1 : t - t0, CX = 240, closed = mode === 1;
     box(svg, 10, 10, 460, 310, 'surface2', 'border', 1.2, {rx: 12});
     const stop = closed ? 3.6 : 6, burn = s < 0 ? 0 : clamp(s / stop, 0, 1) * (closed ? .55 : 1), burning = s >= 0 && s < stop;
     const r0 = closed ? 640 : 105, rn = closed ? 640 : 105 - 4.95 * burn;
@@ -967,9 +967,9 @@ function miniMol(g, x, y, kind, op){ const o = {opacity: op};
     if (s > (closed ? 4.4 : 6.6)) tx(svg, 635, 300, closed ? 'mass is conserved ✔' : 'the gases took the mass away', closed ? 'green' : 'red', 'middle', {style: 'font-size:14px', 'font-weight': 800});
     out.textContent = s < 0 ? (closed ? 'Closed jar on the balance: 640.00 g. Predict first: when the paper burns inside, will the reading change?' : 'Paper in an open dish on the balance: 105.00 g. Predict first: when the paper burns, will the reading change?') : closed ? 'Closed jar: the paper, the air (with its oxygen) and all the products stay inside, so the balance weighs everything all the time. The reading stays the same – mass is conserved.' : 'Open dish: the balance weighs only the dish, the paper and then the ash. The carbon dioxide and water vapour leave, so the reading falls. The mass has gone into the air, not out of existence.'; }
   const it = anim($id('bpLab'), draw);
-  modeB.addEventListener('click', ev => { const b = ev.target.closest('button'); if (!b) return; mode = +b.dataset.m; t0 = -1; K.$$('button', modeB).forEach(x => x.classList.toggle('on', x === b)); draw(it.t); });
+  modeB.addEventListener('click', ev => { const b = ev.target.closest('button'); if (!b) return; mode = +b.dataset.m; t0 = -1e9; K.$$('button', modeB).forEach(x => x.classList.toggle('on', x === b)); draw(it.t); });
   $id('bpGo').addEventListener('click', () => { t0 = reduce ? it.t - 12 : it.t; if (reduce) it.fn(it.t, 0); });
-  $id('bpReset').addEventListener('click', () => { t0 = -1; draw(it.t); });
+  $id('bpReset').addEventListener('click', () => { t0 = -1e9; draw(it.t); });
 })();
 
 /* ---------- 4. atom-mass counter ---------- */

@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Model Test – Solved – Chemical Kinetics</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+.sec{margin:1.4rem 0 .4rem;font-weight:800;color:var(--primary-ink);background:var(--primary-soft);padding:.3rem .7rem;border-radius:6px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.3rem}
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.qcard .qh{display:flex;gap:.6rem;align-items:flex-start;padding-bottom:.5rem;border-bottom:1px dashed var(--border);margin-bottom:.6rem}
+.qcard .qn{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.qcard .qt{flex:1;min-width:0}
+.qcard .marks{white-space:nowrap;color:var(--muted);font-weight:600}
+.qcard .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.2rem .8rem;margin-top:.3rem}
+.qcard .opts.long{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.qcard .reveal{margin:.2rem 0 .5rem}
+.hintp{background:var(--blue-soft);border-radius:8px;padding:.4rem .8rem;margin:.4rem 0}
+.ans{border-left:5px solid var(--green);background:var(--green-soft);padding:.6rem .9rem;border-radius:8px;margin:.6rem 0}
+.ans .t{font-weight:700;color:var(--green);margin-bottom:.2rem}
+.ans p{margin:.3em 0}
+.ans table{background:var(--surface)}
+.mark{font-size:.9rem;color:var(--accent-ink);background:var(--accent-soft);padding:.4rem .8rem;border-radius:8px;margin:.5rem 0 0}
+.mark b{color:var(--accent-ink)}
+.rev{font-size:.88rem;color:var(--muted);margin-top:.4rem}
+.qcard .lab{margin:.7rem 0}
+.qcard .lab svg{min-width:0}
+.fig{max-width:400px;margin:.5rem 0}
+.qt>.fig{float:right;width:42%;max-width:340px;margin:0 0 .4rem .9rem}
+.qt::after{content:"";display:block;clear:both}
+@media(max-width:640px){.qt>.fig{float:none;width:auto;margin:.5rem 0}}
+.fig svg{width:100%;height:auto;background:var(--svgbg);border:1px solid var(--border);border-radius:8px}
+.blank{display:inline-block;min-width:4rem;border-bottom:1.5px solid var(--text)}
+.eqn{white-space:normal}
+.over{position:relative;display:inline-block;padding:0 .35em;line-height:1}
+.over>span{font-size:1.3em}
+.over small{position:absolute;left:50%;transform:translateX(-50%);bottom:1.05em;white-space:nowrap;font-size:.66em;color:var(--purple);font-weight:700}
+.case:has(.over){line-height:1.9}
+table.c14 .eqn{white-space:nowrap}
+.st{font-size:.72em}
+.cf{color:var(--red)}
+table.vt{width:auto;max-width:100%;margin:.4rem 0;display:inline-table;vertical-align:top}
+table.vt td,table.vt th{text-align:center;padding:.2rem .6rem}
+.qt table.vt{display:block;overflow-x:auto}
+table.c14 td,table.c14 th{text-align:left;vertical-align:top}
+table.tal tr.ok td{color:var(--green);font-weight:700}
+table.tal tr.no td{color:var(--red);font-weight:700}
+.case{border-left:4px solid var(--accent);background:var(--accent-soft);padding:.5rem .8rem;border-radius:6px;margin:.4rem 0 .5rem;font-size:.97rem}
+.key{white-space:nowrap}
+@media(max-width:600px){.qcard{padding:.8rem .7rem}.qcard .qh{flex-wrap:wrap}}
+</style>
+</head>
+<body data-page="14_model_test_solutions">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 5 · Solved paper</span><span class="chip amber">40 marks</span>
+<h1>Model Test – Solved <span class="ml">ഉത്തരങ്ങൾ</span></h1>
+<p class="lead">Every question of the <a href="13_model_test_paper.html">model paper</a>, in the same order, with the full answer, the marking scheme, an animated step-by-step solution for the longer questions, and a link to the page where the idea is taught. Try each one again before you open the answer, and mark your own paper honestly.</p>
+<div class="callout"><div class="title">📐 How the solutions are drawn</div><p style="margin:.2rem 0">In equations a coefficient that has just been changed is <b style="color:var(--red)">red</b>; the <b>atom tally</b> turns green when an atom is equal on both sides. <b>Particle pictures</b> show the four reaction types with coloured balls (A + B → AB, AB → A + B, A + BC → AC + B, AB + CD → AD + CB). In <b>energy bars</b> each bar is one particle; the <b style="color:var(--red)">dashed red line</b> is the threshold energy and the bars that reach it turn <b style="color:var(--green)">green</b>. On a <b>volume–time graph</b> the steeper the curve, the faster the reaction.</p>
+<p class="small muted" style="margin:.2rem 0 0">The chain used in every explanation: <b>factor</b> → more collisions, or more particles with at least the threshold energy → <b>more effective collisions</b> every second → <b>higher rate</b>. A catalyst increases the rate and is left chemically unchanged at the end.</p></div>
+
+<div class="sec"><span>SECTION A</span><span>Answer all · 8 × 1 = 8 marks</span></div>
+<div class="qcard" id="qA1"><div class="qh"><span class="qn">1.</span><div class="qt">Which of the following is a chemical change?<div class="opts"><span>(a) melting of ice</span><span>(b) dissolving sugar in water</span><span>(c) milk turning into curd</span><span>(d) boiling of water</span></div></div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 In which one does a new substance form?</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (c) milk turning into curd</div><p>When milk sets into curd a <b>new substance</b> with a new taste and smell forms – a chemical change (<span class="ml">രാസമാറ്റം</span>). Melting, dissolving and boiling change only the state or the form; no new substance forms – physical changes (<span class="ml">ഭൗതികമാറ്റം</span>).</p></div><p class="mark"><b>Marking:</b> 1 mark for (c).</p></div><p class="rev">📖 Review this on <a href="01_physical_chemical_changes.html">Page 1 · Physical & chemical changes</a> · <a href="03_identifying_chemical_change.html">Page 3 · Signs of a chemical change</a></p></div>
+<div class="qcard" id="qA2"><div class="qh"><span class="qn">2.</span><div class="qt">When sodium hydroxide solution is added to blue copper sulphate solution, a blue solid forms and settles at the bottom of the test tube: &nbsp;<span class="eqn">CuSO<sub>4</sub> + 2NaOH → Cu(OH)<sub>2</sub>↓ + Na<sub>2</sub>SO<sub>4</sub></span>. An insoluble solid formed like this in a reaction is called a <span class="blank"></span>.</div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Look at the arrow ↓ after Cu(OH)₂.</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: precipitate (<span class="ml">അവക്ഷിപ്തം</span>)</div><p>The blue solid, copper hydroxide Cu(OH)<sub>2</sub>, does not dissolve in water and sinks – it is a <b>precipitate</b>. The ↓ after its formula shows this. Forming a precipitate is one of the signs of a chemical change.</p></div><p class="mark"><b>Marking:</b> 1 mark.</p></div><p class="rev">📖 Review this on <a href="03_identifying_chemical_change.html">Page 3 · Signs of a chemical change</a> · <a href="05_double_decomposition_displacement.html">Page 5 · Double decomposition & displacement</a></p></div>
+<div class="qcard" id="qA3"><div class="qh"><span class="qn">3.</span><div class="qt">Find the relation and fill in: &nbsp; <span class="eqn">C + O<sub>2</sub> → CO<sub>2</sub></span> : combination &nbsp;::&nbsp; <span style="white-space:nowrap"><span class="eqn">2HgO → 2Hg + O<sub>2</sub></span> : <span class="blank"></span></span></div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 How many reactants are there on the left?</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: decomposition (<span class="ml">വിഘടന രാസപ്രവർത്തനം</span>)</div><p>Carbon and oxygen join to give <b>one</b> product – combination. In <span class="eqn">2HgO → 2Hg + O<sub>2</sub></span> <b>one</b> compound, mercury(II) oxide, breaks into two substances, mercury and oxygen – <b>decomposition</b> (here on heating, a thermal decomposition).</p></div><p class="mark"><b>Marking:</b> 1 mark.</p></div><p class="rev">📖 Review this on <a href="04_combination_decomposition.html">Page 4 · Combination & decomposition</a></p></div>
+<div class="qcard" id="qA4"><div class="qh"><span class="qn">4.</span><div class="qt">The reaction <span class="eqn">Mg + 2HCl → MgCl<sub>2</sub> + H<sub>2</sub>↑</span> is an example of<div class="opts"><span>(a) combination</span><span>(b) decomposition</span><span>(c) displacement</span><span>(d) double decomposition</span></div></div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Which element is pushed out of the compound?</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (c) displacement</div><p>Magnesium, an element, takes the place of hydrogen in hydrochloric acid and hydrogen is set free – pattern A + BC → AC + B: a <b>displacement reaction</b> (<span class="ml">ആദേശ രാസപ്രവർത്തനം</span>).</p></div><p class="mark"><b>Marking:</b> 1 mark for (c).</p></div><p class="rev">📖 Review this on <a href="05_double_decomposition_displacement.html">Page 5 · Double decomposition & displacement</a></p></div>
+<div class="qcard" id="qA5"><div class="qh"><span class="qn">5.</span><div class="qt">The minimum kinetic energy that the reactant particles must have to change into products is called <span class="blank"></span>.</div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 It is the “bar” every collision has to cross.</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: threshold energy (<span class="ml">ത്രെഷോൾഡ് എനർജി</span>)</div><p>Only collisions between particles that have at least the <b>threshold energy</b> give products – these are the effective collisions.</p></div><p class="mark"><b>Marking:</b> 1 mark.</p></div><p class="rev">📖 Review this on <a href="08_temperature_catalysts.html">Page 8 · Temperature & catalysts</a> · <a href="06_rate_collision_theory.html">Page 6 · Rate & collision theory</a></p></div>
+<div class="qcard" id="qA6"><div class="qh"><span class="qn">6.</span><div class="qt">Which of these will <b>not</b> make magnesium ribbon react faster with hydrochloric acid?<div class="opts"><span>(a) warming the acid</span><span>(b) using magnesium powder</span><span>(c) adding water to the acid</span><span>(d) using concentrated acid</span></div></div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 What happens to the number of acid particles in each mL?</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (c) adding water to the acid</div><p>Adding water makes the acid <b>dilute</b> (<span class="ml">നേർപ്പിച്ച</span>): fewer acid particles per unit volume → fewer collisions → the reaction becomes <b>slower</b>. Warming, powdering and a higher concentration all increase the rate.</p></div><p class="mark"><b>Marking:</b> 1 mark for (c).</p></div><p class="rev">📖 Review this on <a href="07_nature_concentration_surface.html">Page 7 · Nature, concentration & surface area</a></p></div>
+<div class="qcard" id="qA7"><div class="qh"><span class="qn">7.</span><div class="qt">Which of these reactions is the fastest?<div class="opts"><span>(a) rusting of an iron gate</span><span>(b) weathering of rocks</span><span>(c) bursting of a firecracker</span><span>(d) ripening of a mango</span></div></div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Which one is over before you can blink?</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (c) bursting of a firecracker</div><p>An explosion (<span class="ml">സ്ഫോടനം</span>) is over in a fraction of a second. Ripening takes days, rusting (<span class="ml">തുരുമ്പിക്കൽ</span>) days to months and weathering of rocks many years.</p></div><p class="mark"><b>Marking:</b> 1 mark for (c).</p></div><p class="rev">📖 Review this on <a href="06_rate_collision_theory.html">Page 6 · Rate & collision theory</a></p></div>
+<div class="qcard" id="qA8"><div class="qh"><span class="qn">8.</span><div class="qt">The enzyme in our saliva that speeds up the breakdown of starch into maltose is <span class="blank"></span>.</div><span class="marks">(1 mark)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Chew rice for a long time – it tastes sweet.</p></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: amylase</div><p><b>Amylase</b> – an enzyme (<span class="ml">എൻസൈമുകൾ</span>), that is, a biological catalyst. That is why chewed rice begins to taste sweet.</p></div><p class="mark"><b>Marking:</b> 1 mark.</p></div><p class="rev">📖 Review this on <a href="08_temperature_catalysts.html">Page 8 · Temperature & catalysts</a></p></div>
+<div class="sec"><span>SECTION B</span><span>Answer all · 5 × 2 = 10 marks</span></div>
+<div class="qcard" id="qB9"><div class="qh"><span class="qn">9.</span><div class="qt">While whitewashing, water is poured on quicklime (<span class="ml">നീറ്റുകക്ക</span>). The mixture hisses and becomes very hot: &nbsp;<span class="eqn">CaO + H<sub>2</sub>O → Ca(OH)<sub>2</sub></span>. (a) Which type of reaction is this? Give the reason.<br>(b) Which sign of a chemical change is seen here? What is such a reaction called?</div><span class="marks">(2 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Count the products. What do you feel if you touch the container?</p></div><div class="lab" id="labB9"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 290" role="img" aria-label="Animated solution of question 9"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: combination; heat is given out – an exothermic reaction</div><p>(a) Two substances, calcium oxide and water, join to form <b>one</b> new compound, calcium hydroxide – a <b>combination reaction</b> (<span class="ml">സംയോജന രാസപ്രവർത്തനം</span>). Pattern A + B → AB.</p><p>(b) The mixture becomes hot: <b>heat is given out</b> (an energy change). A reaction that gives out heat is an <b>exothermic reaction</b> (<span class="ml">താപമോചക പ്രവർത്തനം</span>).</p></div><p class="mark"><b>Marking:</b> (a) type ½, reason ½; (b) sign ½, name ½.</p></div><p class="rev">📖 Review this on <a href="04_combination_decomposition.html">Page 4 · Combination & decomposition</a> · <a href="03_identifying_chemical_change.html">Page 3 · Signs of a chemical change</a></p></div>
+<div class="qcard" id="qB10"><div class="qh"><span class="qn">10.</span><div class="qt">Barium chloride solution is added to sodium sulphate solution: &nbsp;<span class="eqn">BaCl<sub>2</sub> + Na<sub>2</sub>SO<sub>4</sub> → BaSO<sub>4</sub>↓ + 2NaCl</span>. (a) Name the type of reaction and the visible sign seen.<br>(b) Which ions exchange partners in this reaction?</div><span class="marks">(2 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Write the ions of each compound under its formula.</p></div><div class="lab" id="labB10"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 290" role="img" aria-label="Animated solution of question 10"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: double decomposition (precipitation) – a white precipitate; Ba²⁺ and Na⁺ exchange partners</div><p>(a) Two compounds react to form two new compounds – a <b>double decomposition reaction</b> (<span class="ml">ദ്വിവിഘടന രാസപ്രവർത്തനം</span>) of the precipitation kind (<span class="ml">അവക്ഷിപ്തരൂപീകരണ രാസപ്രവർത്തനങ്ങൾ</span>): a <b>white precipitate</b> of barium sulphate, BaSO<sub>4</sub>, forms.</p><p>(b) Before: Ba<sup>2+</sup> with Cl<sup>−</sup>, and Na<sup>+</sup> with SO<sub>4</sub><sup>2−</sup>. After: Ba<sup>2+</sup> with SO<sub>4</sub><sup>2−</sup>, and Na<sup>+</sup> with Cl<sup>−</sup>. The <b>barium ion and the sodium ions exchange partners</b> (the chloride and sulphate ions change places) – AB + CD → AD + CB.</p></div><p class="mark"><b>Marking:</b> (a) type ½, sign ½; (b) 1 mark.</p></div><p class="rev">📖 Review this on <a href="05_double_decomposition_displacement.html">Page 5 · Double decomposition & displacement</a></p></div>
+<div class="qcard" id="qB11"><div class="qh"><span class="qn">11.</span><div class="qt">In a balloon filled with hydrogen and oxygen, the molecules collide with each other millions of times every second, yet nothing happens until a spark is given. (a) According to collision theory, when does a chemical reaction take place?<br>(b) Why do the gases not react without the spark?</div><span class="marks">(2 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Is every collision an effective collision?</p></div><div class="lab" id="labB11"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 290" role="img" aria-label="Animated solution of question 11"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: only collisions with at least the threshold energy (effective collisions) give products; the spark supplies that energy</div><p>(a) Collision theory (<span class="ml">കൊളിഷൻ സിദ്ധാന്തം</span>): a reaction takes place when reactant particles <b>collide</b>; only the collisions in which the particles have at least the <b>threshold energy</b> form products – these are <b>effective collisions</b> (<span class="ml">ഫലവത്തായ കൂട്ടിമുട്ടലുകൾ</span>).</p><p>(b) At room temperature almost none of the molecules have the threshold energy, so their collisions are <b>not effective</b>. The spark gives some molecules enough energy; their effective collisions start the reaction (the energy it releases then keeps it going – very fast, an explosion).</p></div><p class="mark"><b>Marking:</b> (a) 1 mark (collision + threshold energy); (b) 1 mark.</p></div><p class="rev">📖 Review this on <a href="06_rate_collision_theory.html">Page 6 · Rate & collision theory</a> · <a href="08_temperature_catalysts.html">Page 8 · Temperature & catalysts</a></p></div>
+<div class="qcard" id="qB12"><div class="qh"><span class="qn">12.</span><div class="qt">At Neendakara harbour, fishermen pack the fish in crushed ice as soon as it is unloaded from the boats. (a) Which factor affecting the rate of reaction is used here?<br>(b) Explain, using kinetic energy and threshold energy, how this keeps the fish fresh for longer.</div><span class="marks">(2 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 What does cooling do to the speed of particles?</p></div><div class="lab" id="labB12"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 290" role="img" aria-label="Animated solution of question 12"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: temperature – at a low temperature fewer particles reach the threshold energy, so spoiling is slower</div><p>(a) <b>Temperature</b> (<span class="ml">താപനില</span>).</p><p>(b) Spoiling is a set of chemical reactions. At a low temperature the particles have <b>less kinetic energy</b> (<span class="ml">ഗതികോർജം</span>), so <b>fewer particles reach the threshold energy</b> → fewer effective collisions → the reactions of spoiling become <b>slower</b>. (A refrigerator works in the same way.)</p></div><p class="mark"><b>Marking:</b> (a) ½ mark; (b) 1½ marks (less kinetic energy ½, fewer reach the threshold energy ½, slower rate ½).</p></div><p class="rev">📖 Review this on <a href="08_temperature_catalysts.html">Page 8 · Temperature & catalysts</a></p></div>
+<div class="qcard" id="qB13"><div class="qh"><span class="qn">13.</span><div class="qt">A sugar cube does not catch fire when a burning match is held to it. But when a little ash is rubbed on it, it burns. After burning, the ash is still left behind. (a) What is the role of the ash?<br>(b) What does the ash left behind tell you about it?</div><span class="marks">(2 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 A substance that speeds up a reaction but is left at the end is called …?</p></div><div class="lab" id="labB13"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 290" role="img" aria-label="Animated solution of question 13"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: the ash is a catalyst; it is not permanently changed</div><p>(a) The ash (its metal compounds) <b>increases the rate</b> of the burning of sugar – it acts as a <b>catalyst</b> (<span class="ml">ഉൽപ്രേരകം</span>). (Burning of sugar: <span class="eqn">C<sub>12</sub>H<sub>22</sub>O<sub>11</sub> + 12O<sub>2</sub> → 12CO<sub>2</sub> + 11H<sub>2</sub>O</span>.)</p><p>(b) The ash remains after the reaction – it has <b>not undergone a permanent chemical change</b>. This is the feature of a catalyst: it increases the rate without being used up.</p></div><p class="mark"><b>Marking:</b> (a) 1 mark; (b) 1 mark.</p></div><p class="rev">📖 Review this on <a href="08_temperature_catalysts.html">Page 8 · Temperature & catalysts</a></p></div>
+<div class="sec"><span>SECTION C</span><span>Answer all · 4 × 3 = 12 marks</span></div>
+<div class="qcard" id="qC14"><div class="qh"><span class="qn">14.</span><div class="qt">Study the three reactions and write, for each, (i) the sign that shows a chemical change has taken place and (ii) the type of the reaction.<table class="vt c14"><tr><th></th><th>What is done and seen</th><th>Equation</th></tr><tr><td>(a)</td><td>A zinc strip is dipped in blue copper sulphate solution. The blue colour fades and a reddish-brown layer forms on the zinc.</td><td><span class="eqn">Zn + CuSO<sub>4</sub> → ZnSO<sub>4</sub> + Cu</span></td></tr><tr><td>(b)</td><td>Potassium hydroxide solution is mixed with dilute nitric acid. The test tube becomes warm.</td><td><span class="eqn">KOH + HNO<sub>3</sub> → KNO<sub>3</sub> + H<sub>2</sub>O</span></td></tr><tr><td>(c)</td><td>Dilute hydrochloric acid is poured on washing soda (sodium carbonate). It fizzes.</td><td><span class="eqn">Na<sub>2</sub>CO<sub>3</sub> + 2HCl → 2NaCl + H<sub>2</sub>O + CO<sub>2</sub>↑</span></td></tr></table></div><span class="marks">(3 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Look at how many reactants are elements.</p></div><div class="lab" id="labC14"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Animated solution of question 14"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (a) colour change – displacement; (b) heat given out – double decomposition (neutralisation); (c) a gas (effervescence) – double decomposition (gas-forming)</div><p>(a) <b>Colour change</b> (<span class="ml">നിറവ്യത്യാസം</span>) – the blue colour fades and red-brown copper appears. Zinc takes the place of copper in copper sulphate: <b>displacement</b>.</p><p>(b) <b>Heat is given out</b> – the tube becomes warm. Two compounds exchange ions and water forms (a compound that does not split into ions): <b>double decomposition</b> – a neutralisation (<span class="ml">നിർവീരീകരണം</span>).</p><p>(c) <b>A gas is given off</b> (<span class="ml">വാതകം</span>) – effervescence of CO<sub>2</sub>. Two compounds exchange ions: <b>double decomposition</b> of the gas-forming kind (<span class="ml">വാതകരൂപീകരണ രാസപ്രവർത്തനങ്ങൾ</span>).</p></div><p class="mark"><b>Marking:</b> ½ for each sign, ½ for each type.</p></div><p class="rev">📖 Review this on <a href="03_identifying_chemical_change.html">Page 3 · Signs of a chemical change</a> · <a href="05_double_decomposition_displacement.html">Page 5 · Double decomposition & displacement</a></p></div>
+<div class="qcard" id="qC15"><div class="qh"><span class="qn">15.</span><div class="qt">Balance the equations and name the type of each reaction. &nbsp; (a) <span class="eqn">Al + Fe<sub>2</sub>O<sub>3</sub> → Al<sub>2</sub>O<sub>3</sub> + Fe</span> &nbsp; (thermite, used to weld rails) &nbsp;<br>(b) <span class="eqn">Fe + Cl<sub>2</sub> → FeCl<sub>3</sub></span> &nbsp;<br>(c) <span class="eqn">NaHCO<sub>3</sub> → Na<sub>2</sub>CO<sub>3</sub> + H<sub>2</sub>O + CO<sub>2</sub></span> &nbsp; (baking soda heated in a cake)</div><span class="marks">(3 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Balance the atom that appears in only one substance on each side first.</p></div><div class="lab" id="labC15"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 320" role="img" aria-label="Animated solution of question 15"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (a) <span class="eqn">2Al + Fe<sub>2</sub>O<sub>3</sub> → Al<sub>2</sub>O<sub>3</sub> + 2Fe</span> – displacement &nbsp; (b) <span class="eqn">2Fe + 3Cl<sub>2</sub> → 2FeCl<sub>3</sub></span> – combination &nbsp; (c) <span class="eqn">2NaHCO<sub>3</sub> → Na<sub>2</sub>CO<sub>3</sub> + H<sub>2</sub>O + CO<sub>2</sub>↑</span> – decomposition</div><p>(a) Al: 2 on the right → 2Al; Fe: 2 on the left → 2Fe; O 3 = 3: <b><span class="eqn"><b class="cf">2</b>Al + Fe<sub>2</sub>O<sub>3</sub> → Al<sub>2</sub>O<sub>3</sub> + <b class="cf">2</b>Fe</span></b> – aluminium takes the place of iron: <b>displacement</b> (<span class="ml">തെർമൈറ്റ്</span>).</p><table class="vt tal"><tr><th>Atom</th><th>Reactants</th><th>Products</th></tr><tr class="ok"><td>Al</td><td>2</td><td>2</td></tr><tr class="ok"><td>Fe</td><td>2</td><td>2</td></tr><tr class="ok"><td>O</td><td>3</td><td>3</td></tr></table><p>(b) Cl: 2 on the left, 3 on the right – the smallest common number is 6: 3Cl<sub>2</sub> and 2FeCl<sub>3</sub>, then 2Fe: <b><span class="eqn"><b class="cf">2</b>Fe + <b class="cf">3</b>Cl<sub>2</sub> → <b class="cf">2</b>FeCl<sub>3</sub></span></b> – two substances give one product: <b>combination</b>.</p><table class="vt tal"><tr><th>Atom</th><th>Reactants</th><th>Products</th></tr><tr class="ok"><td>Fe</td><td>2</td><td>2</td></tr><tr class="ok"><td>Cl</td><td>6</td><td>6</td></tr></table><p>(c) Na: 2 on the right → 2NaHCO<sub>3</sub>; then H 2 = 2, C 2 = 2, O 6 = 6: <b><span class="eqn"><b class="cf">2</b>NaHCO<sub>3</sub> → Na<sub>2</sub>CO<sub>3</sub> + H<sub>2</sub>O + CO<sub>2</sub>↑</span></b> – one compound breaks into three: <b>decomposition</b> (thermal). The CO<sub>2</sub> makes the cake rise.</p><table class="vt tal"><tr><th>Atom</th><th>Reactants</th><th>Products</th></tr><tr class="ok"><td>Na</td><td>2</td><td>2</td></tr><tr class="ok"><td>H</td><td>2</td><td>2</td></tr><tr class="ok"><td>C</td><td>2</td><td>2</td></tr><tr class="ok"><td>O</td><td>6</td><td>6</td></tr></table></div><p class="mark"><b>Marking:</b> ½ for each balanced equation, ½ for each type.</p></div><p class="rev">📖 Review this on <a href="04_combination_decomposition.html">Page 4 · Combination & decomposition</a> · <a href="05_double_decomposition_displacement.html">Page 5 · Double decomposition & displacement</a> · <a href="01_physical_chemical_changes.html">Page 1 · Physical & chemical changes</a></p></div>
+<div class="qcard" id="qC16"><div class="qh"><span class="qn">16.</span><div class="qt"><div class="fig"><svg id="figC16" viewBox="0 0 400 260" role="img" aria-label="Graph of the volume of carbon dioxide in mL against time in minutes: it rises steeply at first, then more and more slowly, and is flat at 90 mL from 5 minutes"></svg></div>Marble chips are added to dilute hydrochloric acid (taken in excess) and the carbon dioxide formed is collected in a gas syringe: &nbsp;<span class="eqn">CaCO<sub>3</sub> + 2HCl → CaCl<sub>2</sub> + H<sub>2</sub>O + CO<sub>2</sub>↑</span>. The readings are given in the table and the graph.<table class="vt"><tr><th>Time (minutes)</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td></tr><tr><th>Volume of CO<sub>2</sub> (mL)</th><td>0</td><td>36</td><td>60</td><td>76</td><td>86</td><td>90</td><td>90</td></tr></table>(a) How much CO<sub>2</sub> forms in the 1st minute and in the 4th minute? In which minute is the reaction fastest? Why?<br>(b) Why does the volume stop changing after 5 minutes?<br>(c) The experiment is repeated with the same mass of marble <b>powder</b>. How will the graph change? Give the reason.</div><span class="marks">(3 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 The steepness (slope) of the graph shows the rate.</p></div><div class="lab" id="labC16"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 350" role="img" aria-label="Animated solution of question 16"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (a) 36 mL and 10 mL – fastest in the 1st minute &nbsp; (b) the marble is used up &nbsp; (c) steeper at the start, flat sooner, the same final 90 mL</div><p>(a) 1st minute: 36 − 0 = <b>36 mL</b>. 4th minute: 86 − 76 = <b>10 mL</b>. The reaction is <b>fastest in the 1st minute</b> – the steepest part of the graph. At the start the reactants are present in the largest amount (highest concentration), so there are the most effective collisions every second; as they are used up the rate falls.</p><p>(b) The marble (calcium carbonate) is <b>completely used up</b> (the acid is in excess), so the reaction stops and no more CO<sub>2</sub> forms – the graph becomes flat at 90 mL.</p><p>(c) The curve is <b>steeper at the start</b> and becomes flat <b>sooner</b>, but the final volume is the <b>same (90 mL)</b> because the mass of calcium carbonate is the same. Reason: the powder has a much larger <b>surface area</b> (<span class="ml">പ്രതലപരപ്പളവ്</span>) → more collisions with acid particles every second → a faster rate.</p></div><p class="mark"><b>Marking:</b> (a) the two volumes ½, fastest minute with the reason ½; (b) 1 mark; (c) shape ½, reason ½.</p></div><p class="rev">📖 Review this on <a href="10_assess_solutions.html">Page 10 · Extended activities</a> · <a href="07_nature_concentration_surface.html">Page 7 · Nature, concentration & surface area</a></p></div>
+<div class="qcard" id="qC17"><div class="qh"><span class="qn">17.</span><div class="qt">Give the scientific reason, and name the factor that affects the rate in each case. (a) Fireworks contain magnesium <b>powder</b>, not magnesium ribbon.<br>(b) A glowing incense stick bursts into flame when it is put into a jar of pure oxygen.<br>(c) Potassium reacts violently with cold water, but water can be stored in a copper vessel for years.</div><span class="marks">(3 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Powder – more air – different metals: which factor is each?</p></div><div class="lab" id="labC17"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 290" role="img" aria-label="Animated solution of question 17"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (a) surface area &nbsp; (b) concentration &nbsp; (c) nature of reactants</div><p>(a) <b>Surface area</b> (<span class="ml">പ്രതലപരപ്പളവ്</span>): the powder has a far larger surface → many more collisions with oxygen at the same time → it burns very fast with a brilliant flash.</p><p>(b) <b>Concentration</b> (<span class="ml">ഗാഢത</span>): pure oxygen has about five times as many oxygen molecules per unit volume as air (about 21 % oxygen) → more effective collisions → the stick burns brightly.</p><p>(c) <b>Nature of reactants</b> (<span class="ml">അഭികാരകങ്ങളുടെ സ്വഭാവം</span>): potassium gives away its single outermost electron very easily, so it is extremely reactive; copper is much less reactive and does not react with water.</p></div><p class="mark"><b>Marking:</b> 1 mark each (factor ½, reason ½).</p></div><p class="rev">📖 Review this on <a href="07_nature_concentration_surface.html">Page 7 · Nature, concentration & surface area</a></p></div>
+<div class="sec"><span>SECTION D</span><span>Answer all · 2 × 5 = 10 marks</span></div>
+<div class="qcard" id="qD18"><div class="qh"><span class="qn">18.</span><div class="qt">Read the passage and answer the questions.<div class="case">Sulphuric acid is one of the most important industrial chemicals; fertiliser factories need it in large amounts. It is made by the <b>contact process</b> (<span class="ml">സമ്പർക്ക പ്രക്രിയ</span>). Its main step is &nbsp;<span class="eqn">2SO<sub>2</sub><span class="st">(g)</span> + O<sub>2</sub><span class="st">(g)</span> <span class="over"><small>V<sub>2</sub>O<sub>5</sub></small><span>⇌</span></span> 2SO<sub>3</sub><span class="st">(g)</span></span>&nbsp; carried out with <b>vanadium pentoxide (V<sub>2</sub>O<sub>5</sub>)</b> at a pressure of <b>2 atm</b> and a temperature of <b>720 K</b>.</div>(a) Which type of reaction is this? Give the reason.<br>(b) What is the role of V<sub>2</sub>O<sub>5</sub>? What will you find about its amount and its chemical nature at the end?<br>(c) What does the sign ⇌ tell you about this reaction?<br>(d) How do the pressure (2 atm) and the temperature (720 K) help the reaction to go faster?<br>(e) Write the balanced equation for the Haber process and name its catalyst. Where in Kerala is this reaction used on a large scale?</div><span class="marks">(5 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Underline the catalyst and the conditions in the passage first.</p></div><div class="lab" id="labD18"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 320" role="img" aria-label="Animated solution of question 18"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (a) combination &nbsp; (b) catalyst – same amount, unchanged &nbsp; (c) reversible &nbsp; (d) more particles per unit volume; more particles reach the threshold energy &nbsp; (e) <span class="eqn">N<sub>2</sub><span class="st">(g)</span> + 3H<sub>2</sub><span class="st">(g)</span> ⇌ 2NH<sub>3</sub><span class="st">(g)</span></span> – iron (Fe); fertiliser factories such as FACT, Udyogamandal</div><p>(a) Two substances, sulphur dioxide and oxygen, join to form <b>one</b> product, sulphur trioxide – a <b>combination reaction</b>.</p><p>(b) V<sub>2</sub>O<sub>5</sub> is a <b>catalyst</b> (<span class="ml">ഉൽപ്രേരകം</span>) – it increases the rate. At the end its <b>amount is the same</b> and it is <b>chemically unchanged</b>: a catalyst does not undergo a permanent chemical change.</p><p>(c) ⇌ shows a <b>reversible reaction</b> (<span class="ml">ഉഭയദിശാ പ്രവർത്തനങ്ങൾ</span>): SO<sub>2</sub> and O<sub>2</sub> form SO<sub>3</sub>, and at the same time some SO<sub>3</sub> breaks back into SO<sub>2</sub> and O<sub>2</sub>.</p><p>(d) <b>Pressure</b> pushes more gas molecules into each unit volume (<span class="ml">യൂണിറ്റ് വ്യാപ്തം</span>) – a higher concentration → more collisions → more effective collisions. <b>High temperature</b> gives the molecules more kinetic energy → more of them reach the threshold energy → more effective collisions. Both make the reaction faster.</p><p>(e) Haber process (<span class="ml">ഹേബർ പ്രക്രിയ</span>): <b><span class="eqn">N<sub>2</sub><span class="st">(g)</span> + 3H<sub>2</sub><span class="st">(g)</span> <span class="over"><small>Fe</small><span>⇌</span></span> 2NH<sub>3</sub><span class="st">(g)</span></span></b> (200 atm, 700 K); the catalyst is <b>iron (Fe)</b>. Ammonia made this way is used to make fertilisers in factories such as <b>FACT at Udyogamandal</b>.</p></div><p class="mark"><b>Marking:</b> 1 mark for each part ((d) ½ for pressure, ½ for temperature; (e) ½ equation, ½ catalyst and place).</p></div><p class="rev">📖 Review this on <a href="04_combination_decomposition.html">Page 4 · Combination & decomposition</a> · <a href="08_temperature_catalysts.html">Page 8 · Temperature & catalysts</a> · <a href="11_applications_explore.html">Page 11 · Applications</a></p></div>
+<div class="qcard" id="qD19"><div class="qh"><span class="qn">19.</span><div class="qt">Read the passage and answer the questions.<div class="case">Ammu lives in Thrissur with her grandmother, who still cooks on a firewood hearth. In the evening grandmother grinds soaked rice and urad dal into a batter for the next morning’s idli and dosa. In the hot days of April the batter rises and smells sour by morning; in the cool, rainy days of July it takes much longer; and batter kept in the refrigerator hardly changes at all. The batter rises (ferments) because tiny microbes in it produce <b>enzymes</b>. To light the hearth quickly, grandmother never puts in a whole log – she splits it into thin sticks. When the fire is weak she blows air into it through a metal blowpipe, and the flames at once become bright.</div>(a) Burning of firewood is a chemical change. Write two observations that show this.<br>(b) Name the factor that makes the batter rise faster in April. Where should grandmother keep the batter on a cool July evening so that it is ready by morning?<br>(c) What are enzymes? Name one enzyme in your body and the change it speeds up.<br>(d) Why does a split log catch fire faster than a whole log? Explain using collisions.<br>(e) Why do the flames become bright when air is blown into the fire? Name the factor.</div><span class="marks">(5 marks)</span></div><div class="reveal" data-btn="💡 Show a hint"><p class="hintp">💡 Find the factor in each sentence of the passage before you answer.</p></div><div class="lab" id="labD19"><div class="lab-title">🎬 Step by step</div><svg viewBox="0 0 800 320" role="img" aria-label="Animated solution of question 19"></svg></div><div class="reveal" data-btn="✅ Show final answer"><div class="ans"><div class="t">✅ Answer: (a) heat and light, smoke/gases and ash form &nbsp; (b) temperature – a warm place &nbsp; (c) biological catalysts – amylase: starch → maltose &nbsp; (d) surface area &nbsp; (e) concentration of oxygen</div><p>(a) Any two: <b>heat and light</b> are given out; <b>smoke and gases</b> are given off; the wood turns into black charcoal and grey <b>ash</b> – new substances that cannot be turned back into wood.</p><p>(b) <b>Temperature</b>: in April the particles have more kinetic energy, so more of them reach the threshold energy and the enzyme-catalysed reactions of fermentation go faster. In July she should keep the covered batter in a <b>warm place</b> in the kitchen (for example near the hearth after cooking), <b>not</b> in the refrigerator.</p><p>(c) Enzymes (<span class="ml">എൻസൈമുകൾ</span>) are <b>biological catalysts</b> – substances made by living things that speed up reactions in them. Example: <b>amylase</b> in saliva speeds up the change of <b>starch into maltose</b>.</p><p>(d) <b>Surface area</b> (<span class="ml">പ്രതലപരപ്പളവ്</span>): splitting the log exposes much more wood surface to the air, so many more oxygen molecules collide with the wood at the same time → more effective collisions → it catches fire and burns faster.</p><p>(e) <b>Concentration</b> (<span class="ml">ഗാഢത</span>) of oxygen: blowing pushes more air, so more oxygen molecules reach the burning wood every second → more effective collisions → brighter, faster burning.</p></div><p class="mark"><b>Marking:</b> 1 mark for each part (½ + ½ where there are two answers).</p></div><p class="rev">📖 Review this on <a href="03_identifying_chemical_change.html">Page 3 · Signs of a chemical change</a> · <a href="08_temperature_catalysts.html">Page 8 · Temperature & catalysts</a> · <a href="07_nature_concentration_surface.html">Page 7 · Nature, concentration & surface area</a> · <a href="11_applications_explore.html">Page 11 · Applications</a></p></div>
+
+<h2 id="marks">Marks summary</h2>
+<div class="tablewrap" style="overflow-x:auto"><table>
+<tr><th>Section</th><th>Questions</th><th>Marks each</th><th>Total</th><th>Topics</th></tr>
+<tr><td>A</td><td>1–8</td><td>1</td><td>8</td><td>chemical change (curd), precipitate, combination : decomposition, displacement (Mg + HCl), threshold energy, diluting an acid, the fastest reaction, amylase</td></tr>
+<tr><td>B</td><td>9–13</td><td>2</td><td>10</td><td>quicklime and water (combination, exothermic), BaCl₂ + Na₂SO₄ (ion exchange, precipitate), collision theory and the H₂–O₂ balloon, fish on ice (temperature), sugar cube and ash (catalyst)</td></tr>
+<tr><td>C</td><td>14–17</td><td>3</td><td>12</td><td>signs and types of three reactions, balance and classify (thermite, FeCl₃, baking soda), volume–time graph of marble and acid, three factors with reasons</td></tr>
+<tr><td>D</td><td>18–19</td><td>5</td><td>10</td><td>contact and Haber processes (catalyst, ⇌, pressure and temperature), Kerala case study: batter, firewood hearth and blowpipe</td></tr>
+<tr><th colspan="3">Total</th><th>40</th><th></th></tr>
+</table></div>
+
+<div class="callout think"><div class="title">⏱️ Time management (15 min cool-off + 90 minutes)</div>
+<ul style="margin:0">
+<li><b>Cool-off (15 min)</b> – read the whole paper. Mark the equations to classify (Q3, Q4, Q9, Q10, Q14, Q15, Q18) and the “explain” questions that need collision theory (Q11, Q12, Q16, Q17, Q18, Q19).</li>
+<li><b>Section A</b> – about 8 minutes. One word or letter each.</li>
+<li><b>Section B</b> – about 20 minutes. Name the factor or type first, then give the reason in one or two sentences.</li>
+<li><b>Section C</b> – about 27 minutes. In Q15 check every atom after balancing; in Q16 subtract the readings carefully.</li>
+<li><b>Section D</b> – about 25 minutes. Underline the substances, the catalyst and the conditions in the passage; answer each part separately.</li>
+<li><b>Checking</b> – keep 10 minutes: every equation balanced? Every type named in full? Every explanation ends with “more effective collisions → faster”?</li>
+</ul></div>
+
+<div class="callout"><div class="title">🎉 Finished the chapter?</div>
+<p style="margin:0">Count your marks: 32 or more – excellent; 24–31 – good, revise the pages linked under the questions you missed; below 24 – go back through pages 3 to 8 with their labs and do the <a href="12_summary_revision.html">scored quiz</a> again. Then return to the <a href="index.html">chapter home</a> and tick off what you have learned.</p></div>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Chemical Kinetics · Class 9 Chemistry", "icon": "⏱️", "key": "chemistry_ch5_progress", "pages": [["index.html", "Home"], ["01_physical_chemical_changes.html", "1 · Physical & Chemical Changes, Equations Recap"], ["02_particles_energy_recap.html", "2 · Particles in Motion, Energy & Concentration"], ["03_identifying_chemical_change.html", "3 · Signs of a Chemical Change"], ["04_combination_decomposition.html", "4 · Combination & Decomposition Reactions"], ["05_double_decomposition_displacement.html", "5 · Double Decomposition & Displacement Reactions"], ["06_rate_collision_theory.html", "6 · Rate of Reaction & Collision Theory"], ["07_nature_concentration_surface.html", "7 · Nature, Concentration & Surface Area"], ["08_temperature_catalysts.html", "8 · Temperature, Catalysts & Enzymes"], ["09_intext_questions_solutions.html", "9 · In-text Questions – Solutions"], ["10_assess_solutions.html", "10 · Let Us Assess & Extended Activities – Solutions"], ["11_applications_explore.html", "11 · Applications & Explore Online"], ["12_summary_revision.html", "12 · Summary & Quick Quiz"], ["13_model_test_paper.html", "13 · Model Test Paper"], ["14_model_test_solutions.html", "14 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ---- helpers shared by pages 12–14 of Chemistry Chapter 5 – Chemical Kinetics (inlined by _gen/gen.py) ---- */
+const {P} = K;
+const COL = {red:'var(--red)', blue:'var(--blue)', green:'var(--green)', amber:'var(--accent)', purple:'var(--purple)', text:'var(--text)', muted:'var(--muted)'};
+const sline = (svg, a, b, attrs={}) => K.el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+const minus = s => String(s).replace(/(^|[\s(=:,/])-(?=[\d.x])/g, '$1−');
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const lerpP = (a, b, t) => P(K.lerp(a.x, b.x, t), K.lerp(a.y, b.y, t));
+/* SVG text that understands sub- and superscripts: "SO_4^2−" → SO₄²⁻ (sizes set with style, not attributes) */
+function text(svg, p, str, attrs={}){ const s = String(str);
+  if (!/[_^]/.test(s)) return K.text(svg, p, s, attrs);
+  return K.el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs,
+    html: esc(s).replace(/_(\d+)/g, '<tspan baseline-shift="sub" style="font-size:72%">$1</tspan>').replace(/\^([\d]*[−+\-?])/g, '<tspan baseline-shift="super" style="font-size:68%">$1</tspan>')}, svg); }
+/* working lines: rows = [[step, text, cls], …]; rows whose step ≤ i are shown (o.only: just step i), the newest fades in */
+function lines(svg, rows, i, t, o={}){ const x = o.x ?? 400, y0 = o.y ?? 36, lh = o.lh ?? 34, an = o.anchor ?? 'middle'; let k = 0;
+  rows.forEach(r => { if (r[0] > i || (o.only && r[0] !== i)) return; text(svg, P(x, y0 + k * lh), minus(r[1]), {class: 'lbl ' + (r[2] || ''), 'text-anchor': an, opacity: r[0] === i ? t : 1}); k++; }); }
+function arrow(svg, a, b, o={}){ const c = COL[o.c || 'red'] || o.c, w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const L = K.dist(a, b); if (L < 1) return g; const u = K.unit(a, b), hs = Math.min(o.head ?? 11, L * .6), base = P(b.x - u.x * hs, b.y - u.y * hs);
+  K.el('line', {x1: a.x, y1: a.y, x2: base.x, y2: base.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round', ...(o.dash ? {'stroke-dasharray': o.dash} : {})}, g);
+  K.el('polygon', {points: `${b.x},${b.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g);
+  return g; }
+function box(svg, p, w, h, str, o={}){ const g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  K.el('rect', {x: p.x - w / 2, y: p.y - h / 2, width: w, height: h, rx: 8, fill: o.fill || 'var(--surface2)', stroke: o.stroke || 'var(--border)', 'stroke-width': o.sw ?? 1.5}, g);
+  if (str) text(g, p, str, {class: 'lbl ' + (o.cls || 'sm'), 'font-weight': o.fw ?? 700}); return g; }
+const cap = (svg, p, s, cls='', op=1) => text(svg, p, s, {class: 'lbl sm ' + cls, 'font-weight': 700, opacity: op});
+
+/* ---------- chemistry: formulae, atom counts, reaction types (the same rules as _gen/gen.py) ---------- */
+const cleanF = f => String(f).replace(/[↑↓]/g, '').replace(/\((s|l|g|aq)\)/g, '');
+/* 'Al_2(SO_4)_3' → {Al: 2, S: 3, O: 12} (keys in the order they first appear) */
+function parseF(f){ const s = cleanF(f); let i = 0;
+  function group(){ const c = {};
+    while (i < s.length && s[i] !== ')'){ let part;
+      if (s[i] === '('){ i++; part = group(); i++; }
+      else { const m = /^[A-Z][a-z]?/.exec(s.slice(i)); if (!m) throw new Error('bad formula ' + f); i += m[0].length; part = {[m[0]]: 1}; }
+      let n = 1; const mm = /^_(\d+)/.exec(s.slice(i)); if (mm){ n = +mm[1]; i += mm[0].length; }
+      for (const [e, k] of Object.entries(part)) c[e] = (c[e] || 0) + k * n; }
+    return c; }
+  return group(); }
+/* '*2H_2O' → {k: 2, f: 'H_2O', hl: true} (a * marks a coefficient that has just been changed – drawn in red) */
+function parseSp(tok){ const m = /^(\*?)(\d*)(.+)$/.exec(tok); return {hl: !!m[1], k: m[2] ? +m[2] : 1, f: m[3]}; }
+/* both arrows: → (one way) and ⇌ (reversible) */
+const sidesOf = eq => eq.split(/ [→⇌] /).map(s => s.split(' + ').map(parseSp));
+/* atom tally: {El: [reactants, products]} */
+function tallyEq(eq){ const t = {};
+  sidesOf(eq).forEach((side, k) => side.forEach(sp => { for (const [e, n] of Object.entries(parseF(sp.f))){ if (!t[e]) t[e] = [0, 0]; t[e][k] += n * sp.k; } }));
+  return t; }
+const isBalanced = eq => Object.values(tallyEq(eq)).every(([a, b]) => a === b);
+const isEl = f => Object.keys(parseF(f)).length === 1;
+/* the four types of the textbook, from the pattern of the equation:
+   combination A + B → AB · decomposition AB → A + B · displacement A + BC → AC + B · double decomposition AB + CD → AD + CB */
+function classify(eq){ const [L, R] = sidesOf(eq), el = s => isEl(s.f);
+  if (L.length >= 2 && R.length === 1) return 'combination';
+  if (L.length === 1 && R.length >= 2) return 'decomposition';
+  if (L.length === 2 && R.length === 2 && L.filter(el).length === 1 && R.filter(el).length === 1 && cleanF(L.find(el).f) !== cleanF(R.find(el).f)) return 'displacement';
+  if (L.length === 2 && R.length >= 2 && !L.some(el) && !R.some(el)) return 'double decomposition';
+  return null; }
+/* the three kinds of double decomposition (p100): a precipitate ↓, a gas ↑, or water (a compound that does not split into ions) */
+function ddKind(eq){ const R = sidesOf(eq)[1];
+  if (R.some(s => s.f.includes('↓'))) return 'precipitation';
+  if (R.some(s => s.f.includes('↑'))) return 'gas-forming';
+  if (R.some(s => cleanF(s.f) === 'H_2O')) return 'neutralisation';
+  return null; }
+const TYPE_ML = {combination: 'സംയോജന രാസപ്രവർത്തനം', decomposition: 'വിഘടന രാസപ്രവർത്തനം', 'double decomposition': 'ദ്വിവിഘടന രാസപ്രവർത്തനം', displacement: 'ആദേശ രാസപ്രവർത്തനം'};
+const TYPE_PAT = {combination: 'A + B → AB', decomposition: 'AB → A + B', 'double decomposition': 'AB + CD → AD + CB', displacement: 'A + BC → AC + B'};
+
+/* ---------- drawing: equations with coloured coefficients ---------- */
+function tw(node, s, fs){ let w = 0; try { w = node.getComputedTextLength(); } catch (e) {} return w > 0 ? w : String(s).length * fs * .6; }
+/* eqn(svg, y, eq, o): the equation centred at o.x (default 400), font o.fs; o.over: text written over the arrow (catalyst, conditions).
+   Returns {sp: [{x0, x1}], y, fs, g, ax} (ax = centre of the arrow). */
+function eqn(svg, y, eq, o={}){ const fs = o.fs ?? 26, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {}), inner = K.group(g, {});
+  const rev = / ⇌ /.test(eq), sides = sidesOf(eq), sp = []; let x = 0, ax = 0;
+  const put = (s, size, cls, dy=0, weight=700) => { const n = K.el('text', {x, y: y + dy, class: 'lbl ' + (cls || ''), style: `font-size:${size}px`, 'font-weight': weight, 'text-anchor': 'start', 'dominant-baseline': 'middle', text: s}, inner); const w = tw(n, s, size); x += w; return w; };
+  sides.forEach((side, k) => { if (k) { const pad = o.over ? Math.max(fs * .45, String(o.over).length * fs * .2) : fs * .45; x += pad; const x0 = x; const w = put(rev ? '⇌' : '→', fs, '', 0, 400); ax = x0 + w / 2;
+      if (o.over) text(inner, P(ax, y - fs * .82), o.over, {class: 'lbl purple', style: `font-size:${Math.round(fs * .52)}px`, 'font-weight': 700});
+      if (o.under) text(inner, P(ax, y + fs * .82), o.under, {class: 'lbl muted', style: `font-size:${Math.round(fs * .46)}px`, 'font-weight': 600});
+      x += pad; }
+    side.forEach((s, j) => { if (j) { x += fs * .3; put('+', fs, '', 0, 400); x += fs * .3; }
+      const rec = {x0: x}; if (s.k !== 1) put(String(s.k), fs, s.hl ? 'red' : (o.cls || ''));
+      let f = s.f.replace(/[↑↓]/g, ''); const gas = s.f.replace(/[^↑↓]/g, ''), st = /\((s|l|g|aq)\)$/.exec(f); if (st) f = f.slice(0, -st[0].length);
+      const re = /([A-Z][a-z]?)|_(\d+)|(\()|(\))|\^(\d*[−+])/g; let m;
+      while ((m = re.exec(f))){ if (m[1]) put(m[1], fs, o.cls || '');
+        else if (m[2]) put(m[2], fs * .62, o.cls || '', fs * .3);
+        else if (m[5]) put(m[5], fs * .6, o.cls || '', -fs * .34);
+        else put(m[3] || m[4], fs, o.cls || '', 0, 400); }
+      if (st) put(st[0], fs * .6, 'muted', fs * .1, 500);
+      if (gas) put(gas, fs * .9, gas === '↓' ? 'amber' : 'blue', 0, 400);
+      rec.x1 = x; sp.push(rec); }); });
+  const dx = (o.x ?? 400) - x / 2; inner.setAttribute('transform', `translate(${dx},0)`);
+  sp.forEach(r => { r.x0 += dx; r.x1 += dx; }); ax += dx;
+  return {sp, y, fs, g, ax}; }
+/* atom tally table (as in Chapter 4): rows turn green when both sides are equal */
+function tally(svg, x, y, eq, o={}){ const t = tallyEq(eq), els = Object.keys(t), rh = o.rh ?? 26, w = [70, 90, 90], g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const W = w[0] + w[1] + w[2];
+  K.el('rect', {x, y, width: W, height: rh * (els.length + 1), rx: 6, fill: 'var(--surface)', stroke: 'var(--border)', 'stroke-width': 1.2}, g);
+  ['Atom', 'Reactants', 'Products'].forEach((h, k) => cap(g, P(x + w.slice(0, k).reduce((a, b) => a + b, 0) + w[k] / 2, y + rh / 2), h, 'muted'));
+  els.forEach((e, r) => { const ok = t[e][0] === t[e][1], yy = y + rh * (r + 1.5);
+    K.el('rect', {x: x + 2, y: yy - rh / 2 + 2, width: W - 4, height: rh - 4, rx: 4, fill: ok ? 'var(--green-soft)' : 'var(--red-soft)', opacity: .8}, g);
+    cap(g, P(x + w[0] / 2, yy), e, ''); cap(g, P(x + w[0] + w[1] / 2, yy), String(t[e][0]), ok ? 'green' : 'red'); cap(g, P(x + w[0] + w[1] + w[2] / 2, yy), String(t[e][1]), ok ? 'green' : 'red'); });
+  return g; }
+/* type badge: 'displacement  ആദേശ രാസപ്രവർത്തനം' */
+function typeTag(svg, p, type, o={}){ const s = type + (o.kind ? ' (' + o.kind + ')' : ''); const w = Math.max(150, s.length * 8.4 + 30);
+  box(svg, p, w, 30, s, {cls: 'sm green', fill: 'var(--green-soft)', stroke: 'var(--green)', op: o.op});
+  if (o.ml !== false) text(svg, P(p.x, p.y + 26), TYPE_ML[type] || '', {class: 'lbl sm purple', 'font-weight': 600, opacity: o.op ?? 1}); }
+
+/* ---------- drawing: particles ---------- */
+const PCOL = {A: ['var(--red-soft)', 'var(--red)'], B: ['var(--blue-soft)', 'var(--blue)'], C: ['var(--green-soft)', 'var(--green)'], D: ['var(--accent-soft)', 'var(--accent)']};
+/* an atom or ion as a ball with its symbol */
+function ball(svg, c, sym, o={}){ const g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {}), r = o.r ?? 26;
+  K.el('circle', {cx: c.x, cy: c.y, r, fill: o.fill || 'var(--surface2)', stroke: o.stroke || 'var(--muted)', 'stroke-width': 2}, g);
+  if (sym) text(g, P(c.x, c.y + 1), sym, {class: 'lbl', style: `font-size:${o.fs ?? 17}px`, 'font-weight': 800}); return g; }
+/* the particle pictures of the four reaction types: reactant positions → product positions (x offsets from o.x, ball radius 21) */
+const TYPEPIC = {
+  combination: {r: [['A', -170, 0], ['B', -80, 0]], p: [['A', 70, 0], ['B', 112, 0]], plus: [[-125], [ ]], arrow: -10},
+  decomposition: {r: [['A', -150, 0], ['B', -108, 0]], p: [['A', 60, 0], ['B', 150, 0]], plus: [[], [105]], arrow: -30},
+  displacement: {r: [['A', -200, 0], ['B', -110, 0], ['C', -68, 0]], p: [['A', 60, 0], ['B', 190, 0], ['C', 102, 0]], plus: [[-155], [146]], arrow: -10},
+  'double decomposition': {r: [['A', -240, 0], ['B', -198, 0], ['C', -120, 0], ['D', -78, 0]], p: [['A', 40, 0], ['B', 202, 0], ['C', 160, 0], ['D', 82, 0]], plus: [[-159], [121]], arrow: -20},
+};
+/* typePic(svg, type, t, o): animated particle picture; o.x, o.y centre; o.s scale; o.sym {A: 'Zn', …} replaces the letters; o.pat writes the pattern below */
+function typePic(svg, type, t, o={}){ const d = TYPEPIC[type], x = o.x ?? 400, y = o.y ?? 100, s = o.s ?? 1, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {}), r = 21 * s;
+  const ghost = o.ghost !== false;
+  d.plus[0].forEach(px => text(g, P(x + px * s, y), '+', {class: 'lbl', style: `font-size:${Math.round(24 * s)}px`, opacity: ghost ? 1 : 1 - K.sub01(t, 0, .3)}));
+  arrow(g, P(x + (d.arrow - 22) * s, y), P(x + (d.arrow + 22) * s, y), {c: 'muted', w: 2.5 * s, head: 10 * s});
+  d.plus[1].forEach(px => text(g, P(x + px * s, y), '+', {class: 'lbl', style: `font-size:${Math.round(24 * s)}px`, opacity: K.sub01(t, .7, 1)}));
+  const e = K.ease ? K.ease(Math.min(1, Math.max(0, t))) : t;
+  if (ghost && t > 0) d.r.forEach(([L, rx]) => ball(g, P(x + rx * s, y), (o.sym || {})[L] ?? L, {r, fill: PCOL[L][0], stroke: PCOL[L][1], fs: Math.round((o.sym ? 13 : 16) * s), op: (o.both ? 1 : .35) * K.sub01(t, 0, .25)}));
+  d.r.forEach(([L, rx], k) => { const px = d.p[k][1], moved = Math.abs(px - rx) > 1;
+    const c = P(x + K.lerp(rx, px, e) * s, y - (moved ? Math.sin(Math.PI * e) * (L === 'A' || L === 'C' ? 30 : -30) * s : 0));
+    ball(g, c, (o.sym || {})[L] ?? L, {r, fill: PCOL[L][0], stroke: PCOL[L][1], fs: Math.round((o.sym ? 13 : 16) * s)}); });
+  if (o.pat !== false) text(g, P(x, y + 44 * s), TYPE_PAT[type], {class: 'lbl sm muted', 'font-weight': 700});
+  return g; }
+/* deterministic moving particles in a box (positions are a function of time only, so a step can be redrawn) */
+function rnd(k){ const v = Math.sin(k * 127.1 + 311.7) * 43758.5453; return v - Math.floor(v); }
+const tri = v => { const m = ((v % 2) + 2) % 2; return m < 1 ? m : 2 - m; };
+function particles(svg, bx, n, t, o={}){ const r = o.r ?? 7, sp = o.speed ?? 1, out = [], seed = o.seed ?? 1;
+  for (let k = 0; k < n; k++){ const a = rnd(seed * 31 + k), b = rnd(seed * 17 + k * 3 + 1), va = (rnd(seed * 7 + k * 5 + 2) - .5) * .9 * sp, vb = (rnd(seed * 11 + k * 7 + 3) - .5) * .9 * sp;
+    const p = P(bx.x + r + tri(a * 2 + va * t) * (bx.w - 2 * r), bx.y + r + tri(b * 2 + vb * t) * (bx.h - 2 * r)); out.push(p);
+    const kind = o.kinds ? o.kinds[k % o.kinds.length] : (k % 2 ? 'B' : 'A');
+    K.el('circle', {cx: p.x, cy: p.y, r, fill: PCOL[kind][0], stroke: PCOL[kind][1], 'stroke-width': 1.6}, svg); }
+  return out; }
+function burst(svg, c, s=1, cls='amber', op=1){ const g = K.group(svg, {opacity: op}), pts = [];
+  for (let k = 0; k < 16; k++){ const a = Math.PI * k / 8, rr = (k % 2 ? 6 : 14) * s; pts.push(`${c.x + rr * Math.cos(a)},${c.y + rr * Math.sin(a)}`); }
+  K.el('polygon', {points: pts.join(' '), fill: COL[cls], opacity: .85}, g); return g; }
+/* energy bars: one bar per particle, height ∝ kinetic energy; the dashed red line is the threshold energy; bars that reach it are green */
+function energyBars(svg, x, yb, vals, thr, o={}){ const g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {}), w = o.w ?? 18, gap = o.gap ?? 8, k = o.k ?? 1.2, t = o.t ?? 1;
+  let n = 0; vals.forEach((v, j) => { const h = v * k * t, ok = v >= thr && t > .95; if (ok) n++;
+    K.el('rect', {x: x + j * (w + gap), y: yb - h, width: w, height: Math.max(.5, h), rx: 3, fill: ok ? 'var(--green)' : 'var(--blue-soft)', stroke: ok ? 'var(--green)' : 'var(--blue)', 'stroke-width': 1}, g); });
+  const W = vals.length * (w + gap) - gap;
+  sline(g, P(x - 6, yb), P(x + W + 6, yb), {stroke: 'var(--muted)', 'stroke-width': 1.5});
+  sline(g, P(x - 10, yb - thr * k), P(x + W + 10, yb - thr * k), {stroke: 'var(--red)', 'stroke-width': 2.2, 'stroke-dasharray': '7 5'});
+  if (o.thrRight) text(g, P(x + W + 14, yb - thr * k), 'threshold', {class: 'lbl sm red', 'font-weight': 700, 'text-anchor': 'start'});
+  else if (o.thrLabel !== false) cap(g, P(x + W / 2, yb - thr * k - 12), 'threshold energy', 'red');
+  if (o.label) cap(g, P(x + W / 2, yb + 16), o.label, o.cls || '');
+  if (o.count !== false) cap(g, P(x + W / 2, yb + (o.label ? 34 : 16)), `${t > .95 ? n : '…'} of ${vals.length} reach it`, 'green');
+  return {g, n}; }
+
+/* ---------- drawing: apparatus ---------- */
+/* test tube standing on base point b (bottom centre); o.liq colour, o.level 0–1; o.bub bubble phase (o.nb bubbles); o.ppt colour of a precipitate (o.pa amount 0–1);
+   o.solid 'ribbon' | 'lump' | 'powder' | 'nail'; o.cloud cloudiness 0–1; o.label text below */
+function tube(svg, b, o={}){ const g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {}), x = b.x, y = b.y, w = o.w ?? 40, h = o.h ?? 150, r = w / 2;
+  const lev = o.level ?? .55, ly = y - r - (h - r) * lev;
+  K.el('path', {d: `M${x - r},${ly} V${y - r} A${r},${r} 0 0 0 ${x + r},${y - r} V${ly} Z`, fill: o.liq || 'var(--blue-soft)', opacity: .95}, g);
+  if (o.cloud) K.el('path', {d: `M${x - r},${ly} V${y - r} A${r},${r} 0 0 0 ${x + r},${y - r} V${ly} Z`, fill: '#e9d98b', opacity: Math.min(.95, o.cloud)}, g);
+  if (o.ppt){ const pa = o.pa ?? 1; K.el('path', {d: `M${x - r + 2},${y - r} A${r - 2},${r - 2} 0 0 0 ${x + r - 2},${y - r} Q${x},${y - r - 16 * pa} ${x - r + 2},${y - r} Z`, fill: o.ppt, stroke: 'var(--muted)', 'stroke-width': .8}, g);
+    for (let k = 0; k < 10 * pa; k++) K.el('circle', {cx: x - r + 6 + rnd(k + 3) * (w - 12), cy: ly + 8 + rnd(k + 9) * (y - ly - 30) * (1 - pa * .6), r: 1.8, fill: o.ppt}, g); }
+  if (o.solid === 'ribbon') K.el('rect', {x: x - 3, y: y - 46, width: 6, height: 38, rx: 2, fill: '#cbd5e1', stroke: 'var(--muted)', transform: `rotate(12 ${x} ${y - 27})`}, g);
+  else if (o.solid === 'nail'){ K.el('rect', {x: x - 3, y: ly - 30, width: 6, height: y - ly + 18, fill: o.nailCol || '#94a3b8', stroke: 'var(--muted)'}, g); K.el('rect', {x: x - 8, y: ly - 34, width: 16, height: 5, fill: '#94a3b8', stroke: 'var(--muted)'}, g); }
+  else if (o.solid === 'lump') K.el('path', {d: `M${x - 13},${y - 8} l6,-16 l14,-3 l8,12 l-4,9 z`, fill: '#e2e8f0', stroke: 'var(--muted)', 'stroke-width': 1.4}, g);
+  else if (o.solid === 'powder') for (let k = 0; k < 26; k++) K.el('circle', {cx: x - r + 5 + rnd(k + 40) * (w - 10), cy: y - 6 - rnd(k + 70) * 9, r: 1.8, fill: '#94a3b8'}, g);
+  if (o.bub !== undefined){ const nb = o.nb ?? 7; for (let k = 0; k < nb; k++){ const ph = (o.bub * (o.fast ?? 1) + k / nb) % 1; K.el('circle', {cx: x - r + 7 + rnd(k + 5) * (w - 14), cy: y - 10 - ph * (y - 10 - ly), r: 2.2 + rnd(k) * 1.4, fill: 'none', stroke: 'var(--blue)', 'stroke-width': 1.2, opacity: 1 - ph * .5}, g); } }
+  K.el('path', {d: `M${x - r - 3},${y - h} H${x - r} V${y - r} A${r},${r} 0 0 0 ${x + r},${y - r} V${y - h} H${x + r + 3}`, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 2.4, 'stroke-linejoin': 'round'}, g);
+  if (o.label) cap(g, P(x, y + 16), o.label, o.cls || '');
+  if (o.label2) cap(g, P(x, y + 32), o.label2, o.cls2 || 'muted');
+  return g; }
+/* a flame: base point, size, flicker phase */
+function flame(svg, x, y, s=1, ph=0){ const k = s * (1 + .08 * Math.sin(ph * 9));
+  K.el('path', {d: `M${x},${y} q${-18 * k},${-30 * k} 0,${-70 * k} q${4 * k},${26 * k} ${16 * k},${30 * k} q${10 * k},${-14 * k} ${4 * k},${-30 * k} q${26 * k},${30 * k} ${-20 * k},${70 * k} z`, fill: '#f97316', opacity: .9}, svg);
+  K.el('path', {d: `M${x},${y} q${-8 * k},${-14 * k} 0,${-32 * k} q${12 * k},${16 * k} 0,${32 * k} z`, fill: '#fde047', opacity: .9}, svg); }
+/* thermometer: level 0–1 */
+function thermo(svg, x, y, lev, o={}){ const g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {}), h = o.h ?? 110;
+  K.el('rect', {x: x - 7, y: y - h, width: 14, height: h, rx: 7, fill: 'var(--surface)', stroke: 'var(--muted)', 'stroke-width': 1.6}, g);
+  K.el('rect', {x: x - 3.5, y: y - 8 - (h - 16) * lev, width: 7, height: (h - 16) * lev + 8, rx: 3, fill: 'var(--red)'}, g);
+  K.el('circle', {cx: x, cy: y + 6, r: 12, fill: 'var(--red)', stroke: 'var(--muted)', 'stroke-width': 1.6}, g);
+  if (o.label) cap(g, P(x, y + 30), o.label, o.cls || 'red'); return g; }
+/* a cube drawn in 2.5-D: front square at (x, y) top-left, side s */
+function cube(svg, x, y, s, o={}){ const d = s * .35, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  K.el('polygon', {points: `${x},${y} ${x + d},${y - d} ${x + s + d},${y - d} ${x + s},${y}`, fill: o.top || 'var(--accent-soft)', stroke: 'var(--muted)', 'stroke-width': 1.2}, g);
+  K.el('polygon', {points: `${x + s},${y} ${x + s + d},${y - d} ${x + s + d},${y + s - d} ${x + s},${y + s}`, fill: o.side || 'var(--green-soft)', stroke: 'var(--muted)', 'stroke-width': 1.2}, g);
+  K.el('rect', {x, y, width: s, height: s, fill: o.front || 'var(--blue-soft)', stroke: 'var(--muted)', 'stroke-width': 1.2}, g); return g; }
+/* split firewood: a log (n = 1) or n thin sticks */
+function wood(svg, x, y, n, o={}){ const g = K.group(svg, {});
+  if (n === 1){ K.el('rect', {x: x - 60, y: y - 34, width: 120, height: 34, rx: 14, fill: '#b45309', stroke: '#78350f', 'stroke-width': 2}, g); K.el('ellipse', {cx: x + 58, cy: y - 17, rx: 9, ry: 17, fill: '#f59e0b', stroke: '#78350f', 'stroke-width': 2}, g); return g; }
+  for (let k = 0; k < n; k++){ const yy = y - 8 - (k % 3) * 11, xx = x - 60 + Math.floor(k / 3) * 6; K.el('rect', {x: xx, y: yy - 8, width: 120, height: 9, rx: 4, fill: '#b45309', stroke: '#78350f', 'stroke-width': 1.2, transform: `rotate(${(k % 2 ? -1 : 1) * 4} ${xx + 60} ${yy})`}, g); }
+  return g; }
+
+/* ---------- drawing: volume–time graph (gas-syringe experiments) ---------- */
+/* graphVT(svg, o): axes from (o.x0, o.y0) of size o.W × o.H; o.tmax, o.vmax, o.tStep, o.vStep; o.data [[t, v]…] drawn as points and line;
+   o.extra [{data, cls, dash, label}] more curves; o.t (0–1) draws the line progressively; o.hl [i, j] highlights the slope between points i and j.
+   Returns the mapping function M(t, v) → point. */
+function graphVT(svg, o){ const g = K.group(svg, {}), x0 = o.x0, y0 = o.y0, W = o.W, H = o.H, M = (t, v) => P(x0 + t / o.tmax * W, y0 - v / o.vmax * H);
+  for (let t = 0; t <= o.tmax + 1e-9; t += o.tStep){ const p = M(t, 0); sline(g, p, M(t, o.vmax), {stroke: 'var(--grid)', 'stroke-width': 1}); cap(g, P(p.x, y0 + 14), String(t), 'muted'); }
+  for (let v = 0; v <= o.vmax + 1e-9; v += o.vStep){ const p = M(0, v); sline(g, p, M(o.tmax, v), {stroke: 'var(--grid)', 'stroke-width': 1}); text(g, P(x0 - 8, p.y), String(v), {class: 'lbl sm muted', 'text-anchor': 'end', 'font-weight': 700}); }
+  arrow(g, P(x0, y0), P(x0 + W + 18, y0), {c: 'text', w: 2, head: 9}); arrow(g, P(x0, y0), P(x0, y0 - H - 18), {c: 'text', w: 2, head: 9});
+  cap(g, P(x0 + W / 2, y0 + 32), o.xl || 'time (minutes)', ''); text(g, P(x0 - 44, y0 - H / 2), o.yl || 'volume of gas (mL)', {class: 'lbl sm', 'font-weight': 700, transform: `rotate(-90 ${x0 - 44} ${y0 - H / 2})`});
+  const curve = (data, cls, dash, tt) => { const n = Math.max(1, Math.round((data.length - 1) * tt)), pts = data.slice(0, n + 1).map(([t, v]) => M(t, v));
+    K.el('polyline', {points: pts.map(p => `${p.x},${p.y}`).join(' '), fill: 'none', stroke: COL[cls] || cls, 'stroke-width': 3, 'stroke-linejoin': 'round', ...(dash ? {'stroke-dasharray': dash} : {})}, g);
+    if (!dash) pts.forEach(p => K.el('circle', {cx: p.x, cy: p.y, r: 4.5, fill: COL[cls] || cls, stroke: 'var(--svgbg)', 'stroke-width': 1.5}, g)); return pts; };
+  (o.extra || []).forEach(e => { const pts = curve(e.data, e.cls || 'green', e.dash ?? '8 5', e.t ?? 1); if (e.label && (e.t ?? 1) > .9){ const q = e.lp ?? 2; text(g, P(pts[q].x - 10, pts[q].y - 16), e.label, {class: 'lbl sm ' + (e.cls || 'green'), 'font-weight': 800, 'text-anchor': 'end'}); } });
+  if (o.data) curve(o.data, o.cls || 'blue', null, o.t ?? 1);
+  if (o.hl){ const [i, j] = o.hl, a = M(...o.data[i]), b = M(...o.data[j]);
+    K.el('polyline', {points: `${a.x},${a.y} ${b.x},${a.y} ${b.x},${b.y}`, fill: 'none', stroke: COL[o.hlc || 'red'], 'stroke-width': 2, 'stroke-dasharray': '4 3', opacity: o.hlop ?? 1}, g);
+    if (o.hlLabel) text(g, P(b.x + 8, (a.y + b.y) / 2), o.hlLabel, {class: 'lbl sm ' + (o.hlc || 'red'), 'font-weight': 800, 'text-anchor': 'start', opacity: o.hlop ?? 1}); }
+  return M; }
+const htmlF = s => esc(s).replace(/_(\d+)/g, '<sub>$1</sub>').replace(/\^([\d]*[−+])/g, '<sup>$1</sup>');
+
+/* ---- figures printed with the questions (paper and solved paper) ---- */
+/* C16: marble chips + excess dilute HCl, CO2 collected in a gas syringe – volume against time (illustrative numbers, the table of the question) */
+const C16_DATA = [[0, 0], [1, 36], [2, 60], [3, 76], [4, 86], [5, 90], [6, 90]];
+function figC16(svg, o={}){
+  return graphVT(svg, {x0: o.x0 ?? 70, y0: o.y0 ?? 210, W: o.W ?? 300, H: o.H ?? 170, tmax: 6, vmax: 100, tStep: 1, vStep: 20, data: C16_DATA,
+    t: o.t ?? 1, hl: o.hl, hlc: o.hlc, hlLabel: o.hlLabel, hlop: o.hlop, extra: o.extra, xl: 'time (minutes)', yl: 'volume of CO₂ (mL)'}); }
+(function(){ const s = document.getElementById('figC16'); if (s) figC16(s); })();
+
+const C16_POWDER = [[0, 0], [1, 62], [2, 82], [3, 89], [4, 90], [5, 90], [6, 90]];
+const hm = s => minus(s).replace(/_(\d+)/g, '<sub>$1</sub>');
+/* S(id, steps, rows, fig, o): stepper; working lines (rows: [step, text, cls]) below the picture */
+function S(id, steps, rows, fig, o={}){ if (!document.getElementById('lab' + id)) return;
+  new K.Stepper('#lab' + id, {steps: steps.map(hm), draw(svg, i, t){ fig(svg, i, t);
+    lines(svg, rows, i, t, {x: 400, y: o.y ?? 264, lh: o.lh ?? 27, only: o.only ?? true}); }}); }
+/* equation + tally side by side (balancing steps), with the type when balanced */
+function balStep(svg, eq, o={}){ eqn(svg, o.y ?? 50, eq, {fs: o.fs ?? 28}); const n = Object.keys(tallyEq(eq)).length;
+  tally(svg, 120, o.ty ?? 90, eq); const ok = isBalanced(eq);
+  cap(svg, P(330, (o.ty ?? 90) + 26 * (n + 1) + 16), ok ? '✔ balanced' : '✘ not balanced yet', ok ? 'green' : 'red');
+  if (ok && o.type) typeTag(svg, P(600, 140), classify(eq), {op: o.t ?? 1}); }
+const rgba = (a) => `rgba(59,130,246,${a})`;
+/* a collision of two particles: they approach, touch at t = .5 and fly apart (o.react: they join instead) */
+function collide(svg, c, t, o={}){ const d = 110 * Math.abs(1 - 2 * Math.min(1, t)), r = o.r ?? 20;
+  const a = P(c.x - r - d, c.y), b = P(c.x + r + d, c.y);
+  if (o.react && t > .5){ ball(svg, P(c.x - r, c.y), o.la || '', {r, fill: PCOL.A[0], stroke: PCOL.A[1]}); ball(svg, P(c.x + r, c.y), o.lb || '', {r, fill: PCOL.B[0], stroke: PCOL.B[1]}); burst(svg, P(c.x, c.y - r - 10), .9, 'amber'); return; }
+  ball(svg, a, o.la || '', {r, fill: PCOL.A[0], stroke: PCOL.A[1]}); ball(svg, b, o.lb || '', {r, fill: PCOL.B[0], stroke: PCOL.B[1]});
+  if (t < .5){ arrow(svg, P(a.x - r - 30, c.y), P(a.x - r - 6, c.y), {c: 'muted', w: 2}); arrow(svg, P(b.x + r + 30, c.y), P(b.x + r + 6, c.y), {c: 'muted', w: 2}); }
+  else { arrow(svg, P(a.x - r - 6, c.y), P(a.x - r - 30, c.y), {c: 'muted', w: 2}); arrow(svg, P(b.x + r + 6, c.y), P(b.x + r + 30, c.y), {c: 'muted', w: 2}); } }
+
+/* B9: quicklime and water */
+S('B9', ['Two reactants: calcium oxide (quicklime, CaO) and water (H<sub>2</sub>O).',
+  'They join to form <b>one</b> new compound, calcium hydroxide Ca(OH)<sub>2</sub> – pattern A + B → AB: a <b>combination reaction</b>.',
+  'The mixture becomes very hot – <b>heat is given out</b>. A reaction that gives out heat is an <b>exothermic reaction</b>.'], [
+  [0, 'CaO + H_2O: two reactants', 'big'], [1, 'one product → combination (A + B → AB)', 'big green'], [2, 'heat given out → exothermic reaction', 'big red']],
+  (svg, i, t) => { eqn(svg, 40, 'CaO + H_2O → Ca(OH)_2', {fs: 26});
+    typePic(svg, 'combination', i === 0 ? 0 : (i === 1 ? t : 1), {x: 360, y: 140, s: 1.3, sym: {A: 'CaO', B: 'H₂O'}});
+    if (i >= 1) typeTag(svg, P(360, 230), 'combination', {op: i === 1 ? t : 1, ml: false});
+    thermo(svg, 690, 190, i < 2 ? .15 : .15 + .7 * t, {label: i < 2 ? 'cool' : 'very hot!'});
+    if (i === 2) for (let k = 0; k < 3; k++){ const ph = (t * 2 + k / 3) % 1; K.el('path', {d: `M${600 + k * 18},${150 - ph * 50} q8,-10 0,-20 q-8,-10 0,-20`, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 2, opacity: 1 - ph}, svg); } });
+
+/* B10: BaCl2 + Na2SO4 */
+S('B10', ['Write the ions: BaCl<sub>2</sub> → Ba<sup>2+</sup> and Cl<sup>−</sup>; Na<sub>2</sub>SO<sub>4</sub> → Na<sup>+</sup> and SO<sub>4</sub><sup>2−</sup>.',
+  'The partners are exchanged: Ba<sup>2+</sup> goes with SO<sub>4</sub><sup>2−</sup>, and Na<sup>+</sup> goes with Cl<sup>−</sup> – AB + CD → AD + CB: <b>double decomposition</b>.',
+  'BaSO<sub>4</sub> does not dissolve in water – it settles as a <b>white precipitate</b> (the precipitation kind of double decomposition).'], [
+  [0, 'Ba^2+ Cl^− + Na^+ SO_4^2−', 'big'], [1, 'Ba^2+ and Na^+ exchange partners → BaSO_4 + NaCl', 'big green'], [2, 'white precipitate of BaSO_4 ↓', 'big amber']],
+  (svg, i, t) => { eqn(svg, 36, 'BaCl_2 + Na_2SO_4 → BaSO_4↓ + 2NaCl', {fs: 24});
+    typePic(svg, 'double decomposition', i === 0 ? 0 : (i === 1 ? t : 1), {x: 330, y: 135, s: 1.05, sym: {A: 'Ba²⁺', B: 'Cl⁻', C: 'Na⁺', D: 'SO₄²⁻'}});
+    if (i === 2){ tube(svg, P(700, 230), {liq: 'var(--blue-soft)', ppt: '#f8fafc', pa: t, h: 150, label: 'white BaSO₄', cls: 'amber'}); typeTag(svg, P(330, 205), 'double decomposition', {kind: 'precipitation', op: t, ml: false}); } });
+
+/* B11: collision theory, H2 + O2 balloon */
+(function(){ const room = [8, 14, 22, 11, 30, 18, 25, 16, 34, 20, 12, 27], spark = [8, 14, 22, 11, 66, 18, 25, 72, 34, 20, 12, 61], thr = 55;
+S('B11', ['The H<sub>2</sub> and O<sub>2</sub> molecules move about and collide millions of times every second.',
+  'At room temperature hardly any molecule has the <b>threshold energy</b>: when they collide they just bounce apart – the collisions are <b>not effective</b>.',
+  'The spark gives some molecules enough energy. Their collisions are <b>effective</b> and form water; the energy released makes more collisions effective – the reaction spreads (an explosion).'], [
+  [0, 'collisions all the time …', 'big'], [1, '… but no molecule reaches the threshold energy → no reaction', 'big red'], [2, 'spark → some reach the threshold energy → effective collisions', 'big green']],
+  (svg, i, t) => { K.el('rect', {x: 40, y: 30, width: 320, height: 190, rx: 14, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 2, 'stroke-dasharray': '6 4'}, svg);
+    particles(svg, {x: 44, y: 34, w: 312, h: 182}, 16, (i + t) * 2.5, {r: 9, speed: 1.2, kinds: ['A', 'B', 'A']}); cap(svg, P(200, 236), 'red: H₂ · blue: O₂', 'muted');
+    if (i === 1){ collide(svg, P(600, 70), t, {la: 'H₂', lb: 'O₂'}); cap(svg, P(600, 112), 'not enough energy → they bounce apart', 'red'); energyBars(svg, 450, 225, room, thr, {k: 1.2, w: 16, gap: 9, count: false, thrLabel: false}); return; }
+    const r = energyBars(svg, 450, 200, i === 2 ? spark : room, thr, {k: 2, w: 16, gap: 9, t: i === 0 ? 1 : t, label: i === 2 ? 'after the spark' : 'room temperature', cls: i === 2 ? 'green' : 'blue'});
+    if (i === 2 && t > .9) burst(svg, P(650, 60), 1.2, 'amber'); }, {y: 266});
+})();
+
+/* B12: fish on ice */
+(function(){ const warm = [22, 35, 48, 60, 30, 72, 41, 55, 26, 66, 38, 80], cold = warm.map(v => Math.round(v * .7)), thr = 55;
+S('B12', ['At room temperature: some particles have at least the threshold energy (the green bars).',
+  'On ice the particles have <b>less kinetic energy</b> – every bar is shorter and <b>fewer reach the threshold energy</b>. The threshold itself does not change.',
+  'Fewer effective collisions every second → the reactions that spoil the fish are <b>much slower</b>; the fish stays fresh longer.'], [
+  [0, 'room temperature: 5 of 12 reach the threshold energy', 'big'], [1, 'on ice: only 1 of 12 reaches it', 'big blue'], [2, 'fewer effective collisions → slower spoiling', 'big green']],
+  (svg, i, t) => { const v = i === 0 ? warm : warm.map((w, k) => K.lerp(w, cold[k], i === 1 ? t : 1));
+    energyBars(svg, 90, 210, v, thr, {k: 2.1, w: 18, gap: 10, label: i === 0 ? 'room temperature' : 'fish on ice', cls: i === 0 ? 'red' : 'blue', t: 1});
+    thermo(svg, 470, 200, i === 0 ? .7 : K.lerp(.7, .12, i === 1 ? t : 1), {label: i === 0 ? '30 °C' : '0 °C', cls: i === 0 ? 'red' : 'blue'});
+    if (i === 2){ const bar = (y, w, s, c) => { K.el('rect', {x: 560, y, width: w, height: 26, rx: 6, fill: COL[c], opacity: .75}, svg); text(svg, P(560, y - 12), s, {class: 'lbl sm', 'font-weight': 700, 'text-anchor': 'start'}); };
+      bar(90, 200 * 1, 'rate of spoiling – room temperature', 'red'); bar(160, 200 * (1 - .8 * t), 'rate of spoiling – on ice', 'blue'); } }, {y: 266});
+})();
+
+/* B13: sugar cube and ash */
+(function(){ const cubeAt = (x, y, ash) => { cube(svg0, x, y, 70, {front: '#f8fafc', top: '#e2e8f0', side: '#cbd5e1'}); if (ash) for (let k = 0; k < 18; k++) K.el('circle', {cx: x + 6 + rnd(k) * 58, cy: y + 6 + rnd(k + 20) * 58, r: 2.4, fill: '#64748b'}, svg0); };
+  let svg0 = null;
+S('B13', ['A burning match is held to a sugar cube: the sugar only melts and chars a little – it does <b>not</b> catch fire.',
+  'A little ash is rubbed on the cube: now it <b>burns</b>. The metal compounds in the ash increase the rate of burning – the ash is a <b>catalyst</b>.',
+  'After the sugar has burnt the ash is <b>still there</b> – it has not undergone a permanent chemical change. That is what a catalyst does.'], [
+  [0, 'sugar alone: no fire', 'big red'], [1, 'with ash: it burns → the ash speeds up the reaction', 'big green'], [2, 'the ash is left unchanged → catalyst', 'big purple']],
+  (svg, i, t) => { svg0 = svg; eqn(svg, 30, 'C_12H_22O_11 + 12O_2 → 12CO_2 + 11H_2O', {fs: 20});
+    if (i < 2){ cubeAt(330, 110, i === 1); K.el('rect', {x: 180, y: 160, width: 130, height: 6, rx: 3, fill: '#b45309', transform: 'rotate(-10 245 163)'}, svg); flame(svg, 318, 160, .5, t);
+      if (i === 1 && t > .3) flame(svg, 380, 112, .9 * K.sub01(t, .3, 1), t * 3);
+      cap(svg, P(380, 210), i === 0 ? 'only melts – no flame' : 'burns with ash on it', i === 0 ? 'red' : 'green'); }
+    else { K.el('path', {d: 'M330,190 q50,-30 100,0 z', fill: '#64748b'}, svg); cap(svg, P(380, 206), 'ash left behind', 'purple');
+      box(svg, P(620, 130), 230, 60, 'catalyst: not used up', {cls: 'purple', fill: 'var(--purple-soft)', stroke: 'var(--purple)', op: t}); } }, {y: 262});
+})();
+
+/* C14: signs and types */
+(function(){ const SYM = [{A: 'Zn', B: 'Cu', C: 'SO₄'}, {A: 'K', B: 'OH', C: 'H', D: 'NO₃'}, {A: 'Na', B: 'CO₃', C: 'H', D: 'Cl'}], TY = ['displacement', 'double decomposition', 'double decomposition'],
+  KIND = [null, 'neutralisation', 'gas-forming'], E = ['Zn + CuSO_4 → ZnSO_4 + Cu', 'KOH + HNO_3 → KNO_3 + H_2O', 'Na_2CO_3 + 2HCl → 2NaCl + H_2O + CO_2↑'];
+S('C14', ['(a) Sign: <b>colour change</b> – the blue fades and red-brown copper coats the zinc. Zinc (A) takes the place of copper (B): A + BC → AC + B, <b>displacement</b>.',
+  '(b) Sign: <b>heat is given out</b> – the tube becomes warm. K<sup>+</sup> and H<sup>+</sup> exchange partners: KNO<sub>3</sub> and H–OH (water) – <b>double decomposition</b> (neutralisation).',
+  '(c) Sign: <b>effervescence – a gas is given off</b>. Na<sup>+</sup> and H<sup>+</sup> exchange partners; H<sub>2</sub>CO<sub>3</sub> at once breaks into H<sub>2</sub>O + CO<sub>2</sub>↑ – <b>double decomposition</b> (gas-forming).'], [
+  [0, '(a) colour change · displacement', 'big green'], [1, '(b) heat given out · double decomposition (neutralisation)', 'big green'], [2, '(c) gas given off · double decomposition (gas-forming)', 'big green']],
+  (svg, i, t) => { eqn(svg, 34, E[i], {fs: 24});
+    if (i === 0) tube(svg, P(110, 230), {liq: rgba(.75 - .55 * t), solid: 'nail', nailCol: t > .5 ? '#b45309' : '#94a3b8', label: t > .5 ? 'blue fades' : 'blue CuSO₄', cls: 'blue', level: .6});
+    if (i === 1){ tube(svg, P(90, 230), {liq: 'var(--blue-soft)', label: 'becomes warm', cls: 'red'}); thermo(svg, 160, 210, .2 + .55 * t, {h: 120}); }
+    if (i === 2) tube(svg, P(110, 230), {liq: 'var(--blue-soft)', solid: 'powder', bub: t * 3, nb: 10, label: 'fizzing: CO₂', cls: 'blue'});
+    typePic(svg, TY[i], t, {x: 470, y: 130, s: .95, sym: SYM[i]});
+    if (i === 2 && t > .8) cap(svg, P(630, 175), 'H₂CO₃ → H₂O + CO₂↑', 'blue');
+    typeTag(svg, P(470, 215), TY[i], {kind: KIND[i], op: K.sub01(t, .6, 1), ml: false}); }, {y: 274});
+})();
+
+/* C15: balance and classify */
+(function(){ const E = ['Al + Fe_2O_3 → Al_2O_3 + Fe', '*2Al + Fe_2O_3 → Al_2O_3 + *2Fe', 'Fe + Cl_2 → FeCl_3', '*2Fe + *3Cl_2 → *2FeCl_3', 'NaHCO_3 → Na_2CO_3 + H_2O + CO_2', '*2NaHCO_3 → Na_2CO_3 + H_2O + CO_2↑'];
+S('C15', ['(a) Count: Al 1 ≠ 2, Fe 2 ≠ 1, O 3 = 3.', '(a) Write <b>2</b>Al and <b>2</b>Fe: <b>2Al + Fe<sub>2</sub>O<sub>3</sub> → Al<sub>2</sub>O<sub>3</sub> + 2Fe</b>. Aluminium takes the place of iron – <b>displacement</b> (thermite).',
+  '(b) Count: Fe 1 = 1, but Cl 2 ≠ 3.', '(b) Cl: 2 and 3 → 6 atoms: <b>3</b>Cl<sub>2</sub> and <b>2</b>FeCl<sub>3</sub>, then <b>2</b>Fe. <b>2Fe + 3Cl<sub>2</sub> → 2FeCl<sub>3</sub></b> – one product: <b>combination</b>.',
+  '(c) Count: Na 1 ≠ 2, H 1 ≠ 2, C 1 ≠ 2, O 3 ≠ 6.', '(c) Write <b>2</b>NaHCO<sub>3</sub>: every atom is now equal. <b>2NaHCO<sub>3</sub> → Na<sub>2</sub>CO<sub>3</sub> + H<sub>2</sub>O + CO<sub>2</sub></b> – one reactant: <b>decomposition</b>.'], [
+  [0, '(a) not balanced', 'red'], [1, '(a) 2Al + Fe_2O_3 → Al_2O_3 + 2Fe · displacement', 'big green'], [2, '(b) not balanced', 'red'], [3, '(b) 2Fe + 3Cl_2 → 2FeCl_3 · combination', 'big green'],
+  [4, '(c) not balanced', 'red'], [5, '(c) 2NaHCO_3 → Na_2CO_3 + H_2O + CO_2 · decomposition', 'big green']],
+  (svg, i, t) => balStep(svg, E[i], {type: i % 2 === 1, t}), {y: 296});
+})();
+
+/* C16: the volume–time graph */
+S('C16', ['Plot the readings: volume of CO<sub>2</sub> (Y axis) against time (X axis). The curve rises steeply at first, then more and more slowly.',
+  '1st minute: 36 − 0 = <b>36 mL</b> – the steepest part of the curve. At the start there is the most marble and acid, so the most effective collisions every second.',
+  '4th minute: 86 − 76 = <b>10 mL</b> only – the curve is much less steep: the reactants are being used up and the rate falls.',
+  'From 5 minutes the volume stays at <b>90 mL</b> – the graph is flat: all the marble has been used up (the acid is in excess) and the reaction has stopped.',
+  'Marble <b>powder</b> of the same mass: larger surface area → more collisions → the curve is <b>steeper at the start</b> and flat <b>sooner</b>, but it ends at the <b>same 90 mL</b> (same mass of CaCO<sub>3</sub>).'], [
+  [0, 'the steeper the curve, the faster the reaction', 'big'], [1, '1st minute: 36 mL – fastest', 'big red'], [2, '4th minute: 10 mL – slower', 'big blue'], [3, 'flat at 90 mL: marble used up', 'big purple'], [4, 'powder: steeper, flat sooner, same 90 mL', 'big green']],
+  (svg, i, t) => { const hl = i === 1 ? [0, 1] : (i === 2 ? [3, 4] : null);
+    figC16(svg, {x0: 120, y0: 270, W: 420, H: 220, t: i === 0 ? t : 1, hl, hlc: i === 1 ? 'red' : 'blue', hlLabel: i === 1 ? '36 mL' : (i === 2 ? '10 mL' : null), hlop: t,
+      extra: i === 4 ? [{data: C16_POWDER, cls: 'green', dash: '8 5', t, label: 'powder', lp: 1}] : null});
+    if (i === 3){ box(svg, P(670, 120), 210, 34, 'flat: marble used up', {cls: 'sm purple', op: t, fill: 'var(--purple-soft)', stroke: 'var(--purple)'}); sline(svg, P(120 + 5 / 6 * 420, 270 - .9 * 220), P(540, 270 - .9 * 220), {stroke: 'var(--purple)', 'stroke-width': 5, opacity: .5 * t}); }
+    if (i === 4) box(svg, P(670, 120), 220, 50, 'larger surface area', {cls: 'sm green', op: t, fill: 'var(--green-soft)', stroke: 'var(--green)'}); }, {y: 334});
+
+/* C17: three factors */
+S('C17', ['(a) Cut one 2 cm cube into eight 1 cm cubes: the surface grows from 24 cm² to 48 cm². Powder has far more surface than ribbon → many more collisions with oxygen → a brilliant flash: <b>surface area</b>.',
+  '(b) Air has about 21 % oxygen; pure oxygen has about five times as many O<sub>2</sub> molecules in the same volume → more effective collisions → the stick bursts into flame: <b>concentration</b>.',
+  '(c) Potassium gives away its outermost electron very easily – it reacts violently with water; copper does not react with water at all: <b>nature of reactants</b>.'], [
+  [0, '(a) surface area: 24 cm² → 48 cm²', 'big green'], [1, '(b) concentration of oxygen', 'big blue'], [2, '(c) nature of reactants', 'big purple']],
+  (svg, i, t) => {
+    if (i === 0){ cube(svg, 130, 90, 110); cap(svg, P(205, 225), 'one 2 cm cube: 24 cm²', '');
+      for (let k = 0; k < 8; k++){ const sp = 14 * t, x = 430 + (k % 4) * (55 + sp), y = 80 + Math.floor(k / 4) * (62 + sp); cube(svg, x, y, 50); }
+      cap(svg, P(560, 225), 'eight 1 cm cubes: 48 cm²', 'green', t); return; }
+    if (i === 1){ K.el('rect', {x: 90, y: 40, width: 240, height: 170, rx: 12, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 2}, svg); K.el('rect', {x: 470, y: 40, width: 240, height: 170, rx: 12, fill: 'none', stroke: 'var(--blue)', 'stroke-width': 2}, svg);
+      particles(svg, {x: 94, y: 44, w: 232, h: 162}, 20, t * 3, {r: 8, kinds: ['B', 'D', 'D', 'D', 'D'], seed: 3}); particles(svg, {x: 474, y: 44, w: 232, h: 162}, 20, t * 3, {r: 8, kinds: ['B'], seed: 5});
+      cap(svg, P(210, 226), 'air: 4 O₂ in 20 molecules', 'muted'); cap(svg, P(590, 226), 'pure oxygen: 20 O₂', 'blue'); cap(svg, P(400, 125), 'blue = O₂ · orange = N₂', 'muted'); return; }
+    tube(svg, P(250, 220), {liq: 'var(--blue-soft)', bub: t * 6, nb: 14, label: 'potassium + water', label2: 'violent', cls: 'red'}); burst(svg, P(250, 60), .9 + .2 * Math.sin(t * 12), 'amber');
+    tube(svg, P(550, 220), {liq: 'var(--blue-soft)', label: 'copper + water', label2: 'no reaction', cls: 'muted'}); K.el('rect', {x: 540, y: 150, width: 20, height: 50, rx: 3, fill: '#b45309'}, svg); }, {y: 270});
+
+/* D18: contact and Haber processes */
+S('D18', ['(a) 2SO<sub>2</sub> + O<sub>2</sub> → 2SO<sub>3</sub>: two substances join to form <b>one</b> product – a <b>combination reaction</b>.',
+  '(b) V<sub>2</sub>O<sub>5</sub> is the <b>catalyst</b>: it increases the rate; at the end its amount is the same and it is chemically unchanged.',
+  '(c) ⇌ means the reaction is <b>reversible</b>: SO<sub>2</sub> and O<sub>2</sub> form SO<sub>3</sub>, and some SO<sub>3</sub> breaks back into SO<sub>2</sub> and O<sub>2</sub> at the same time.',
+  '(d) Pressure: more molecules in each unit volume (higher concentration) → more collisions. High temperature: more kinetic energy → more molecules reach the threshold energy. Both give more effective collisions.',
+  '(e) Haber process: N<sub>2</sub> + 3H<sub>2</sub> ⇌ 2NH<sub>3</sub> with an <b>iron</b> catalyst (200 atm, 700 K). Ammonia for fertilisers is made in factories such as FACT, Udyogamandal.'], [
+  [0, '(a) one product → combination', 'big green'], [1, '(b) catalyst: same amount, unchanged', 'big purple'], [2, '(c) ⇌ reversible reaction', 'big blue'], [3, '(d) pressure → concentration · temperature → threshold energy', 'big'], [4, '(e) N_2 + 3H_2 ⇌ 2NH_3 · catalyst Fe', 'big green']],
+  (svg, i, t) => {
+    if (i === 4){ eqn(svg, 70, 'N_2(g) + 3H_2(g) ⇌ 2NH_3(g)', {fs: 32, over: 'Fe', under: '200 atm, 700 K'}); box(svg, P(400, 170), 420, 40, 'ammonia → fertilisers (FACT, Udyogamandal)', {cls: 'sm green', op: t, fill: 'var(--green-soft)', stroke: 'var(--green)'}); return; }
+    eqn(svg, 60, '2SO_2(g) + O_2(g) ⇌ 2SO_3(g)', {fs: 30, over: 'V₂O₅', under: '2 atm, 720 K'});
+    if (i === 0){ typePic(svg, 'combination', t, {x: 420, y: 165, s: 1.1, sym: {A: 'SO₂', B: 'O'}}); return; }
+    if (i === 1){ box(svg, P(200, 165), 190, 50, 'V₂O₅ at the start', {cls: 'sm purple', fill: 'var(--purple-soft)', stroke: 'var(--purple)'}); arrow(svg, P(310, 165), P(490, 165), {c: 'muted', w: 3});
+      cap(svg, P(400, 145), 'gases react on it', 'muted'); box(svg, P(600, 165), 190, 50, 'V₂O₅ at the end', {cls: 'sm purple', fill: 'var(--purple-soft)', stroke: 'var(--purple)', op: t}); cap(svg, P(600, 205), 'same amount · unchanged', 'green', t); return; }
+    if (i === 2){ arrow(svg, P(260, 140), P(540, 140), {c: 'blue', w: 3}); arrow(svg, P(540, 185), P(260, 185), {c: 'red', w: 3, op: t});
+      cap(svg, P(150, 162), '2SO₂ + O₂', ''); cap(svg, P(650, 162), '2SO₃', ''); cap(svg, P(400, 124), 'forward', 'blue'); cap(svg, P(400, 205), 'backward (at the same time)', 'red', t); return; }
+    K.el('rect', {x: 70, y: 105, width: 150, height: 110, rx: 10, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 2}, svg); particles(svg, {x: 74, y: 109, w: 142, h: 102}, 6, t * 3, {r: 7, seed: 2});
+    K.el('rect', {x: 250, y: 105, width: 150, height: 110, rx: 10, fill: 'none', stroke: 'var(--blue)', 'stroke-width': 2}, svg); particles(svg, {x: 254, y: 109, w: 142, h: 102}, 14, t * 3, {r: 7, seed: 4});
+    cap(svg, P(145, 228), 'low pressure', 'muted'); cap(svg, P(325, 228), 'high pressure: more per unit volume', 'blue');
+    energyBars(svg, 470, 205, [20, 34, 48, 62, 30, 70, 44, 58], 55, {k: 1.2, w: 16, gap: 9, label: 'hot: more reach the threshold', cls: 'red', count: false, thrRight: true}); }, {y: 268});
+
+/* D19: the Kerala kitchen */
+S('D19', ['(a) Burning firewood gives out <b>heat and light</b>, gives off <b>smoke and gases</b>, and leaves black charcoal and grey <b>ash</b> – new substances: a chemical change.',
+  '(b) <b>Temperature</b>: April (warm) – the batter rises by morning; July (cool) – slower; refrigerator – hardly at all. In July keep it covered in a <b>warm place</b> in the kitchen.',
+  '(c) Enzymes are <b>biological catalysts</b>. Amylase in saliva breaks the long starch chain into maltose (two glucose units) – that is why chewed rice tastes sweet.',
+  '(d) <b>Surface area</b>: thin sticks expose much more wood to the air → many more collisions with oxygen → they catch fire and burn faster.',
+  '(e) <b>Concentration</b> of oxygen: blowing brings more oxygen molecules to the burning wood every second → more effective collisions → bright flames.'], [
+  [0, '(a) heat and light · smoke · ash', 'big amber'], [1, '(b) temperature: warm place, not the fridge', 'big red'], [2, '(c) enzymes = biological catalysts (amylase)', 'big purple'], [3, '(d) surface area', 'big green'], [4, '(e) concentration of oxygen', 'big blue']],
+  (svg, i, t) => {
+    if (i === 0){ wood(svg, 400, 210, 6); flame(svg, 380, 196, 1.3, t); flame(svg, 425, 196, 1, t + .3); for (let k = 0; k < 4; k++){ const ph = (t + k / 4) % 1; K.el('circle', {cx: 400 + Math.sin(ph * 6 + k) * 20, cy: 100 - ph * 70, r: 8 + ph * 10, fill: 'var(--muted)', opacity: .35 * (1 - ph)}, svg); }
+      cap(svg, P(220, 120), 'heat and light', 'amber'); cap(svg, P(590, 60), 'smoke and gases', 'muted'); K.el('path', {d: 'M470,212 q30,-14 60,0 z', fill: '#64748b'}, svg); cap(svg, P(560, 196), 'ash', 'muted'); return; }
+    if (i === 1){ [['April', .8, .95], ['July', .45, .6], ['refrigerator', .1, .1]].forEach(([n, lv, rise], k) => { const x = 160 + k * 240;
+        K.el('path', {d: `M${x - 50},90 V200 q0,14 14,14 H${x + 36} q14,0 14,-14 V90`, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 2.4}, svg);
+        const top = 200 - 50 - 55 * rise * t; K.el('rect', {x: x - 48, y: top, width: 96, height: 212 - top, rx: 8, fill: '#fef3c7', stroke: '#d97706', 'stroke-width': 1.2}, svg);
+        for (let b = 0; b < 6 * rise; b++) K.el('circle', {cx: x - 36 + rnd(b + k * 9) * 72, cy: top + 10 + rnd(b + 4 + k) * (190 - top), r: 3, fill: 'none', stroke: '#d97706'}, svg);
+        thermo(svg, x + 80, 200, lv, {h: 90}); cap(svg, P(x, 236), n, k === 2 ? 'blue' : 'red'); }); return; }
+    if (i === 2){ for (let k = 0; k < 8; k++){ const sep = (k % 2 ? 0 : 1) * 26 * t * (k ? 1 : 0); const x = 160 + k * 44 + Math.floor(k / 2) * 26 * t; ball(svg, P(x, 120), '', {r: 18, fill: 'var(--accent-soft)', stroke: 'var(--accent)'}); if (k < 7 && !(k % 2 === 1 && t > .5)) sline(svg, P(x + 18, 120), P(x + 26, 120), {stroke: 'var(--accent)', 'stroke-width': 3}); }
+      cap(svg, P(320, 160), t < .5 ? 'starch: a long chain' : 'maltose: pairs of glucose units', 'amber'); box(svg, P(660, 120), 170, 44, 'amylase', {cls: 'purple', fill: 'var(--purple-soft)', stroke: 'var(--purple)'}); cap(svg, P(660, 160), 'biological catalyst', 'purple'); return; }
+    if (i === 3){ wood(svg, 220, 170, 1); wood(svg, 560, 170, 9); cap(svg, P(220, 200), 'whole log: little surface', 'muted'); cap(svg, P(560, 200), 'thin sticks: much more surface', 'green');
+      particles(svg, {x: 440, y: 60, w: 240, h: 60}, 10, t * 3, {r: 6, kinds: ['B'], seed: 7}); particles(svg, {x: 130, y: 70, w: 180, h: 50}, 4, t * 3, {r: 6, kinds: ['B'], seed: 9}); return; }
+    wood(svg, 520, 210, 6); flame(svg, 510, 196, .8 + .7 * t, t); flame(svg, 545, 196, .6 + .5 * t, t + .4);
+    K.el('rect', {x: 120, y: 160, width: 230, height: 12, rx: 6, fill: '#94a3b8', stroke: 'var(--muted)', transform: 'rotate(8 235 166)'}, svg); cap(svg, P(220, 200), 'blowpipe', 'muted');
+    for (let k = 0; k < 7; k++){ const ph = (t * 2 + k / 7) % 1; K.el('circle', {cx: 360 + ph * 120, cy: 182 + ph * 10 + (k % 3 - 1) * 6, r: 6, fill: PCOL.B[0], stroke: PCOL.B[1], 'stroke-width': 1.4}, svg); }
+    cap(svg, P(420, 140), 'more O₂ every second', 'blue'); }, {y: 270});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

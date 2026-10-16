@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Temperature, Catalysts and Enzymes</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+/* ==== common styles (same on pages 07–09) ==== */
+.qa,.qbox{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.7rem 1rem;margin:.8rem 0;box-shadow:var(--shadow)}
+.qa p,.qbox p{margin:.3em 0}
+.qbox ol,.qbox ul,.qa ol,.qa ul{margin:.3rem 0}
+.mlq{display:block;font-weight:500;margin:.2rem 0 .4rem}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.answer ul{margin:.2rem 0}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.keyml{display:block;margin:.2rem 0 .4rem}
+.ft{width:auto;min-width:min(100%,520px)}
+.ft td,.ft th{text-align:center;vertical-align:middle;padding:.35rem .45rem}
+.ft th{font-size:.88rem;line-height:1.3}
+.ft th .ml,.ft td .ml{display:block;font-size:.85em}
+.ft td.l{text-align:left}
+.ft input{width:3.8em;padding:.25rem .3rem;border-radius:6px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;text-align:center}
+.ft input.wide{width:9em}
+.ft input.ok{border-color:var(--green);background:var(--green-soft)}
+.ft input.bad{border-color:var(--red);background:var(--red-soft)}
+.ft td.given{font-weight:600}
+.score{font-weight:700;color:var(--primary-ink);margin:.4rem 0 0;min-height:1.3em}
+.ans-tab td,.ans-tab th{text-align:center;vertical-align:middle}
+.ans-tab th .ml,.ans-tab td .ml{display:block;font-size:.85em}
+.ans-tab td.l{text-align:left}
+td.fill{font-weight:700;color:var(--green)}
+.btn.ok{background:var(--green-soft);border-color:var(--green);color:var(--text)}
+.btn.bad{background:var(--red-soft);border-color:var(--red);color:var(--text)}
+.btn.primary .ml{color:#fff}
+.yn{display:inline-flex;gap:.3rem;flex-wrap:wrap}
+.yn .btn{padding:.25rem .6rem;font-size:.88rem}
+.why{font-size:.92rem;margin-top:.3rem;min-height:1.2em}
+.ask{margin:.55rem 0;padding:.45rem .7rem;border-radius:10px;background:var(--surface2)}
+.ask p{margin:.1rem 0 .35rem}
+.sidebox{border:2px solid var(--blue);background:var(--blue-soft);border-radius:14px;padding:.7rem 1rem;margin:1rem 0}
+.sidebox .title{font-weight:700;color:var(--blue);margin-bottom:.3rem}
+.sidebox p:last-child{margin-bottom:0}
+.further{border-left:6px solid var(--purple);background:var(--purple-soft);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+.further .title{font-weight:700;color:var(--purple);margin-bottom:.3rem}
+.eqc{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.35rem;padding:.55em .6em;margin:.7em 0;background:var(--surface2);border-radius:10px;line-height:1.6;overflow-x:auto;white-space:nowrap}
+.eqc sub{font-size:.65em}
+.eqc .st{font-size:.7em;color:var(--muted)}
+.carr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .4em;line-height:1.05}
+.carr .up{font-size:.62em;font-weight:700;color:var(--purple)}
+.carr .ar{font-size:1.25em}
+.carr .dn{font-size:.55em;color:var(--muted);font-family:"Segoe UI",Roboto,Arial,sans-serif}
+.coll{border:2px solid var(--primary);border-radius:12px;padding:.55rem .9rem;margin:.8rem 0;background:var(--surface)}
+.coll .title{font-weight:700;color:var(--primary-ink);margin-bottom:.25rem}
+.coll ol{margin:.2rem 0;padding-left:1.3em}
+.ct td,.ct th{vertical-align:middle}
+.ct th .ml,.ct td .ml{display:block;font-size:.85em}
+/* ==== page 08 ==== */
+.bxlist{margin:.3rem 0;padding-left:1.2em}
+.bxlist li{margin:.35rem 0}
+</style>
+</head>
+<body data-page="08_temperature_catalysts">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 5 · Section 8</span><span class="chip amber">Textbook pages 106–109</span>
+<h1>Temperature, Catalysts and Enzymes <span class="ml">താപനില · ഉൽപ്രേരകം · എൻസൈമുകൾ</span></h1>
+<p class="lead">Why does dosa batter rise overnight on the kitchen shelf but hardly at all in the fridge? Why does a glowing incense stick suddenly blaze when a pinch of black powder is added to hydrogen peroxide? Here are the last two factors that control the rate of reaction, <b>temperature</b> <span class="ml">താപനില</span> and <b>catalysts</b> <span class="ml">ഉൽപ്രേരകം</span>. You will also meet the <b>threshold energy</b> <span class="ml">ത്രെഷോൾഡ് എനർജി</span>, the Haber and contact processes, and the enzymes at work inside your own mouth.</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 2, 6 and 7 of this guide)</div>
+<ul style="margin:0">
+<li>Particles are always moving. The higher the temperature, the greater their <b>kinetic energy</b> <span class="ml">ഗതികോർജം</span> (<a href="02_particles_energy_recap.html">page 2</a>).</li>
+<li>Only collisions with enough energy are <b>effective collisions</b> <span class="ml">ഫലവത്തായ കൂട്ടിമുട്ടലുകൾ</span> (<a href="06_rate_collision_theory.html">page 6</a>).</li>
+<li>Nature, concentration and surface area change the rate (<a href="07_nature_concentration_surface.html">page 7</a>).</li>
+</ul></div>
+
+<!-- ================= 1 ================= -->
+<h2 id="temp">1. Temperature <span class="ml">താപനില</span> – ammonium chloride and sodium hydroxide</h2>
+<p><span class="ml">അമോണിയം ക്ലോറൈഡും (NH₄Cl) സോഡിയം ഹൈഡ്രോക്സൈഡും (NaOH) തമ്മിലുള്ള പ്രവർത്തനം നമുക്കൊന്ന് പരിശോധിക്കാം. ഇവ തമ്മിൽ പ്രവർത്തിച്ചാൽ ഏതൊക്കെ ഉൽപന്നങ്ങളാണ് ലഭിക്കുന്നത്?</span> Let us examine the reaction between ammonium chloride (NH₄Cl) and sodium hydroxide (NaOH). <b>Q (page 106).</b> Which products form when they react? Look at the equation:</p>
+<span class="eqc">NH<sub>4</sub>Cl + NaOH → NaCl + H<sub>2</sub>O + NH<sub>3</sub>↑</span>
+<div class="reveal" data-btn="Show answer"><div class="answer">Sodium chloride (<b>NaCl</b>), water (<b>H₂O</b>) and <b>ammonia gas (NH₃)</b>. The ↑ shows that ammonia escapes as a gas. It is a double decomposition reaction: NH₄⁺ and Na⁺ swap partners, and NH₄OH breaks up into NH₃ + H₂O.</div></div>
+<p><span class="ml">ഒരു ടെസ്റ്റ് ട്യൂബിൽ 2 mL അമോണിയം ക്ലോറൈഡ് ലായനി എടുക്കുക. അതിലേക്ക് മറ്റൊരു ടെസ്റ്റ് ട്യൂബിൽ എടുത്തിരിക്കുന്ന 2 mL സോഡിയം ഹൈഡ്രോക്സൈഡ് ലായനി ഒഴിക്കുക.</span> Take 2 mL of ammonium chloride solution in a test tube. Pour into it 2 mL of sodium hydroxide solution taken in another test tube.</p>
+<div class="safety">⚠️ Ammonia has a strong, choking smell and sodium hydroxide is caustic. <b>Never</b> put your nose over a test tube. Smell a gas only by <b>wafting</b> it gently towards you with your hand (Fig 5.9). Warming is done by the teacher, with the tube pointing away from everyone. Wear goggles.</div>
+<div class="lab" id="amLab">
+  <div class="lab-title">👃 Virtual lab – Fig 5.9: smell the ammonia safely, cold and warm</div>
+  <svg id="amSvg" viewBox="0 0 800 330" role="img" aria-label="A test tube of ammonium chloride solution with a thermometer; sodium hydroxide is poured in; tiny ammonia particles rise from the liquid; a hand wafts them towards a face on the right; a smell meter shows how strong the smell is; after warming, many more ammonia particles escape"></svg>
+  <div class="controls"><button class="btn primary" id="amMix">① Pour in 2 mL NaOH</button><button class="btn" id="amWaft">② ✋ Waft towards the nose</button><button class="btn" id="amWarm">③ 🔥 Warm the tube (teacher)</button><button class="btn ghost" id="amReset">⟲ Reset</button></div>
+  <div class="readout" id="amOut"></div>
+  <p class="hint">Blue dots are ammonia molecules leaving the liquid. The smell meter counts how many reach the nose. The numbers are a model.</p>
+</div>
+<div class="qa"><p><b>Q (page 107).</b> Answer from the experiment:</p><ol>
+<li><span class="ml">എന്തെങ്കിലും ഉൽപന്നം ഉണ്ടായതായി നിരീക്ഷിച്ചോ?</span> Did you observe any product forming?</li>
+<li><span class="ml">ചിത്രം 5.9 ൽ കാണുന്നതുപോലെ ടെസ്റ്റ് ട്യൂബിന്റെ വായ്ഭാഗത്തുനിന്ന് നമ്മുടെ മൂക്കിലേക്ക് വായു വരുന്ന തരത്തിൽ കൈ വീശി നോക്കുക. എന്തെങ്കിലും ഗന്ധം അനുഭവപ്പെടുന്നുണ്ടോ?</span> Wave your hand so that air from the mouth of the tube comes towards your nose, as in Fig 5.9. Do you notice any smell?</li>
+<li><span class="ml">ടെസ്റ്റ് ട്യൂബ് ചൂടാക്കിയശേഷം വീണ്ടും ഗന്ധം പരിശോധിക്കുക.</span> Warm the test tube and test the smell again. What do you find?</li></ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">
+1. <b>No visible change.</b> Both solutions are colourless and the mixture stays clear, because all the products dissolve or are colourless.<br>
+2. Only a <b>very faint</b> smell, or none at all. At room temperature very little ammonia forms each second.<br>
+3. After warming, the sharp, <b>pungent smell of ammonia</b> <span class="ml">അമോണിയയുടെ രൂക്ഷഗന്ധം</span> is strong. The rate increased because the <b>temperature</b> increased.<br>
+<span class="ml">ചൂടാക്കിയപ്പോഴാണ് അമോണിയയുടെ രൂക്ഷഗന്ധം ലഭിച്ചത്. അതായത് പ്രവർത്തനവേഗം വർധിച്ചത് താപനിലയിൽ ഉണ്ടായ വർധനവ് മൂലമാണ്.</span></div></div></div>
+
+<!-- ================= 2 ================= -->
+<h2 id="threshold">2. Threshold energy <span class="ml">ത്രെഷോൾഡ് എനർജി</span></h2>
+<div class="callout key"><div class="title">⭐ Threshold energy (page 107)</div>
+<span class="ml keyml">ഒരു രാസപ്രവർത്തനത്തിൽ പങ്കെടുക്കുന്ന അഭികാരകങ്ങൾ ഉൽപന്നമായി മാറണമെങ്കിൽ അഭികാരക കണികകൾക്ക് ഒരു നിശ്ചിത അളവ് ഗതികോർജം (kinetic energy) ആവശ്യമാണ്. ഈ ഊർജത്തെ ത്രെഷോൾഡ് എനർജി (threshold energy) എന്ന് പറയുന്നു.</span>
+<p style="margin:0">For the reactants in a chemical reaction to change into products, the reactant particles need a <b>certain minimum amount of kinetic energy</b> <span class="ml">ഗതികോർജം</span>. This energy is called the <b>threshold energy</b> <span class="ml">ത്രെഷോൾഡ് എനർജി</span>.</p></div>
+<p><span class="ml">അഭികാരകങ്ങളെ ചൂടാക്കുമ്പോൾ കണികകളുടെ ഗതികോർജം വർധിക്കുന്നു. അതായത് താപനില വർധിക്കുമ്പോൾ ത്രെഷോൾഡ് എനർജി കൈവരിച്ച കണികകളുടെ എണ്ണം കൂടുന്നു. തൽഫലമായി ഫലവത്തായ കൂട്ടിമുട്ടലുകളുടെ എണ്ണം വർധിക്കുകയും രാസപ്രവർത്തനം വേഗത്തിലാവുകയും ചെയ്യുന്നു.</span> When the reactants are heated, the kinetic energy of the particles increases. So as the temperature rises, the <b>number of particles that reach the threshold energy increases</b>. As a result the number of effective collisions increases and the reaction becomes faster.</p>
+<p>The particles in a beaker do <b>not</b> all have the same energy. A few are slow, most are in the middle, and a few are very fast. Move the slider and watch the coloured tail, which shows the particles that have <b>at least</b> the threshold energy.</p>
+<div class="lab" id="keLab">
+  <div class="lab-title">📈 Energy share lab – how many particles reach the threshold?</div>
+  <svg id="keSvg" viewBox="0 0 800 330" role="img" aria-label="A curve showing how many particles have each kinetic energy; a vertical red line marks the threshold energy; the area to the right of the line, the particles able to react, is shaded green; at higher temperature the curve spreads to the right and the shaded area grows; a dashed curve shows room temperature for comparison"></svg>
+  <div class="controls"><label>temperature <input type="range" id="keT" min="270" max="400" step="10" value="300"> <output></output> K</label><button class="btn" id="keCat">🔭 Add a catalyst (go further)</button></div>
+  <div class="readout" id="keOut"></div>
+  <p class="hint">The curve is a real energy distribution for gas particles (the Maxwell–Boltzmann shape), with the threshold put at 4 units. The percentages show the trend. They are not the values for any one reaction. K = kelvin; 300 K ≈ 27 °C.</p>
+</div>
+<div class="coll"><div class="title">💥 Collision theory: temperature</div>
+<p style="margin:0">Heating does <b>two</b> things. The particles move faster, so they collide a little more often. Much more important, a <b>far larger share</b> of the collisions now has at least the threshold energy. In the lab a rise of 60 K nearly doubles the green tail. Real reactions have a much higher threshold, so for them even a 10 °C rise can double the rate. Heating does <b>not</b> lower the threshold energy. It gives more particles enough energy to get over it.</p></div>
+
+<div class="qa"><p><b>? (page 107).</b> <span class="ml mlq">സോഡിയം തയോസൾഫേറ്റും (Na₂S₂O₃) ഹൈഡ്രോക്ലോറിക് ആസിഡും തമ്മിലുള്ള രാസപ്രവർത്തനക്രമം ചുവടെ നൽകിയിരിക്കുന്നു. പരീക്ഷണത്തിലൂടെ രാസപ്രവർത്തനവേഗത്തെ സ്വാധീനിക്കുന്ന ഘടകമേതെന്ന് തിരിച്ചറിയുക.</span> The procedure for the reaction between sodium thiosulphate (Na₂S₂O₃) and hydrochloric acid is given below. Identify, by experiment, the factor that affects the rate.</p>
+<p><span class="ml">ഒരു ബീക്കറിൽ സോഡിയം തയോസൾഫേറ്റിന്റെ നേർപ്പിച്ച ലായനി തയ്യാറാക്കുക. ഈ ലായനി തുല്യ അളവിൽ രണ്ട് ടെസ്റ്റ് ട്യൂബുകളിൽ എടുക്കുക. ഒരു ടെസ്റ്റ് ട്യൂബിനെ അൽപ്പസമയം ചൂടാക്കുക. രണ്ട് ടെസ്റ്റ് ട്യൂബുകളിലും ഒരേ അളവിൽ നേർപ്പിച്ച ഹൈഡ്രോക്ലോറിക് ആസിഡ് ഒഴിക്കുക.</span> Prepare a dilute solution of sodium thiosulphate in a beaker. Take equal amounts of it in two test tubes. Warm one test tube for a short time. Pour the same amount of dilute hydrochloric acid into both tubes.</p>
+<div class="safety">⚠️ This reaction gives off a little sulphur dioxide, a choking gas. Use small amounts in a well-ventilated room, and only gentle warming done by your teacher. Do not smell the tubes.</div>
+<div class="lab" id="tsLab">
+  <div class="lab-title">⏱️ Virtual lab – warm vs cold: which tube turns cloudy first?</div>
+  <svg id="tsSvg" viewBox="0 0 800 320" role="img" aria-label="Two test tubes of sodium thiosulphate solution with thermometers, a cross drawn behind each; after hydrochloric acid is added the liquid becomes cloudy pale yellow with sulphur, faster in the warmed tube; the time at which the cross disappears is recorded under each tube"></svg>
+  <div class="controls"><button class="btn" id="tsWarm">① 🔥 Warm test tube 2 (teacher)</button><button class="btn primary" id="tsAdd">② Add equal dilute HCl to both</button><button class="btn ghost" id="tsReset">⟲ Reset</button></div>
+  <div class="readout" id="tsOut"></div>
+  <p class="hint">The clock in the picture runs 4 times faster than real time. Times are illustrative. A common rule of thumb is that a rise of 10 °C roughly doubles the rate of many reactions.</p>
+</div>
+<p><span class="ml">നിങ്ങളുടെ നിരീക്ഷണം രേഖപ്പെടുത്തുക. ഏത് ടെസ്റ്റ് ട്യൂബിലാണ് വേഗത്തിൽ അവക്ഷിപ്തം രൂപപ്പെട്ടത്? ഇവിടെ രാസപ്രവർത്തനവേഗത്തെ സ്വാധീനിച്ച ഘടകം ഏതാണ്?</span> <b>Q.</b> Record your observation. In which test tube did the precipitate form quickly? Which factor affected the rate here?</p>
+<div class="ask"><p>The factor that affected the rate here is …</p>
+<div class="yn" data-ans="2" data-why="Temperature. The solutions, the amounts and the acid were all the same. Only the temperature was different." data-hint="What was the ONLY difference between the two tubes?"><button class="btn">concentration</button><button class="btn">surface area</button><button class="btn">temperature</button><button class="btn">catalyst</button></div><div class="why"></div></div>
+<div class="reveal" data-btn="Show answer"><div class="answer">
+<b>Observation:</b> both tubes slowly turn <b>cloudy, pale yellow</b>. The cloudiness is a precipitate <span class="ml">അവക്ഷിപ്തം</span> of sulphur. The <b>warmed</b> tube turns cloudy much <b>sooner</b>.<br>
+<b>Precipitate formed quickly in:</b> the warmed test tube.<br>
+<b>Factor:</b> <b>temperature</b> <span class="ml">താപനില</span>. At the higher temperature more particles have the threshold energy, so there are more effective collisions.<br>
+Go further, the equation: Na₂S₂O₃ + 2HCl → 2NaCl + S↓ + SO₂↑ + H₂O.</div></div></div>
+
+<div class="sidebox"><div class="title">🌡️ Side box (page 108) – temperature at work around us <span class="ml">നമുക്ക് ചുറ്റും കാണുന്ന ചില പ്രവർത്തനങ്ങളിൽ താപനിലയുടെ സ്വാധീനം</span></div>
+<ul class="bxlist">
+<li><span class="ml">ദോശയും ഇഡ്ഡലിയും ഉണ്ടാക്കാനായി നമ്മൾ അരച്ചുവെക്കുന്ന മാവ് സാധാരണ താപനിലയിൽ വളരെ വേഗത്തിൽ പുളിച്ചുപൊങ്ങി വരുന്നത് കാണാനാകും എന്നാൽ റഫ്രിജറേറ്ററിലാണ് മാവ് സൂക്ഷിക്കുന്നതെങ്കിൽ പൊങ്ങി വരുന്നത് സാവധാനത്തിൽ ആയിരിക്കും.</span> The batter we grind for <b>dosa and idli</b> ferments and rises quickly at room temperature, but if it is kept in the <b>refrigerator</b> it rises only slowly. Fermentation is a chemical change carried out by the enzymes of yeast and bacteria. In the cold it slows down, and in a warm Kerala kitchen it speeds up. Curd also sets faster in summer.</li>
+<li><span class="ml">ഇപ്രകാരം ചില രാസവസ്തുക്കൾ മിശ്രണം ചെയ്ത ലൈറ്റ് സ്റ്റിക്കുകൾക്കും വെളിച്ചം പുറപ്പെടുവിക്കാൻ കഴിയും. ഇത്തരം ലൈറ്റ് സ്റ്റിക്കുകൾക്ക് ഉയർന്ന താപനിലയിൽ തീവ്രതയുള്ള പ്രകാശം പുറത്തേക്ക് വിടാൻ കഴിയും.</span> You know that a firefly gives out light by chemiluminescence. <b>Light sticks</b> also glow when the chemicals inside are mixed. At a <b>higher temperature</b> they glow more <b>brightly</b>, because the light-giving reaction runs faster (they also fade sooner). Try it below.</li></ul>
+<div class="lab" id="lsLab" style="margin-bottom:.2rem">
+  <div class="lab-title">💡 A light stick in water: cold, room temperature, warm</div>
+  <svg id="lsSvg" viewBox="0 0 800 210" role="img" aria-label="A light stick standing in a beaker of water; as the water temperature slider goes up, the glow around the stick becomes brighter and wider"></svg>
+  <div class="controls"><label>water temperature <input type="range" id="lsT" min="5" max="60" step="5" value="25"> <output></output> °C</label></div>
+</div></div>
+
+<!-- ================= 3 ================= -->
+<h2 id="cat">3. Catalysts <span class="ml">ഉൽപ്രേരകങ്ങളുടെ സ്വാധീനം</span> – hydrogen peroxide and manganese dioxide</h2>
+<p><span class="ml">ഹൈഡ്രജൻ പെറോക്സൈഡ് (H₂O₂) എന്ന സംയുക്തത്തെക്കുറിച്ച് നിങ്ങൾ കേട്ടിട്ടുണ്ടോ? നമ്മുടെ വീടുകളിലും ആശുപത്രിയിലുമൊക്കെ അണുനാശിനിയായി ഹൈഡ്രജൻ പെറോക്സൈഡിന്റെ ജലീയലായനി ഉപയോഗിക്കാറുണ്ട്. കോവിഡിന്റെ ആക്രമണം രൂക്ഷമായിരുന്ന സമയത്ത് ഹൈഡ്രജൻ പെറോക്സൈഡ് അടങ്ങിയ സാനിറ്റൈസർ ഉപയോഗിച്ചിരുന്നല്ലോ. വിഘടന രാസപ്രവർത്തനത്തിന് വിധേയമാകുമ്പോൾ ഹൈഡ്രജൻ പെറോക്സൈഡിന് ഓക്സിജൻ സ്വതന്ത്രമാക്കാൻ കഴിയും.</span> Have you heard of hydrogen peroxide (H₂O₂)? Its solution in water is used as a disinfectant (antiseptic) in our homes and hospitals, and sanitisers containing hydrogen peroxide were used during the worst of the COVID period. When it undergoes a <b>decomposition reaction</b> <span class="ml">വിഘടന രാസപ്രവർത്തനം</span>, hydrogen peroxide sets oxygen free:</p>
+<span class="eqc">2H<sub>2</sub>O<sub>2</sub> → 2H<sub>2</sub>O + O<sub>2</sub>↑</span>
+<p><span class="ml">ബോയിലിംഗ് ട്യൂബിൽ കുറച്ച് ഹൈഡ്രജൻ പെറോക്സൈഡ് ലായനി എടുക്കുക. ബോയിലിംഗ് ട്യൂബിനുള്ളിലേക്ക് എരിയുന്ന ഒരു ചന്ദനത്തിരി കാണിക്കുക.</span> Take a little hydrogen peroxide solution in a boiling tube. Hold a <b>glowing incense stick</b> <span class="ml">എരിയുന്ന ചന്ദനത്തിരി</span> inside the tube. Then add a little <b>manganese dioxide (MnO₂)</b> <span class="ml">മാംഗനീസ് ഡൈഓക്സൈഡ്</span> and bring the glowing stick in again.</p>
+<div class="safety">⚠️ Lab hydrogen peroxide (stronger than the 3 % antiseptic) irritates skin and eyes, and a glowing stick near extra oxygen can burst into flame. Do this only under your teacher's supervision, with goggles, small amounts, and the tube in a stand.</div>
+<div class="lab" id="caLab">
+  <div class="lab-title">🔥 Virtual lab – the glowing incense stick, MnO₂ and filtering</div>
+  <svg id="caSvg" viewBox="0 0 800 350" role="img" aria-label="Left: a boiling tube of hydrogen peroxide with a glowing incense stick held in it; with no catalyst only a few tiny oxygen bubbles rise and the tip glows dimly; after black manganese dioxide is added the liquid froths with oxygen and the tip glows brightly and bursts into flame. Right: the mixture is filtered; the black manganese dioxide stays on the filter paper and weighs the same as before"></svg>
+  <div class="controls"><button class="btn" id="caStick">① Bring in the glowing stick</button><button class="btn primary" id="caMn">② Add a pinch of MnO₂</button><button class="btn" id="caFilter">③ Filter when the fizzing stops</button><button class="btn ghost" id="caReset">⟲ Reset</button></div>
+  <div class="readout" id="caOut"></div>
+  <p class="hint">Oxygen volumes and masses are illustrative. The tube gets warm, because the decomposition gives out heat.</p>
+</div>
+<div class="qa"><p><b>Q (page 108).</b> Answer from the experiment:</p><ol>
+<li><span class="ml">ചന്ദനത്തിരി കത്തുന്നതിൽ എന്തെങ്കിലും മാറ്റം ഉണ്ടോ?</span> Is there any change in the way the incense stick burns (before MnO₂)?</li>
+<li><span class="ml">ഇപ്പോൾ എന്താണ് നിരീക്ഷിച്ചത്?</span> After adding MnO₂, what did you observe now?</li>
+<li><span class="ml">ഫിൽറ്റർ പേപ്പറിൽ അവശേഷിക്കുന്ന പദാർഥം എന്താണ്?</span> When the reaction is over, the solution is filtered through filter paper. What is the substance left on the filter paper?</li></ol>
+<div class="reveal" data-btn="Show answers"><div class="answer">
+1. <b>Hardly any change.</b> Hydrogen peroxide decomposes very slowly on its own, so only a trace of extra oxygen reaches the stick.<br>
+2. The liquid <b>froths</b> with oxygen bubbles and the incense stick <b>glows brightly and may burst into flame</b>. <span class="ml">ചന്ദനത്തിരിയുടെ ജ്വലനവേഗം വർധിച്ചതായി കാണാം.</span> The burning of the stick became faster because the decomposition of hydrogen peroxide became faster and released more oxygen. The substance that increased the rate is <b>manganese dioxide</b>.<br>
+3. <b>Manganese dioxide</b>, the same black powder. <span class="ml">മാത്രമല്ല സൂക്ഷ്മമായി പരിശോധിച്ചാൽ അതിന്റെ അളവിലും ഗുണത്തിലും മാറ്റം ഉണ്ടായിട്ടില്ല എന്നതും ബോധ്യമാകും.</span> When it is examined carefully, its <b>amount</b> (mass) and <b>properties</b> have not changed.</div></div></div>
+<div class="callout key"><div class="title">⭐ Key idea 5 (page 108) – catalysts</div>
+<span class="ml keyml">സ്ഥിരമായ രാസമാറ്റത്തിന് സ്വയം വിധേയമാകാതെ രാസപ്രവർത്തന വേഗം വർധിപ്പിക്കുന്ന പദാർഥങ്ങളെ ഉൽപ്രേരകങ്ങൾ (catalysts) എന്നു പറയുന്നു.</span>
+<p style="margin:0">Substances that <b>increase the rate</b> of a chemical reaction <b>without themselves undergoing a permanent chemical change</b> are called <b>catalysts</b> <span class="ml">ഉൽപ്രേരകം</span>. In the decomposition of hydrogen peroxide, manganese dioxide is used as a catalyst.</p></div>
+<div class="further"><div class="title">🔭 Go further – how does a catalyst work?</div>
+<p style="margin:0">A catalyst gives the reaction a <b>different path</b> with a <b>lower threshold energy</b>. At the same temperature, many more particles now have enough energy, so many more collisions are effective. Press "Add a catalyst" in the energy share lab above to see the threshold line move left and the green tail grow. The catalyst takes part along the way but is given back unchanged at the end. That is why a small pinch can be used again and again. A catalyst changes only <b>how fast</b> the products form, not <b>which</b> products form or <b>how much</b>.</p></div>
+
+<!-- ================= 4 ================= -->
+<h2 id="industry">4. Catalysts in industry – the Haber and contact processes</h2>
+<p><span class="ml">ഇതുപോലെ ചുവടെ നൽകിയിരിക്കുന്ന രാസപ്രവർത്തനങ്ങളിലെ ഉൽപ്രേരകങ്ങൾ ഏതൊക്കെയാണെന്ന് തിരിച്ചറിയാമോ?</span> <b>Q (page 109).</b> In the same way, can you identify the catalysts in the reactions below? The catalyst is written <b>above</b> the arrow and the conditions <b>below</b> it.</p>
+<p><b>1.</b> <span class="ml">ഹേബർ പ്രക്രിയ വഴിയുള്ള അമോണിയയുടെ വ്യാവസായിക നിർമ്മാണം</span> Industrial manufacture of ammonia by the <b>Haber process</b> <span class="ml">ഹേബർ പ്രക്രിയ</span>:</p>
+<span class="eqc">N<sub>2</sub><span class="st">(g)</span> + 3H<sub>2</sub><span class="st">(g)</span> <span class="carr"><span class="up">Fe</span><span class="ar">⇌</span><span class="dn">200 atm, 700 K</span></span> 2NH<sub>3</sub><span class="st">(g)</span></span>
+<p><b>2.</b> <span class="ml">സമ്പർക്ക പ്രക്രിയ (contact process) വഴിയുള്ള സൾഫ്യൂരിക് ആസിഡിന്റെ വ്യാവസായിക നിർമ്മാണം</span> Industrial manufacture of sulphuric acid by the <b>contact process</b> <span class="ml">സമ്പർക്ക പ്രക്രിയ</span>, in its key step:</p>
+<span class="eqc">2SO<sub>2</sub><span class="st">(g)</span> + O<sub>2</sub><span class="st">(g)</span> <span class="carr"><span class="up">V<sub>2</sub>O<sub>5</sub></span><span class="ar">⇌</span><span class="dn">2 atm, 720 K</span></span> 2SO<sub>3</sub><span class="st">(g)</span></span>
+<div class="ask"><p>The catalyst in the Haber process is …</p>
+<div class="yn" data-ans="1" data-why="Iron (Fe), written above the arrow." data-hint="Look above the arrow."><button class="btn">nitrogen</button><button class="btn">iron (Fe)</button><button class="btn">200 atm</button><button class="btn">ammonia</button></div><div class="why"></div></div>
+<div class="ask"><p>The catalyst in the contact process is …</p>
+<div class="yn" data-ans="2" data-why="Vanadium pentoxide (V₂O₅)." data-hint="Look above the arrow."><button class="btn">sulphur dioxide</button><button class="btn">oxygen</button><button class="btn">vanadium pentoxide (V₂O₅)</button><button class="btn">720 K</button></div><div class="why"></div></div>
+<div class="reveal" data-btn="Show answer"><div class="answer">Haber process: <b>iron (Fe)</b> at 200 atm and 700 K. Contact process: <b>vanadium pentoxide (V₂O₅)</b> at 2 atm and 720 K.<br>
+<span class="ml">'⇌' ചിഹ്നം ഉഭയദിശാ പ്രവർത്തനങ്ങളെ സൂചിപ്പിക്കുന്നു.</span> The sign <b>⇌</b> shows that these are <b>reversible reactions</b> <span class="ml">ഉഭയദിശാ പ്രവർത്തനങ്ങൾ</span>. Some ammonia breaks back into nitrogen and hydrogen even as it forms, so the reaction goes both ways. Without a catalyst these reactions would be far too slow for a factory. With one, a fertiliser factory (such as FACT at Udyogamandal, near Kochi) can make ammonia fast enough.</div></div>
+<div class="callout key"><div class="title">⭐ Five factors (page 109)</div>
+<span class="ml keyml">രാസപ്രവർത്തനത്തിൽ ഏർപ്പെടുന്ന അഭികാരകങ്ങളുടെ സ്വഭാവം, ഗാഢത, പ്രതലപരപ്പളവ് എന്നിവയ്ക്ക് പുറമെ താപനിലയും ഉൽപ്രേരകങ്ങളുടെ സാന്നിധ്യവും രാസപ്രവർത്തനവേഗത്തെ സ്വാധീനിക്കുന്നു.</span>
+<p style="margin:0">Besides the <b>nature</b>, <b>concentration</b> and <b>surface area</b> of the reactants, the <b>temperature</b> and the presence of <b>catalysts</b> also affect the rate of reaction.</p></div>
+<div class="tw"><table class="ct"><thead><tr><th>Factor</th><th>Change that speeds it up</th><th>Collision-theory reason</th></tr></thead><tbody>
+<tr><td>Nature of reactants <span class="ml">അഭികാരകങ്ങളുടെ സ്വഭാവം</span></td><td>a more reactive substance (Mg rather than Zn, Na rather than Mg)</td><td>a larger share of collisions is effective</td></tr>
+<tr><td>Concentration <span class="ml">ഗാഢത</span></td><td>more concentrated</td><td>more particles per unit volume → more collisions per second</td></tr>
+<tr><td>Surface area <span class="ml">പ്രതലപരപ്പളവ്</span></td><td>powder or small pieces</td><td>more exposed particles → more collisions per second</td></tr>
+<tr><td>Temperature <span class="ml">താപനില</span></td><td>warmer</td><td>more particles reach the threshold energy → more effective collisions (and slightly more collisions)</td></tr>
+<tr><td>Catalyst <span class="ml">ഉൽപ്രേരകം</span></td><td>add a suitable catalyst</td><td>(go further) a path with a lower threshold energy → more effective collisions; the catalyst is unchanged at the end</td></tr>
+</tbody></table></div>
+
+<!-- ================= 5 ================= -->
+<h2 id="nature">5. Catalysis in nature <span class="ml">ഉൽപ്രേരണങ്ങൾ (catalysis) പ്രകൃതിയിൽ</span> – enzymes</h2>
+<p><span class="ml">ജീവനുള്ള ഓരോ കോശത്തിലും ആയിരക്കണക്കിന് രാസപ്രവർത്തനങ്ങൾ സാധാരണ താപനിലയിലും മർദത്തിലും സംഭവിക്കുന്നു. ഈ രാസപ്രവർത്തന വേഗത്തെ എൻസൈമുകൾ എന്നറിയപ്പെടുന്ന പ്രോട്ടീൻ തന്മാത്രകൾ ത്വരിതപ്പെടുത്തുന്നതിനാൽ അവ ഉൽപ്രേരകങ്ങളാണ്. ഉദാഹരണമായി ഉമിനീരിൽ കാണപ്പെടുന്ന അമിലേസ്, അന്നജത്തെ മാൾട്ടോസ് ആക്കി മാറ്റുന്ന എൻസൈമാണ്.</span> Many catalytic processes <span class="ml">ഉൽപ്രേരണം</span> take place in nature. In every living cell, thousands of chemical reactions happen at <b>ordinary temperature and pressure</b>. Protein molecules called <b>enzymes</b> <span class="ml">എൻസൈമുകൾ</span> speed up these reactions, so they are catalysts. For example, <b>amylase</b> <span class="ml">അമിലേസ്</span>, found in saliva, is an enzyme that changes <b>starch</b> <span class="ml">അന്നജം</span> into <b>maltose</b> <span class="ml">മാൾട്ടോസ്</span>.</p>
+<div class="lab" id="amyLab">
+  <div class="lab-title">🍚 Amylase at work – cutting starch into maltose</div>
+  <svg id="amySvg" viewBox="0 0 800 200" role="img" aria-label="A long starch chain made of linked glucose rings; when amylase is added, the enzyme moves along the chain and cuts it into pairs of rings, which are maltose molecules; the enzyme itself is unchanged at the end"></svg>
+  <div class="controls"><button class="btn primary" id="amyGo">Add saliva (amylase)</button><button class="btn ghost" id="amyReset">⟲ Reset</button></div>
+  <div class="readout" id="amyOut"></div>
+</div>
+<p class="small">Try it: chew a mouthful of plain rice (or a piece of bread) slowly for a minute. It begins to taste <b>sweet</b>, because amylase is turning the starch into maltose, a sugar. Amylase works best at body temperature, about 37 °C. Like every catalyst, it comes out of the reaction unchanged and goes on to the next starch molecule.</p>
+
+<div class="sidebox"><div class="title">🎩 Side box (page 109) – the catalyst and magic <span class="ml">ഉൽപ്രേരകവും മാജിക്കും</span></div>
+<span class="ml keyml">കൽക്കണ്ടം ചൂടാക്കിയാൽ ഉരുകുന്നു എന്നാൽ ജ്വലനവിധേയമാകില്ല. പക്ഷെ അല്പം ചാരം അതിൽ പുരട്ടിയതിനുശേഷം ഉരുക്കുകയാണെങ്കിൽ കൽക്കണ്ടം ജ്വലിക്കുന്നതായി കാണാം. ഇവിടെ ചാരത്തിലുള്ള ചില ലോഹ സംയുക്തങ്ങളാണ് കൽക്കണ്ടത്തിന്റെ ജ്വലനത്തിൽ ഉൽപ്രേരകമായി വർത്തിക്കുന്നത്.</span>
+<p><b>Sugar that burns only with a little ash.</b> When sugar candy (a sugar cube, കൽക്കണ്ടം) is heated, it melts but does not catch fire. But if a little <b>ash</b> is rubbed on it first, the sugar burns. Some <b>metal compounds in the ash</b> act as a catalyst for the burning of the sugar.</p>
+<span class="ml keyml">ബൊംബാർഡിയർ ബീറ്റിൽ സ്വയരക്ഷയ്ക്കായി ഹൈഡ്രജൻ പെറോക്സൈഡിന്റെ ഉൽപ്രേരണ വിഘടനം ഉപയോഗിക്കുന്നു. ബീറ്റിലിൽ ഉത്പാദിപ്പിക്കുന്ന എൻസൈം ദ്രുതഗതിയിലുള്ള താപമോചക പ്രവർത്തനത്തെ ഉത്തേജിപ്പിക്കുന്നു. തൽഫലമായി നീരാവിയും അസ്വസ്ഥത ഉളവാക്കുന്ന മറ്റ് രാസവസ്തുക്കളും പുറന്തള്ളപ്പെടുന്നു.</span>
+<p><b>The bombardier beetle.</b> To defend itself, this beetle uses the <b>catalysed decomposition of hydrogen peroxide</b>. An enzyme made by the beetle speeds up a very fast <b>exothermic reaction</b> <span class="ml">താപമോചക പ്രവർത്തനം</span>, and a hot spray of steam and irritating chemicals shoots out at the attacker. It is the same reaction as in your MnO₂ lab, with an enzyme as the catalyst.</p>
+<div class="safety" style="margin-bottom:0">⚠️ Burning sugar is a teacher demonstration on a fireproof mat. Molten sugar sticks to skin and causes bad burns. Do not try it at home.</div></div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://en.wikipedia.org/wiki/Catalysis" target="_blank" rel="noopener noreferrer">📄 Catalysis</a> <span class="src">Wikipedia</span><br><span class="note">Substances that speed up reactions without being used up.</span></li><li><a href="https://en.wikipedia.org/wiki/Enzyme" target="_blank" rel="noopener noreferrer">📄 Enzyme</a> <span class="src">Wikipedia</span><br><span class="note">Proteins that are nature’s catalysts in every living cell.</span></li><li><a href="https://en.wikipedia.org/wiki/Amylase" target="_blank" rel="noopener noreferrer">📄 Amylase</a> <span class="src">Wikipedia</span><br><span class="note">The enzyme in saliva that turns starch into maltose.</span></li><li><a href="https://en.wikipedia.org/wiki/Haber_process" target="_blank" rel="noopener noreferrer">📄 Haber process</a> <span class="src">Wikipedia</span><br><span class="note">Making ammonia with an iron catalyst.</span></li><li><a href="https://en.wikipedia.org/wiki/Contact_process" target="_blank" rel="noopener noreferrer">📄 Contact process</a> <span class="src">Wikipedia</span><br><span class="note">Making sulphuric acid with a vanadium pentoxide catalyst.</span></li></ul></div>
+<h2 id="check">6. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li><b>Temperature</b>: NH₄Cl + NaOH → NaCl + H₂O + NH₃↑ gives a strong ammonia smell only when warmed. The warmed thiosulphate tube turns cloudy (sulphur) first. Batter rises faster at room temperature than in the fridge, and light sticks glow brighter when warm.</li>
+<li><b>Threshold energy</b> <span class="ml">ത്രെഷോൾഡ് എനർജി</span>: the minimum kinetic energy that reactant particles need to change into products. Heating → more particles reach it → more effective collisions → faster.</li>
+<li><b>Catalyst</b> <span class="ml">ഉൽപ്രേരകം</span>: increases the rate without itself undergoing a permanent chemical change. In 2H₂O₂ → 2H₂O + O₂↑ the catalyst is MnO₂, which is recovered unchanged by filtering, with the same mass and properties.</li>
+<li>Haber process: N₂ + 3H₂ ⇌ 2NH₃ (Fe, 200 atm, 700 K). Contact process: 2SO₂ + O₂ ⇌ 2SO₃ (V₂O₅, 2 atm, 720 K). The sign ⇌ means a reversible reaction.</li>
+<li><b>Enzymes</b> <span class="ml">എൻസൈമുകൾ</span> are protein catalysts of living cells. Amylase in saliva changes starch → maltose.</li>
+</ul></div>
+<p>Next: <a href="09_intext_questions_solutions.html">In-text questions – all solutions ▶</a></p>
+
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Chemical Kinetics · Class 9 Chemistry", "icon": "⏱️", "key": "chemistry_ch5_progress", "pages": [["index.html", "Home"], ["01_physical_chemical_changes.html", "1 · Physical & Chemical Changes, Equations Recap"], ["02_particles_energy_recap.html", "2 · Particles in Motion, Energy & Concentration"], ["03_identifying_chemical_change.html", "3 · Signs of a Chemical Change"], ["04_combination_decomposition.html", "4 · Combination & Decomposition Reactions"], ["05_double_decomposition_displacement.html", "5 · Double Decomposition & Displacement Reactions"], ["06_rate_collision_theory.html", "6 · Rate of Reaction & Collision Theory"], ["07_nature_concentration_surface.html", "7 · Nature, Concentration & Surface Area"], ["08_temperature_catalysts.html", "8 · Temperature, Catalysts & Enzymes"], ["09_intext_questions_solutions.html", "9 · In-text Questions – Solutions"], ["10_assess_solutions.html", "10 · Let Us Assess & Extended Activities – Solutions"], ["11_applications_explore.html", "11 · Applications & Explore Online"], ["12_summary_revision.html", "12 · Summary & Quick Quiz"], ["13_model_test_paper.html", "13 · Model Test Paper"], ["14_model_test_solutions.html", "14 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ==== common helpers (same code on pages 07–09) ==== */
+const {P, el} = K;
+const $id = id => document.getElementById(id);
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+const CV = c => (c === 'none' ? 'none' : ((c.charAt(0) === '#' || c.startsWith('var(') || c.startsWith('rgb') || c.startsWith('url')) ? c : `var(--${c === 'amber' ? 'accent' : c})`));
+function tx(svg, x, y, s, cls = '', anchor = 'middle', extra = {}){ return K.text(svg, P(x, y), s, {class: ('lbl ' + cls).trim(), 'text-anchor': anchor, ...extra}); }
+function rect(svg, x, y, w, h, style, rx = 0, extra = {}){ return el('rect', {x, y, width: Math.max(0, w), height: Math.max(0, h), rx, style, ...extra}, svg); }
+function circ(svg, c, r, style, extra = {}){ return el('circle', {cx: c.x, cy: c.y, r: Math.max(0, r), style, ...extra}, svg); }
+function ln(svg, a, b, c = 'text', w = 2, extra = ''){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, style: `stroke:${CV(c)};stroke-width:${w};stroke-linecap:round;${extra}`}, svg); }
+function pth(svg, d, style, extra = {}){ return el('path', {d, style, ...extra}, svg); }
+function arrow(svg, a, b, c = 'red', w = 2.5, head = 10){ const L = K.dist(a, b); if (L < 2) return; const u = K.unit(a, b), hh = Math.min(head, L * .6), hb = P(b.x - u.x * hh, b.y - u.y * hh); ln(svg, a, hb, c, w); el('polygon', {points: `${b.x},${b.y} ${hb.x + u.y * hh * .55},${hb.y - u.x * hh * .55} ${hb.x - u.y * hh * .55},${hb.y + u.x * hh * .55}`, style: `fill:${CV(c)}`}, svg); }
+const H = (en, ml) => `${en} <span class="ml">${ml}</span>`;
+const LIQ = '#60a5fa';
+/* glassware: a test tube (open top, round bottom) with liquid up to lvl */
+function tube(svg, cx, top, bot, w, lvl, o = {}){ const r = w / 2, ri = r - 2.5;
+  if (lvl !== null) pth(svg, `M${cx - ri},${lvl} L${cx - ri},${bot - r} A${ri},${ri} 0 0 0 ${cx + ri},${bot - r} L${cx + ri},${lvl} Z`, `fill:${o.liq || LIQ};opacity:${o.op ?? .25}`);
+  if (o.cloud) pth(svg, `M${cx - ri},${lvl} L${cx - ri},${bot - r} A${ri},${ri} 0 0 0 ${cx + ri},${bot - r} L${cx + ri},${lvl} Z`, `fill:${o.cloudCol || '#fde68a'};opacity:${o.cloud}`);
+  pth(svg, `M${cx - r},${top} L${cx - r},${bot - r} A${r},${r} 0 0 0 ${cx + r},${bot - r} L${cx + r},${top}`, 'fill:none;stroke:var(--text);stroke-width:2.2;stroke-linejoin:round');
+  ln(svg, P(cx - r - 5, top), P(cx + r + 5, top), 'text', 2.2); }
+/* rising bubbles */
+class Fizz{ constructor(){ this.b = []; }
+  add(x, y, r = 3){ this.b.push({x, y, r: r * (.7 + Math.random() * .6), vy: -(45 + Math.random() * 45), ph: Math.random() * 6}); }
+  step(dt, top){ this.b.forEach(q => { q.y += q.vy * dt; q.ph += dt * 9; q.x += Math.sin(q.ph) * .35; }); this.b = this.b.filter(q => q.y > top + q.r); }
+  draw(svg){ this.b.forEach(q => circ(svg, P(q.x, q.y), q.r, 'fill:var(--svgbg);fill-opacity:.45;stroke:var(--text);stroke-width:1.1')); }
+  clear(){ this.b = []; } }
+/* animation loop: fn(dt) returns false to stop; returns a stop() function */
+function loop(fn){ let last = performance.now(), raf = 0, on = true;
+  const f = now => { if (!on) return; const dt = Math.min(.05, Math.max(0, (now - last) / 1000)); last = now; if (fn(dt) === false){ on = false; return; } raf = requestAnimationFrame(f); };
+  raf = requestAnimationFrame(f); return () => { on = false; cancelAnimationFrame(raf); }; }
+/* a thermometer: bulb at (x, y), reading in °C from 0 to 100 */
+function thermo(svg, x, y, c){ const h = 120, f = Math.max(0, Math.min(1, c / 100));
+  rect(svg, x - 6, y - h, 12, h, 'fill:var(--surface2);stroke:var(--text);stroke-width:1.4', 6); circ(svg, P(x, y + 6), 10, 'fill:var(--red);stroke:var(--text);stroke-width:1.4');
+  rect(svg, x - 3, y - h * f, 6, h * f + 4, 'fill:var(--red)', 3); tx(svg, x, y - h - 12, `${Math.round(c)} °C`, 'red', 'middle', {style: 'font-size:13px;font-weight:700'}); }
+/* choice buttons: <div class="yn" data-ans="1" data-why="…" data-hint="…"><button>…</button>…</div><div class="why"></div> */
+function choices(root = document){ K.$$('.yn[data-ans]', root).forEach(bx => { const ans = +bx.dataset.ans, why = bx.parentElement.querySelector('.why');
+  K.$$('button', bx).forEach((b, k) => b.addEventListener('click', () => { K.$$('button', bx).forEach(x => x.classList.remove('ok', 'bad')); b.classList.add(k === ans ? 'ok' : 'bad');
+    if (why){ why.innerHTML = k === ans ? '✅ ' + (bx.dataset.why || 'Correct.') : '❌ ' + (bx.dataset.hint || 'Not quite – think again.'); why.style.color = k === ans ? 'var(--green)' : 'var(--red)'; } })); }); }
+/* ==== end common ==== */
+
+choices();
+
+/* ---------- ammonia lab ---------- */
+(function(){
+  const svg = $id('amSvg'), out = $id('amOut');
+  const CX = 230, TOP = 80, BOT = 300, W = 62;
+  let st, stop = null, idle = 0;
+  function init(){ st = {mix: 0, waft: false, warm: false, T: 30, parts: [], acc: 0, meter: 0, hits: 0, t: 0, ph: 0}; }
+  function draw(){
+    K.clear(svg);
+    const lvl = 250 - 36 * st.mix;
+    tube(svg, CX, TOP, BOT, W, lvl, {op: .16});
+    tx(svg, CX + W / 2 + 10, lvl + 18, st.mix > .5 ? 'NH₄Cl + NaOH' : 'NH₄Cl (aq)', 'sm muted', 'start', {style: 'font-size:12px'});
+    thermo(svg, CX - 110, BOT - 20, st.T); tx(svg, CX - 110, BOT + 14, 'mixture', 'sm muted', 'middle', {style: 'font-size:11px'});
+    if (st.mix > 0 && st.mix < 1){ /* pouring tube */ const a = -40; pth(svg, `M${CX - 70},${TOP - 50} l46,30`, 'fill:none;stroke:var(--text);stroke-width:14;stroke-linecap:round;opacity:.25'); ln(svg, P(CX - 28, TOP - 22), P(CX - 12, lvl), LIQ, 3, 'opacity:.6'); }
+    if (st.warm){ /* spirit lamp flame (teacher) */ pth(svg, `M${CX},${BOT + 26} q-12,-14 0,-30 q12,16 0,30 Z`, 'fill:#fb923c;opacity:.85'); rect(svg, CX - 16, BOT + 24, 32, 6, 'fill:var(--muted)', 2); }
+    st.parts.forEach(p => circ(svg, P(p.x, p.y), 3.4, `fill:var(--blue);opacity:${Math.max(0, Math.min(1, p.life))}`));
+    /* hand (Fig 5.9) */
+    const hx = CX + 70 + (st.waft ? Math.sin(st.ph * 7) * 14 : 0), hy = TOP - 40, g = K.group(svg, {transform: `rotate(${st.waft ? Math.sin(st.ph * 7) * 15 : 0} ${hx} ${hy + 20})`});
+    el('ellipse', {cx: hx, cy: hy + 18, rx: 26, ry: 18, style: 'fill:#f2c49b;stroke:#92400e;stroke-width:1.3'}, g);
+    for (let k = 0; k < 4; k++) rect(g, hx - 24 + k * 13, hy - 22 + Math.abs(k - 1.5) * 4, 11, 30, 'fill:#f2c49b;stroke:#92400e;stroke-width:1.1', 5);
+    rect(g, hx + 20, hy + 6, 22, 10, 'fill:#f2c49b;stroke:#92400e;stroke-width:1.1', 5);
+    if (st.waft) arrow(svg, P(CX + 110, TOP - 70), P(500, TOP - 70), 'muted', 1.6, 8);
+    /* face profile */
+    pth(svg, 'M600,20 C560,20 548,60 552,92 L534,122 L552,128 C548,146 556,160 560,166 C566,176 590,178 600,180', 'fill:none;stroke:var(--text);stroke-width:2.2;stroke-linejoin:round');
+    circ(svg, P(572, 72), 3.5, 'fill:var(--text)');
+    tx(svg, 600, 198, 'nose', 'sm muted', 'middle', {style: 'font-size:12px'});
+    /* smell meter */
+    const MX = 680, MY = 40, MH = 220; rect(svg, MX, MY, 34, MH, 'fill:var(--surface2);stroke:var(--text);stroke-width:1.4', 6);
+    const f = Math.min(1, st.meter / 10); rect(svg, MX + 3, MY + MH - 3 - (MH - 6) * f, 28, (MH - 6) * f, `fill:${f > .6 ? 'var(--red)' : f > .2 ? 'var(--accent)' : 'var(--green)'}`, 4);
+    tx(svg, MX + 17, MY - 14, 'smell', '', 'middle', {style: 'font-size:13px;font-weight:700'});
+    [['strong', .85], ['faint', .2], ['none', 0.02]].forEach(([s, v]) => tx(svg, MX + 42, MY + MH - (MH - 6) * v, s, 'sm muted', 'start', {style: 'font-size:12px'}));
+    tx(svg, 400, 318, st.warm ? 'warmed: many NH₃ molecules escape' : st.mix ? 'room temperature: only a few NH₃ molecules escape' : 'NH₄Cl solution only', 'sm', 'middle', {style: 'font-size:13px;font-weight:600'});
+  }
+  function say(){ const f = st.meter / 10;
+    out.textContent = !st.mix ? 'Step ①: pour the 2 mL of sodium hydroxide solution into the ammonium chloride solution.'
+      : (st.mix < 1 ? 'Pouring…' : 'Mixed. Do you see any product? No – the liquid stays clear and colourless.') + '\n' +
+        (!st.waft ? 'Step ②: waft the air from the mouth of the tube towards your nose (never sniff the tube directly).' : `Smell: ${f > .6 ? 'STRONG pungent smell of ammonia!' : f > .2 ? 'noticeable' : f > .03 ? 'very faint' : 'almost nothing'}  (temperature ${Math.round(st.T)} °C)`) +
+        (st.waft && !st.warm ? '\nStep ③: let the teacher warm the tube, then waft again.' : '') + (st.warm && st.T > 55 ? '\nHeating → particles get more kinetic energy → more reach the threshold energy → faster reaction → much more NH₃.' : ''); }
+  function run(){ if (stop) return; idle = 0; let tk = 0;
+    stop = loop(dt => { st.t += dt; st.ph += dt; idle += dt;
+      if (st.mix > 0 && st.mix < 1) st.mix = Math.min(1, st.mix + dt / 1.2);
+      if (st.warm) st.T = Math.min(65, st.T + dt * 12);
+      const rate = st.mix >= 1 ? .8 * Math.pow(2, (st.T - 30) / 8) : 0;
+      st.acc += rate * dt; while (st.acc >= 1){ st.acc--; st.parts.push({x: CX + (Math.random() - .5) * 40, y: 214, vx: (Math.random() - .5) * 10, vy: -60 - Math.random() * 40, life: 3.5}); }
+      st.parts.forEach(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vx += (Math.random() - .5) * 30 * dt;
+        if (p.y < TOP){ if (st.waft){ p.vx += 160 * dt; p.vy *= .96; } else { p.vx += (Math.random() - .5) * 60 * dt; } p.life -= dt * (st.waft ? .25 : .6); }
+        if (p.x > 500 && p.y < 180 && !p.got){ p.got = 1; st.hits++; st.meter += 1; p.life = .2; } });
+      st.parts = st.parts.filter(p => p.life > 0 && p.x < 640);
+      st.meter = Math.max(0, st.meter - st.meter * .5 * dt);
+      draw(); tk += dt; if (tk > .3){ tk = 0; say(); }
+      if (idle > 30){ stop = null; return false; } }); }
+  $id('amMix').addEventListener('click', () => { if (!st.mix) st.mix = .01; run(); say(); });
+  $id('amWaft').addEventListener('click', () => { st.waft = !st.waft; $id('amWaft').classList.toggle('primary', st.waft); idle = 0; run(); say(); });
+  $id('amWarm').addEventListener('click', () => { if (!st.mix) st.mix = .01; st.warm = true; idle = 0; run(); say(); });
+  $id('amReset').addEventListener('click', () => { if (stop){ stop(); stop = null; } init(); $id('amWaft').classList.remove('primary'); draw(); say(); });
+  init(); draw(); say();
+})();
+
+/* ---------- energy share (threshold) lab ---------- */
+(function(){
+  const svg = $id('keSvg'), out = $id('keOut');
+  const X0 = 70, X1 = 760, Y0 = 280, Y1 = 50, EMAX = 10, ET = 4, ETC = 2.6;
+  let T = 300, cat = false;
+  const f = (E, kT) => 2 / Math.sqrt(Math.PI) * Math.pow(1 / kT, 1.5) * Math.sqrt(Math.max(0, E)) * Math.exp(-E / kT);
+  const frac = (et, kT) => { let s = 0; const dE = .005; for (let E = et; E < 40; E += dE) s += f(E + dE / 2, kT) * dE; return s; };
+  const peak = f(.5, 1) * 1.08;
+  const px = E => X0 + (X1 - X0) * E / EMAX, py = v => Y0 - (Y0 - Y1) * v / peak;
+  function curve(kT){ const a = []; for (let E = 0; E <= EMAX + 1e-9; E += .05) a.push(P(px(E), py(f(E, kT)))); return a; }
+  function draw(){
+    K.clear(svg); const kT = T / 300, et = cat ? ETC : ET;
+    /* shaded tail */
+    const tail = [P(px(et), Y0)]; for (let E = et; E <= EMAX + 1e-9; E += .05) tail.push(P(px(E), py(f(E, kT)))); tail.push(P(px(EMAX), Y0));
+    K.polygon(svg, tail, {style: 'fill:var(--green);opacity:.35'});
+    K.polyline(svg, curve(1), {style: 'stroke:var(--muted);stroke-width:1.8;stroke-dasharray:6 5;fill:none'});
+    K.polyline(svg, curve(kT), {style: `stroke:${T > 300 ? 'var(--red)' : T < 300 ? 'var(--blue)' : 'var(--text)'};stroke-width:3;fill:none`});
+    ln(svg, P(X0, Y0), P(X1 + 10, Y0), 'text', 1.6); ln(svg, P(X0, Y0), P(X0, Y1 - 20), 'text', 1.6);
+    tx(svg, X1, Y0 + 22, 'kinetic energy of a particle →', '', 'end', {style: 'font-size:13px'});
+    tx(svg, X0 - 12, (Y0 + Y1) / 2, 'number of particles', '', 'middle', {style: 'font-size:13px', transform: `rotate(-90 ${X0 - 12} ${(Y0 + Y1) / 2})`});
+    if (cat) ln(svg, P(px(ET), Y0), P(px(ET), Y1 - 10), 'red', 1.5, 'stroke-dasharray:4 4;opacity:.55');
+    ln(svg, P(px(et), Y0), P(px(et), Y1 - 10), cat ? 'purple' : 'red', 2.6);
+    tx(svg, px(et) + 6, Y1 - 18, cat ? 'threshold with catalyst (go further)' : 'threshold energy', cat ? 'purple' : 'red', 'start', {style: 'font-size:13px;font-weight:700'});
+    const fr = frac(et, kT);
+    tx(svg, px(Math.max(et, ET)) + 24, Y0 - 34, `${K.fmt(fr * 100, 1)} % of particles can react`, 'green', 'start', {style: 'font-size:14px;font-weight:800'});
+    tx(svg, X1, 20, `${T} K (${T - 273} °C)`, T > 300 ? 'red' : T < 300 ? 'blue' : '', 'end', {style: 'font-size:15px;font-weight:700'});
+    tx(svg, X1, 40, 'dashed: room temperature, 300 K', 'sm muted', 'end', {style: 'font-size:12px'});
+  }
+  function say(){ const kT = T / 300, base = frac(ET, 1), fr = frac(cat ? ETC : ET, kT);
+    out.textContent = `At ${T} K, ${K.fmt(fr * 100, 1)} % of the particles have at least the threshold energy (room temperature, no catalyst: ${K.fmt(base * 100, 1)} %).\n` +
+      `So the effective collisions, and the rate, are about ${K.fmt(fr / base, 1)} × those at room temperature.` + (cat ? '\nGo further: the catalyst does not heat anything. It opens a path with a LOWER threshold, so many more particles qualify.' : T > 300 ? '\nThe threshold line did not move. The curve spread to the right, so more particles are past it.' : ''); }
+  K.slider('#keT', v => { T = v; draw(); say(); }, 0);
+  $id('keCat').addEventListener('click', () => { cat = !cat; $id('keCat').classList.toggle('primary', cat); $id('keCat').textContent = cat ? '🔭 Remove the catalyst' : '🔭 Add a catalyst (go further)'; draw(); say(); });
+})();
+
+/* ---------- thiosulphate warm vs cold ---------- */
+(function(){
+  const svg = $id('tsSvg'), out = $id('tsOut');
+  const X = [250, 520], TOP = 70, BOT = 280, W = 64, LV = 140, SPEED = 4;
+  let st, stop = null;
+  function init(){ st = {T: [30, 30], heat: false, added: false, t: 0, done: [null, null]}; }
+  const tc = c => 60 / Math.pow(2, (c - 30) / 10);
+  function cl(i){ return st.added ? Math.min(1, Math.pow(st.t / tc(st.T[i]), 2)) : 0; }
+  function draw(){
+    K.clear(svg);
+    X.forEach((cx, i) => { const c = cl(i);
+      tx(svg, cx, 16, `Test tube ${i + 1}`, '', 'middle', {style: 'font-size:15px;font-weight:700'});
+      tx(svg, cx, 36, i ? (st.heat ? 'warmed' : 'not yet warmed') : 'room temperature', i && st.heat ? 'red' : 'muted', 'middle', {style: 'font-size:13px'});
+      /* the cross behind the tube */
+      ln(svg, P(cx - 16, 200), P(cx + 16, 232), 'text', 4); ln(svg, P(cx + 16, 200), P(cx - 16, 232), 'text', 4);
+      tube(svg, cx, TOP, BOT, W, LV, {op: .12, cloud: c * .95, cloudCol: '#fde68a'});
+      thermo(svg, cx + 70, BOT - 10, st.T[i]);
+      if (i === 1 && st.heat && !st.added) pth(svg, `M${cx},${BOT + 22} q-11,-12 0,-26 q11,14 0,26 Z`, 'fill:#fb923c;opacity:.85');
+      tx(svg, cx, 300, st.done[i] !== null ? `cross hidden at ${Math.round(st.done[i])} s` : st.added ? `clouding… ${Math.round(c * 100)} %` : 'Na₂S₂O₃ solution', st.done[i] !== null ? 'green' : '', 'middle', {style: 'font-size:14px;font-weight:700'}); });
+    tx(svg, 700, 40, 'clock', 'sm muted', 'middle', {style: 'font-size:12px'});
+    circ(svg, P(700, 90), 36, 'fill:var(--surface2);stroke:var(--text);stroke-width:1.6');
+    const a = K.rad(st.t / 60 * 360 - 90); ln(svg, P(700, 90), P(700 + Math.cos(a) * 28, 90 + Math.sin(a) * 28), 'red', 2.4);
+    tx(svg, 700, 146, `${Math.floor(st.t)} s`, '', 'middle', {style: 'font-size:16px;font-weight:800'});
+  }
+  function say(){ out.textContent = !st.added ? (st.heat ? `Tube 2 warmed to ${Math.round(st.T[1])} °C, tube 1 is at 30 °C. Now add equal amounts of dilute HCl to both.` : 'Equal amounts of the same sodium thiosulphate solution. Warm tube 2 first (step ①), or add the acid to both straight away to see a fair "no difference" test.')
+      : `t = ${Math.floor(st.t)} s.  Tube 1 (${Math.round(st.T[0])} °C): ${st.done[0] !== null ? 'cross hidden at ' + Math.round(st.done[0]) + ' s' : 'still clouding'}.  Tube 2 (${Math.round(st.T[1])} °C): ${st.done[1] !== null ? 'cross hidden at ' + Math.round(st.done[1]) + ' s' : 'still clouding'}.` +
+        (st.done[0] !== null && st.done[1] !== null ? (st.T[1] > st.T[0] + 1 ? `\nThe warm tube formed the sulphur precipitate about ${K.fmt(st.done[0] / st.done[1], 1)} times sooner → the factor is TEMPERATURE.` : '\nSame temperature → same time. Warm one tube to see the effect of temperature.') : ''); }
+  function run(){ if (stop) stop(); let tk = 0;
+    stop = loop(dt => { if (st.heat && !st.added) st.T[1] = Math.min(50, st.T[1] + dt * 10);
+      if (st.added){ st.t += dt * SPEED; X.forEach((cx, i) => { if (st.done[i] === null && cl(i) >= .85) st.done[i] = st.t; }); }
+      draw(); tk += dt; if (tk > .3){ tk = 0; say(); }
+      if (st.added && st.done[0] !== null && st.done[1] !== null){ say(); return false; }
+      if (!st.added && st.T[1] >= 50){ say(); return false; } }); }
+  $id('tsWarm').addEventListener('click', () => { if (st.added) return; st.heat = true; run(); say(); });
+  $id('tsAdd').addEventListener('click', () => { if (st.added) return; st.added = true; st.t = 0; run(); say(); });
+  $id('tsReset').addEventListener('click', () => { if (stop){ stop(); stop = null; } init(); draw(); say(); });
+  init(); draw(); say();
+})();
+
+/* ---------- light stick ---------- */
+(function(){
+  const svg = $id('lsSvg');
+  K.slider('#lsT', c => { K.clear(svg);
+    const b = Math.max(.08, Math.min(1, Math.pow(2, (c - 25) / 15) / 2.2));
+    el('defs', {html: '<radialGradient id="lsG"><stop offset="0" stop-color="#4ade80" stop-opacity="1"/><stop offset="1" stop-color="#4ade80" stop-opacity="0"/></radialGradient>'}, svg);
+    el('ellipse', {cx: 300, cy: 110, rx: 40 + 90 * b, ry: 60 + 60 * b, style: `fill:url(#lsG);opacity:${b}`}, svg);
+    rect(svg, 200, 60, 200, 140, `fill:${c > 35 ? '#fca5a5' : c < 15 ? '#93c5fd' : LIQ};opacity:.22`, 3);
+    pth(svg, 'M194,40 L200,46 L200,200 L400,200 L400,46 L406,40', 'fill:none;stroke:var(--text);stroke-width:2.2');
+    rect(svg, 288, 20, 24, 170, `fill:rgb(${Math.round(120 + 100 * b)},255,${Math.round(120 + 60 * b)});stroke:#15803d;stroke-width:1.6`, 10);
+    tx(svg, 560, 70, `water at ${c} °C`, c > 35 ? 'red' : c < 15 ? 'blue' : '', 'middle', {style: 'font-size:18px;font-weight:800'});
+    tx(svg, 560, 104, `glow: ${b > .75 ? 'very bright' : b > .4 ? 'bright' : b > .2 ? 'dim' : 'very dim'}`, 'green', 'middle', {style: 'font-size:16px;font-weight:700'});
+    tx(svg, 560, 140, c > 35 ? 'faster reaction → brighter, but it fades sooner' : c < 15 ? 'slow reaction → dim, but lasts longer' : 'room temperature', 'sm muted', 'middle', {style: 'font-size:13px'});
+  }, 0);
+})();
+
+/* ---------- catalyst lab ---------- */
+(function(){
+  const svg = $id('caSvg'), out = $id('caOut');
+  const CX = 200, TOP = 50, BOT = 320, W = 76, LV0 = 200;
+  let st, stop = null;
+  function init(){ st = {stick: false, mn: false, t: 0, tMn: 0, o2: 0, acc: 0, f: new Fizz(), foam: 0, filt: 0, filtering: false, done: false, glow: .2}; }
+  function rate(){ return st.mn ? (st.done ? 0 : 26 * Math.max(0, 1 - st.tMn / 12)) : (st.filt ? 0 : .5); }
+  function draw(){
+    K.clear(svg); const lvl = LV0 + st.filt * 70;
+    tx(svg, CX, 16, 'boiling tube: H₂O₂ solution', '', 'middle', {style: 'font-size:14px;font-weight:700'});
+    tube(svg, CX, TOP, BOT, W, st.filt >= 1 ? null : lvl, {op: .18});
+    if (st.foam > .05 && st.filt < 1) for (let k = 0; k < 18; k++){ const a = k * 1.7; circ(svg, P(CX + Math.sin(a) * 28, lvl - 4 - (k % 4) * 5 * st.foam), 4 + (k % 3), `fill:var(--svgbg);fill-opacity:.7;stroke:var(--muted);stroke-width:.8;opacity:${Math.min(1, st.foam)}`); }
+    if (st.mn && st.filt < 1) for (let k = 0; k < 26; k++) circ(svg, P(CX + ((k * 0.618) % 1 - .5) * 50, BOT - 14 - ((k * 7) % 5) * 2), 2.5, 'fill:#1f2937;stroke:#9ca3af;stroke-width:.6');
+    st.f.draw(svg);
+    /* incense stick */
+    const tip = st.stick ? P(CX + 4, TOP + 40) : P(380, 120), base = st.stick ? P(CX + 120, TOP - 40) : P(470, 30);
+    ln(svg, base, tip, '#78350f', 4); ln(svg, P(base.x + (base.x - tip.x) * .15, base.y + (base.y - tip.y) * .15), base, '#a16207', 6);
+    const g = st.glow; circ(svg, tip, 7 + 14 * g, `fill:${g > .7 ? '#fde047' : '#f97316'};opacity:${.35 + .5 * g}`); circ(svg, tip, 4, 'fill:#ef4444');
+    if (g > .75) pth(svg, `M${tip.x},${tip.y - 4} q-10,-16 0,-${30 * g} q10,${16 * g} 0,${30 * g} Z`, 'fill:#fb923c;opacity:.9');
+    if (!st.stick) tx(svg, 425, 140, 'glowing incense stick', 'sm muted', 'middle', {style: 'font-size:12px'});
+    tx(svg, CX, 342, st.mn ? `O₂ given off: ${Math.round(st.o2)} mL` : `O₂ given off: ${K.fmt(st.o2, 1)} mL`, 'green', 'middle', {style: 'font-size:14px;font-weight:700'});
+    /* filtering panel */
+    const FX = 600; ln(svg, P(430, 175), P(430, 345), 'border', 1.5);
+    tx(svg, FX, 16, 'filtering', '', 'middle', {style: 'font-size:14px;font-weight:700'});
+    pth(svg, `M${FX - 70},60 L${FX + 70},60 L${FX + 8},150 L${FX + 8},190 L${FX - 8},190 L${FX - 8},150 Z`, 'fill:none;stroke:var(--text);stroke-width:2');
+    pth(svg, `M${FX - 60},64 L${FX + 60},64 L${FX},146 Z`, 'fill:var(--surface2);stroke:var(--muted);stroke-width:1.2');
+    if (st.filt > 0){ const r = Math.min(1, st.filt); el('polygon', {points: `${FX - 22 * r},${118} ${FX + 22 * r},${118} ${FX},146`, style: 'fill:#1f2937;stroke:#9ca3af;stroke-width:1'}, svg);
+      if (st.filt < 1) for (let k = 0; k < 4; k++) circ(svg, P(FX, 200 + ((st.t * 120 + k * 30) % 80)), 2.5, `fill:${LIQ}`); }
+    pth(svg, `M${FX - 30},215 L${FX - 30},240 L${FX - 60},320 L${FX + 60},320 L${FX + 30},240 L${FX + 30},215`, 'fill:none;stroke:var(--text);stroke-width:2');
+    if (st.filt > 0) pth(svg, `M${FX - 48},${320 - 30 * Math.min(1, st.filt)} L${FX + 48},${320 - 30 * Math.min(1, st.filt)} L${FX + 60},320 L${FX - 60},320 Z`, `fill:${LIQ};opacity:.25`);
+    tx(svg, FX + 76, 106, st.filt > .9 ? 'black solid: MnO₂' : 'filter paper', st.filt > .9 ? '' : 'sm muted', 'start', {style: `font-size:12px;font-weight:${st.filt > .9 ? 700 : 400}`});
+    tx(svg, FX + 70, 300, 'filtrate: water', 'sm muted', 'start', {style: 'font-size:12px'});
+    rect(svg, 470, 200, 70, 56, 'fill:var(--surface2);stroke:var(--text);stroke-width:1.4', 6); tx(svg, 505, 214, 'MnO₂ mass', 'sm', 'middle', {style: 'font-size:11px'});
+    tx(svg, 505, 238, st.filt >= 1 ? '0.50 g ✓' : st.mn ? 'in use' : '0.50 g', st.filt >= 1 ? 'green' : '', 'middle', {style: 'font-size:15px;font-weight:800'});
+  }
+  function say(){ out.textContent = !st.stick && !st.mn ? 'Step ①: bring the glowing incense stick into the boiling tube of hydrogen peroxide.'
+      : !st.mn ? 'With no catalyst: only a trace of oxygen, so the stick glows just as before. There is hardly any change.\nStep ②: add a pinch (0.50 g) of black manganese dioxide.'
+      : !st.done ? `With MnO₂: rapid frothing! ${Math.round(st.o2)} mL of oxygen so far. ${st.stick ? 'The glowing stick blazes up and may burst into flame.' : 'Bring the glowing stick in to test the gas.'}\n2H₂O₂ → 2H₂O + O₂↑ is now fast. The tube feels warm.`
+      : st.filt < 1 ? 'The fizzing has stopped: all the hydrogen peroxide has decomposed. Step ③: filter the mixture.' + (st.filtering ? ' Filtering…' : '')
+      : 'On the filter paper: the black solid, manganese dioxide. Dried and weighed: 0.50 g, the SAME mass as was added, with the same properties.\nIt sped up the reaction without being used up → MnO₂ is a CATALYST.'; }
+  function run(){ if (stop) return; let tk = 0, idle = 0;
+    stop = loop(dt => { st.t += dt; idle += dt; if (st.mn && !st.done){ st.tMn += dt; if (st.tMn >= 12) st.done = true; }
+      const r = rate(); st.acc += r * dt; while (st.acc >= 1){ st.acc--; st.o2 += st.mn ? 2.2 : .1; if (st.filt < 1) st.f.add(CX + (Math.random() - .5) * 50, BOT - 20, st.mn ? 2.8 : 2); }
+      st.f.step(dt, LV0 + st.filt * 70); st.foam += ((st.mn && !st.done ? 1 : 0) - st.foam) * dt * 2;
+      const want = st.stick ? Math.min(1, .25 + r / 18) : .25; st.glow += (want - st.glow) * dt * 3;
+      if (st.filtering){ st.filt = Math.min(1, st.filt + dt / 3); if (st.filt >= 1) st.filtering = false; }
+      draw(); tk += dt; if (tk > .3){ tk = 0; say(); }
+      if ((st.done || !st.mn) && !st.filtering && st.f.b.length === 0 && idle > 14){ stop = null; return false; } }); }
+  $id('caStick').addEventListener('click', () => { st.stick = true; run(); say(); });
+  $id('caMn').addEventListener('click', () => { if (st.mn || st.filt) return; st.mn = true; st.tMn = 0; run(); say(); });
+  $id('caFilter').addEventListener('click', () => { if (!st.mn){ out.textContent = 'There is nothing to filter yet. Add the MnO₂ first and let the reaction finish.'; return; } st.done = true; st.tMn = 12; st.stick = false; st.filtering = true; if (stop){ stop(); stop = null; } run(); say(); });
+  $id('caReset').addEventListener('click', () => { if (stop){ stop(); stop = null; } init(); draw(); say(); });
+  init(); draw(); say();
+})();
+
+/* ---------- amylase ---------- */
+(function(){
+  const svg = $id('amySvg'), out = $id('amyOut'), N = 12, X0 = 60, DX = 56, Y = 90;
+  let p = 0, on = false, stop = null;
+  function hex(c, r, col){ K.polygon(svg, [0, 1, 2, 3, 4, 5].map(k => K.polar(c, r, 60 * k + 30)), {style: `fill:${col};stroke:var(--text);stroke-width:1.4`}); }
+  function draw(){
+    K.clear(svg); const cuts = on ? Math.min(N / 2 - 1, Math.floor(p * (N / 2 - 1) + 1e-6)) : 0;
+    const xs = k => X0 + k * DX + 14 * Math.min(Math.floor(k / 2), cuts);
+    for (let k = 0; k < N - 1; k++){ if (k % 2 === 1 && Math.floor(k / 2) < cuts) continue; ln(svg, P(xs(k) + 18, Y), P(xs(k + 1) - 18, Y), 'text', 2.4); }
+    for (let k = 0; k < N; k++) hex(P(xs(k), Y), 20, k % 2 ? 'var(--accent-soft)' : 'var(--green-soft)');
+    if (on){ const kb = Math.min(N - 2, 2 * cuts + 1), ex = p >= 1 ? 760 - 30 : (xs(kb) + xs(kb + 1)) / 2, ang = 25 + 20 * Math.abs(Math.sin(p * 40));
+      pth(svg, `M${ex},${Y + 50} L${ex + 26 * Math.cos(K.rad(ang))},${Y + 50 - 26 * Math.sin(K.rad(ang))} A26,26 0 1 0 ${ex + 26 * Math.cos(K.rad(ang))},${Y + 50 + 26 * Math.sin(K.rad(ang))} Z`, 'fill:var(--purple);opacity:.85;stroke:var(--text);stroke-width:1.2', {transform: `rotate(-90 ${ex} ${Y + 50})`});
+      tx(svg, ex, Y + 92, 'amylase', 'purple', 'middle', {style: 'font-size:13px;font-weight:700'}); }
+    tx(svg, 400, 26, on && p >= 1 ? 'maltose molecules (pairs of glucose units)' : 'starch: a long chain of glucose units', on && p >= 1 ? 'green' : '', 'middle', {style: 'font-size:15px;font-weight:700'});
+  }
+  $id('amyGo').addEventListener('click', () => { if (stop) stop(); on = true; p = 0; out.textContent = 'Amylase moves along the starch chain and cuts it…';
+    stop = K.animate(4000, u => { p = u; draw(); }, () => { p = 1; draw(); stop = null; out.textContent = 'Starch → maltose. The enzyme is still there at the end, unchanged, ready to act on the next starch molecule: an enzyme is a catalyst.'; }); });
+  $id('amyReset').addEventListener('click', () => { if (stop){ stop(); stop = null; } on = false; p = 0; draw(); out.textContent = 'Without amylase the starch chain stays whole for a long time (the reaction is very slow).'; });
+  draw(); out.textContent = 'Without amylase the starch chain stays whole for a long time (the reaction is very slow).';
+})();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'Threshold energy is …', options: ['the heat given out by a reaction', 'the minimum kinetic energy reactant particles need to change into products', 'the energy of a catalyst', 'the energy needed to boil the solution'], answer: 1, explain: 'Key idea, page 107.', hint: 'It is a minimum amount of kinetic energy.'});
+K.mcq('#q2', {q: 'Why does a reaction become faster when it is heated?', options: ['The threshold energy becomes lower', 'More particles have at least the threshold energy, so there are more effective collisions', 'The concentration increases', 'The products form a catalyst'], answer: 1, explain: 'Heating gives more particles enough kinetic energy. The threshold itself does not change.', hint: 'Look at the energy share lab: did the threshold line move when you heated?'});
+K.mcq('#q3', {q: 'In the sodium thiosulphate + HCl experiment, the warmed tube turned cloudy first. The cloudiness is …', options: ['sodium chloride', 'sulphur', 'sulphur dioxide gas', 'hydrogen'], answer: 1, explain: 'A precipitate of sulphur forms: Na₂S₂O₃ + 2HCl → 2NaCl + S↓ + SO₂ + H₂O.', hint: 'It is a pale yellow precipitate.'});
+K.mcq('#q4', {q: 'After the decomposition of H₂O₂, the MnO₂ on the filter paper is weighed. Its mass is …', options: ['less than before', 'more than before', 'the same as before', 'zero – it was used up'], answer: 2, explain: 'A catalyst does not undergo a permanent chemical change. The same mass is recovered.', hint: 'Key idea 5.'});
+K.mcq('#q5', {q: 'The catalyst used in the Haber process (N₂ + 3H₂ ⇌ 2NH₃) is …', options: ['V₂O₅', 'MnO₂', 'Fe', 'Pt'], answer: 2, explain: 'Iron, at 200 atm and 700 K. V₂O₅ is used in the contact process.', hint: 'Written above the arrow on page 109.'});
+K.mcq('#q6', {q: 'Amylase in saliva changes …', options: ['starch into maltose', 'protein into amino acids', 'fat into glycerol', 'maltose into starch'], answer: 0, explain: 'Amylase is an enzyme, a biological catalyst.', hint: 'Chewed rice tastes sweet.'});
+
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

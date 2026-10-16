@@ -770,7 +770,7 @@ function bubbles(svg, x, w, yBottom, yTop, t, n = 10, speed = 40, r = 3){ const 
 const bySym = {}; E.forEach(e => { bySym[e.s] = e; });
 
 /* ---------- 2. signs spotter ---------- */
-(function(){ const svg = $id('sgSvg'), sel = $id('sgSel'), out = $id('sgOut'); let t0 = -1;
+(function(){ const svg = $id('sgSvg'), sel = $id('sgSel'), out = $id('sgOut'); let t0 = -1e9;
   const SIGNS = [['gas', '🫧 gas given off'], ['colour', '🎨 colour change'], ['ppt', '⬇ precipitate'], ['heat', '🌡 heat given out'], ['light', '💡 light given out']];
   const RX = [
     {n: 'Zinc + dilute hydrochloric acid', eq: 'Zn + 2HCl → ZnCl₂ + H₂↑', k: 'zn', s: {gas: 1, heat: 2.5}, txt: 'Bubbles of hydrogen form on the zinc and the acid gets slightly warm. The zinc slowly gets smaller.'},
@@ -783,7 +783,7 @@ const bySym = {}; E.forEach(e => { bySym[e.s] = e; });
   const mix = (a, b, u) => `rgb(${a.map((v, i) => Math.round(K.lerp(v, b[i], u))).join(',')})`;
   function beaker(x, y, w, h, level, fill){ box(svg, x + 2, y - h * level, w - 4, h * level - 2, fill, 'none', 0, {opacity: .92});
     K.polyline(svg, [P(x - 4, y - h - 4), P(x, y - h), P(x, y), P(x + w, y), P(x + w, y - h), P(x + w + 4, y - h - 4)], {stroke: 'var(--text)', 'stroke-width': 2}); }
-  function draw(t){ K.clear(svg); const r = RX[+sel.value], s = t0 < 0 ? -1 : t - t0, X = 150, Y = 280, W = 180, Hh = 170, top = Y - Hh * .65;
+  function draw(t){ K.clear(svg); const r = RX[+sel.value], s = t0 < -1e8 ? -1 : t - t0, X = 150, Y = 280, W = 180, Hh = 170, top = Y - Hh * .65;
     box(svg, 10, 10, 460, 300, 'surface2', 'border', 1.2, {rx: 12});
     if (r.k === 'mg'){ const on = s > .3, gl = on ? .8 + .2 * Math.sin(t * 13) : 0;
       sline(svg, P(60, 90), P(205, 160), {stroke: '#475569', 'stroke-width': 5}); sline(svg, P(60, 100), P(205, 166), {stroke: '#475569', 'stroke-width': 5});
@@ -823,9 +823,9 @@ const bySym = {}; E.forEach(e => { bySym[e.s] = e; });
     tx(svg, 635, 280, r.eq, 'purple', 'middle', {style: 'font-size:15px', 'font-weight': 700}); }
   const it = anim($id('sgLab'), draw);
   const say = () => { out.textContent = RX[+sel.value].txt; };
-  sel.addEventListener('change', () => { t0 = -1; say(); draw(it.t); });
+  sel.addEventListener('change', () => { t0 = -1e9; say(); draw(it.t); });
   $id('sgGo').addEventListener('click', () => { t0 = reduce ? it.t - 12 : it.t; if (reduce) draw(it.t); });
-  $id('sgReset').addEventListener('click', () => { t0 = -1; draw(it.t); });
+  $id('sgReset').addEventListener('click', () => { t0 = -1e9; draw(it.t); });
   say(); })();
 
 /* ---------- 4. stepper: reading an equation ---------- */
