@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Periods, Groups and Families</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+/* ==== common styles (same on pages 03–05) ==== */
+.qa,.qbox{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.7rem 1rem;margin:.8rem 0;box-shadow:var(--shadow)}
+.qa p,.qbox p{margin:.3em 0}
+.qa ul,.qbox ul{margin:.3rem 0}
+.mlq{display:block;font-weight:500;margin:.2rem 0 .4rem}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.answer ul{margin:.2rem 0}
+.tw{overflow-x:auto}
+.keyml{display:block;margin:.2rem 0 .4rem}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;padding:.05rem .45rem;border-radius:6px;background:var(--surface2);color:var(--muted);margin-left:.3rem}
+.btn.ok{background:var(--green-soft);border-color:var(--green);color:var(--text)}
+.btn.bad{background:var(--red-soft);border-color:var(--red);color:var(--text)}
+.btn.sel{background:var(--accent-soft);border-color:var(--accent);color:var(--text)}
+.btn.primary .ml{color:#fff}
+.ft{width:auto;min-width:min(100%,520px)}
+.ft td,.ft th{text-align:center;vertical-align:middle;padding:.35rem .45rem}
+.ft th{font-size:.88rem;line-height:1.3}
+.ft th .ml{display:block;font-size:.85em}
+.ft input{width:3.6em;padding:.25rem .3rem;border-radius:6px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;text-align:center}
+.ft input.wide{width:9.5em}
+.ft input.ok{border-color:var(--green);background:var(--green-soft)}
+.ft input.bad{border-color:var(--red);background:var(--red-soft)}
+.ft td.given{font-weight:600}
+.score{font-weight:700;color:var(--primary-ink);margin:.4rem 0 0;min-height:1.3em}
+select.sel{padding:.3rem .4rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;max-width:100%}
+#ptLab .controls label{flex-wrap:wrap;max-width:100%}
+#ptMode{max-width:min(100%,300px)}
+.side{float:right;width:210px;margin:.2rem 0 .8rem 1rem;border:2px solid var(--blue);background:var(--blue-soft);border-radius:12px;padding:.5rem .7rem;font-size:.88rem}
+@media(max-width:600px){.side{float:none;width:auto;margin:.6rem 0}}
+.clr{clear:both}
+/* ==== page 05: the periodic table ==== */
+:root{--pt-gas:#b4441f;--pt-gas-ink:#ffffff;--pt-liq:#7dd3e8;--pt-liq-ink:#0c3440;--pt-art:#f8d3c3;--pt-art-ink:#4a2318;
+  --f-h:#e5e7eb;--f-alk:#fecaca;--f-ae:#fed7aa;--f-tr:#bfdbfe;--f-b:#d9f99d;--f-c:#bbf7d0;--f-n:#a5f3fc;--f-o:#c7d2fe;--f-hal:#fbcfe8;--f-nob:#ddd6fe;--f-lan:#fef08a;--f-act:#99f6e4}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--pt-gas:#a63d1b;--pt-liq:#0e7490;--pt-liq-ink:#ecfeff;--pt-art:#6b3a2c;--pt-art-ink:#fde4da;
+  --f-h:#374151;--f-alk:#7f1d1d;--f-ae:#9a3412;--f-tr:#1e3a8a;--f-b:#3f6212;--f-c:#166534;--f-n:#155e75;--f-o:#3730a3;--f-hal:#9d174d;--f-nob:#5b21b6;--f-lan:#854d0e;--f-act:#0f766e}}
+:root[data-theme="dark"]{--pt-gas:#a63d1b;--pt-liq:#0e7490;--pt-liq-ink:#ecfeff;--pt-art:#6b3a2c;--pt-art-ink:#fde4da;
+  --f-h:#374151;--f-alk:#7f1d1d;--f-ae:#9a3412;--f-tr:#1e3a8a;--f-b:#3f6212;--f-c:#166534;--f-n:#155e75;--f-o:#3730a3;--f-hal:#9d174d;--f-nob:#5b21b6;--f-lan:#854d0e;--f-act:#0f766e}
+.ptw{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--border);border-radius:12px;background:var(--svgbg);padding:8px}
+.pt{display:grid;grid-template-columns:22px repeat(18,minmax(49px,1fr));gap:3px;min-width:955px}
+.pt .gh{font-size:.8rem;font-weight:800;color:var(--muted);text-align:center;align-self:end;padding-bottom:2px}
+.pt .gh.on{color:var(--blue)}
+.pt .ph{font-size:.8rem;font-weight:800;color:var(--muted);display:flex;align-items:center;justify-content:center;font-family:Georgia,serif}
+.pt .ph.on{color:var(--accent)}
+.pc{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:64px;padding:2px 1px 3px;border:1px solid #d9825b;border-radius:4px;background:var(--surface);color:var(--text);font-family:inherit;cursor:pointer;line-height:1.08;overflow:hidden;transition:opacity .2s,transform .12s}
+.pc:hover{transform:scale(1.06);z-index:2;box-shadow:var(--shadow)}
+.pc .z{font-size:9px;align-self:flex-start;padding-left:3px;opacity:.85}
+.pc .s{font-size:16px;font-weight:800;margin-top:-2px}
+.pc .n{font-size:8px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 1px}
+.pc .c{font-size:7.5px;margin-top:1px;letter-spacing:-.15px;word-break:keep-all;opacity:.95}
+.pt.nocfg .pc .c{display:none}
+.pt.nocfg .pc{min-height:52px}
+.pc.ph2{font-size:10px;font-weight:700;justify-content:center}
+.pc.dim{opacity:.18}
+.pc.pick{outline:3px solid var(--accent);outline-offset:1px;z-index:3}
+.pc.found{animation:found 1s ease 2}
+@keyframes found{50%{transform:scale(1.18)}}
+.pt .ser{grid-column:1 / span 3;font-size:.72rem;font-weight:700;color:var(--muted);display:flex;align-items:center;justify-content:flex-end;padding-right:6px;text-align:right;line-height:1.2}
+.pt .gap{grid-column:1 / -1;height:10px}
+.pt .lg{grid-column:4 / span 10;grid-row:2 / span 3;display:flex;gap:10px;align-items:stretch;padding:2px 4px}
+.lg .kbox{flex:1.1;border:2px solid #2aa3b8;background:var(--surface2);border-radius:6px;padding:4px 8px;font-size:.78rem;line-height:1.35}
+.lg .kbox b{display:block;font-size:.85rem;margin-bottom:2px}
+.lg .kbox i{display:inline-block;width:22px;height:11px;border-radius:2px;vertical-align:-1px;margin-right:5px;border:1px solid var(--border)}
+.lg .rbox{flex:1;border:2px solid #2aa3b8;background:var(--surface2);border-radius:6px;padding:4px 8px;font-size:.78rem;line-height:1.4;text-align:center;display:flex;flex-direction:column;justify-content:center}
+/* colour modes */
+.m-book .pc.c-gas{background:var(--pt-gas);color:var(--pt-gas-ink);border-color:var(--pt-gas)}
+.m-book .pc.c-liq{background:var(--pt-liq);color:var(--pt-liq-ink)}
+.m-book .pc.c-art{background:var(--pt-art);color:var(--pt-art-ink)}
+.pc.c-h{background:var(--f-h)}.pc.c-alk{background:var(--f-alk)}.pc.c-ae{background:var(--f-ae)}.pc.c-tr{background:var(--f-tr)}.pc.c-b{background:var(--f-b)}.pc.c-c{background:var(--f-c)}.pc.c-n{background:var(--f-n)}.pc.c-o{background:var(--f-o)}.pc.c-hal{background:var(--f-hal)}.pc.c-nob{background:var(--f-nob)}.pc.c-lan{background:var(--f-lan)}.pc.c-act{background:var(--f-act)}
+.pc.c-met{background:var(--blue-soft)}.pc.c-non{background:var(--green-soft)}.pc.c-mtd{background:var(--accent-soft)}
+.pc.c-main{background:var(--green-soft)}.pc.c-trn{background:var(--blue-soft)}.pc.c-inner{background:var(--accent-soft)}
+#ptInfo{display:grid;grid-template-columns:1fr;gap:.6rem;align-items:start}
+@media(min-width:760px){#ptInfo{grid-template-columns:300px 1fr}}
+#ptInfo svg{max-width:300px;margin:0 auto}
+#ptInfo .big{font-size:1.5rem;font-weight:800;color:var(--primary-ink)}
+#ptInfo .row{margin:.25rem 0}
+#ptInfo .why{background:var(--surface2);border-radius:8px;padding:.4rem .6rem;margin:.35rem 0;border-left:4px solid var(--accent)}
+.findbox{display:flex;gap:.3rem;align-items:center}
+.findbox input{padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;width:9.5rem}
+.fam-t td,.fam-t th{vertical-align:middle}
+.fam-t td .sw{display:inline-block;width:1.1em;height:1.1em;border-radius:4px;border:1px solid var(--border);vertical-align:-.2em}
+.fam-t .mem{font-size:.85rem;color:var(--muted)}
+.newel td,.newel th{text-align:center}
+.sample{max-width:520px}
+</style>
+</head>
+<body data-page="05_periods_groups_families">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 2 · Section 3</span><span class="chip amber">Textbook pages 25–29</span>
+<h1>The Modern Periodic Table: Periods, Groups and Families <span class="ml">പീരിയഡുകൾ, ഗ്രൂപ്പുകൾ, മൂലക കുടുംബങ്ങൾ</span></h1>
+<p class="lead">Here is the whole modern periodic table of textbook Fig 2.1 – all 118 elements – as a table you can tap. Use it to answer the textbook's questions: how many periods and groups are there, which period is shortest, what does one cell tell you? Then complete Table 2.1, discover what all the elements of one group have in common, and meet the nine element families of Table 2.2.</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 2 and 4 of this guide)</div>
+<ul style="margin:0">
+<li><b>Electron configuration</b> <span class="ml">ഇലക്ട്രോൺ വിന്യാസം</span> lists the electrons shell by shell: sodium 2, 8, 1. The last number is the number of <b>outermost electrons</b> <span class="ml">ബാഹ്യതമ ഇലക്ട്രോണുകൾ</span> (page 2).</li>
+<li>The modern table is arranged in increasing <b>atomic number</b>. Horizontal rows are <b>periods</b>, vertical columns are <b>groups</b> (<a href="04_modern_periodic_law.html">page 4</a>).</li>
+</ul></div>
+
+<h2 id="table">1. The modern periodic table (Fig 2.1)</h2>
+<p>Each cell shows the <b>atomic number</b>, the <b>symbol</b>, the <b>name</b> and the <b>electron configuration</b>, exactly as in the textbook. Periods are numbered I–VII down the left, groups 1–18 across the top. <b>Tap any element</b> to open its card below the table. On a phone, swipe the table sideways.</p>
+<div class="lab" id="ptLab">
+  <div class="lab-title">🧪 Interactive periodic table (textbook Fig 2.1)</div>
+  <div class="controls">
+    <label>colours <select id="ptMode" class="sel"><option value="book">book key: gases · liquids · artificial</option><option value="fam">element families (Table 2.2)</option><option value="kind">metals · non-metals · metalloids</option><option value="block">main group · transition · inner transition</option></select></label>
+    <label>light up period <select id="ptPer" class="sel"><option value="0">–</option><option value="1">I</option><option value="2">II</option><option value="3">III</option><option value="4">IV</option><option value="5">V</option><option value="6">VI</option><option value="7">VII</option></select></label>
+    <label>group <select id="ptGrp" class="sel"><option value="0">–</option></select></label>
+  </div>
+  <div class="controls">
+    <span class="findbox"><input id="ptQ" type="text" placeholder="symbol, name or Z" aria-label="find an element by symbol, name or atomic number"><button class="btn" id="ptFind">🔍 Find</button></span>
+    <label><input type="checkbox" id="ptCfg" checked> show configurations</label>
+    <button class="btn ghost" id="ptClear">⟲ Clear highlights</button>
+  </div>
+  <div class="ptw" id="ptWrap"><div class="pt m-book" id="pt"></div></div>
+  <div class="readout" id="ptOut"></div>
+  <div class="card" id="ptInfo"><svg id="ptSvg" viewBox="0 0 300 300" role="img" aria-label="Shell diagram of the chosen element: nucleus with its protons and the electrons on each shell; the outermost shell is green"></svg><div id="ptText"></div></div>
+  <p class="hint">The colours of the book key are those of textbook Fig 2.1 (gallium, caesium and francium are coloured as liquids there: they melt just above room temperature – go further). Electron configurations of the heavier elements follow rules you will learn in higher classes; this guide copies them from Fig 2.1. The textbook asks you to check things with the <b>Kalzium</b> software – this table does the same job, offline.</p>
+</div>
+
+<h2 id="cell">2. How to read one cell</h2>
+<p>The key box in Fig 2.1 <span class="ml">സൂചനകൾ</span> shows the order of the information in every cell: <span class="ml">അറ്റോമിക നമ്പർ · പ്രതീകം · പേര് · ഇലക്ട്രോൺ വിന്യാസം</span> – atomic number, symbol, name, electron configuration.</p>
+<div class="lab"><div class="lab-title">🔎 One cell, four facts</div>
+<svg id="cellSvg" class="sample" viewBox="0 0 640 260" role="img" aria-label="An enlarged cell of sodium with arrows: 11 is the atomic number, Na the symbol, Sodium (Natrium) the name, 2,8,1 the electron configuration"></svg></div>
+<div class="qa"><p><b>Q (page 28).</b> <span class="ml mlq">ഒരു മൂലകത്തെ സംബന്ധിച്ച് എന്തെല്ലാം വിവരങ്ങളാണ് പീരിയോഡിക് ടേബിളിൽ നിന്നും ലഭിക്കുന്നത്? സയൻസ് ഡയറിയിൽ രേഖപ്പെടുത്തുക.</span> What information about an element do you get from the periodic table? Record it in your science diary. (The book starts the list: • name <span class="ml">പേര്</span> • symbol <span class="ml">പ്രതീകം</span> • … )</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><ul>
+<li><b>name</b> (and the Latin name where the symbol comes from it, e.g. Natrium → Na) and <b>symbol</b>;</li>
+<li><b>atomic number</b> – so also the number of protons and electrons;</li>
+<li><b>electron configuration</b> – so the number of shells and of outermost electrons;</li>
+<li>the <b>period</b> (row) and the <b>group</b> (column) it belongs to – and so its family;</li>
+<li>its <b>physical state</b> at room temperature (gas / liquid / solid – from the colour key) and whether it is an <b>artificial</b> element.</li></ul></div></div></div>
+
+<h2 id="new">3. Newly discovered elements (2016)</h2>
+<div class="callout book"><div class="title">📦 Box – <span class="ml">പുതിയതായി കണ്ടെത്തിയ മൂലകങ്ങൾ</span> (newly discovered elements, page 27)</div>
+<p>In <b>2016</b> four more elements were added to the periodic table. They are placed in the <b>7th period</b>.</p>
+<div class="tw"><table class="newel" style="max-width:560px"><thead><tr><th>Atomic number <span class="ml">അറ്റോമിക നമ്പർ</span></th><th>Symbol <span class="ml">പ്രതീകം</span></th><th>IUPAC name</th></tr></thead><tbody>
+<tr><td>113</td><td>Nh</td><td><span class="ml">നിഹോണിയം</span> Nihonium</td></tr>
+<tr><td>115</td><td>Mc</td><td><span class="ml">മോസ്കോവിയം</span> Moscovium</td></tr>
+<tr><td>117</td><td>Ts</td><td><span class="ml">ടെന്നെസിൻ</span> Tennessine</td></tr>
+<tr><td>118</td><td>Og</td><td><span class="ml">ഒഗനെസൻ</span> Oganesson</td></tr></tbody></table></div>
+<ul>
+<li><b>Nihonium</b> – from the Japanese word <i>Nihon</i>, meaning Japan; it also means "the land of the rising sun".</li>
+<li><b>Moscovium</b> – the experiments connected with its discovery were done mainly in laboratories in <b>Moscow</b>.</li>
+<li><b>Tennessine</b> – from experiments in laboratories in the <b>Tennessee</b> region (USA). These three names come from the places linked with their discovery.</li>
+<li><b>Oganesson</b> – named to honour the nuclear scientist <b>Prof. Yuri Oganessian</b>. It is only the <b>second</b> element named after a living scientist; the first was <b>seaborgium</b> (atomic number 106), named in honour of the American chemist <b>Glenn Seaborg</b>.</li></ul>
+<p><button class="btn" id="showNew">✨ Show these four in the table</button> <button class="btn" id="showSg">Show seaborgium (106)</button></p></div>
+<p><span class="ml">മൂലകങ്ങളുടെ ഇലക്ട്രോൺ വിന്യാസവും പീരിയോഡിക് ടേബിളിലെ സ്ഥാനവും</span> – Now let us study the link between the <b>electron configuration</b> of an element and its <b>place in the periodic table</b>.</p>
+
+<h2 id="count">4. Counting periods, groups and elements (pages 27–28)</h2>
+<p><span class="ml">ആധുനിക പീരിയോഡിക് ടേബിൾ (ചിത്രം 2.1) വിശകലനം ചെയ്ത് ചുവടെ കൊടുത്തിരിക്കുന്ന ചോദ്യങ്ങൾക്ക് ഉത്തരം കണ്ടെത്താമല്ലോ.</span> – Analyse the modern periodic table (Fig 2.1) and find the answers. Use the counter first, then check each answer.</p>
+<div class="lab">
+  <div class="lab-title">🔢 Elements in each period</div>
+  <div class="controls" id="pcBtns"></div>
+  <svg id="pcSvg" viewBox="0 0 800 260" role="img" aria-label="Bar chart of the number of elements in each of the seven periods: 2, 8, 8, 18, 18, 32 and 32"></svg>
+  <div class="readout" id="pcOut"></div>
+</div>
+<div class="qa"><p><b>Q1.</b> <span class="ml mlq">പീരിയഡുകളുടെ എണ്ണമെത്ര?</span> How many periods are there?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>7 periods</b> (I to VII). The lanthanoid and actinoid rows below the table are not extra periods – they belong to periods 6 and 7.</div></div></div>
+<div class="qa"><p><b>Q2.</b> <span class="ml mlq">ഗ്രൂപ്പുകളുടെ എണ്ണം എഴുതുക.</span> Write the number of groups.</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>18 groups</b> (1 to 18).</div></div></div>
+<div class="qa"><p><b>Q3.</b> <span class="ml mlq">മൂലകങ്ങളുടെ എണ്ണം ഏറ്റവും കുറവുള്ള പീരിയഡ് ഏത്?</span> Which period has the fewest elements?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>Period 1</b> – only <b>2</b> elements, hydrogen (H) and helium (He). Their atoms have just one shell (K), which holds at most 2 electrons.</div></div></div>
+<div class="qa"><p><b>Q4.</b> <span class="ml mlq">2-ഉം 3-ഉം പീരിയഡുകളിലെ മൂലകങ്ങളുടെ എണ്ണം ഒരുപോലെയാണോ?</span> Do periods 2 and 3 have the same number of elements?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>Yes – 8 each</b>: period 2 from lithium (3) to neon (10), period 3 from sodium (11) to argon (18).</div></div></div>
+<div class="qa"><p><b>Q5.</b> <span class="ml mlq">4-ാം പീരിയഡിൽ എത്ര മൂലകങ്ങളാണ് ഉൾപ്പെടുത്തിയിരിക്കുന്നത്?</span> How many elements are there in the 4th period?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>18 elements</b> – from potassium (19) to krypton (36), including the ten transition elements scandium (21) to zinc (30).</div></div></div>
+
+<h2 id="group1">5. Group 1 and group 2: outermost electrons (Table 2.1)</h2>
+<div class="side"><b>🧑‍💻 Side note (page 28)</b><br><span class="ml">പട്ടിക 2.1 പൂർത്തിയാക്കി Kalzium സോഫ്റ്റ്‌വെയർ ഉപയോഗിച്ച് ശരിയാണെന്ന് ഉറപ്പാക്കുക.</span> Complete Table 2.1 and check it with the Kalzium software – or with the interactive table above (set "light up group" to 1).</div>
+<p><span class="ml">ഒന്നാം ഗ്രൂപ്പ് മൂലകങ്ങളാണ് പട്ടികയിൽ നൽകിയിരിക്കുന്നത്. പട്ടിക 2.1 പൂർത്തിയാക്കുക.</span> – The elements of group 1 are given in the table. Complete Table 2.1. Type into the empty boxes (configurations like <code>2,8,1</code>), then press <b>Check</b>.</p>
+<div class="lab" id="t21"><div class="lab-title">✍ Table 2.1 – group 1 elements</div></div>
+<div class="clr"></div>
+<div class="qa"><p><b>Q (page 28).</b> <span class="ml mlq">ഒന്നാം ഗ്രൂപ്പ് മൂലകങ്ങളിൽ ബാഹ്യതമ ഇലക്ട്രോണുകളുടെ എണ്ണത്തിൽ എന്തെങ്കിലും പ്രത്യേകതയുണ്ടോ?</span> Is there anything special about the number of outermost electrons of the group 1 elements?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">Yes – <b>every group 1 element has 1 electron in its outermost shell</b> (Li 2,<b>1</b> · Na 2,8,<b>1</b> · K 2,8,8,<b>1</b> · Rb 2,8,18,8,<b>1</b> · Cs 2,8,18,18,8,<b>1</b> · Fr 2,8,18,32,18,8,<b>1</b>). Hydrogen (1) at the top of group 1 also has 1 electron.</div></div></div>
+<div class="qa"><p><b>Q (page 28).</b> <span class="ml mlq">രണ്ടാം ഗ്രൂപ്പ് മൂലകങ്ങളുടെ ഇലക്ട്രോൺ വിന്യാസം പീരിയോഡിക് ടേബിളിന്റെ സഹായത്തോടെ എഴുതൂ.</span> Write the electron configurations of the group 2 elements with the help of the periodic table.</p></div>
+<div class="lab" id="tg2"><div class="lab-title">✍ Group 2 elements – configurations and outermost electrons</div></div>
+<div class="callout key"><div class="title">⭐ What you have found (page 28)</div>
+<p class="ml keyml">ഒരേ ഗ്രൂപ്പിൽ ഉൾപ്പെട്ട മൂലകങ്ങളുടെ ബാഹ്യതമ ഇലക്ട്രോണുകളുടെ എണ്ണം ഒരുപോലെയാണ്.</p>
+<p>Elements of the <b>same group</b> have the <b>same number of outermost electrons</b> – 1 in group 1, 2 in group 2.</p>
+<p class="ml keyml">മൂലകങ്ങളുടെ രാസഗുണങ്ങൾക്കടിസ്ഥാനം അവയുടെ ബാഹ്യതമ ഷെല്ലിലെ ഇലക്ട്രോണുകളുടെ എണ്ണമാണ്. സാധാരണയായി ഈ ഇലക്ട്രോണുകളാണ് രാസപ്രവർത്തനങ്ങളിൽ പങ്കെടുക്കുന്നത്.</p>
+<p>The <b>chemical properties</b> of elements depend on the number of electrons in their <b>outermost shell</b>; usually it is these electrons that take part in <b>chemical reactions</b> <span class="ml">രാസപ്രവർത്തനങ്ങൾ</span>. That is why the elements of a group behave alike.</p></div>
+<div class="lab">
+  <div class="lab-title">🔭 Group explorer – same outermost electrons, down the group</div>
+  <div class="controls" id="gxBtns"></div>
+  <svg id="gxSvg" viewBox="0 0 800 300" role="img" aria-label="Shell diagrams of every element of the chosen group side by side; inner shells are thin rings, the outermost shell is green with its electrons shown as amber dots"></svg>
+  <div class="readout" id="gxOut"></div>
+  <p class="hint">Inner shells are drawn as thin rings (their electron numbers are in the configuration below); only the <b>outermost</b> electrons are drawn as dots. The rings are drawn to one scale, so you can also see the atoms getting bigger down a group – more about that on page 9.</p>
+</div>
+
+<h2 id="families">6. Families of elements (Table 2.2)</h2>
+<p><span class="ml">ഓരോ ഗ്രൂപ്പിലെയും മൂലകങ്ങളുടെ പൊതുവായ സവിശേഷതകളുടെ അടിസ്ഥാനത്തിൽ അവയെ മൂലക കുടുംബങ്ങളായി പരിഗണിക്കാം.</span> – On the basis of their common features, the elements of each group can be treated as a <b>family of elements</b> <span class="ml">മൂലക കുടുംബങ്ങൾ</span>. Look at the list of families in Table 2.2. Press <b>Show</b> to light the family up in the big table.</p>
+<div class="card"><div class="tw"><table class="fam-t" id="famT"><caption class="small muted">Table 2.2 (textbook page 29) – members listed from this guide's element data</caption>
+<thead><tr><th>Group number <span class="ml">ഗ്രൂപ്പ് നമ്പർ</span></th><th>Name of the family <span class="ml">മൂലക കുടുംബത്തിന്റെ പേര്</span></th><th>Members</th><th></th></tr></thead><tbody></tbody></table></div>
+<p class="small muted" style="margin:.4rem 0 0">Hydrogen sits at the top of group 1 because it has 1 outermost electron, but it is a gas and a non-metal – it is <b>not</b> counted as an alkali metal. The families of groups 13–16 are named after their first element.</p></div>
+<div class="callout real"><div class="title">🌴 Families you have met</div>
+<p><b>Alkali metals:</b> the sodium in common salt and in the yellow street lamps. <b>Alkaline earth metals:</b> calcium in your bones, in chalk and in the lime (ചുണ്ണാമ്പ്) used with betel leaves. <b>Halogens:</b> the chlorine that disinfects water tanks, the fluoride in toothpaste, the iodine in iodised salt. <b>Noble gases:</b> the neon of shop signboards and the helium of festival balloons. <b>Transition elements:</b> the iron, copper and gold of everyday Kerala life (page 7).</p></div>
+
+<h2 id="check">7. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li>The modern periodic table has <b>118 elements</b>, <b>7 periods</b> and <b>18 groups</b>. Elements per period: 2, 8, 8, 18, 18, 32, 32. The lanthanoids and actinoids are written in two rows below the table but belong to periods 6 and 7.</li>
+<li>Each cell gives the atomic number, symbol, name and electron configuration; the colour key shows gases, liquids and artificial elements.</li>
+<li>In <b>2016</b> four elements were added to period 7: nihonium (113), moscovium (115), tennessine (117) and oganesson (118).</li>
+<li>Elements of a group have the <b>same number of outermost electrons</b> (group 1: 1; group 2: 2). Outermost electrons decide chemical properties, so a group's elements behave alike – they form a <b>family</b>.</li>
+<li>Families (Table 2.2): 1 alkali metals · 2 alkaline earth metals · 3–12 transition elements · 13 boron family · 14 carbon family · 15 nitrogen family · 16 oxygen family · 17 halogens · 18 noble gases.</li>
+</ul></div>
+<p>Next: <a href="06_main_group_elements.html">Main group elements – finding the group and period number ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>
+/* Chapter 2 element data – generated by _gen/make_elements.py; shells follow textbook Fig 2.1 */
+window.ELEMENTS=[{"z":1,"s":"H","n":"Hydrogen","lat":null,"p":1,"g":1,"sh":[1],"st":"gas","art":false,"kind":"nonmetal","fam":"main","m":1.01},{"z":2,"s":"He","n":"Helium","lat":null,"p":1,"g":18,"sh":[2],"st":"gas","art":false,"kind":"nonmetal","fam":"main","m":4.0},{"z":3,"s":"Li","n":"Lithium","lat":null,"p":2,"g":1,"sh":[2,1],"st":"solid","art":false,"kind":"metal","fam":"main","m":6.94},{"z":4,"s":"Be","n":"Beryllium","lat":null,"p":2,"g":2,"sh":[2,2],"st":"solid","art":false,"kind":"metal","fam":"main","m":9.01},{"z":5,"s":"B","n":"Boron","lat":null,"p":2,"g":13,"sh":[2,3],"st":"solid","art":false,"kind":"metalloid","fam":"main","m":10.81},{"z":6,"s":"C","n":"Carbon","lat":null,"p":2,"g":14,"sh":[2,4],"st":"solid","art":false,"kind":"nonmetal","fam":"main","m":12.01},{"z":7,"s":"N","n":"Nitrogen","lat":null,"p":2,"g":15,"sh":[2,5],"st":"gas","art":false,"kind":"nonmetal","fam":"main","m":14.01},{"z":8,"s":"O","n":"Oxygen","lat":null,"p":2,"g":16,"sh":[2,6],"st":"gas","art":false,"kind":"nonmetal","fam":"main","m":16.0},{"z":9,"s":"F","n":"Fluorine","lat":null,"p":2,"g":17,"sh":[2,7],"st":"gas","art":false,"kind":"nonmetal","fam":"main","m":19.0},{"z":10,"s":"Ne","n":"Neon","lat":null,"p":2,"g":18,"sh":[2,8],"st":"gas","art":false,"kind":"nonmetal","fam":"main","m":20.18},{"z":11,"s":"Na","n":"Sodium","lat":"Natrium","p":3,"g":1,"sh":[2,8,1],"st":"solid","art":false,"kind":"metal","fam":"main","m":22.99},{"z":12,"s":"Mg","n":"Magnesium","lat":null,"p":3,"g":2,"sh":[2,8,2],"st":"solid","art":false,"kind":"metal","fam":"main","m":24.3},{"z":13,"s":"Al","n":"Aluminium","lat":null,"p":3,"g":13,"sh":[2,8,3],"st":"solid","art":false,"kind":"metal","fam":"main","m":26.98},{"z":14,"s":"Si","n":"Silicon","lat":null,"p":3,"g":14,"sh":[2,8,4],"st":"solid","art":false,"kind":"metalloid","fam":"main","m":28.09},{"z":15,"s":"P","n":"Phosphorus","lat":null,"p":3,"g":15,"sh":[2,8,5],"st":"solid","art":false,"kind":"nonmetal","fam":"main","m":30.97},{"z":16,"s":"S","n":"Sulphur","lat":null,"p":3,"g":16,"sh":[2,8,6],"st":"solid","art":false,"kind":"nonmetal","fam":"main","m":32.06},{"z":17,"s":"Cl","n":"Chlorine","lat":null,"p":3,"g":17,"sh":[2,8,7],"st":"gas","art":false,"kind":"nonmetal","fam":"main","m":35.45},{"z":18,"s":"Ar","n":"Argon","lat":null,"p":3,"g":18,"sh":[2,8,8],"st":"gas","art":false,"kind":"nonmetal","fam":"main","m":39.95},{"z":19,"s":"K","n":"Potassium","lat":"Kalium","p":4,"g":1,"sh":[2,8,8,1],"st":"solid","art":false,"kind":"metal","fam":"main","m":39.1},{"z":20,"s":"Ca","n":"Calcium","lat":null,"p":4,"g":2,"sh":[2,8,8,2],"st":"solid","art":false,"kind":"metal","fam":"main","m":40.08},{"z":21,"s":"Sc","n":"Scandium","lat":null,"p":4,"g":3,"sh":[2,8,9,2],"st":"solid","art":false,"kind":"metal","fam":"transition","m":44.96},{"z":22,"s":"Ti","n":"Titanium","lat":null,"p":4,"g":4,"sh":[2,8,10,2],"st":"solid","art":false,"kind":"metal","fam":"transition","m":47.87},{"z":23,"s":"V","n":"Vanadium","lat":null,"p":4,"g":5,"sh":[2,8,11,2],"st":"solid","art":false,"kind":"metal","fam":"transition","m":50.94},{"z":24,"s":"Cr","n":"Chromium","lat":null,"p":4,"g":6,"sh":[2,8,13,1],"st":"solid","art":false,"kind":"metal","fam":"transition","m":52.0},{"z":25,"s":"Mn","n":"Manganese","lat":null,"p":4,"g":7,"sh":[2,8,13,2],"st":"solid","art":false,"kind":"metal","fam":"transition","m":54.94},{"z":26,"s":"Fe","n":"Iron","lat":"Ferrum","p":4,"g":8,"sh":[2,8,14,2],"st":"solid","art":false,"kind":"metal","fam":"transition","m":55.84},{"z":27,"s":"Co","n":"Cobalt","lat":null,"p":4,"g":9,"sh":[2,8,15,2],"st":"solid","art":false,"kind":"metal","fam":"transition","m":58.93},{"z":28,"s":"Ni","n":"Nickel","lat":null,"p":4,"g":10,"sh":[2,8,16,2],"st":"solid","art":false,"kind":"metal","fam":"transition","m":58.69},{"z":29,"s":"Cu","n":"Copper","lat":"Cuprum","p":4,"g":11,"sh":[2,8,18,1],"st":"solid","art":false,"kind":"metal","fam":"transition","m":63.55},{"z":30,"s":"Zn","n":"Zinc","lat":null,"p":4,"g":12,"sh":[2,8,18,2],"st":"solid","art":false,"kind":"metal","fam":"transition","m":65.38},{"z":31,"s":"Ga","n":"Gallium","lat":null,"p":4,"g":13,"sh":[2,8,18,3],"st":"liquid","art":false,"kind":"metal","fam":"main","m":69.72},{"z":32,"s":"Ge","n":"Germanium","lat":null,"p":4,"g":14,"sh":[2,8,18,4],"st":"solid","art":false,"kind":"metalloid","fam":"main","m":72.63},{"z":33,"s":"As","n":"Arsenic","lat":null,"p":4,"g":15,"sh":[2,8,18,5],"st":"solid","art":false,"kind":"metalloid","fam":"main","m":74.92},{"z":34,"s":"Se","n":"Selenium","lat":null,"p":4,"g":16,"sh":[2,8,18,6],"st":"solid","art":false,"kind":"nonmetal","fam":"main","m":78.97},{"z":35,"s":"Br","n":"Bromine","lat":null,"p":4,"g":17,"sh":[2,8,18,7],"st":"liquid","art":false,"kind":"nonmetal","fam":"main","m":79.9},{"z":36,"s":"Kr","n":"Krypton","lat":null,"p":4,"g":18,"sh":[2,8,18,8],"st":"gas","art":false,"kind":"nonmetal","fam":"main","m":83.8},{"z":37,"s":"Rb","n":"Rubidium","lat":null,"p":5,"g":1,"sh":[2,8,18,8,1],"st":"solid","art":false,"kind":"metal","fam":"main","m":85.47},{"z":38,"s":"Sr","n":"Strontium","lat":null,"p":5,"g":2,"sh":[2,8,18,8,2],"st":"solid","art":false,"kind":"metal","fam":"main","m":87.62},{"z":39,"s":"Y","n":"Yttrium","lat":null,"p":5,"g":3,"sh":[2,8,18,9,2],"st":"solid","art":false,"kind":"metal","fam":"transition","m":88.91},{"z":40,"s":"Zr","n":"Zirconium","lat":null,"p":5,"g":4,"sh":[2,8,18,10,2],"st":"solid","art":false,"kind":"metal","fam":"transition","m":91.22},{"z":41,"s":"Nb","n":"Niobium","lat":null,"p":5,"g":5,"sh":[2,8,18,12,1],"st":"solid","art":false,"kind":"metal","fam":"transition","m":92.91},{"z":42,"s":"Mo","n":"Molybdenum","lat":null,"p":5,"g":6,"sh":[2,8,18,13,1],"st":"solid","art":false,"kind":"metal","fam":"transition","m":95.95},{"z":43,"s":"Tc","n":"Technetium","lat":null,"p":5,"g":7,"sh":[2,8,18,14,1],"st":"solid","art":true,"kind":"metal","fam":"transition","m":98.0},{"z":44,"s":"Ru","n":"Ruthenium","lat":null,"p":5,"g":8,"sh":[2,8,18,15,1],"st":"solid","art":false,"kind":"metal","fam":"transition","m":101.07},{"z":45,"s":"Rh","n":"Rhodium","lat":null,"p":5,"g":9,"sh":[2,8,18,16,1],"st":"solid","art":false,"kind":"metal","fam":"transition","m":102.91},{"z":46,"s":"Pd","n":"Palladium","lat":null,"p":5,"g":10,"sh":[2,8,18,18],"st":"solid","art":false,"kind":"metal","fam":"transition","m":106.42},{"z":47,"s":"Ag","n":"Silver","lat":"Argentum","p":5,"g":11,"sh":[2,8,18,18,1],"st":"solid","art":false,"kind":"metal","fam":"transition","m":107.87},{"z":48,"s":"Cd","n":"Cadmium","lat":null,"p":5,"g":12,"sh":[2,8,18,18,2],"st":"solid","art":false,"kind":"metal","fam":"transition","m":112.41},{"z":49,"s":"In","n":"Indium","lat":null,"p":5,"g":13,"sh":[2,8,18,18,3],"st":"solid","art":false,"kind":"metal","fam":"main","m":114.82},{"z":50,"s":"Sn","n":"Tin","lat":"Stannum","p":5,"g":14,"sh":[2,8,18,18,4],"st":"solid","art":false,"kind":"metal","fam":"main","m":118.71},{"z":51,"s":"Sb","n":"Antimony","lat":"Stibium","p":5,"g":15,"sh":[2,8,18,18,5],"st":"solid","art":false,"kind":"metalloid","fam":"main","m":121.76},{"z":52,"s":"Te","n":"Tellurium","lat":null,"p":5,"g":16,"sh":[2,8,18,18,6],"st":"solid","art":false,"kind":"metalloid","fam":"main","m":127.6},{"z":53,"s":"I","n":"Iodine","lat":null,"p":5,"g":17,"sh":[2,8,18,18,7],"st":"solid","art":false,"kind":"nonmetal","fam":"main","m":126.9},{"z":54,"s":"Xe","n":"Xenon","lat":null,"p":5,"g":18,"sh":[2,8,18,18,8],"st":"gas","art":false,"kind":"nonmetal","fam":"main","m":131.29},{"z":55,"s":"Cs","n":"Caesium","lat":null,"p":6,"g":1,"sh":[2,8,18,18,8,1],"st":"liquid","art":false,"kind":"metal","fam":"main","m":132.91},{"z":56,"s":"Ba","n":"Barium","lat":null,"p":6,"g":2,"sh":[2,8,18,18,8,2],"st":"solid","art":false,"kind":"metal","fam":"main","m":137.33},{"z":57,"s":"La","n":"Lanthanum","lat":null,"p":6,"g":3,"sh":[2,8,18,18,9,2],"st":"solid","art":false,"kind":"metal","fam":"lanthanoid","m":138.91},{"z":58,"s":"Ce","n":"Cerium","lat":null,"p":6,"g":3,"sh":[2,8,18,19,9,2],"st":"solid","art":false,"kind":"metal","fam":"lanthanoid","m":140.12},{"z":59,"s":"Pr","n":"Praseodymium","lat":null,"p":6,"g":3,"sh":[2,8,18,21,8,2],"st":"solid","art":false,"kind":"metal","fam":"lanthanoid","m":140.91},{"z":60,"s":"Nd","n":"Neodymium","lat":null,"p":6,"g":3,"sh":[2,8,18,22,8,2],"st":"solid","art":false,"kind":"metal","fam":"lanthanoid","m":144.24},{"z":61,"s":"Pm","n":"Promethium","lat":null,"p":6,"g":3,"sh":[2,8,18,23,8,2],"st":"solid","art":true,"kind":"metal","fam":"lanthanoid","m":145.0},{"z":62,"s":"Sm","n":"Samarium","lat":null,"p":6,"g":3,"sh":[2,8,18,24,8,2],"st":"solid","art":false,"kind":"metal","fam":"lanthanoid","m":150.36},{"z":63,"s":"Eu","n":"Europium","lat":null,"p":6,"g":3,"sh":[2,8,18,25,8,2],"st":"solid","art":false,"kind":"metal","fam":"lanthanoid","m":151.96},{"z":64,"s":"Gd","n":"Gadolinium","lat":null,"p":6,"g":3,"sh":[2,8,18,25,9,2],"st":"solid","art":false,"kind":"metal","fam":"lanthanoid","m":157.25},{"z":65,"s":"Tb","n":"Terbium","lat":null,"p":6,"g":3,"sh":[2,8,18,27,8,2],"st":"solid","art":false,"kind":"metal","fam":"lanthanoid","m":158.93},{"z":66,"s":"Dy","n":"Dysprosium","lat":null,"p":6,"g":3,"sh":[2,8,18,28,8,2],"st":"solid","art":false,"kind":"metal","fam":"lanthanoid","m":162.5},{"z":67,"s":"Ho","n":"Holmium","lat":null,"p":6,"g":3,"sh":[2,8,18,29,8,2],"st":"solid","art":false,"kind":"metal","fam":"lanthanoid","m":164.93},{"z":68,"s":"Er","n":"Erbium","lat":null,"p":6,"g":3,"sh":[2,8,18,30,8,2],"st":"solid","art":false,"kind":"metal","fam":"lanthanoid","m":167.26},{"z":69,"s":"Tm","n":"Thulium","lat":null,"p":6,"g":3,"sh":[2,8,18,31,8,2],"st":"solid","art":false,"kind":"metal","fam":"lanthanoid","m":168.93},{"z":70,"s":"Yb","n":"Ytterbium","lat":null,"p":6,"g":3,"sh":[2,8,18,32,8,2],"st":"solid","art":false,"kind":"metal","fam":"lanthanoid","m":173.04},{"z":71,"s":"Lu","n":"Lutetium","lat":null,"p":6,"g":3,"sh":[2,8,18,32,9,2],"st":"solid","art":false,"kind":"metal","fam":"lanthanoid","m":174.97},{"z":72,"s":"Hf","n":"Hafnium","lat":null,"p":6,"g":4,"sh":[2,8,18,32,10,2],"st":"solid","art":false,"kind":"metal","fam":"transition","m":178.49},{"z":73,"s":"Ta","n":"Tantalum","lat":null,"p":6,"g":5,"sh":[2,8,18,32,11,2],"st":"solid","art":false,"kind":"metal","fam":"transition","m":180.95},{"z":74,"s":"W","n":"Tungsten","lat":"Wolfram","p":6,"g":6,"sh":[2,8,18,32,12,2],"st":"solid","art":false,"kind":"metal","fam":"transition","m":183.84},{"z":75,"s":"Re","n":"Rhenium","lat":null,"p":6,"g":7,"sh":[2,8,18,32,13,2],"st":"solid","art":false,"kind":"metal","fam":"transition","m":186.21},{"z":76,"s":"Os","n":"Osmium","lat":null,"p":6,"g":8,"sh":[2,8,18,32,14,2],"st":"solid","art":false,"kind":"metal","fam":"transition","m":190.23},{"z":77,"s":"Ir","n":"Iridium","lat":null,"p":6,"g":9,"sh":[2,8,18,32,15,2],"st":"solid","art":false,"kind":"metal","fam":"transition","m":192.22},{"z":78,"s":"Pt","n":"Platinum","lat":null,"p":6,"g":10,"sh":[2,8,18,32,17,1],"st":"solid","art":false,"kind":"metal","fam":"transition","m":195.08},{"z":79,"s":"Au","n":"Gold","lat":"Aurum","p":6,"g":11,"sh":[2,8,18,32,18,1],"st":"solid","art":false,"kind":"metal","fam":"transition","m":196.97},{"z":80,"s":"Hg","n":"Mercury","lat":"Hydrargyrum","p":6,"g":12,"sh":[2,8,18,32,18,2],"st":"liquid","art":false,"kind":"metal","fam":"transition","m":200.59},{"z":81,"s":"Tl","n":"Thallium","lat":null,"p":6,"g":13,"sh":[2,8,18,32,18,3],"st":"solid","art":false,"kind":"metal","fam":"main","m":204.38},{"z":82,"s":"Pb","n":"Lead","lat":"Plumbum","p":6,"g":14,"sh":[2,8,18,32,18,4],"st":"solid","art":false,"kind":"metal","fam":"main","m":207.2},{"z":83,"s":"Bi","n":"Bismuth","lat":null,"p":6,"g":15,"sh":[2,8,18,32,18,5],"st":"solid","art":false,"kind":"metal","fam":"main","m":208.98},{"z":84,"s":"Po","n":"Polonium","lat":null,"p":6,"g":16,"sh":[2,8,18,32,18,6],"st":"solid","art":false,"kind":"metal","fam":"main","m":209.0},{"z":85,"s":"At","n":"Astatine","lat":null,"p":6,"g":17,"sh":[2,8,18,32,18,7],"st":"solid","art":false,"kind":"metal","fam":"main","m":210.0},{"z":86,"s":"Rn","n":"Radon","lat":null,"p":6,"g":18,"sh":[2,8,18,32,18,8],"st":"gas","art":false,"kind":"nonmetal","fam":"main","m":222.0},{"z":87,"s":"Fr","n":"Francium","lat":null,"p":7,"g":1,"sh":[2,8,18,32,18,8,1],"st":"liquid","art":false,"kind":"metal","fam":"main","m":223.0},{"z":88,"s":"Ra","n":"Radium","lat":null,"p":7,"g":2,"sh":[2,8,18,32,18,8,2],"st":"solid","art":false,"kind":"metal","fam":"main","m":226.0},{"z":89,"s":"Ac","n":"Actinium","lat":null,"p":7,"g":3,"sh":[2,8,18,32,18,9,2],"st":"solid","art":false,"kind":"metal","fam":"actinoid","m":227.0},{"z":90,"s":"Th","n":"Thorium","lat":null,"p":7,"g":3,"sh":[2,8,18,32,18,10,2],"st":"solid","art":false,"kind":"metal","fam":"actinoid","m":232.04},{"z":91,"s":"Pa","n":"Protactinium","lat":null,"p":7,"g":3,"sh":[2,8,18,32,20,9,2],"st":"solid","art":false,"kind":"metal","fam":"actinoid","m":231.04},{"z":92,"s":"U","n":"Uranium","lat":null,"p":7,"g":3,"sh":[2,8,18,32,21,9,2],"st":"solid","art":false,"kind":"metal","fam":"actinoid","m":238.03},{"z":93,"s":"Np","n":"Neptunium","lat":null,"p":7,"g":3,"sh":[2,8,18,32,22,9,2],"st":"solid","art":true,"kind":"metal","fam":"actinoid","m":237.0},{"z":94,"s":"Pu","n":"Plutonium","lat":null,"p":7,"g":3,"sh":[2,8,18,32,24,8,2],"st":"solid","art":true,"kind":"metal","fam":"actinoid","m":244.0},{"z":95,"s":"Am","n":"Americium","lat":null,"p":7,"g":3,"sh":[2,8,18,32,25,8,2],"st":"solid","art":true,"kind":"metal","fam":"actinoid","m":243.0},{"z":96,"s":"Cm","n":"Curium","lat":null,"p":7,"g":3,"sh":[2,8,18,32,25,9,2],"st":"solid","art":true,"kind":"metal","fam":"actinoid","m":247.0},{"z":97,"s":"Bk","n":"Berkelium","lat":null,"p":7,"g":3,"sh":[2,8,18,32,27,8,2],"st":"solid","art":true,"kind":"metal","fam":"actinoid","m":247.0},{"z":98,"s":"Cf","n":"Californium","lat":null,"p":7,"g":3,"sh":[2,8,18,32,28,8,2],"st":"solid","art":true,"kind":"metal","fam":"actinoid","m":251.0},{"z":99,"s":"Es","n":"Einsteinium","lat":null,"p":7,"g":3,"sh":[2,8,18,32,29,8,2],"st":"solid","art":true,"kind":"metal","fam":"actinoid","m":252.0},{"z":100,"s":"Fm","n":"Fermium","lat":null,"p":7,"g":3,"sh":[2,8,18,32,30,8,2],"st":"solid","art":true,"kind":"metal","fam":"actinoid","m":257.0},{"z":101,"s":"Md","n":"Mendelevium","lat":null,"p":7,"g":3,"sh":[2,8,18,32,31,8,2],"st":"solid","art":true,"kind":"metal","fam":"actinoid","m":258.0},{"z":102,"s":"No","n":"Nobelium","lat":null,"p":7,"g":3,"sh":[2,8,18,32,32,8,2],"st":"solid","art":true,"kind":"metal","fam":"actinoid","m":259.0},{"z":103,"s":"Lr","n":"Lawrencium","lat":null,"p":7,"g":3,"sh":[2,8,18,32,32,9,2],"st":"solid","art":true,"kind":"metal","fam":"actinoid","m":262.0},{"z":104,"s":"Rf","n":"Rutherfordium","lat":null,"p":7,"g":4,"sh":[2,8,18,32,32,10,2],"st":"solid","art":true,"kind":"metal","fam":"transition","m":261.0},{"z":105,"s":"Db","n":"Dubnium","lat":null,"p":7,"g":5,"sh":[2,8,18,32,32,11,2],"st":"solid","art":true,"kind":"metal","fam":"transition","m":262.0},{"z":106,"s":"Sg","n":"Seaborgium","lat":null,"p":7,"g":6,"sh":[2,8,18,32,32,12,2],"st":"solid","art":true,"kind":"metal","fam":"transition","m":266.0},{"z":107,"s":"Bh","n":"Bohrium","lat":null,"p":7,"g":7,"sh":[2,8,18,32,32,13,2],"st":"solid","art":true,"kind":"metal","fam":"transition","m":264.0},{"z":108,"s":"Hs","n":"Hassium","lat":null,"p":7,"g":8,"sh":[2,8,18,32,32,14,2],"st":"solid","art":true,"kind":"metal","fam":"transition","m":277.0},{"z":109,"s":"Mt","n":"Meitnerium","lat":null,"p":7,"g":9,"sh":[2,8,18,32,32,15,2],"st":"solid","art":true,"kind":"metal","fam":"transition","m":268.0},{"z":110,"s":"Ds","n":"Darmstadtium","lat":null,"p":7,"g":10,"sh":[2,8,18,32,32,16,2],"st":"solid","art":true,"kind":"metal","fam":"transition","m":281.0},{"z":111,"s":"Rg","n":"Roentgenium","lat":null,"p":7,"g":11,"sh":[2,8,18,32,32,18,1],"st":"solid","art":true,"kind":"metal","fam":"transition","m":272.0},{"z":112,"s":"Cn","n":"Copernicium","lat":null,"p":7,"g":12,"sh":[2,8,18,32,32,18,2],"st":"solid","art":true,"kind":"metal","fam":"transition","m":285.0},{"z":113,"s":"Nh","n":"Nihonium","lat":null,"p":7,"g":13,"sh":[2,8,18,32,32,18,3],"st":"solid","art":true,"kind":"metal","fam":"main","m":286.0},{"z":114,"s":"Fl","n":"Flerovium","lat":null,"p":7,"g":14,"sh":[2,8,18,32,32,18,4],"st":"solid","art":true,"kind":"metal","fam":"main","m":289.0},{"z":115,"s":"Mc","n":"Moscovium","lat":null,"p":7,"g":15,"sh":[2,8,18,32,32,18,5],"st":"solid","art":true,"kind":"metal","fam":"main","m":289.0},{"z":116,"s":"Lv","n":"Livermorium","lat":null,"p":7,"g":16,"sh":[2,8,18,32,32,18,6],"st":"solid","art":true,"kind":"metal","fam":"main","m":293.0},{"z":117,"s":"Ts","n":"Tennessine","lat":null,"p":7,"g":17,"sh":[2,8,18,32,32,18,7],"st":"solid","art":true,"kind":"metal","fam":"main","m":294.0},{"z":118,"s":"Og","n":"Oganesson","lat":null,"p":7,"g":18,"sh":[2,8,18,32,32,18,8],"st":"solid","art":true,"kind":"metal","fam":"main","m":294.0}];
+</script>
+<script>window.KIT_CONFIG={"title": "Periodic Table · Class 9 Chemistry", "icon": "🧪", "key": "chemistry_ch2_progress", "pages": [["index.html", "Home"], ["01_elements_symbols_states.html", "1 · Elements, Symbols, Metals & Non-metals"], ["02_atoms_shells_recap.html", "2 · Atom Recap: Z, Shells & Electron Configuration"], ["03_early_classification.html", "3 · Early Classification & Mendeleev's Table"], ["04_modern_periodic_law.html", "4 · Moseley & the Modern Periodic Law"], ["05_periods_groups_families.html", "5 · The Modern Table: Periods, Groups & Families"], ["06_main_group_elements.html", "6 · Main Group Elements, Group & Period Numbers"], ["07_noble_gases_transition.html", "7 · Noble Gases & Transition Elements"], ["08_lanthanoids_actinoids.html", "8 · Lanthanoids, Actinoids & New Elements"], ["09_atomic_size_trends.html", "9 · Periodic Trends: Size of Atoms"], ["10_intext_questions_solutions.html", "10 · In-text Questions – Solutions"], ["11_assess_solutions.html", "11 · Let Us Assess & Extended Activities – Solutions"], ["12_applications.html", "12 · Applications & Uses"], ["13_summary_revision.html", "13 · Summary & Quick Quiz"], ["14_model_test_paper.html", "14 · Model Test Paper"], ["15_model_test_solutions.html", "15 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ==== common helpers (same code on pages 03–05) ==== */
+const {P, el} = K;
+const $id = id => document.getElementById(id);
+const C = c => (c === 'none' ? 'none' : ((c.charAt(0) === '#' || c.startsWith('url') || c.startsWith('rgb')) ? c : `var(--${c === 'amber' ? 'accent' : c})`));
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+function line(svg, a, b, color = 'text', w = 2, extra = {}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: C(color), 'stroke-width': w, 'stroke-linecap': 'round', ...extra}, svg); }
+function arrow(svg, a, b, color = 'red', w = 2.5, head = 10, extra = {}){ const L = K.dist(a, b); if (L < 2) return; const u = K.unit(a, b), hh = Math.min(head, L); const hb = P(b.x - u.x * hh, b.y - u.y * hh);
+  el('line', {x1: a.x, y1: a.y, x2: hb.x, y2: hb.y, stroke: C(color), 'stroke-width': w, 'stroke-linecap': 'round', ...extra}, svg);
+  el('polygon', {points: `${b.x},${b.y} ${hb.x + u.y * hh * .55},${hb.y - u.x * hh * .55} ${hb.x - u.y * hh * .55},${hb.y + u.x * hh * .55}`, fill: C(color), ...extra}, svg); }
+function tx(svg, x, y, str, cls = '', anchor = 'middle', extra = {}){ return K.text(svg, P(x, y), str, {class: ('lbl ' + cls).trim(), 'text-anchor': anchor, ...extra}); }
+function box(svg, x, y, w, h, fill = 'surface2', stroke = 'text', sw = 1.5, extra = {}){ return el('rect', {x, y, width: w, height: h, fill: C(fill), stroke: C(stroke), 'stroke-width': sw, ...extra}, svg); }
+function circ(svg, x, y, r, fill = 'none', stroke = 'text', sw = 1.5, extra = {}){ return el('circle', {cx: x, cy: y, r: Math.max(0, r), fill: C(fill), stroke: C(stroke), 'stroke-width': sw, ...extra}, svg); }
+const E = window.ELEMENTS || []; const EZ = z => E[z - 1];
+const SHELL = ['K', 'L', 'M', 'N', 'O', 'P', 'Q'];
+const outer = e => e.sh[e.sh.length - 1];
+const cfg = e => e.sh.join(', ');
+function shells(svg, cx, cy, sh, o = {}){
+  const {p = null, n = null, nucR = 18, gap = 18, eR = 3.6, names = false, hlOuter = true} = o; const g = K.group(svg);
+  sh.forEach((m, k) => { const r = nucR + gap * (k + 1), out = hlOuter && k === sh.length - 1;
+    circ(g, cx, cy, r, 'none', out ? 'green' : 'muted', out ? 2.2 : 1.2);
+    for (let j = 0; j < m; j++){ const a = -Math.PI / 2 + 2 * Math.PI * j / m + k * .35; circ(g, cx + r * Math.cos(a), cy + r * Math.sin(a), eR, out ? '#f59e0b' : '#22c55e', '#1e293b', .8); }
+    if (names) el('text', {x: cx + r * Math.cos(-2.1), y: cy + r * Math.sin(-2.1), 'text-anchor': 'middle', 'dominant-baseline': 'middle', style: `font-size:${clamp(gap * .55, 8, 12)}px;font-weight:700;fill:var(--muted);paint-order:stroke;stroke:var(--svgbg);stroke-width:3px`, text: SHELL[k]}, g); });
+  circ(g, cx, cy, nucR, '#f9a8d4', '#831843', 1.2);
+  if (p !== null){ const fs = clamp(nucR * .55, 7, 15);
+    el('text', {x: cx, y: n === null ? cy : cy - fs * .5, 'text-anchor': 'middle', 'dominant-baseline': 'middle', style: `font-size:${fs}px;font-weight:700;fill:#831843`, text: p + 'p'}, g);
+    if (n !== null) el('text', {x: cx, y: cy + fs * .6, 'text-anchor': 'middle', 'dominant-baseline': 'middle', style: `font-size:${fs}px;font-weight:700;fill:#831843`, text: n + 'n'}, g); }
+  return g; }
+/* interactive fill-in table (as in Chapter 1) */
+const norm = s => String(s).trim().toLowerCase().replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/[.;]/g, ',').replace(/,+/g, ',');
+function fillTable(id, spec){
+  const root = $id(id); let N = 0;
+  const cell = (c, ci) => { if (c && typeof c === 'object'){ N++; return `<td><input type="text" autocomplete="off" spellcheck="false" ${spec.wide && spec.wide.includes(ci) ? 'class="wide"' : 'inputmode="numeric"'} data-a="${c.a}" data-alt="${(c.alt || []).join('|')}" aria-label="${(spec.labels && spec.labels[ci]) || 'answer'}"></td>`; } return `<td class="given">${c}</td>`; };
+  root.insertAdjacentHTML('beforeend', `<div class="tw"><table class="ft"><thead><tr>${spec.head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${spec.rows.map(r => `<tr>${r.map(cell).join('')}</tr>`).join('')}</tbody></table></div>
+    <div class="controls"><button class="btn primary" data-f="check">✔ Check my answers</button><button class="btn ghost" data-f="clear">⟲ Clear</button><button class="btn" data-f="show">💡 Show answers</button></div><p class="score"></p>`);
+  const ins = K.$$('input[data-a]', root), score = root.querySelector('.score');
+  const right = inp => { const v = norm(inp.value); return v !== '' && (v === norm(inp.dataset.a) || inp.dataset.alt.split('|').filter(Boolean).some(a => norm(a) === v)); };
+  root.addEventListener('click', e => { const b = e.target.closest('button[data-f]'); if (!b) return; const f = b.dataset.f;
+    if (f === 'check'){ let ok = 0; ins.forEach(i => { const r = right(i); i.classList.toggle('ok', r); i.classList.toggle('bad', !r); if (r) ok++; });
+      score.textContent = ok === ins.length ? `🎉 All ${ins.length} correct!` : `${ok} of ${ins.length} correct – the red boxes need another look.` + (spec.hint ? ' ' + spec.hint : ''); }
+    else if (f === 'show'){ ins.forEach(i => { i.value = i.dataset.a; i.classList.add('ok'); i.classList.remove('bad'); }); score.textContent = 'All answers filled in (green). Cover them and try again tomorrow!'; }
+    else { ins.forEach(i => { i.value = ''; i.classList.remove('ok', 'bad'); }); score.textContent = ''; } });
+  root.addEventListener('input', e => { if (e.target.matches('input[data-a]')) e.target.classList.remove('ok', 'bad'); });
+}
+/* ==== end common ==== */
+
+/* ---------- families (Table 2.2) ---------- */
+const FAM = [
+  {g: [1], key: 'alk', en: 'alkali metals', ml: 'ആൽക്കലി ലോഹങ്ങൾ'},
+  {g: [2], key: 'ae', en: 'alkaline earth metals', ml: 'ആൽക്കലൈൻ എർത്ത് ലോഹങ്ങൾ'},
+  {g: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12], key: 'tr', en: 'transition elements', ml: 'സംക്രമണ മൂലകങ്ങൾ'},
+  {g: [13], key: 'b', en: 'boron family', ml: 'ബോറോൺ കുടുംബം'},
+  {g: [14], key: 'c', en: 'carbon family', ml: 'കാർബൺ കുടുംബം'},
+  {g: [15], key: 'n', en: 'nitrogen family', ml: 'നൈട്രജൻ കുടുംബം'},
+  {g: [16], key: 'o', en: 'oxygen family', ml: 'ഓക്സിജൻ കുടുംബം'},
+  {g: [17], key: 'hal', en: 'halogens', ml: 'ഹാലൊജനുകൾ'},
+  {g: [18], key: 'nob', en: 'noble gases', ml: 'ഉൽകൃഷ്ട വാതകങ്ങൾ'}];
+const famOf = e => e.z === 1 ? {key: 'h', en: 'hydrogen – group 1, but not an alkali metal', ml: ''} : e.fam === 'lanthanoid' ? {key: 'lan', en: 'lanthanoids (inner transition elements)', ml: 'ലാൻഥനോയ്ഡുകൾ'} : e.fam === 'actinoid' ? {key: 'act', en: 'actinoids (inner transition elements)', ml: 'ആക്റ്റിനോയ്ഡുകൾ'} : FAM.find(f => f.g.includes(e.g));
+const STATE = {gas: ['gas', 'വാതകം'], liquid: ['liquid', 'ദ്രാവകം'], solid: ['solid', 'ഖരം']};
+const KIND = {metal: ['metal', 'ലോഹം'], nonmetal: ['non-metal', 'അലോഹം'], metalloid: ['metalloid', 'ഉപലോഹം']};
+const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
+const isMainGrid = e => e.fam === 'main' || e.fam === 'transition';
+
+/* ---------- the big table ---------- */
+const PT = (function(){
+  const pt = $id('pt'), out = $id('ptOut'), svg = $id('ptSvg'), info = $id('ptText');
+  let mode = 'book', hlP = 0, hlG = 0, pick = 11, set = null, setLabel = '';
+  const cellClass = e => { if (mode === 'book') return e.st === 'gas' ? 'c-gas' : e.st === 'liquid' ? 'c-liq' : e.art ? 'c-art' : '';
+    if (mode === 'fam') return 'c-' + famOf(e).key; if (mode === 'kind') return e.kind === 'metal' ? 'c-met' : e.kind === 'nonmetal' ? 'c-non' : 'c-mtd';
+    return e.fam === 'main' ? 'c-main' : e.fam === 'transition' ? 'c-trn' : 'c-inner'; };
+  /* build */
+  let h = '<div></div>'; for (let g = 1; g <= 18; g++) h += `<div class="gh" data-gh="${g}" style="grid-column:${g + 1};grid-row:1">${g}</div>`;
+  for (let p = 1; p <= 7; p++) h += `<div class="ph" data-ph="${p}" style="grid-column:1;grid-row:${p + 1}">${ROMAN[p]}</div>`;
+  const cellHTML = (e, col, row) => `<button class="pc" data-z="${e.z}" style="grid-column:${col};grid-row:${row}" title="${e.n}"><span class="z">${e.z}</span><span class="s">${e.s}</span><span class="n">${e.n}</span><span class="c">${e.sh.join(',<wbr>')}</span></button>`;
+  E.forEach(e => { if (isMainGrid(e)) h += cellHTML(e, e.g + 1, e.p + 1); });
+  h += `<button class="pc ph2" data-series="lanthanoid" style="grid-column:4;grid-row:7"><span class="z">57–71</span>La–Lu</button>`;
+  h += `<button class="pc ph2" data-series="actinoid" style="grid-column:4;grid-row:8"><span class="z">89–103</span>Ac–Lr</button>`;
+  h += '<div class="gap" style="grid-row:9"></div>';
+  h += '<div class="ser" style="grid-row:10">lanthanoids · period VI</div><div class="ser" style="grid-row:11">actinoids · period VII</div>';
+  E.filter(e => e.fam === 'lanthanoid').forEach((e, k) => { h += cellHTML(e, 4 + k, 10); });
+  E.filter(e => e.fam === 'actinoid').forEach((e, k) => { h += cellHTML(e, 4 + k, 11); });
+  h += '<div class="lg" style="grid-column:4 / span 10;grid-row:2 / span 3"><div class="kbox" id="ptKey"></div><div class="rbox"><span class="ml">അറ്റോമിക നമ്പർ</span><span class="ml">പ്രതീകം</span><span class="ml">പേര്</span><span class="ml">ഇലക്ട്രോൺ വിന്യാസം</span><span class="small muted">atomic number · symbol · name · configuration</span></div></div>';
+  pt.innerHTML = h;
+  const cells = K.$$('.pc[data-z]', pt);
+  const sel = $id('ptGrp'); for (let g = 1; g <= 18; g++) sel.insertAdjacentHTML('beforeend', `<option value="${g}">${g}</option>`);
+
+  function legend(){
+    const k = $id('ptKey'); const sw = (c, t) => `<div><i style="background:${c}"></i>${t}</div>`;
+    if (mode === 'book') k.innerHTML = '<b>Key <span class="ml">സൂചനകൾ</span></b>' + sw('var(--pt-gas)', 'gases <span class="ml">വാതകങ്ങൾ</span>') + sw('var(--pt-liq)', 'liquids <span class="ml">ദ്രാവകങ്ങൾ</span>') + sw('var(--pt-art)', 'artificial elements <span class="ml">കൃത്രിമ മൂലകങ്ങൾ</span>') + sw('var(--surface)', 'others: solids');
+    else if (mode === 'fam') k.innerHTML = '<b>Families (Table 2.2)</b><div style="columns:2;column-gap:10px">' + FAM.map(f => sw(`var(--f-${f.key})`, f.en)).join('') + sw('var(--f-h)', 'hydrogen') + sw('var(--f-lan)', 'lanthanoids') + sw('var(--f-act)', 'actinoids') + '</div>';
+    else if (mode === 'kind') k.innerHTML = '<b>Type of element</b>' + sw('var(--blue-soft)', 'metals <span class="ml">ലോഹങ്ങൾ</span>') + sw('var(--green-soft)', 'non-metals <span class="ml">അലോഹങ്ങൾ</span>') + sw('var(--accent-soft)', 'metalloids <span class="ml">ഉപലോഹങ്ങൾ</span>');
+    else k.innerHTML = '<b>Blocks of the table</b>' + sw('var(--green-soft)', 'main group (1, 2, 13–18) <span class="ml">പ്രധാനഗ്രൂപ്പ് മൂലകങ്ങൾ</span>') + sw('var(--blue-soft)', 'transition (3–12) <span class="ml">സംക്രമണ മൂലകങ്ങൾ</span>') + sw('var(--accent-soft)', 'inner transition <span class="ml">അന്തഃസംക്രമണ മൂലകങ്ങൾ</span>');
+  }
+  function paint(){
+    pt.className = 'pt m-' + mode + ($id('ptCfg').checked ? '' : ' nocfg');
+    cells.forEach(c => { const e = EZ(+c.dataset.z); c.className = 'pc ' + cellClass(e);
+      const inSet = set ? set.includes(e.z) : true, inP = !hlP || e.p === hlP, inG = !hlG || e.g === hlG;
+      if (!(inSet && inP && inG)) c.classList.add('dim'); if (e.z === pick) c.classList.add('pick'); });
+    K.$$('.pc[data-series]', pt).forEach(c => { const fam = c.dataset.series, p = fam === 'lanthanoid' ? 6 : 7; c.classList.toggle('dim', !!(set || (hlP && hlP !== p) || (hlG && hlG !== 3))); });
+    K.$$('.gh', pt).forEach(d => d.classList.toggle('on', +d.dataset.gh === hlG)); K.$$('.ph', pt).forEach(d => d.classList.toggle('on', +d.dataset.ph === hlP));
+    legend(); readout();
+  }
+  function readout(){
+    const lines = [];
+    if (set) lines.push(setLabel);
+    if (hlP){ const m = E.filter(e => e.p === hlP); lines.push(`Period ${ROMAN[hlP]} (${hlP}): ${m.length} elements, from ${m[0].n} (${m[0].z}) to ${m[m.length - 1].n} (${m[m.length - 1].z}).` + (hlP >= 6 ? ` This includes the 15 ${hlP === 6 ? 'lanthanoids' : 'actinoids'} written in the row below the table.` : '') + ` Their atoms have ${hlP} shell${hlP > 1 ? 's' : ''} (period number = number of shells, page 6).`); }
+    if (hlG){ const m = E.filter(e => e.g === hlG && isMainGrid(e)), f = FAM.find(x => x.g.includes(hlG)), outs = [...new Set(m.filter(e => e.z !== 2).map(outer))];
+      lines.push(`Group ${hlG} – ${f.en} (${f.ml}): ${m.map(e => e.s).join(', ')}.` + (hlG === 3 ? ' The lanthanoids and actinoids also take the place of group 3 in periods 6 and 7.' : '') +
+        (hlG <= 2 || hlG >= 13 ? ` Outermost electrons: ${outs.join(' / ')}` + (hlG === 18 ? ' (helium: 2, its only shell is full)' : '') + ` – the same for the whole group.` : ' Transition elements: the outermost shell mostly has 2 electrons (sometimes 1) – page 7.')); }
+    if (!lines.length) lines.push(`Selected: ${EZ(pick).n}. Tap any cell, choose a colour key, or light up a period or a group.`);
+    out.textContent = lines.join('\n');
+  }
+  function reasons(e){
+    const n = e.sh.length, o = outer(e); const r = {};
+    r.per = n === e.p ? `${n} shell${n > 1 ? 's' : ''} → <b>period ${e.p}</b> (period number = number of shells).` : `Fig 2.1 gives ${e.n} the configuration ${cfg(e)} – only ${n} occupied shells, although it is in <b>period ${e.p}</b>. It is a special case among the heavy transition elements (higher classes).`;
+    if (e.fam === 'lanthanoid' || e.fam === 'actinoid') r.grp = `An <b>inner transition element</b> (${e.fam}). It is written in the separate row below the table; in the table it takes the place of <b>group 3</b> in period ${e.p} (page 8).`;
+    else if (e.fam === 'transition') r.grp = `A <b>transition element</b> (groups 3–12): its new electrons go into the shell just inside the outermost shell, so its group is not found from the outermost electrons (page 7). Fig 2.1 places it in <b>group ${e.g}</b>.`;
+    else if (e.z === 2) r.grp = `2 electrons in its only shell – that shell is <b>full</b> (like the 8 of the other noble gases) → <b>group 18</b>.`;
+    else if (e.g <= 2) r.grp = `${o} outermost electron${o > 1 ? 's' : ''} → <b>group ${o}</b> (for groups 1 and 2, group number = outermost electrons).`;
+    else r.grp = `${o} outermost electrons → ${o} + 10 = <b>group ${o + 10}</b> (for groups 13–18 add 10, for the ten transition groups in between).`;
+    return r;
+  }
+  function card(){
+    const e = EZ(pick); K.clear(svg); const n = e.sh.length, gap = Math.min(24, 118 / n);
+    shells(svg, 150, 150, e.sh, {p: e.z, nucR: 18, gap, eR: n > 4 ? 2.6 : 3.6, names: true});
+    const f = famOf(e), r = reasons(e), st = STATE[e.st], kd = KIND[e.kind];
+    info.innerHTML = `<div class="row"><span class="big">${e.s}</span> &nbsp;<b>${e.n}</b>${e.lat ? ` <span class="muted">(Latin: ${e.lat})</span>` : ''}</div>
+      <div class="row">Atomic number <b>${e.z}</b> → ${e.z} protons, ${e.z} electrons · atomic mass ≈ ${e.m}</div>
+      <div class="row">Electron configuration: <b>${cfg(e)}</b> · outermost electrons: <b>${outer(e)}</b></div>
+      <div class="why">📏 <b>Period:</b> ${r.per}</div><div class="why">🏛 <b>Group:</b> ${r.grp}</div>
+      <div class="row">Family: <b>${f.en}</b>${f.ml ? ' <span class="ml">' + f.ml + '</span>' : ''}</div>
+      <div class="row">State at room temperature: <b>${st[0]}</b> <span class="ml">${st[1]}</span> · <b>${kd[0]}</b> <span class="ml">${kd[1]}</span>${e.art ? ' · <b>artificial</b> (man-made) <span class="ml">കൃത്രിമ മൂലകം</span>' : ''}</div>`;
+  }
+  function choose(z, scroll){ pick = z; paint(); card(); if (scroll){ const c = cells.find(x => +x.dataset.z === z); if (c){ c.classList.add('found'); setTimeout(() => c.classList.remove('found'), 2100); const w = $id('ptWrap'); w.scrollLeft = Math.max(0, c.offsetLeft - w.clientWidth / 2); } } }
+  pt.addEventListener('click', e => { const c = e.target.closest('.pc'); if (!c) return;
+    if (c.dataset.series){ const fam = c.dataset.series; set = E.filter(x => x.fam === fam).map(x => x.z); setLabel = fam === 'lanthanoid' ? 'Lanthanoids: lanthanum (57) and the next 14 elements, to lutetium (71) – period 6, shown in the first row below the table.' : 'Actinoids: actinium (89) and the next 14 elements, to lawrencium (103) – period 7, shown in the second row below the table.'; paint(); return; }
+    choose(+c.dataset.z, false); });
+  $id('ptMode').addEventListener('change', e => { mode = e.target.value; paint(); });
+  $id('ptPer').addEventListener('change', e => { hlP = +e.target.value; paint(); });
+  sel.addEventListener('change', e => { hlG = +e.target.value; paint(); });
+  $id('ptCfg').addEventListener('change', paint);
+  const find = () => { const q = $id('ptQ').value.trim().toLowerCase(); if (!q) return; const hit = /^\d+$/.test(q) ? EZ(+q) : (E.find(e => e.s.toLowerCase() === q) || E.find(e => e.n.toLowerCase().startsWith(q)) || E.find(e => e.lat && e.lat.toLowerCase().startsWith(q)));
+    if (hit){ choose(hit.z, true); out.textContent = `Found: ${hit.n} (${hit.s}), atomic number ${hit.z} – period ${hit.p}` + (isMainGrid(hit) ? `, group ${hit.g}.` : `, in the ${hit.fam} row below the table.`); } else out.textContent = `No element matches "${$id('ptQ').value}". Try a symbol (Fe), a name (iron) or an atomic number (26).`; };
+  $id('ptFind').addEventListener('click', find); $id('ptQ').addEventListener('keydown', e => { if (e.key === 'Enter') find(); });
+  const clearAll = () => { set = null; hlP = 0; hlG = 0; $id('ptPer').value = '0'; sel.value = '0'; paint(); };
+  $id('ptClear').addEventListener('click', clearAll);
+  paint(); card();
+  return {
+    showSet(zs, label){ set = zs; setLabel = label; hlP = 0; hlG = 0; $id('ptPer').value = '0'; sel.value = '0'; paint(); },
+    period(p){ set = null; hlP = p; hlG = 0; $id('ptPer').value = String(p); sel.value = '0'; paint(); },
+    group(g, m){ set = null; hlG = g; hlP = 0; sel.value = String(g); $id('ptPer').value = '0'; if (m){ mode = m; $id('ptMode').value = m; } paint(); },
+    choose, clearAll, goTo(){ const lab = $id('ptLab'); if (lab.scrollIntoView) lab.scrollIntoView({behavior: 'smooth', block: 'start'}); }};
+})();
+
+/* ---------- one cell, four facts ---------- */
+(function(){
+  const svg = $id('cellSvg'), e = EZ(11);
+  box(svg, 200, 30, 200, 200, 'surface', '#d9825b', 3, {rx: 10});
+  tx(svg, 222, 58, String(e.z), '', 'start', {style: 'font-size:24px;font-weight:700'});
+  tx(svg, 300, 110, e.s, '', 'middle', {style: 'font-size:64px;font-weight:800'});
+  tx(svg, 300, 160, `${e.n} (${e.lat || ''})`, '', 'middle', {style: 'font-size:18px'});
+  tx(svg, 300, 200, e.sh.join(','), '', 'middle', {style: 'font-size:20px;font-weight:600'});
+  const L = [[60, 50, 'atomic number', 'അറ്റോമിക നമ്പർ', P(215, 55), 'blue'], [60, 110, 'symbol', 'പ്രതീകം', P(255, 105), 'red'], [530, 150, 'name (Latin name)', 'പേര്', P(395, 160), 'green'], [530, 205, 'electron configuration', 'ഇലക്ട്രോൺ വിന്യാസം', P(345, 200), 'purple']];
+  L.forEach(([x, y, en, ml, to, col]) => { const left = x < 300; tx(svg, x, y - 9, en, 'sm ' + col, 'middle', {style: 'font-weight:700'}); tx(svg, x, y + 9, ml, 'sm purple', 'middle');
+    arrow(svg, P(left ? x + 58 : x - 70, y), to, col, 2, 8); });
+})();
+
+/* ---------- new elements buttons ---------- */
+$id('showNew').addEventListener('click', () => { PT.showSet([113, 115, 117, 118], 'The four elements added in 2016 – nihonium (113), moscovium (115), tennessine (117), oganesson (118) – all in period 7. All four are artificial.'); PT.choose(118, true); PT.goTo(); });
+$id('showSg').addEventListener('click', () => { PT.showSet([106], 'Seaborgium (106) – the first element named after a living scientist, Glenn Seaborg.'); PT.choose(106, true); PT.goTo(); });
+
+/* ---------- elements per period ---------- */
+(function(){
+  const svg = $id('pcSvg'), out = $id('pcOut'), btns = $id('pcBtns'); let cur = 4;
+  const cnt = p => E.filter(e => e.p === p).length;
+  function draw(){
+    K.clear(svg); const X = p => 60 + (p - 1) * 102, Y = v => 220 - v * 5.6;
+    line(svg, P(40, 220), P(790, 220), 'muted', 1.5);
+    for (let p = 1; p <= 7; p++){ const v = cnt(p), on = p === cur; box(svg, X(p), Y(v), 70, 220 - Y(v), on ? 'amber' : 'blue', 'none', 0, {rx: 4, opacity: on ? .9 : .5});
+      tx(svg, X(p) + 35, Y(v) - 12, String(v), on ? 'big amber' : '', 'middle', {style: 'font-weight:800'}); tx(svg, X(p) + 35, 240, 'period ' + ROMAN[p], 'sm', 'middle', {style: on ? 'font-weight:800' : ''}); }
+    const m = E.filter(e => e.p === cur);
+    out.textContent = `Period ${ROMAN[cur]}: ${m.length} elements – ${m[0].n} (${m[0].z}) to ${m[m.length - 1].n} (${m[m.length - 1].z}).` + (cur >= 6 ? ` 18 in the main table + 14 more in the ${cur === 6 ? 'lanthanoid' : 'actinoid'} row (the 57–71 / 89–103 cell stands for 15 of them).` : '') + '\nAll 7 periods together: ' + [1, 2, 3, 4, 5, 6, 7].map(cnt).join(' + ') + ' = ' + E.length + ' elements.';
+  }
+  btns.innerHTML = [1, 2, 3, 4, 5, 6, 7].map(p => `<button class="btn${p === cur ? ' primary' : ''}" data-p="${p}">period ${ROMAN[p]}</button>`).join('') + '<button class="btn ghost" id="pcShow">show it in the big table ↑</button>';
+  btns.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.id === 'pcShow'){ PT.period(cur); PT.goTo(); return; } cur = +b.dataset.p; K.$$('button[data-p]', btns).forEach(x => x.classList.toggle('primary', x === b)); draw(); });
+  draw();
+})();
+
+/* ---------- Table 2.1 ---------- */
+(function(){
+  const ML = {3: 'ലിഥിയം', 11: 'സോഡിയം', 19: 'പൊട്ടാസ്യം', 37: 'റുബീഡിയം', 55: 'സീസിയം', 87: 'ഫ്രാൻസിയം'};
+  /* which cells the textbook leaves blank: [symbol, Z, configuration] */
+  const BL = {3: [0, 0, 1], 11: [0, 0, 1], 19: [1, 1, 0], 37: [0, 1, 0], 55: [1, 0, 0], 87: [0, 1, 0]};
+  const rows = Object.keys(BL).map(Number).map(z => { const e = EZ(z), b = BL[z];
+    return [`<span class="ml">${ML[z]}</span> ${e.n}`, b[0] ? {a: e.s} : e.s, b[1] ? {a: e.z} : String(e.z), b[2] ? {a: e.sh.join(',')} : e.sh.join(',')]; });
+  fillTable('t21', {head: ['Name of the element <span class="ml">മൂലകത്തിന്റെ പേര്</span>', 'Symbol <span class="ml">പ്രതീകം</span>', 'Atomic number <span class="ml">അറ്റോമിക നമ്പർ</span>', 'Electron configuration <span class="ml">ഇലക്ട്രോൺ വിന്യാസം</span>'],
+    labels: ['', 'symbol', 'atomic number', 'electron configuration'], wide: [3], rows, hint: 'Use the interactive table above: light up group 1.'});
+})();
+/* ---------- group 2 ---------- */
+(function(){
+  const rows = E.filter(e => e.g === 2 && e.fam === 'main').map(e => [`${e.n} (${e.s})`, String(e.z), {a: e.sh.join(',')}, {a: outer(e)}]);
+  fillTable('tg2', {head: ['Element', 'Atomic number', 'Electron configuration <span class="ml">ഇലക്ട്രോൺ വിന്യാസം</span>', 'Outermost electrons <span class="ml">ബാഹ്യതമ ഇലക്ട്രോണുകൾ</span>'], labels: ['', '', 'electron configuration', 'outermost electrons'], wide: [2], rows, hint: 'Tap the group 2 cells in the big table to read their configurations.'});
+})();
+
+/* ---------- group explorer ---------- */
+(function(){
+  const svg = $id('gxSvg'), out = $id('gxOut'), btns = $id('gxBtns'); let G = 1;
+  const GS = [1, 2, 13, 14, 15, 16, 17, 18];
+  function draw(){
+    K.clear(svg); const m = E.filter(e => e.g === G && e.fam === 'main'); const w = 800 / m.length;
+    m.forEach((e, k) => { const cx = w * (k + .5), cy = 120, n = e.sh.length, o = outer(e);
+      for (let s = 0; s < n; s++){ const r = 9 + (s + 1) * 6.2, last = s === n - 1; circ(svg, cx, cy, r, 'none', last ? 'green' : 'muted', last ? 2 : .9); }
+      circ(svg, cx, cy, 7, '#f9a8d4', '#831843', 1);
+      const R = 9 + n * 6.2; for (let j = 0; j < o; j++){ const a = -Math.PI / 2 + 2 * Math.PI * j / o; circ(svg, cx + R * Math.cos(a), cy + R * Math.sin(a), 3.6, '#f59e0b', '#1e293b', .8); }
+      tx(svg, cx, 210, e.s, 'big', 'middle'); tx(svg, cx, 232, e.n, 'sm', 'middle', {style: 'font-size:11px'});
+      tx(svg, cx, 252, e.sh.join(','), 'sm muted', 'middle', {style: `font-size:${e.sh.length > 5 ? 9.5 : 11}px`});
+      tx(svg, cx, 274, `outer: ${o}`, 'sm green', 'middle', {style: 'font-weight:800'}); });
+    const f = FAM.find(x => x.g.includes(G)), outs = [...new Set(m.filter(e => e.z !== 2).map(outer))][0];
+    out.textContent = `Group ${G} – ${f.en} (${f.ml}). Every member has ${outs} electron${outs > 1 ? 's' : ''} in its outermost shell` + (G === 18 ? ' – except helium, whose only shell is full with 2.' : G === 1 ? ' (hydrogen too, though it is not an alkali metal).' : '.') + ` The number of shells goes up by one each step down the group (${m.map(e => e.sh.length).join(', ')}), but the outermost electrons stay the same – so the chemical properties are similar.`;
+  }
+  btns.innerHTML = GS.map(g => `<button class="btn${g === G ? ' primary' : ''}" data-g="${g}">group ${g}</button>`).join('');
+  btns.addEventListener('click', e => { const b = e.target.closest('button[data-g]'); if (!b) return; G = +b.dataset.g; K.$$('button', btns).forEach(x => x.classList.toggle('primary', x === b)); draw(); });
+  draw();
+})();
+
+/* ---------- families table ---------- */
+(function(){
+  const tb = K.$('#famT tbody');
+  tb.innerHTML = FAM.map((f, k) => { const mem = E.filter(e => f.g.includes(e.g) && isMainGrid(e) && e.z !== 1);
+    const list = f.key === 'tr' ? `${mem.length} in the main table, e.g. Fe, Cu, Zn, Ag, Au` : mem.map(e => e.s).join(', ');
+    return `<tr><td><b>${f.g.length > 1 ? '3 – 12' : f.g[0]}</b></td><td><span class="sw" style="background:var(--f-${f.key})"></span> <span class="ml">${f.ml}</span> ${f.en}</td><td class="mem">${list}</td><td><button class="btn" data-k="${k}" style="white-space:nowrap">Show ↑</button></td></tr>`; }).join('');
+  tb.addEventListener('click', e => { const b = e.target.closest('button[data-k]'); if (!b) return; const f = FAM[+b.dataset.k];
+    if (f.g.length > 1){ $id('ptMode').value = 'fam'; $id('ptMode').dispatchEvent(new Event('change')); PT.showSet(E.filter(x => x.fam === 'transition').map(x => x.z), 'Groups 3–12: the transition elements (സംക്രമണ മൂലകങ്ങൾ) – all metals, starting from period 4 (page 7).'); }
+    else PT.group(f.g[0], 'fam');
+    PT.goTo(); });
+})();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'How many periods and groups does the modern periodic table have?', options: ['7 periods, 18 groups', '18 periods, 7 groups', '8 periods, 18 groups', '7 periods, 8 groups'], answer: 0, explain: '7 horizontal rows (periods) and 18 vertical columns (groups).', hint: 'Count the Roman numerals and the column numbers in the big table.'});
+K.mcq('#q2', {q: 'How many elements does period 4 contain?', options: ['8', '18', '32', '2'], answer: 1, explain: 'Period 4 runs from potassium (19) to krypton (36): 18 elements.', hint: 'Use the "Elements in each period" counter.'});
+K.mcq('#q3', {q: 'What is common to all the group 1 elements Li, Na, K, Rb, Cs and Fr?', options: ['the same number of shells', 'one electron in the outermost shell', 'the same atomic mass', 'eight electrons in the outermost shell'], answer: 1, explain: 'Every group 1 element has 1 outermost electron (2,1 · 2,8,1 · 2,8,8,1 …).', hint: 'Look at the last number of each configuration.'});
+K.mcq('#q4', {q: 'Calcium is 2,8,8,2. How many outermost electrons do the other group 2 elements (Be, Mg, Sr, Ba, Ra) have?', options: ['1', '2', '8', 'it is different for each'], answer: 1, explain: 'All group 2 elements have 2 outermost electrons – same group, same number of outermost electrons.', hint: 'Same group …'});
+K.mcq('#q5', {q: 'Why do the elements of one group show similar chemical properties?', options: ['they have the same atomic number', 'they have the same number of outermost electrons, which take part in reactions', 'they were discovered together', 'they have the same number of neutrons'], answer: 1, explain: 'Chemical properties depend on the outermost electrons, and these are the same in number for a group.', hint: 'Which electrons take part in chemical reactions?'});
+K.mcq('#q6', {q: 'Group 17 elements are known as…', options: ['noble gases', 'alkaline earth metals', 'halogens', 'the oxygen family'], answer: 2, explain: 'Group 17 = halogens (ഹാലൊജനുകൾ): F, Cl, Br, I, At, Ts.', hint: 'See Table 2.2.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>
