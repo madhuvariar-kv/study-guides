@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oxidation and Reduction</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+
+</style>
+<style>
+/* ==== common styles (same on pages 04–06) ==== */
+.qa,.qbox{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.7rem 1rem;margin:.8rem 0;box-shadow:var(--shadow)}
+.qa p,.qbox p{margin:.3em 0}
+.qbox ol,.qbox ul,.qa ol,.qa ul{margin:.3rem 0}
+.mlq{display:block;font-weight:500;margin:.2rem 0 .4rem}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ft{width:auto;min-width:min(100%,560px)}
+.ft td,.ft th{text-align:center;vertical-align:middle;padding:.35rem .45rem}
+.ft th{font-size:.88rem;line-height:1.3}
+.ft th .ml{display:block;font-size:.85em}
+.ft td .ml{display:block;font-size:.85em;font-weight:500}
+.ft input{width:3.6em;padding:.25rem .3rem;border-radius:6px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;text-align:center}
+.ft input.wide{width:9em}
+.ft input.cfg{width:6.2em}
+.ft input.fm{width:6.4em;font-family:ui-monospace,Menlo,Consolas,monospace}
+.ft input.hq{width:11em;font-family:ui-monospace,Menlo,Consolas,monospace}
+.ft input.ok{border-color:var(--green);background:var(--green-soft)}
+.ft input.bad{border-color:var(--red);background:var(--red-soft)}
+.ft td.given{font-weight:600}
+.ft .pv{display:block;min-height:1.3em;font-size:1.05rem;font-weight:700;color:var(--primary-ink)}
+.score{font-weight:700;color:var(--primary-ink);margin:.4rem 0 0;min-height:1.3em}
+.further{border-left:6px solid var(--purple);background:var(--purple-soft);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+.further .title{font-weight:700;color:var(--purple);margin-bottom:.3rem}
+.yn{display:inline-flex;gap:.3rem;flex-wrap:wrap}
+.yn .btn{padding:.25rem .6rem;font-size:.88rem}
+.btn.ok{background:var(--green-soft);border-color:var(--green);color:var(--text)}
+.btn.bad{background:var(--red-soft);border-color:var(--red);color:var(--text)}
+.btn.sel{background:var(--accent-soft);border-color:var(--accent);color:var(--text)}
+.why{font-size:.92rem;margin-top:.3rem}
+.keyml{display:block;margin:.2rem 0 .4rem}
+.rx{display:grid;grid-template-columns:minmax(9rem,1fr) auto;gap:.35rem .8rem;align-items:center;margin:.4rem 0}
+.rx .lbl2{font-weight:600}
+.rx .why{grid-column:1 / -1;margin:0 0 .3rem}
+@media(max-width:600px){.rx{grid-template-columns:1fr}}
+.ex{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center;font-size:.9rem;margin:.3rem 0}
+.ex .btn{padding:.25rem .55rem;font-size:.88rem}
+.lab select{padding:.3rem .4rem;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:.92rem;max-width:100%}
+.chem{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.15em;white-space:nowrap}
+.eqs{display:grid;gap:.3rem;margin:.6rem 0;padding:.6rem .9rem;background:var(--surface2);border-radius:10px;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.15rem}
+.eqs>div{display:block}
+.eqs .st{display:inline-block;font-family:"Segoe UI",Roboto,Arial,sans-serif;font-size:.85rem;font-weight:700;color:var(--muted);min-width:4.6rem;margin-right:.6rem}
+.rc{color:var(--red);font-weight:800;text-decoration:underline}
+.bt{width:auto;min-width:min(100%,520px)}
+.bt td{text-align:center}
+.bt td:first-child{text-align:left;font-weight:600}
+.bt td .ml{display:block;font-size:.85em;font-weight:500}
+
+
+/* page 05 */
+.hl-ox{color:var(--red);font-weight:800}
+.hl-red{color:var(--blue);font-weight:800}
+.two{display:grid;grid-template-columns:1fr;gap:1rem}
+@media(min-width:760px){.two{grid-template-columns:1fr 1fr}}
+.two .card{margin:0}
+.card.ox{border-top:5px solid var(--red)}
+.card.rd{border-top:5px solid var(--blue)}
+.card h3{margin-top:.2rem}
+.memo{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin:.6rem 0}
+.memo>div{flex:1 1 220px;border-radius:12px;padding:.6rem .9rem;text-align:center;font-weight:700;font-size:1.05rem}
+.memo .o{background:var(--red-soft);color:var(--red);border:2px solid var(--red)}
+.memo .r{background:var(--blue-soft);color:var(--blue);border:2px solid var(--blue)}
+.memo small{display:block;font-weight:600;color:var(--text);font-size:.85rem}
+.sorter .pool{display:grid;gap:.4rem;margin:.5rem 0}
+.sorter .crd{display:flex;flex-wrap:wrap;gap:.4rem .8rem;align-items:center;justify-content:space-between;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:.4rem .7rem}
+.sorter .crd.shake{animation:shake .35s;border-color:var(--red)}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.sorter .crd .chem{font-size:1.15rem}
+.bins{display:grid;grid-template-columns:1fr;gap:.6rem}
+@media(min-width:700px){.bins{grid-template-columns:1fr 1fr}}
+.bin{border:2px dashed var(--border);border-radius:12px;padding:.5rem .7rem;min-height:5rem}
+.bin.o{border-color:var(--red);background:var(--red-soft)}
+.bin.r{border-color:var(--blue);background:var(--blue-soft)}
+.bin h4{margin:.1rem 0 .3rem}
+.bin ul{margin:0;padding-left:1.1rem;font-size:.95rem}
+.bin li .why{display:block;font-size:.85rem;margin:0;color:var(--muted)}
+.hb .btn{padding:.25rem .6rem;font-size:.88rem}
+</style>
+</head>
+<body data-page="05_oxidation_reduction">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 4 · Oxidation &amp; reduction</span><span class="chip amber">Textbook pages 75–77</span>
+<h1>Oxidation and Reduction <span class="ml">ഓക്സീകരണവും നിരോക്സീകരണവും</span></h1>
+<p class="lead">When sodium meets chlorine, one electron jumps from sodium to chlorine. Chemists give the two halves of this jump two names: losing the electron is <b>oxidation</b>, gaining it is <b>reduction</b>. Here you watch the electron move, learn why metals are usually oxidised and non-metals usually reduced, see that ions can be oxidised or reduced too, and then sort a pile of half-equations yourself.</p>
+
+<div class="callout book"><div class="title">📖 What you need (page 2 of this guide)</div>
+<ul style="margin:0">
+<li>Electron configurations and outermost electrons: Na 2, 8, 1 · Cl 2, 8, 7 (<a href="02_ions_valency_recap.html">page 2</a>).</li>
+<li>Ions: an atom that loses electrons becomes a <b>positive ion</b>; one that gains electrons becomes a <b>negative ion</b>. Charge = protons − electrons.</li></ul></div>
+
+<h2 id="bond">1. Atoms bond by giving, taking or sharing electrons</h2>
+<p><span class="ml">മൂലകങ്ങളുടെ ആറ്റങ്ങൾ സംയോജിച്ച് സംയുക്ത തന്മാത്രകൾ രൂപീകരിക്കപ്പെടുന്ന വിധം പഠിച്ചല്ലോ. ഇലക്ട്രോണുകൾ വിട്ടുകൊടുക്കുകയോ സ്വീകരിക്കുകയോ പങ്കുവയ്ക്കുകയോ ചെയ്താണ് ആറ്റങ്ങൾ രാസബന്ധനത്തിൽ ഏർപ്പെടുന്നത്.</span></p>
+<p>You learnt how atoms of elements combine to form molecules of compounds. Atoms take part in chemical bonding by <b>giving away</b>, <b>accepting</b> or <b>sharing</b> electrons. In this chapter we follow the electrons that are <b>given</b> and <b>taken</b>.</p>
+
+<h2 id="ox">2. Sodium gives away an electron – oxidation</h2>
+<p><span class="ml">സോഡിയം (Na), ക്ലോറിൻ (Cl) എന്നിവ രാസബന്ധനത്തിലേർപ്പെട്ട് സോഡിയം ക്ലോറൈഡ് (NaCl) ഉണ്ടാകുന്ന വിധം അറിയാമല്ലോ.</span> – You know how sodium (Na) and chlorine (Cl) bond to form sodium chloride (NaCl).</p>
+<div class="qa"><p><b>Question (page 76).</b> <span class="ml mlq">ഈ പ്രവർത്തനത്തിൽ ഇലക്ട്രോൺ വിട്ടുകൊടുത്ത് പോസിറ്റീവ് ചാർജുള്ള അയോൺ ആയി മാറുന്ന ആറ്റം ഏതാണ്?</span> In this reaction, which atom gives away an electron and becomes a positively charged ion?</p>
+<div class="rx"><span class="lbl2">The atom that becomes a positive ion is…</span><span class="yn" data-ans="0" data-why="Sodium (2, 8, 1) gives away its one outer electron and becomes Na⁺ (2, 8)." data-hint="Which atom has just one outer electron to give?"><button class="btn">sodium</button><button class="btn">chlorine</button></span><div class="why"></div></div>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>Sodium.</b> Its equation: <b>Na → Na<sup>+</sup> + 1e<sup>−</sup></b>. The electron appears on the <b>right</b> side – it has been given away.</div></div></div>
+<p><span class="ml">രാസപ്രവർത്തനത്തിന്റെ സമവാക്യം എഴുതാം.</span> – Let us write the equation:</p>
+<p class="eq">Na → Na<sup>+</sup> + 1e<sup>−</sup></p>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 76)</div>
+<p class="ml keyml">രാസപ്രവർത്തനത്തിൽ ഇലക്ട്രോൺ നഷ്ടപ്പെടുന്ന പ്രവർത്തനമാണ് ഓക്സീകരണം (Oxidation).</p>
+<p>The process in which <b>electrons are lost</b> in a chemical reaction is <b class="hl-ox">oxidation</b> <span class="ml">ഓക്സീകരണം</span>.</p></div>
+
+<h2 id="red">3. Chlorine takes the electron – reduction</h2>
+<div class="qa"><p><b>Question (page 76).</b> <span class="ml mlq">ഇലക്ട്രോണിനെ സ്വീകരിച്ച് നെഗറ്റീവ് ചാർജുള്ള അയോൺ ആയി മാറുന്ന ആറ്റമേതാണ്? പ്രവർത്തനത്തിന്റെ സമവാക്യം എഴുതാം.</span> Which atom accepts the electron and becomes a negatively charged ion? Write the equation of the process.</p>
+<div class="rx"><span class="lbl2">The atom that becomes a negative ion is…</span><span class="yn" data-ans="1" data-why="Chlorine (2, 8, 7) accepts one electron and becomes Cl⁻ (2, 8, 8)." data-hint="Which atom needs only one more electron for an octet?"><button class="btn">sodium</button><button class="btn">chlorine</button></span><div class="why"></div></div>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>Chlorine.</b> <b>Cl + 1e<sup>−</sup> → Cl<sup>−</sup></b>. The electron appears on the <b>left</b> side – it is taken in.</div></div></div>
+<p class="eq">Cl + 1e<sup>−</sup> → Cl<sup>−</sup></p>
+<div class="callout key"><div class="title">⭐ Key idea (textbook page 76)</div>
+<p class="ml keyml">രാസപ്രവർത്തനങ്ങളിൽ ഇലക്ട്രോൺ നേടുന്ന പ്രവർത്തനമാണ് നിരോക്സീകരണം (Reduction).</p>
+<p>The process in which <b>electrons are gained</b> in a chemical reaction is <b class="hl-red">reduction</b> <span class="ml">നിരോക്സീകരണം</span>.</p></div>
+<p><span class="ml">പോസിറ്റീവ് ചാർജുള്ള സോഡിയം അയോണും (Na⁺) നെഗറ്റീവ് ചാർജുള്ള ക്ലോറൈഡ് അയോണും (Cl⁻) തമ്മിൽ സംയോജിച്ച് സോഡിയം ക്ലോറൈഡ് ഉണ്ടാകുന്നു.</span> – The positively charged sodium ion (Na<sup>+</sup>) and the negatively charged chloride ion (Cl<sup>−</sup>) combine to form sodium chloride:</p>
+<p class="eq">Na<sup>+</sup> + Cl<sup>−</sup> → NaCl</p>
+
+<div class="lab" id="sNaCl"><div class="lab-title">🎬 The electron moves: oxidation and reduction together</div>
+<svg viewBox="0 0 800 360" role="img" aria-label="Orbit models of a sodium atom 2, 8, 1 and a chlorine atom 2, 8, 7; sodium's outer electron moves to chlorine; sodium is labelled oxidation, loses 1 electron, and chlorine reduction, gains 1 electron; the ions Na+ and Cl- attract to form NaCl"></svg></div>
+
+<div class="memo"><div class="o">Oxidation = Loss of electrons<small>electrons on the <u>right</u>: Na → Na⁺ + 1e⁻ · charge goes <b>up</b></small></div><div class="r">Reduction = Gain of electrons<small>electrons on the <u>left</u>: Cl + 1e⁻ → Cl⁻ · charge goes <b>down</b></small></div></div>
+<div class="callout think"><div class="title">🧠 A memory aid: “OIL RIG”</div>
+<p><b>O</b>xidation <b>I</b>s <b>L</b>oss, <b>R</b>eduction <b>I</b>s <b>G</b>ain (of electrons). Another check: in oxidation the charge becomes <b>more positive</b> (0 → +1); in reduction it becomes <b>more negative</b> (0 → −1), because each electron carries one negative charge.</p></div>
+
+<h2 id="metals">4. Metals are generally oxidised</h2>
+<p><span class="ml">മറ്റു ചില ഓക്സീകരണ സമവാക്യങ്ങൾ നൽകിയിരിക്കുന്നത് നോക്കുക.</span> – Look at some more oxidation equations:</p>
+<div class="two">
+<div class="card ox"><h3>Oxidation equations <span class="ml">ഓക്സീകരണ സമവാക്യങ്ങൾ</span></h3>
+<div class="eqs"><div>K → K<sup>+</sup> + 1e<sup>−</sup></div><div>Ca → Ca<sup>2+</sup> + 2e<sup>−</sup></div><div>Mg → Mg<sup>2+</sup> + 2e<sup>−</sup></div><div>Zn → Zn<sup>2+</sup> + 2e<sup>−</sup></div><div>Al → Al<sup>3+</sup> + 3e<sup>−</sup></div></div></div>
+<div class="card"><h3>Why these atoms lose electrons</h3>
+<div class="tw"><table class="ft"><thead><tr><th>Metal</th><th>Electron configuration</th><th>Outer electrons</th><th>Ion</th></tr></thead><tbody>
+<tr><td>K <span class="ml">പൊട്ടാസ്യം</span></td><td>2, 8, 8, 1</td><td>1</td><td>K<sup>+</sup></td></tr>
+<tr><td>Ca <span class="ml">കാൽസ്യം</span></td><td>2, 8, 8, 2</td><td>2</td><td>Ca<sup>2+</sup></td></tr>
+<tr><td>Mg <span class="ml">മഗ്നീഷ്യം</span></td><td>2, 8, 2</td><td>2</td><td>Mg<sup>2+</sup></td></tr>
+<tr><td>Zn <span class="ml">സിങ്ക്</span></td><td>2, 8, 18, 2</td><td>2</td><td>Zn<sup>2+</sup></td></tr>
+<tr><td>Al <span class="ml">അലുമിനിയം</span></td><td>2, 8, 3</td><td>3</td><td>Al<sup>3+</sup></td></tr></tbody></table></div></div></div>
+<p><span class="ml">സോഡിയം (Na), പൊട്ടാസ്യം (K) മുതലായവ ലോഹങ്ങളാണല്ലോ. ലോഹങ്ങൾക്ക് പൊതുവേ രാസപ്രവർത്തനങ്ങളിൽ ഓക്സീകരണം സംഭവിക്കുന്നു.</span> – Sodium (Na), potassium (K) and the others are <b>metals</b>. Metals have only 1, 2 or 3 outer electrons, which they give away easily, so <b>metals are generally oxidised</b> in chemical reactions.</p>
+
+<h2 id="nonmetals">5. Non-metals are generally reduced</h2>
+<p><span class="ml">ചില നിരോക്സീകരണ സമവാക്യങ്ങൾ നൽകിയിരിക്കുന്നത് നോക്കൂ.</span> – Look at some reduction equations:</p>
+<div class="two">
+<div class="card rd"><h3>Reduction equations <span class="ml">നിരോക്സീകരണ സമവാക്യങ്ങൾ</span></h3>
+<div class="eqs"><div>F + 1e<sup>−</sup> → F<sup>−</sup></div><div>Cl + 1e<sup>−</sup> → Cl<sup>−</sup></div><div>Br + 1e<sup>−</sup> → Br<sup>−</sup></div><div>O + 2e<sup>−</sup> → O<sup>2−</sup></div></div></div>
+<div class="card"><h3>Why these atoms gain electrons</h3>
+<div class="tw"><table class="ft"><thead><tr><th>Non-metal</th><th>Electron configuration</th><th>Needs for an octet</th><th>Ion</th></tr></thead><tbody>
+<tr><td>F <span class="ml">ഫ്ലൂറിൻ</span></td><td>2, 7</td><td>1</td><td>F<sup>−</sup></td></tr>
+<tr><td>Cl <span class="ml">ക്ലോറിൻ</span></td><td>2, 8, 7</td><td>1</td><td>Cl<sup>−</sup></td></tr>
+<tr><td>Br <span class="ml">ബ്രോമിൻ</span></td><td>2, 8, 18, 7</td><td>1</td><td>Br<sup>−</sup></td></tr>
+<tr><td>O <span class="ml">ഓക്സിജൻ</span></td><td>2, 6</td><td>2</td><td>O<sup>2−</sup></td></tr></tbody></table></div></div></div>
+<p><span class="ml">ഫ്ലൂറിൻ (F), ക്ലോറിൻ (Cl) മുതലായവ അലോഹങ്ങളാണല്ലോ. അലോഹങ്ങൾക്ക് പൊതുവെ രാസപ്രവർത്തനങ്ങളിൽ നിരോക്സീകരണം സംഭവിക്കുന്നു.</span> – Fluorine (F), chlorine (Cl) and the others are <b>non-metals</b>. With 6 or 7 outer electrons they complete an octet by taking 2 or 1 electrons, so <b>non-metals are generally reduced</b> in chemical reactions.</p>
+<div class="tw"><table class="ft" style="min-width:min(100%,640px)"><thead><tr><th></th><th>Metals <span class="ml">ലോഹങ്ങൾ</span></th><th>Non-metals <span class="ml">അലോഹങ്ങൾ</span></th></tr></thead><tbody>
+<tr><th>Outer electrons</th><td>few (1, 2, 3)</td><td>many (5, 6, 7)</td></tr>
+<tr><th>Electrons in a reaction</th><td class="hl-ox">lost</td><td class="hl-red">gained</td></tr>
+<tr><th>Ion formed</th><td>positive: Na<sup>+</sup>, Mg<sup>2+</sup>, Al<sup>3+</sup></td><td>negative: Cl<sup>−</sup>, O<sup>2−</sup></td></tr>
+<tr><th>Process</th><td class="hl-ox">oxidation (generally)</td><td class="hl-red">reduction (generally)</td></tr></tbody></table></div>
+
+<h2 id="ions">6. Ions can be reduced or oxidised too</h2>
+<p><span class="ml">പോസിറ്റീവ് അയോണുകൾ ഇലക്ട്രോണുകൾ സ്വീകരിച്ച് ആറ്റങ്ങളായി മാറാം. ഇവയും നിരോക്സീകരണ രാസപ്രവർത്തനങ്ങൾക്ക് ഉദാഹരണങ്ങളാണ്.</span> – <b>Positive ions</b> can accept electrons and become atoms. These are also examples of <b>reduction</b>:</p>
+<div class="eqs"><div><span class="st">ഉദാ:</span>Ag<sup>+</sup> + 1e<sup>−</sup> → Ag</div><div><span class="st"></span>Cu<sup>2+</sup> + 2e<sup>−</sup> → Cu</div></div>
+<p><span class="ml">ഇതുപോലെ നെഗറ്റീവ് അയോണുകൾ ഇലക്ട്രോണുകളെ വിട്ടുകൊടുത്ത് ആറ്റങ്ങളായി മാറാം. ഈ രാസപ്രവർത്തനങ്ങൾ ഓക്സീകരണ രാസപ്രവർത്തനങ്ങൾക്ക് ഉദാഹരണമാണ്.</span> – In the same way <b>negative ions</b> can give away electrons and become atoms. These are examples of <b>oxidation</b>:</p>
+<div class="eqs"><div><span class="st">ഉദാ:</span>I<sup>−</sup> → I + 1e<sup>−</sup></div><div><span class="st"></span>S<sup>2−</sup> → S + 2e<sup>−</sup></div></div>
+<div class="callout real"><div class="title">🌴 Where you meet these</div>
+<p>When a copper or silver layer is put on a vessel or ornament by <b>electroplating</b>, Cu<sup>2+</sup> or Ag<sup>+</sup> ions in the solution take electrons from the electric current and become shiny metal atoms – reduction. (More on page 11.)</p></div>
+<div class="callout warn"><div class="title">⚠️ Do not decide by “metal” alone</div>
+<p>“Metals are oxidised” is true for <b>metal atoms</b>. A metal <b>ion</b> such as Cu<sup>2+</sup> can gain electrons and be <b>reduced</b>. Always look at the electrons: <b>lost → oxidation, gained → reduction</b>.</p></div>
+
+<h2 id="anim">7. Virtual lab: half-equation animator</h2>
+<p>Choose a half-equation from the book (or a go-further one). Press <b>Play</b>: watch the electrons leave (oxidation) or arrive (reduction), and the count of protons, electrons and the charge change.</p>
+<div class="lab" id="hLab"><div class="lab-title">⚡ Half-equation animator</div>
+<div class="controls"><label>Half-equation <select id="hSel" aria-label="choose a half-equation"></select></label><button class="btn primary" id="hPlay">▶ Play</button><button class="btn" id="hNext">Next ▶</button></div>
+<svg id="hSvg" viewBox="0 0 800 300" role="img" aria-label="A particle drawn as a ball with its symbol and charge; electrons fly away from it for oxidation or fly into it for reduction; counts of protons and electrons and the charge are shown"></svg>
+<div class="readout" id="hOut"></div></div>
+
+<h2 id="sort">8. Sort them: oxidation or reduction?</h2>
+<p>Press <b>oxidation</b> or <b>reduction</b> for each half-equation. Correct cards move into their box with the reason. Tip: find the electrons – on the right means lost, on the left means gained.</p>
+<div class="lab sorter" id="sorter"><div class="lab-title">🗂 Oxidation / reduction sorter</div>
+<div class="pool" id="sPool"></div>
+<p class="score" id="sScore"></p>
+<div class="bins"><div class="bin o"><h4 class="hl-ox">Oxidation – electrons lost</h4><ul id="binO"></ul></div><div class="bin r"><h4 class="hl-red">Reduction – electrons gained</h4><ul id="binR"></ul></div></div>
+<div class="controls"><button class="btn ghost" id="sReset">⟲ Start again</button></div></div>
+
+<div class="callout"><div class="title">🔗 Looking ahead: they always happen together</div>
+<p>The electron that sodium loses does not vanish – chlorine takes it. So whenever something is oxidised, something else is reduced <b>at the same time</b>. On the next page you will name the partners: the <b>oxidising agent</b> and the <b>reducing agent</b>.</p></div>
+
+<div class="callout warn"><div class="title">⚠️ Common mistakes</div>
+<ul style="margin:0">
+<li>Swapping the names ✗ “Na → Na<sup>+</sup> + 1e<sup>−</sup> is reduction” – losing electrons is <b>oxidation</b>.</li>
+<li>Thinking oxidation needs oxygen ✗ – here oxidation simply means losing electrons; no oxygen is involved in Na + Cl.</li>
+<li>Writing the electron on the wrong side ✗ Cl → Cl<sup>−</sup> + 1e<sup>−</sup> – a gained electron is written on the <b>left</b>.</li>
+<li>Getting the charge wrong ✗ Mg → Mg<sup>+</sup> + 2e<sup>−</sup> – losing 2 electrons gives charge <b>2+</b>; the charges on both sides must match (0 = +2 − 2).</li>
+<li>“Metals are always oxidised” ✗ – metal <b>ions</b> like Ag<sup>+</sup> and Cu<sup>2+</sup> are reduced when they gain electrons.</li></ul></div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://en.wikipedia.org/wiki/Redox" target="_blank" rel="noopener noreferrer">📄 Redox</a> <span class="src">Wikipedia</span><br><span class="note">Oxidation and reduction always happen together.</span></li><li><a href="https://en.wikipedia.org/wiki/Oxidizing_agent" target="_blank" rel="noopener noreferrer">📄 Oxidizing agent</a> <span class="src">Wikipedia</span><br><span class="note">Substances that take electrons and so oxidise others.</span></li><li><a href="https://en.wikipedia.org/wiki/Reducing_agent" target="_blank" rel="noopener noreferrer">📄 Reducing agent</a> <span class="src">Wikipedia</span><br><span class="note">Substances that give electrons and so reduce others.</span></li></ul></div>
+<h2 id="check">9. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li><b>Oxidation</b> <span class="ml">ഓക്സീകരണം</span> = loss of electrons: Na → Na<sup>+</sup> + 1e<sup>−</sup>.</li>
+<li><b>Reduction</b> <span class="ml">നിരോക്സീകരണം</span> = gain of electrons: Cl + 1e<sup>−</sup> → Cl<sup>−</sup>.</li>
+<li>Metals (K, Ca, Mg, Zn, Al) are generally oxidised; non-metals (F, Cl, Br, O) are generally reduced.</li>
+<li>Positive ions gaining electrons are reduced (Ag<sup>+</sup>, Cu<sup>2+</sup>); negative ions losing electrons are oxidised (I<sup>−</sup>, S<sup>2−</sup>).</li>
+<li>In a half-equation the charges on both sides are equal; electrons on the right = oxidation, on the left = reduction.</li></ul></div>
+<p>Next: <a href="06_oxidising_reducing_agents.html">Oxidising &amp; reducing agents ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Redox Reactions · Class 9 Chemistry", "icon": "⚡", "key": "chemistry_ch4_progress", "pages": [["index.html", "Home"], ["01_reactions_and_equations.html", "1 · Chemical Reactions & How Equations Are Written"], ["02_ions_valency_recap.html", "2 · Recap: Ions, Valency & Electronegativity"], ["03_conservation_of_mass.html", "3 · Law of Conservation of Mass"], ["04_balancing_equations.html", "4 · Balancing Chemical Equations"], ["05_oxidation_reduction.html", "5 · Oxidation & Reduction (Electron Transfer)"], ["06_oxidising_reducing_agents.html", "6 · Oxidising & Reducing Agents"], ["07_oxidation_number.html", "7 · Oxidation Number & How to Find It"], ["08_redox_reactions.html", "8 · Oxidation Number & Redox Reactions"], ["09_intext_questions_solutions.html", "9 · In-text Questions – Solutions"], ["10_assess_solutions.html", "10 · Let Us Assess & Extended Activities – Solutions"], ["11_applications_explore.html", "11 · Applications & Explore Online"], ["12_summary_revision.html", "12 · Summary & Quick Quiz"], ["13_model_test_paper.html", "13 · Model Test Paper"], ["14_model_test_solutions.html", "14 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ==== common helpers (same code on pages 04–06) ==== */
+const {P, el} = K;
+const $id = id => document.getElementById(id);
+const C = c => (c === 'none' ? 'none' : ((c.charAt(0) === '#' || c.startsWith('url') || c.startsWith('rgb') || c.startsWith('var(')) ? c : `var(--${c === 'amber' ? 'accent' : c})`));
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const gcd = (a, b) => b ? gcd(b, a % b) : a;
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+function tx(svg, x, y, str, cls = '', anchor = 'middle', extra = {}){ return K.text(svg, P(x, y), str, {class: ('lbl ' + cls).trim(), 'text-anchor': anchor, ...extra}); }
+function box(svg, x, y, w, h, fill = 'surface2', stroke = 'text', sw = 1.5, extra = {}){ return el('rect', {x, y, width: Math.max(0, w), height: Math.max(0, h), fill: C(fill), stroke: C(stroke), 'stroke-width': sw, ...extra}, svg); }
+function circ(svg, x, y, r, fill = 'none', stroke = 'text', sw = 1.5, extra = {}){ return el('circle', {cx: x, cy: y, r: Math.max(0, r), fill: C(fill), stroke: C(stroke), 'stroke-width': sw, ...extra}, svg); }
+function line(svg, x1, y1, x2, y2, stroke = 'text', sw = 1.5, extra = {}){ return el('line', {x1, y1, x2, y2, stroke: C(stroke), 'stroke-width': sw, 'stroke-linecap': 'round', ...extra}, svg); }
+function arrow(svg, a, b, col = 'text', sw = 2, extra = {}){ const g = K.group(svg, extra); line(g, a.x, a.y, b.x, b.y, col, sw); const u = K.unit(a, b), s = 9;
+  el('polygon', {points: `${b.x},${b.y} ${b.x - u.x * s - u.y * s * .55},${b.y - u.y * s + u.x * s * .55} ${b.x - u.x * s + u.y * s * .55},${b.y - u.y * s - u.x * s * .55}`, fill: C(col)}, g); return g; }
+/* formulae with true subscripts / superscripts: 'Al2O3' → Al₂O₃, 'Cu^2+' → Cu²⁺ */
+const SUBC = '₀₁₂₃₄₅₆₇₈₉', SUPC = {0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹', '+': '⁺', '-': '⁻', '−': '⁻'};
+function segs(str){ if (Array.isArray(str)) return str; const out = []; let i = 0, prev = ''; str = String(str);
+  while (i < str.length){ const ch = str[i];
+    if (ch === '^'){ const m = str.slice(i + 1).match(/^\d*[+\-−]/); const s = m ? m[0] : ''; out.push({t: s.replace('-', '−'), k: 'p'}); i += 1 + s.length; prev = '^'; continue; }
+    const sub = /\d/.test(ch) && (/[A-Za-z)\]]/.test(prev) || (/\d/.test(prev) && out.length > 0 && out[out.length - 1].k === 'b'));
+    const k = sub ? 'b' : 'n'; if (out.length && out[out.length - 1].k === k && !out[out.length - 1].fill) out[out.length - 1].t += ch; else out.push({t: ch, k}); prev = ch; i++; }
+  return out; }
+const fHtml = s => segs(s).map(g => g.k === 'b' ? `<sub>${g.t}</sub>` : g.k === 'p' ? `<sup>${g.t}</sup>` : g.t).join('');
+const fUni = s => segs(s).map(g => g.k === 'b' ? g.t.replace(/\d/g, d => SUBC[+d]) : g.k === 'p' ? g.t.split('').map(c => SUPC[c] || c).join('') : g.t).join('');
+function fSvg(svg, x, y, s, fs = 28, o = {}){
+  const t = el('text', {x, y, class: 'lbl', 'text-anchor': o.anchor || 'middle', 'dominant-baseline': 'middle', style: `font-size:${fs}px;font-weight:${o.w || 700};fill:${o.fill || 'var(--text)'}`, ...(o.attrs || {})}, svg); let off = 0;
+  segs(s).forEach(g => { const want = g.k === 'b' ? fs * .3 : g.k === 'p' ? -fs * .42 : 0; const sp = el('tspan', {dy: (want - off).toFixed(1)}, t);
+    const fill = g.fill || null;
+    if (g.k !== 'n') sp.setAttribute('style', `font-size:${(fs * .62).toFixed(1)}px` + (fill ? `;fill:${fill}` : ''));
+    else if (fill) sp.setAttribute('style', `fill:${fill}` + (g.u ? ';text-decoration:underline' : ''));
+    sp.textContent = g.t; off = want; });
+  return t; }
+const estW = (s, fs) => segs(s).reduce((w, g) => w + g.t.split('').reduce((a, c) => a + fs * (g.k === 'n' ? 1 : .62) * (/[A-Z]/.test(c) ? .68 : /[a-z]/.test(c) ? .52 : /[()\[\]]/.test(c) ? .34 : /[+−\-]/.test(c) ? .6 : /→/.test(c) ? 1 : /\s/.test(c) ? .3 : .56), 0), 0);
+const fnorm = s => String(s).trim().replace(/[₀-₉]/g, c => SUBC.indexOf(c)).replace(/\s+/g, '').replace(/[\[{]/g, '(').replace(/[\]}]/g, ')');
+const tnorm = s => String(s).trim().toLowerCase().replace(/[−–—]/g, '-').replace(/\s+/g, ' ');
+const nnorm = s => String(s).trim().toLowerCase().replace(/[₀-₉]/g, c => SUBC.indexOf(c)).replace(/[−–—]/g, '-').replace(/\s+/g, '').replace(/,+/g, ',');
+/* half-equations typed by a student: 'F + 1e- -> F-', 'F+e→F⁻', 'e + F = F-' are all the same */
+const SUPN = {'⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4', '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9', '⁺': '+', '⁻': '-'};
+function hnorm(s){ s = String(s).replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻]/g, c => SUPN[c]).replace(/[₀-₉]/g, c => SUBC.indexOf(c)).replace(/[−–—]/g, '-').replace(/\s+/g, '');
+  s = s.replace(/-+>|=+>|→|⟶|=/g, '>'); const sides = s.split('>'); if (sides.length !== 2) return '?' + s;
+  return sides.map(sd => { const tk = []; let i = 0;
+    while (i < sd.length){ const ch = sd[i];
+      if (/[A-Z]/.test(ch)){ const m = sd.slice(i).match(/^[A-Z][a-z]?/)[0]; i += m.length; const d = (sd.slice(i).match(/^\d+/) || [''])[0]; i += d.length; let q = '';
+        if (sd[i] === '-'){ q = '-'; i++; } else if (sd[i] === '+' && (d || i + 1 >= sd.length || sd[i + 1] === '+')){ q = '+'; i++; }
+        tk.push(m + (q ? (d === '1' ? '' : d) + q : d)); }
+      else if (/[\de]/.test(ch)){ const m = sd.slice(i).match(/^(\d*)e-?/); if (!m){ tk.push('?'); i++; continue; } i += m[0].length; tk.push((m[1] === '1' ? '' : m[1]) + 'e'); }
+      else if (ch === '+') i++; else { tk.push('?' + ch); i++; } }
+    return tk.sort().join('+'); }).join('>'); }
+/* ---- interactive fill-in table ----
+   cell = 'given html' | {g, rs, cs} | null (covered by a rowspan) |
+   {a, alt: [...], k: 'n' number · 't' text · 'f' formula (live preview) · 'h' half-equation, lab, pre} */
+function fillTable(id, spec){
+  const root = $id(id);
+  const cell = (c, ci) => { if (c === null) return '';
+    if (c && typeof c === 'object' && 'g' in c) return `<td class="given"${c.rs ? ` rowspan="${c.rs}"` : ''}${c.cs ? ` colspan="${c.cs}"` : ''}>${c.g}</td>`;
+    if (c && typeof c === 'object'){ const k = c.k || 'n', cls = k === 'f' ? 'fm' : k === 'h' ? 'hq' : k === 't' ? 'wide' : '';
+      return `<td>${c.pre || ''}<input type="text" autocomplete="off" spellcheck="false" autocapitalize="off" ${cls ? `class="${cls}"` : ''} ${k === 'n' ? 'inputmode="numeric"' : ''} data-k="${k}" data-a="${esc(c.a)}" data-alt="${esc((c.alt || []).join('|'))}" aria-label="${esc(c.lab || (spec.labels && spec.labels[ci]) || 'answer')}">${k === 'f' || k === 'h' ? '<span class="pv"></span>' : ''}</td>`; }
+    return ci === 0 && spec.th0 ? `<th>${c}</th>` : `<td class="given">${c}</td>`; };
+  const head = spec.thead || (spec.head ? `<tr>${spec.head.map(h => `<th>${h}</th>`).join('')}</tr>` : '');
+  root.insertAdjacentHTML('beforeend', `<div class="tw"><table class="ft">${head ? `<thead>${head}</thead>` : ''}<tbody>${spec.rows.map(r => `<tr>${r.map(cell).join('')}</tr>`).join('')}</tbody></table></div>
+    <div class="controls"><button class="btn primary" data-f="check">✔ Check my answers</button><button class="btn ghost" data-f="clear">⟲ Clear</button><button class="btn" data-f="show">💡 Show answers</button></div><p class="score"></p>`);
+  const ins = K.$$('input[data-a]', root), score = root.querySelector('.score');
+  const N = {n: nnorm, t: tnorm, f: fnorm, h: hnorm};
+  const right = inp => { const f = N[inp.dataset.k] || nnorm, v = f(inp.value); return inp.value.trim() !== '' && [inp.dataset.a, ...inp.dataset.alt.split('|').filter(Boolean)].some(a => f(a) === v); };
+  const pv = inp => { const p = inp.parentElement.querySelector('.pv'); if (!p) return; p.innerHTML = inp.dataset.k === 'h' ? hPrev(inp.value) : fHtml(fnorm(inp.value).replace(/[^A-Za-z0-9()]/g, '')); };
+  root.addEventListener('click', e => { const b = e.target.closest('button[data-f]'); if (!b) return; const f = b.dataset.f;
+    if (f === 'check'){ let ok = 0; ins.forEach(i => { const r = right(i); i.classList.toggle('ok', r); i.classList.toggle('bad', !r); if (r) ok++; });
+      score.textContent = ok === ins.length ? `🎉 All ${ins.length} correct!` : `${ok} of ${ins.length} correct – the red boxes need another look.` + (spec.hint ? ' ' + spec.hint : ''); }
+    else if (f === 'show'){ ins.forEach(i => { i.value = i.dataset.a; i.classList.add('ok'); i.classList.remove('bad'); pv(i); }); score.textContent = 'All answers filled in (green). Cover them and try again tomorrow!'; }
+    else { ins.forEach(i => { i.value = ''; i.classList.remove('ok', 'bad'); pv(i); }); score.textContent = ''; } });
+  root.addEventListener('input', e => { if (e.target.matches('input[data-a]')){ e.target.classList.remove('ok', 'bad'); pv(e.target); } });
+}
+/* preview of a typed half-equation: 'Ca -> Ca2+ + 2e-' → Ca → Ca²⁺ + 2e⁻ */
+function hPrev(s){ s = String(s).replace(/-+>|=+>|=/g, '→'); return esc(s).replace(/([A-Z][a-z]?)(\d?)([+\-−])(?=\s|$|→)/g, (m, a, n, q) => `${a}<sup>${n}${q === '+' ? '+' : '−'}</sup>`).replace(/(\d*)e-(?=\s|$|→)/g, '$1e<sup>−</sup>'); }
+/* yes/no style choice buttons: <span class="yn" data-ans="1" data-why="…"> + <div class="why"> */
+function choices(root = document){ K.$$('.yn[data-ans]', root).forEach(bx => { if (bx.dataset.wired) return; bx.dataset.wired = 1; const ans = +bx.dataset.ans, why = bx.parentElement.querySelector('.why');
+  K.$$('button', bx).forEach((b, k) => b.addEventListener('click', () => { K.$$('button', bx).forEach(x => x.classList.remove('ok', 'bad')); b.classList.add(k === ans ? 'ok' : 'bad');
+    if (why){ why.innerHTML = k === ans ? '✅ ' + (bx.dataset.why || 'Correct.') : '❌ ' + (bx.dataset.hint || 'Not quite – think again.'); why.style.color = k === ans ? 'var(--green)' : 'var(--red)'; } })); }); }
+const H = (en, ml) => `${en} <span class="ml">${ml}</span>`;
+/* atom colours for molecule pictures: [fill, stroke, text] (fixed colours, readable in both themes) */
+const ECOL = {H: ['#dcfce7', '#16a34a', '#14532d'], O: ['#ef4444', '#991b1b', '#ffffff'], C: ['#57534e', '#1c1917', '#ffffff'], N: ['#3b82f6', '#1e3a8a', '#ffffff'], Cl: ['#0d9488', '#134e4a', '#ffffff'],
+  Mg: ['#a8a29e', '#44403c', '#1c1917'], Zn: ['#94a3b8', '#334155', '#0f172a'], Al: ['#e2e8f0', '#64748b', '#0f172a'], Na: ['#a855f7', '#581c87', '#ffffff'], K: ['#8b5cf6', '#4c1d95', '#ffffff'],
+  I: ['#7e22ce', '#3b0764', '#ffffff'], Fe: ['#b45309', '#78350f', '#ffffff'], S: ['#facc15', '#a16207', '#422006'], Ca: ['#fde68a', '#a16207', '#422006'], Ba: ['#f59e0b', '#92400e', '#ffffff'],
+  F: ['#a3e635', '#3f6212', '#1a2e05'], Br: ['#9a3412', '#431407', '#ffffff'], Cu: ['#ea580c', '#7c2d12', '#ffffff'], Ag: ['#cbd5e1', '#475569', '#0f172a'], P: ['#fb923c', '#9a3412', '#ffffff']};
+const ENAME = {H: 'hydrogen', O: 'oxygen', C: 'carbon', N: 'nitrogen', Cl: 'chlorine', Mg: 'magnesium', Zn: 'zinc', Al: 'aluminium', Na: 'sodium', K: 'potassium', I: 'iodine', Fe: 'iron', S: 'sulphur', Ca: 'calcium', Ba: 'barium', F: 'fluorine', Br: 'bromine', Cu: 'copper', Ag: 'silver', P: 'phosphorus'};
+const EML = {H: 'ഹൈഡ്രജൻ', O: 'ഓക്സിജൻ', C: 'കാർബൺ', N: 'നൈട്രജൻ', Cl: 'ക്ലോറിൻ', Mg: 'മഗ്നീഷ്യം', Zn: 'സിങ്ക്', Al: 'അലുമിനിയം', Na: 'സോഡിയം', K: 'പൊട്ടാസ്യം', I: 'അയഡിൻ', Fe: 'ഇരുമ്പ്', S: 'സൾഫർ', Ca: 'കാൽസ്യം', Ba: 'ബേരിയം', F: 'ഫ്ലൂറിൻ', Br: 'ബ്രോമിൻ', Cu: 'ചെമ്പ്', Ag: 'വെള്ളി'};
+function ball(svg, x, y, r, s, op = 1){ const c = ECOL[s] || ['#e5e7eb', '#475569', '#0f172a'], g = K.group(svg, op < 1 ? {opacity: op.toFixed(2)} : {});
+  circ(g, x, y, r, c[0], c[1], Math.max(1, r * .12)); circ(g, x - r * .32, y - r * .34, r * .28, '#ffffff', 'none', 0, {opacity: .35});
+  if (r >= 8) el('text', {x, y: y + 1, 'text-anchor': 'middle', 'dominant-baseline': 'middle', style: `font-size:${(r * (s.length > 1 ? .78 : .95)).toFixed(1)}px;font-weight:800;fill:${c[2]};font-family:Segoe UI,Roboto,Arial,sans-serif`, text: s}, g);
+  return g; }
+/* ==== end common ==== */
+
+/* ---------- ion / half-equation text ---------- */
+const qSup = q => q === 0 ? '' : (Math.abs(q) === 1 ? '' : String(Math.abs(q))) + (q > 0 ? '+' : '−');
+const ionH = (s, q) => q === 0 ? s : `${s}<sup>${qSup(q)}</sup>`;
+const ionU = (s, q) => q === 0 ? s : s + qSup(q).split('').map(c => SUPC[c] || (c === '+' ? '⁺' : '⁻')).join('');
+const qNum = q => q === 0 ? '0' : (q > 0 ? '+' : '−') + Math.abs(q);
+/* item: [symbol, Z, charge before, electrons, 'o' oxidation | 'r' reduction, name, note] */
+function halfH(it){ const [s, , q0, n, k] = it, q1 = k === 'o' ? q0 + n : q0 - n;
+  return k === 'o' ? `${ionH(s, q0)} → ${ionH(s, q1)} + ${n}e<sup>−</sup>` : `${ionH(s, q0)} + ${n}e<sup>−</sup> → ${ionH(s, q1)}`; }
+function halfU(it){ const [s, , q0, n, k] = it, q1 = k === 'o' ? q0 + n : q0 - n;
+  return k === 'o' ? `${ionU(s, q0)} → ${ionU(s, q1)} + ${n}e⁻` : `${ionU(s, q0)} + ${n}e⁻ → ${ionU(s, q1)}`; }
+
+/* ---------- orbit models for Na and Cl ---------- */
+let ORB = 0;
+function orbDefs(svg){ const old = svg.querySelector('defs.od'); if (old) return old.getAttribute('data-id'); const id = 'o5x' + (++ORB), d = el('defs', {class: 'od', 'data-id': id}, svg);
+  const gr = (nm, stops) => { const g = el('radialGradient', {id: id + nm, cx: '38%', cy: '34%', r: '70%'}, d); stops.forEach(([o, c]) => el('stop', {offset: o, 'stop-color': c}, g)); };
+  gr('b', [['0%', '#fff4d6'], ['62%', '#fcd581'], ['100%', '#f39a1e']]); gr('e', [['0%', '#e9fde9'], ['55%', '#5fd16b'], ['100%', '#15803d']]); gr('r', [['0%', '#ffe4e6'], ['55%', '#f87171'], ['100%', '#b91c1c']]); gr('n', [['0%', '#a3243b'], ['100%', '#5a0e1e']]);
+  return id; }
+/* shells: array of arrays of electron angles; red: set of 'k:j' keys drawn red; slot: [k, angle] dashed empty place */
+function orbit(svg, x, y, Z, N, shells, o = {}){ const id = orbDefs(svg), g = K.group(svg), nuc = 22, gap = 26, rr = k => nuc + gap * (k + 1);
+  for (let k = shells.length - 1; k >= 0; k--) circ(g, x, y, rr(k) + gap * .42, `url(#${id}b)`, 'none', 0);
+  shells.forEach((_, k) => circ(g, x, y, rr(k), 'none', '#d9381e', 1.3));
+  circ(g, x, y, nuc, `url(#${id}n)`, '#fde7b0', 1.5);
+  el('text', {x, y: y - 6, 'text-anchor': 'middle', 'dominant-baseline': 'middle', style: 'font-size:11px;font-weight:700;fill:#fff;font-family:Segoe UI,Roboto,Arial,sans-serif', text: Z + 'p'}, g);
+  el('text', {x, y: y + 7, 'text-anchor': 'middle', 'dominant-baseline': 'middle', style: 'font-size:11px;font-weight:700;fill:#fde7b0;font-family:Segoe UI,Roboto,Arial,sans-serif', text: N + 'n'}, g);
+  if (o.slot){ const q = K.polar(P(x, y), rr(o.slot[0]), o.slot[1]); circ(g, q.x, q.y, 7, 'none', '#b91c1c', 1.4, {'stroke-dasharray': '3 2'}); }
+  shells.forEach((sh, k) => sh.forEach(a => { const q = K.polar(P(x, y), rr(k), a.a ?? a), red = a.c === 'r'; circ(g, q.x, q.y, 6, `url(#${id}${red ? 'r' : 'e'})`, red ? '#7f1d1d' : '#14532d', .9); }));
+  return {R: rr(shells.length - 1) + gap * .42, rr}; }
+const ring = (n, start = -90) => Array.from({length: n}, (_, j) => start + 360 * j / n);
+function brackets(svg, x, y, R, q){ const b = R + 6, w = 10;
+  el('path', {d: `M${x - b + w},${y - b} H${x - b} V${y + b} H${x - b + w} M${x + b - w},${y - b} H${x + b} V${y + b} H${x + b - w}`, fill: 'none', stroke: 'var(--text)', 'stroke-width': 2.5}, svg);
+  tx(svg, x + b + 4, y - b + 8, q, q === '+' ? 'red' : 'blue', 'start', {style: 'font-size:22px;font-weight:800'}); }
+
+/* ---------- Na + Cl stepper ---------- */
+(function(){ const xa = 215, xb = 585, y = 165;
+  const steps = ['<b>Two atoms.</b> Sodium (11 protons, 2, 8, 1) has one outer electron (red). Chlorine (17 protons, 2, 8, 7) has one empty place (dashed) in its outer shell.',
+    '<b>The electron moves.</b> Sodium <b class="hl-ox">loses</b> its outer electron – <b class="hl-ox">oxidation</b>. Chlorine <b class="hl-red">gains</b> it – <b class="hl-red">reduction</b>. Both happen in the same instant.',
+    '<b>Two ions.</b> Na → Na<sup>+</sup> + 1e<sup>−</sup> (11 p, 10 e → charge +1). Cl + 1e<sup>−</sup> → Cl<sup>−</sup> (17 p, 18 e → charge −1). Both now have an octet.',
+    '<b>Sodium chloride.</b> The oppositely charged ions attract: Na<sup>+</sup> + Cl<sup>−</sup> → NaCl. One loss, one gain – the electron was only handed over.'];
+  new K.Stepper('#sNaCl', {steps, ms: 1200, gap: 3200, draw(svg, i, t){
+    const moved = i >= 1, naSh = [ring(2), ring(8, -67.5)], clSh = [ring(2), ring(8, -67.5), [-90, -45, 0, 45, 90, 135, 180].map(a => ({a}))];
+    if (!moved) naSh.push([{a: 0, c: 'r'}]); else if (i > 1 || t >= 1) clSh[2].push({a: 180 + 45, c: 'r'});
+    const A = orbit(svg, xa, y, 11, 12, naSh), B = orbit(svg, xb, y, 17, 18, clSh, {slot: moved && i === 1 && t < 1 ? [2, 225] : (!moved ? [2, 225] : null)});
+    if (i === 1 && t < 1){ const p0 = K.polar(P(xa, y), 22 + 26 * 3, 0), p1 = K.polar(P(xb, y), 22 + 26 * 3, 225), q = P(K.lerp(p0.x, p1.x, t), K.lerp(p0.y, p1.y, t) - 70 * Math.sin(Math.PI * t)), id = orbDefs(svg);
+      circ(svg, q.x, q.y, 13, 'none', '#f59e0b', 3, {opacity: .8}); circ(svg, q.x, q.y, 7, `url(#${id}r)`, '#7f1d1d', 1); tx(svg, q.x, q.y - 22, 'e⁻', 'red', 'middle', {style: 'font-size:15px;font-weight:800'}); }
+    if (i >= 2){ brackets(svg, xa, y, A.R, '+'); brackets(svg, xb, y, B.R, '−'); }
+    if (i === 0) tx(svg, 400, y, '+', '', 'middle', {style: 'font-size:28px;font-weight:700'});
+    if (i >= 1){ tx(svg, xa, 26, 'OXIDATION – loses 1 e⁻', 'red', 'middle', {style: 'font-size:17px;font-weight:800'}); tx(svg, xb, 26, 'REDUCTION – gains 1 e⁻', 'blue', 'middle', {style: 'font-size:17px;font-weight:800'}); }
+    if (i >= 3){ line(svg, xa + A.R + 18, y, xb - B.R - 18, y, 'purple', 2.5, {'stroke-dasharray': '6 4'}); tx(svg, 400, y - 16, 'attract', 'purple', 'middle', {style: 'font-size:13px;font-weight:700'}); }
+    tx(svg, xa, 300, i < 2 ? 'sodium atom  Na  (2, 8, 1)' : 'sodium ion  Na⁺  (2, 8)', '', 'middle', {style: 'font-size:15px;font-weight:700'});
+    tx(svg, xb, 300, i < 2 ? 'chlorine atom  Cl  (2, 8, 7)' : 'chloride ion  Cl⁻  (2, 8, 8)', '', 'middle', {style: 'font-size:15px;font-weight:700'});
+    if (i >= 2){ tx(svg, xa, 330, 'Na → Na⁺ + 1e⁻', 'red', 'middle', {style: 'font-size:18px;font-weight:800'}); tx(svg, xb, 330, 'Cl + 1e⁻ → Cl⁻', 'blue', 'middle', {style: 'font-size:18px;font-weight:800'}); }
+    if (i >= 3) tx(svg, 400, 352, 'Na⁺ + Cl⁻ → NaCl', 'purple', 'middle', {style: 'font-size:14px;font-weight:800'});
+  }});
+})();
+
+/* ---------- half-equation animator ---------- */
+const HALF = [
+  ['Na', 11, 0, 1, 'o', 'sodium atom', 'book'], ['K', 19, 0, 1, 'o', 'potassium atom', 'book'], ['Ca', 20, 0, 2, 'o', 'calcium atom', 'book'], ['Mg', 12, 0, 2, 'o', 'magnesium atom', 'book'], ['Zn', 30, 0, 2, 'o', 'zinc atom', 'book'], ['Al', 13, 0, 3, 'o', 'aluminium atom', 'book'],
+  ['F', 9, 0, 1, 'r', 'fluorine atom', 'book'], ['Cl', 17, 0, 1, 'r', 'chlorine atom', 'book'], ['Br', 35, 0, 1, 'r', 'bromine atom', 'book'], ['O', 8, 0, 2, 'r', 'oxygen atom', 'book'],
+  ['Ag', 47, 1, 1, 'r', 'silver ion', 'book'], ['Cu', 29, 2, 2, 'r', 'copper ion (cupric)', 'book'], ['I', 53, -1, 1, 'o', 'iodide ion', 'book'], ['S', 16, -2, 2, 'o', 'sulphide ion', 'book'],
+  ['Fe', 26, 0, 3, 'o', 'iron atom (as in rust, Fe³⁺)', 'go further'], ['S', 16, 0, 2, 'r', 'sulphur atom', 'go further'], ['Fe', 26, 2, 1, 'o', 'iron(II) ion → iron(III) ion', 'go further']];
+(function(){ const sel = $id('hSel'), svg = $id('hSvg'), out = $id('hOut'); let cur = 0, stop = null;
+  sel.innerHTML = HALF.map((h, k) => `<option value="${k}">${halfU(h)}  (${h[6]})</option>`).join('');
+  function draw(t){ const it = HALF[cur], [s, Z, q0, n, k, name] = it, q1 = k === 'o' ? q0 + n : q0 - n, e0 = Z - q0, x = 300, y = 140, R = 62, ox = k === 'o';
+    K.clear(svg); const done = t >= 1, q = done ? q1 : q0;
+    tx(svg, 400, 26, ox ? `OXIDATION – the ${name} LOSES ${n} electron${n > 1 ? 's' : ''}` : `REDUCTION – the ${name} GAINS ${n} electron${n > 1 ? 's' : ''}`, ox ? 'red' : 'blue', 'middle', {style: 'font-size:17px;font-weight:800'});
+    ball(svg, x, y, R, s); if (q !== 0) tx(svg, x + R * .78, y - R * .78, qSup(q), q > 0 ? 'red' : 'blue', 'start', {style: 'font-size:26px;font-weight:800'});
+    /* electron tray: right for oxidation (given away), left for reduction (coming in) */
+    const tray = j => ox ? P(560 + (j % 3) * 34, 105 + Math.floor(j / 3) * 34) : P(70 + (j % 3) * 34, 105 + Math.floor(j / 3) * 34);
+    box(svg, ox ? 540 : 50, 80, 112, 84, 'none', ox ? 'red' : 'blue', 1.5, {rx: 12, 'stroke-dasharray': '5 4'});
+    tx(svg, ox ? 596 : 106, 182, ox ? 'electrons given away' : 'electrons coming in', ox ? 'sm red' : 'sm blue', 'middle', {style: 'font-size:12px;font-weight:700'});
+    for (let j = 0; j < n; j++){ const rim = K.polar(P(x, y), R + 8, -25 + j * 25), tj = clamp(t * 1.3 - j * .15, 0, 1);
+      const a = ox ? rim : tray(j), b = ox ? tray(j) : K.polar(P(x, y), R + 8, 155 + j * 25), p = P(K.lerp(a.x, b.x, tj), K.lerp(a.y, b.y, tj) - 40 * Math.sin(Math.PI * tj));
+      if (!ox && tj >= 1) continue;
+      circ(svg, p.x, p.y, 9, '#fecaca', '#b91c1c', 1.5); tx(svg, p.x, p.y + 1, 'e⁻', '', 'middle', {style: 'font-size:10px;font-weight:800;fill:#7f1d1d;stroke:none'}); }
+    const ee = done ? (ox ? e0 - n : e0 + n) : e0;
+    tx(svg, 400, 232, `protons ${Z} (never change)   ·   electrons ${ee}   ·   charge ${Z} − ${ee} = ${qNum(Z - ee)}`, '', 'middle', {style: 'font-size:15px;font-weight:700'});
+    fSvg(svg, 400, 274, halfU(it), 26, {fill: ox ? 'var(--red)' : 'var(--blue)'});
+    out.textContent = `${halfU(it)}\n${ox ? 'Electrons appear on the RIGHT – they are lost → OXIDATION.' : 'Electrons appear on the LEFT – they are gained → REDUCTION.'}\nCharge: ${qNum(q0)} → ${qNum(q1)} (${ox ? 'goes up' : 'goes down'} by ${n}). Check the charges balance: left ${qNum(k === 'o' ? q0 : q0 - n)} = right ${qNum(k === 'o' ? q1 - n : q1)}.` + (it[6] === 'go further' ? '\n(Go further – not in the textbook list.)' : ''); }
+  function play(){ if (stop) stop(); stop = K.animate(1600, (e, t) => draw(t), () => { stop = null; draw(1); }); }
+  sel.addEventListener('change', () => { cur = +sel.value; draw(0); });
+  $id('hPlay').addEventListener('click', play);
+  $id('hNext').addEventListener('click', () => { cur = (cur + 1) % HALF.length; sel.value = cur; draw(0); play(); });
+  draw(0);
+})();
+
+/* ---------- sorter ---------- */
+(function(){ const pool = $id('sPool'), bO = $id('binO'), bR = $id('binR'), sc = $id('sScore');
+  const CARDS = [['Na', 11, 0, 1, 'o'], ['Cl', 17, 0, 1, 'r'], ['Mg', 12, 0, 2, 'o'], ['O', 8, 0, 2, 'r'], ['Cu', 29, 2, 2, 'r'], ['I', 53, -1, 1, 'o'], ['Li', 3, 0, 1, 'o'], ['Fe', 26, 3, 3, 'r'],
+    ['Br', 35, -1, 1, 'o'], ['N', 7, 0, 3, 'r'], ['Ba', 56, 0, 2, 'o'], ['Pb', 82, 2, 2, 'r'], ['H', 1, 1, 1, 'r'], ['O', 8, -2, 2, 'o']];
+  let left = 0, tries = 0, right = 0;
+  function why(c){ const [s, , q0, n, k] = c, q1 = k === 'o' ? q0 + n : q0 - n; return k === 'o' ? `${n} e⁻ on the right – lost; charge ${qNum(q0)} → ${qNum(q1)}` : `${n} e⁻ on the left – gained; charge ${qNum(q0)} → ${qNum(q1)}`; }
+  function reset(){ pool.innerHTML = CARDS.map((c, k) => `<div class="crd" data-k="${k}"><span class="chem">${halfH(c)}</span><span class="yn hb"><button class="btn" data-s="o">oxidation</button><button class="btn" data-s="r">reduction</button></span></div>`).join('');
+    bO.innerHTML = ''; bR.innerHTML = ''; left = CARDS.length; tries = 0; right = 0; score(); }
+  function score(){ sc.textContent = left ? `${CARDS.length - left} of ${CARDS.length} sorted · ${tries ? Math.round(100 * right / tries) : 0}% right first time` : `🎉 All ${CARDS.length} sorted! ${right} of ${tries} answers were right.`; }
+  pool.addEventListener('click', e => { const b = e.target.closest('button[data-s]'); if (!b) return; const card = b.closest('.crd'), c = CARDS[+card.dataset.k]; tries++;
+    if (b.dataset.s === c[4]){ right++; (c[4] === 'o' ? bO : bR).insertAdjacentHTML('beforeend', `<li><span class="chem">${halfH(c)}</span><span class="why">${why(c)}</span></li>`); card.remove(); left--; }
+    else { card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); b.classList.add('bad'); }
+    score(); });
+  $id('sReset').addEventListener('click', reset);
+  reset();
+})();
+
+choices();
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'Oxidation is…', options: ['gain of electrons', 'loss of electrons', 'gain of protons', 'sharing of electrons'], answer: 1, explain: 'Key idea, page 76: the process in which electrons are lost is oxidation.', hint: 'Na → Na⁺ + 1e⁻ is oxidation. What happened to sodium\'s electron?'});
+K.mcq('#q2', {q: 'Which half-equation shows reduction?', options: ['K → K⁺ + 1e⁻', 'Zn → Zn²⁺ + 2e⁻', 'O + 2e⁻ → O²⁻', 'S²⁻ → S + 2e⁻'], answer: 2, explain: 'Oxygen gains 2 electrons (electrons on the left) – reduction.', hint: 'Look for electrons on the left side.'});
+K.mcq('#q3', {q: 'Metals are generally…', options: ['reduced, because they gain electrons', 'oxidised, because they lose electrons', 'neither oxidised nor reduced', 'reduced, because they lose electrons'], answer: 1, explain: 'With 1–3 outer electrons, metals give them away: oxidation.', hint: 'Na, K, Mg, Al form positive ions…'});
+K.mcq('#q4', {q: 'Al → Al³⁺ + …', options: ['1e⁻', '2e⁻', '3e⁻', '3e⁺'], answer: 2, explain: 'Aluminium (2, 8, 3) loses 3 electrons; charges: 0 = +3 − 3.', hint: 'The charges on both sides must be equal.'});
+K.mcq('#q5', {q: 'Cu²⁺ + 2e⁻ → Cu is an example of…', options: ['oxidation of a negative ion', 'reduction of a positive ion', 'oxidation of a metal atom', 'sharing of electrons'], answer: 1, explain: 'A positive ion gains electrons and becomes an atom – reduction.', hint: 'Which side are the electrons on?'});
+K.mcq('#q6', {q: 'I⁻ → I + 1e⁻ is…', options: ['reduction, because iodine is a non-metal', 'oxidation, because the ion loses an electron', 'reduction, because the charge decreases', 'not possible'], answer: 1, explain: 'The negative ion gives away an electron: oxidation. The charge goes up from −1 to 0.', hint: 'Do not decide by “non-metal” – look at the electrons.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>
