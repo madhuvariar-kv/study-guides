@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oxygen, Ozone and the Ozone Layer</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+@media(max-width:600px){.onpage a{white-space:normal}}
+
+</style>
+<style>
+/* ==== common styles (same on pages 06–08) ==== */
+.qa,.qbox{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.7rem 1rem;margin:.8rem 0;box-shadow:var(--shadow)}
+.qa p,.qbox p{margin:.3em 0}
+.qbox ol,.qbox ul,.qa ol,.qa ul{margin:.3rem 0}
+.mlq{display:block;font-weight:500;margin:.2rem 0 .4rem}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.answer ul{margin:.2rem 0}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.keyml{display:block;margin:.2rem 0 .4rem}
+.ft{width:auto;min-width:min(100%,520px)}
+.ft td,.ft th{text-align:center;vertical-align:middle;padding:.35rem .45rem}
+.ft th{font-size:.88rem;line-height:1.3}
+.ft th .ml,.ft td .ml{display:block;font-size:.85em}
+.ft td.l{text-align:left}
+.ft input,.ft select{padding:.25rem .3rem;border-radius:6px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:.92rem}
+.ft input{width:9em;text-align:center}
+.ft select{max-width:15em}
+.ft .ok{border-color:var(--green);background:var(--green-soft)}
+.ft .bad{border-color:var(--red);background:var(--red-soft)}
+.ft td.given{font-weight:600}
+.score{font-weight:700;color:var(--primary-ink);margin:.4rem 0 0;min-height:1.3em}
+.btn.ok{background:var(--green-soft);border-color:var(--green);color:var(--text)}
+.btn.bad{background:var(--red-soft);border-color:var(--red);color:var(--text)}
+.btn.primary .ml{color:#fff}
+.yn{display:inline-flex;gap:.3rem;flex-wrap:wrap}
+.yn .btn{padding:.25rem .6rem;font-size:.88rem}
+.why{font-size:.92rem;margin-top:.3rem;min-height:1.2em}
+.ask{margin:.55rem 0;padding:.45rem .7rem;border-radius:10px;background:var(--surface2)}
+.ask p{margin:.1rem 0 .35rem}
+.tick{display:grid;grid-template-columns:1fr auto;gap:.3rem .8rem;align-items:center}
+.tick .yn{justify-content:flex-end}
+@media(max-width:600px){.tick{grid-template-columns:1fr}.tick .yn{justify-content:flex-start}}
+.sidebox{border:2px solid var(--blue);background:var(--blue-soft);border-radius:14px;padding:.7rem 1rem;margin:1rem 0}
+.sidebox .title{font-weight:700;color:var(--blue);margin-bottom:.3rem}
+.sidebox p:last-child{margin-bottom:0}
+.further{border-left:6px solid var(--purple);background:var(--purple-soft);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+.further .title{font-weight:700;color:var(--purple);margin-bottom:.3rem}
+.eqc{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.3rem;padding:.55em .6em;margin:.7em 0;background:var(--surface2);border-radius:10px;line-height:1.6;overflow-x:auto;white-space:nowrap}
+.eqc .st{font-size:.7em;color:var(--muted)}
+.eqc .gap{color:var(--red);font-weight:700}
+.ct td,.ct th{vertical-align:middle}
+.ct th .ml,.ct td .ml{display:block;font-size:.85em}
+.svgscroll{overflow-x:auto;border-radius:10px}
+.svgscroll svg{min-width:600px}
+.controls select{padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;max-width:100%}
+.usegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.7rem;margin:.8rem 0}
+.usegrid .card{margin:0;padding:.7rem .9rem}
+.usegrid .card .ic{font-size:1.6rem;line-height:1}
+.usegrid .card b{display:block;margin:.25rem 0 .15rem}
+.usegrid .card p{margin:.2rem 0 0;font-size:.93rem}
+/* ==== page 08 ==== */
+.arrlab{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;margin:0 .2em}
+.arrlab small{font-size:.55em;color:var(--muted);font-family:"Segoe UI",Roboto,Arial,sans-serif}
+.checklist li{list-style:none;margin:.25rem 0}
+.checklist{padding-left:.4rem}
+</style>
+</head>
+<body data-page="08_oxygen_ozone">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 7 · Section 8</span><span class="chip amber">Textbook pages 145–147</span>
+<h1>Oxygen, Ozone and the Ozone Layer <span class="ml">ഓക്സിജൻ · ഓസോൺ</span></h1>
+<p class="lead">Hospitals keep it in tall cylinders, rockets carry it in huge tanks, and every fire needs it. Oxygen is the "life gas" <span class="ml">പ്രാണവായു</span>. High above the clouds, three oxygen atoms join to form <b>ozone</b>, a thin shield that stops most of the Sun's harmful ultraviolet rays. On this page you make oxygen in a virtual teacher demo, test it with a glowing splinter, write its reactions, and then fly up to the stratosphere to watch the ozone cycle – and what CFCs do to it.</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 2 and 3 of this guide)</div>
+<ul style="margin:0">
+<li>Test for oxygen: a glowing splinter bursts into flame; test for hydrogen: a burning splinter gives a "pop" sound <span class="ml">പോപ്പ് ശബ്ദം</span> (<a href="02_gases_tests_equations.html">page 2</a>).</li>
+<li>Electrolysis of water <span class="ml">ജലത്തിന്റെ വൈദ്യുതവിശ്ലേഷണം</span> gives hydrogen and oxygen (<a href="03_hydrogen.html">page 3</a>).</li>
+<li>Oxygen: atomic number 8, configuration 2,6; it forms the diatomic molecule O₂ with a double bond (<a href="01_metals_nonmetals_recap.html">page 1</a>).</li></ul></div>
+
+<!-- ================= 1 ================= -->
+<h2 id="oxygen">1. Oxygen – the life gas <span class="ml">പ്രാണവായു</span></h2>
+<p><span class="ml">ഭൂവൽക്കത്തിൽ ഏറ്റവും കൂടുതൽ കാണപ്പെടുന്ന മൂലകമാണ് ഓക്സിജൻ. ജീവന്റെ നിലനിൽപ്പിന് അത്യന്താപേക്ഷിതമായ വാതകമാണ് പ്രാണവായു എന്നറിയപ്പെടുന്ന ഓക്സിജൻ. അന്തരീക്ഷവായു, ജലം, ധാതുക്കൾ, ജീവജാലങ്ങൾ എന്നിവയിലെല്ലാം ഓക്സിജൻ സ്വതന്ത്രാവസ്ഥയിലോ സംയുക്താവസ്ഥയിലോ കാണപ്പെടുന്നു.</span> Oxygen is the <b>most abundant element in the Earth's crust</b>. It is the gas absolutely necessary for life, known as <b>prāṇavāyu</b>, the "life gas". Oxygen is found in air, water, minerals and living things, either in the <b>free state</b> <span class="ml">സ്വതന്ത്രാവസ്ഥ</span> (O₂ in air, dissolved O₂ in water) or in the <b>combined state</b> <span class="ml">സംയുക്താവസ്ഥ</span> (in water H₂O, in sand SiO₂, in limestone CaCO₃, in sugar and proteins).</p>
+
+<!-- ================= 2 ================= -->
+<h2 id="lab">2. Making oxygen in the laboratory (Fig 7.9)</h2>
+<p><span class="ml">പരീക്ഷണശാലയിൽ ഓക്സിജൻ നിർമ്മിക്കുന്നതിന്റെ ചിത്രം നൽകിയിരിക്കുന്നത് നിരീക്ഷിക്കുക.</span> Observe the picture of how oxygen is made in the laboratory. <span class="ml">പൊട്ടാസ്യം പെർമാംഗനേറ്റ് (KMnO₄) എടുത്തിരിക്കുന്ന ബോയിലിങ് ട്യൂബ് ചൂടാക്കുക.</span> A boiling tube containing <b>potassium permanganate</b> (KMnO₄) is heated. <span class="ml">ബോയിലിങ് ട്യൂബിലേക്ക് എരിയുന്ന തീപ്പെട്ടിക്കൊള്ളി കടത്തി വയ്ക്കുക.</span> A burning matchstick is then brought into the boiling tube.</p>
+<div class="safety">⚠️ <b>Teacher demonstration only.</b> Heating KMnO₄ is done by the teacher, with goggles, a clamped tube pointing away from everyone, and only a small amount. Hot glass looks exactly like cold glass – never touch it. KMnO₄ is a strong oxidiser: keep it away from fuels and skin, and never heat it in a closed vessel.</div>
+<div class="lab" id="o2Lab">
+  <div class="lab-title">🔥 Virtual teacher demo – Fig 7.9: heating potassium permanganate</div>
+  <div class="svgscroll"><svg id="o2Svg" viewBox="0 0 800 400" role="img" aria-label="Figure 7.9 redrawn. A boiling tube held by a clamp on a stand, with dark purple potassium permanganate crystals at the bottom and a spirit lamp under it. When heated, oxygen gas fills the tube. A burning matchstick held at the mouth of the tube burns more brightly, and a glowing splinter bursts into flame."></svg></div>
+  <div class="controls"><button class="btn primary" id="oHeat">① Teacher heats the tube</button><button class="btn" id="oMatch">② Burning matchstick at the mouth</button><button class="btn" id="oGlow">③ Glowing splinter test</button><button class="btn ghost" id="oReset">⟲ Start again</button></div>
+  <div class="readout" id="o2Out"></div>
+  <p class="hint">The faint dots show the oxygen gas; in real life it is invisible. Try ② and ③ <b>before</b> heating too – what is different?</p>
+</div>
+<div class="qa"><p><b>Q (page 145).</b> <span class="ml mlq">ഈ രാസപ്രവർത്തനത്തിലെ അഭികാരകം ഏത്?</span> What is the reactant in this reaction?</p>
+<div class="yn" data-ans="2" data-why="Potassium permanganate, KMnO₄ – only one reactant, which breaks up on heating (a decomposition reaction)." data-hint="What was put into the boiling tube?"><button class="btn">zinc</button><button class="btn">calcium carbonate</button><button class="btn">potassium permanganate</button></div><div class="why"></div>
+<p><b>Q (page 145).</b> <span class="ml mlq">ബോയിലിങ് ട്യൂബിലേക്ക് എരിയുന്ന തീപ്പെട്ടിക്കൊള്ളി കടത്തി വയ്ക്കുക. നിരീക്ഷണം എന്ത്?</span> A burning matchstick is brought into the boiling tube. What do you observe?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">The matchstick <b>burns more brightly</b> (with a bigger, brighter flame). A <b>glowing</b> splinter <b>bursts into flame</b>. This shows that the gas formed is <b>oxygen</b>, which supports combustion <span class="ml">ജ്വലനസഹായി</span>.</div></div>
+<p><b>Q (page 145).</b> <span class="ml mlq">പ്രവർത്തനത്തിന്റെ രാസസമവാക്യം പൂർത്തിയാക്കുക.</span> Complete the chemical equation of the reaction.</p>
+<div class="eqc">2KMnO₄ <span class="arrlab"><small>heat · താപം</small>⟶</span> K₂MnO₄ + MnO₂ + <span class="gap">____</span></div>
+<div class="yn" data-ans="1" data-why="O₂. Oxygen atoms: left 2 × 4 = 8; right 4 (K₂MnO₄) + 2 (MnO₂) = 6, so 2 more O atoms = one O₂ molecule." data-hint="Count the oxygen atoms on each side. How many are missing on the right?"><button class="btn">O</button><button class="btn">O₂</button><button class="btn">2O₂</button><button class="btn">H₂O</button></div><div class="why"></div>
+<div class="reveal" data-btn="Show the balanced equation"><div class="answer"><span class="eqc" style="background:none;margin:.2em 0">2KMnO₄ <span class="arrlab"><small>heat</small>⟶</span> K₂MnO₄ + MnO₂ + O₂↑</span>
+Check: K 2 = 2 · Mn 2 = 1 + 1 · O 8 = 4 + 2 + 2. Balanced. The products are potassium manganate (green), manganese dioxide (black) and oxygen.</div></div></div>
+
+<div class="sidebox"><div class="title">📜 The discovery of oxygen <span class="ml">ഓക്സിജന്റെ കണ്ടുപിടുത്തം</span> (page 146)</div>
+<span class="ml keyml">1774ൽ ജോസഫ് പ്രീസ്റ്റ്ലി എന്ന ശാസ്ത്രജ്ഞനാണ് ഓക്സിജൻ വാതകം കണ്ടുപിടിച്ചത്. എന്നാൽ ഓക്സിജൻ എന്ന പേര് നൽകിയത് ലാവോസിയെ എന്ന ഫ്രഞ്ച് ശാസ്ത്രജ്ഞനാണ്. ആസിഡ് ഉണ്ടാക്കുന്നത് എന്നർഥം വരുന്ന oxygenes ഗ്രീക്കുപദത്തിൽ നിന്നാണ് ഓക്സിജൻ എന്ന പേര് സ്വീകരിച്ചത്.</span>
+<p>Oxygen gas was discovered in <b>1774</b> by the scientist <b>Joseph Priestley</b> (1733–1804). But the name "oxygen" was given by the French scientist <b>Lavoisier</b>. It comes from the Greek word <i>oxygenes</i>, meaning "<b>acid producer</b>".</p></div>
+
+<!-- ================= 3 ================= -->
+<h2 id="t75">3. Physical properties of oxygen – Table 7.5</h2>
+<div class="qbox"><p><span class="ml mlq">ചുവടെ തന്നിരിക്കുന്നവയിൽ ഓക്സിജന്റെ ഭൗതിക ഗുണങ്ങൾക്ക് യോജിച്ചവ കണ്ടെത്തി എഴുതുക.</span> From the choices given, find the ones that match the physical properties of oxygen. Choose, then press <b>Check</b>.</p>
+<div id="ft75"></div></div>
+<div class="callout think"><div class="title">🐟 Slightly soluble – but enough!</div>
+<p style="margin:0">Only a little oxygen dissolves in water (about 8–9 mg in a litre of water at room temperature), but that is enough for fish and other water animals to breathe through their gills. Warm or polluted water holds even less, which is why fish die in a stagnant, dirty pond.</p></div>
+
+<!-- ================= 4 ================= -->
+<h2 id="elec">4. Oxygen in industry – electrolysis of water</h2>
+<p><span class="ml">വ്യാവസായികമായി ഓക്സിജൻ നിർമ്മിക്കുന്നത് ജലത്തിന്റെ വൈദ്യുത വിശ്ലേഷണത്തിലൂടെയാണ്.</span> Industrially, oxygen is made by the <b>electrolysis of water</b> <span class="ml">ജലത്തിന്റെ വൈദ്യുതവിശ്ലേഷണം</span>.</p>
+<div class="eqc">2H₂O <span class="arrlab"><small>electrolysis · വൈദ്യുതവിശ്ലേഷണം</small>⟶</span> 2H₂ + O₂</div>
+<div class="lab" id="elLab">
+  <div class="lab-title">⚡ Electrolysis of water – two volumes of hydrogen, one of oxygen</div>
+  <div class="svgscroll"><svg id="elSvg" viewBox="0 0 800 330" role="img" aria-label="A vessel of water with two electrodes connected to a battery. Gas collects in an upturned tube over each electrode: hydrogen at the negative electrode and oxygen at the positive electrode. The hydrogen tube fills twice as fast as the oxygen tube."></svg></div>
+  <div class="controls"><button class="btn primary" id="elOn">⚡ Switch on the current</button><button class="btn ghost" id="elReset">⟲ Reset</button></div>
+  <div class="readout" id="elOut"></div>
+  <p class="hint">Pure water hardly conducts electricity, so a little acid or salt is added in practice. The equation tells you why the volumes are 2 : 1 – two molecules of H₂ for every molecule of O₂.</p>
+</div>
+
+<!-- ================= 5 ================= -->
+<h2 id="chem">5. Chemical properties of oxygen <span class="ml">ഓക്സിജന്റെ പ്രധാന രാസഗുണങ്ങൾ</span></h2>
+<p><span class="ml">ഓക്സിജൻ ലോഹങ്ങളുമായും അലോഹങ്ങളുമായും പ്രവർത്തിച്ച് അവയുടെ ഓക്സൈഡുകൾ ഉണ്ടാകുന്നു.</span> Oxygen reacts with <b>metals</b> <span class="ml">ലോഹങ്ങൾ</span> and with <b>non-metals</b> <span class="ml">അലോഹങ്ങൾ</span> to form their <b>oxides</b>. <span class="ml">കാർബൺ, ഹൈഡ്രജൻ മുതലായ അലോഹങ്ങളുമായി ഓക്സിജൻ പ്രവർത്തിക്കുമ്പോൾ യഥാക്രമം കാർബൺ ഡൈഓക്സൈഡും ജലവും ഉണ്ടാകുന്നു.</span> With non-metals such as carbon and hydrogen it forms carbon dioxide and water respectively.</p>
+<div class="qa"><p><b>Q (page 146).</b> Complete the equations.</p>
+<div class="ask"><p><span class="eqc" style="display:inline-block;margin:0 .3rem;padding:.15em .6em">C + O₂ → <span class="gap">……</span></span></p>
+<div class="yn" data-ans="1" data-why="C + O₂ → CO₂ (carbon dioxide). 1 C and 2 O on each side." data-hint="Plenty of oxygen: each carbon atom gets two oxygen atoms."><button class="btn">CO</button><button class="btn">CO₂</button><button class="btn">2CO</button></div><div class="why"></div></div>
+<div class="ask"><p><span class="eqc" style="display:inline-block;margin:0 .3rem;padding:.15em .6em">2H₂ + O₂ → <span class="gap">……</span></span></p>
+<div class="yn" data-ans="2" data-why="2H₂ + O₂ → 2H₂O. H: 4 = 4, O: 2 = 2." data-hint="Count: 4 H atoms and 2 O atoms on the left."><button class="btn">H₂O</button><button class="btn">H₂O₂</button><button class="btn">2H₂O</button></div><div class="why"></div></div>
+<div class="reveal" data-btn="Show both"><div class="answer"><b>C + O₂ → CO₂</b> &nbsp;&nbsp; and &nbsp;&nbsp; <b>2H₂ + O₂ → 2H₂O</b>. Both are combination reactions, and both give out heat.</div></div></div>
+
+<h3 id="tarnish">Why do metals lose their shine?</h3>
+<p><span class="ml">വിവിധ ലോഹങ്ങളുമായി ഓക്സിജൻ പ്രവർത്തിക്കുമ്പോൾ കാലക്രമേണ അവയുടെ തിളക്കം നഷ്ടപ്പെടുന്നത് കണ്ടിട്ടില്ലേ? ഇതിനുകാരണം എന്താണെന്ന് ബോധ്യമായല്ലോ.</span> Have you noticed that metals slowly <b>lose their shine</b> when oxygen acts on them? A new copper kindi or a freshly scrubbed aluminium vessel shines, but in a few weeks it looks dull. Slide time forward.</p>
+<div class="lab" id="tnLab">
+  <div class="lab-title">🫖 Metals in air – watch the shine fade</div>
+  <div class="svgscroll"><svg id="tnSvg" viewBox="0 0 800 280" role="img" aria-label="Three metal plates – copper, aluminium and iron – exposed to air. As the months pass, oxygen molecules settle on the surfaces and a dull layer of oxide forms: copper turns dark brown, aluminium turns dull grey, and iron in moist air gets brown rust. A magnified edge shows the thin oxide layer on top of the shiny metal."></svg></div>
+  <div class="controls"><label>Time in air <input type="range" id="tnT" min="0" max="12" step="1" value="0" data-fmt="{v} months"><output></output></label><button class="btn" id="tnPolish">✨ Polish them again</button></div>
+  <div class="readout" id="tnOut"></div>
+</div>
+<div class="qa"><p><b>Q (page 146).</b> Why do metals lose their shine over time?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">Oxygen in the air reacts slowly with the surface of the metal and forms a thin layer of the <b>metal oxide</b>, which is dull. For example, <b>2Cu + O₂ → 2CuO</b> (black copper oxide) and <b>4Al + 3O₂ → 2Al₂O₃</b>. The shine is the bare metal; the oxide layer hides it. Scrubbing with tamarind or a cleaning powder removes the oxide layer and the shine comes back. (Iron needs both oxygen and water to rust.)</div></div></div>
+
+<!-- ================= 6 ================= -->
+<h2 id="uses">6. Uses of oxygen <span class="ml">ഓക്സിജന്റെ ഉപയോഗങ്ങൾ</span></h2>
+<div class="usegrid">
+<div class="card"><span class="ic">🔥</span><b>Supporter of combustion <span class="ml">ജ്വലനസഹായി</span></b><p>Nothing burns without oxygen: in kitchens, engines and power stations.</p></div>
+<div class="card"><span class="ic">🚀</span><b>Rocket fuels</b><p>Liquid oxygen is the <b>oxidiser</b> in rocket fuels <span class="ml">റോക്കറ്റ് ഇന്ധനങ്ങളിൽ ഓക്സീകാരിയായി</span> – there is no air in space.</p></div>
+<div class="card"><span class="ic">🏥</span><b>Artificial respiration</b><p>Hospital oxygen for patients who cannot breathe well <span class="ml">കൃത്രിമ ശ്വസനത്തിന്</span>; also for divers and mountaineers.</p></div>
+<div class="card"><span class="ic">🧑‍🏭</span><b>Oxy-acetylene welding</b><p>The very hot oxy-acetylene flame cuts and welds metals <span class="ml">ഓക്സി-അസറ്റിലിൻ ജ്വാല വെൽഡിംഗിന്</span>.</p></div></div>
+
+<!-- ================= 7 ================= -->
+<h2 id="ozone">7. Ozone (O₃) <span class="ml">ഓസോൺ</span></h2>
+<p><span class="ml">ഓക്സിജൻ ഒരു ദ്വയാറ്റോമിക തന്മാത്രയാണെന്ന് മനസിലായല്ലോ. എന്നാൽ മൂന്ന് ഓക്സിജൻ ആറ്റങ്ങൾ കൂടിച്ചേർന്നുണ്ടാകുന്ന തന്മാത്രയാണ് ഓസോൺ (O₃). അന്തരീക്ഷത്തിലെ സ്ട്രാറ്റോസ്ഫിയറിലാണ് ഓസോൺ കൂടുതലായി കാണപ്പെടുന്നത്.</span> Oxygen is a <b>diatomic molecule</b> <span class="ml">ദ്വയാറ്റോമിക തന്മാത്ര</span>, O₂. <b>Ozone</b> is a molecule made of <b>three oxygen atoms</b>, O₃. Most of the ozone is in the <b>stratosphere</b>, the layer of the atmosphere about 15–35 km above the ground.</p>
+<p><span class="ml">അന്തരീക്ഷ ഓക്സിജൻ ഊർജം കൂടിയ അൾട്രാവയലറ്റ് വികിരണങ്ങളെ (UV radiations) ആഗിരണം ചെയ്ത് വിഘടിക്കുന്നു. ഇങ്ങനെ ഉണ്ടാകുന്ന ഓക്സിജൻ ആറ്റങ്ങൾ ഓക്സിജൻ തന്മാത്രകളുമായി സംയോജിച്ച് ഓസോൺ തന്മാത്രകളായി മാറുന്നു.</span> Oxygen in the upper atmosphere absorbs <b>high-energy ultraviolet radiations</b> <span class="ml">അൾട്രാവയലറ്റ് വികിരണങ്ങൾ</span> and splits up. The oxygen atoms formed combine with oxygen molecules to become ozone molecules:</p>
+<div class="eqc">3O₂ <span class="arrlab"><small>UV radiation</small>⇌</span> 2O₃</div>
+<p><span class="ml">ഈ പ്രവർത്തനം നടക്കുന്നത് ചുവടെ നൽകിയിരിക്കുന്ന ഘട്ടങ്ങളിലൂടെയാണ്.</span> This takes place in the following steps:</p>
+<div class="eqc">O₂ <span class="arrlab"><small>UV</small>⟶</span> 2O &nbsp;&nbsp;&nbsp;&nbsp; O₂ + O → O₃</div>
+<div class="callout key"><div class="title">⭐ The ozone–oxygen cycle (page 147)</div>
+<span class="ml keyml">ഓസോൺ ഊർജം കുറഞ്ഞ അൾട്രാവയലറ്റ് വികിരണങ്ങളെ ആഗിരണം ചെയ്ത് വീണ്ടും ഓക്സിജനായി മാറുന്നു. ഈ ചാക്രിക പ്രവർത്തനത്തിന്റെ ഫലമായി അന്തരീക്ഷത്തിലെ ഓസോണിന്റെ അളവ് സ്ഥിരമായി നിലനിൽക്കുന്നു. ഈ പ്രവർത്തനത്തിൽ ഊർജത്തിനായി സൂര്യനിൽനിന്നു വരുന്ന അൾട്രാവയലറ്റ് വികിരണങ്ങൾ ഉപയോഗപ്പെടുത്തുന്നതിനാൽ മാരകമായ ഇത്തരം വികിരണങ്ങൾ അമിതമായി ഭൂമിയിൽ എത്തുന്നില്ല. ഓസോൺ ഒരു ഗ്രീൻ ഹൗസ് വാതകമാണ്.</span>
+<p style="margin:0">Ozone absorbs <b>lower-energy UV radiation</b> and changes back into oxygen (O₃ → O₂ + O). Because of this <b>cycle</b>, the amount of ozone in the atmosphere stays <b>steady</b>. Since the cycle <b>uses up</b> the Sun's UV radiation for its energy, these deadly rays do not reach the Earth in large amounts. Ozone is also a <b>greenhouse gas</b> <span class="ml">ഗ്രീൻ ഹൗസ് വാതകം</span>.</p></div>
+
+<div class="lab" id="ozLab">
+  <div class="lab-title">☀️ The ozone layer – cycle and CFC attack</div>
+  <div class="svgscroll"><svg id="ozSvg" viewBox="0 0 800 430" role="img" aria-label="A slice of the atmosphere. The Sun at the top sends ultraviolet rays down. In the stratosphere band, oxygen molecules split into oxygen atoms when hit by high-energy UV, the atoms join oxygen molecules to make ozone, and ozone absorbs lower-energy UV and splits back into oxygen. A counter shows the number of ozone molecules and a meter at the ground shows how much UV gets through. When CFCs are released from old refrigerators and air conditioners on the ground, they drift up, are broken by UV and release chlorine atoms that destroy ozone, so more UV reaches the ground."></svg></div>
+  <div class="controls"><button class="btn primary" id="ozRun">▶ Run the cycle (30 s)</button><button class="btn" id="ozUV">☀️ UV: on</button>
+    <label>CFCs released <select id="ozCFC"><option value="0">none</option><option value="2">some (a few old fridges)</option><option value="6">a lot</option></select></label><button class="btn ghost" id="ozReset">⟲ Reset</button></div>
+  <div class="readout" id="ozOut"></div>
+  <p class="hint">A model with a few dozen molecules standing for billions. Real CFCs take years to reach the stratosphere, and one chlorine atom can destroy many thousands of ozone molecules before it is removed.</p>
+</div>
+
+<h3 id="depletion">Depletion of the ozone layer <span class="ml">ഓസോൺ പാളിയുടെ ശോഷണം</span></h3>
+<p><span class="ml">ക്ലോറോഫ്ലൂറോകാർബൺ (CFC) ഓസോൺ പാളിയുടെ ശോഷണത്തിന് കാരണമാകുന്നു. അന്തരീക്ഷത്തിൽ കലരുന്ന ക്ലോറോഫ്ലൂറോകാർബണുകൾ സ്ട്രാറ്റോസ്ഫിയറിലെത്തി സ്വയം വിഘടിച്ചുണ്ടാകുന്ന ക്ലോറിൻ, ഓസോൺ തന്മാത്രയെ വിഘടിപ്പിച്ച് ഓക്സിജനാക്കി മാറ്റുന്നു. ഇത് ഓസോൺ-ഓക്സിജൻ ചാക്രിക പ്രവാഹത്തെ അസന്തുലിതമാക്കുന്നു.</span> <b>Chlorofluorocarbons (CFCs)</b> <span class="ml">ക്ലോറോഫ്ലൂറോകാർബണുകൾ</span> cause the <b>depletion of the ozone layer</b> <span class="ml">ഓസോൺ പാളിയുടെ ശോഷണം</span>. CFCs released into the air reach the stratosphere and break up, giving <b>chlorine</b>. The chlorine splits ozone molecules and turns them into oxygen. This <b>upsets the balance</b> of the ozone–oxygen cycle. Less ozone means less UV is absorbed – so more harmful UV reaches the ground (sunburn, skin cancer, eye cataracts, damage to crops and plankton).</p>
+<div class="further"><div class="title">🔭 Go further – how one chlorine atom does so much damage</div>
+<span class="eqc">Cl + O₃ → ClO + O₂</span><span class="eqc">ClO + O → Cl + O₂</span>
+<p style="margin:0">The chlorine atom comes out again at the end, ready to attack another ozone molecule. It is a <b>catalyst</b>: it is not used up. Adding the two steps gives O₃ + O → 2O₂.</p></div>
+
+<div class="sidebox"><div class="title">🧊 Chlorofluorocarbons (CFC) (page 147)</div>
+<span class="ml keyml">ക്ലോറിൻ, ഫ്ലൂറിൻ, കാർബൺ എന്നീ ആറ്റങ്ങൾ അടങ്ങിയ ഒരു വിഭാഗം സംയുക്തങ്ങളാണ് ക്ലോറോഫ്ലൂറോകാർബണുകൾ അഥവാ CFC. ഇവയെ മർദം ഉപയോഗിച്ച് എളുപ്പത്തിൽ ദ്രവീകരിക്കാൻ കഴിയും. … സെപ്റ്റംബർ 16 അന്താരാഷ്ട്ര ഓസോൺ ദിനമായി ആചരിക്കുന്നു.</span>
+<ul style="margin:.2rem 0 0">
+<li>CFCs are a group of compounds containing <b>chlorine, fluorine and carbon</b> atoms.</li>
+<li>They are <b>easily liquefied</b> by pressure. Liquid CFCs cool their surroundings well when they evaporate, so they were used in <b>refrigerators, ACs</b> and similar devices.</li>
+<li>When these devices are thrown away carelessly, the CFC escapes into the air. CFCs cause the depletion of the ozone layer.</li>
+<li>Compounds <b>without chlorine</b> are now used instead: <b>hydrofluorocarbons (HFC)</b>, liquefied <b>hydrocarbons</b>, liquid <b>ammonia</b> and <b>solid carbon dioxide</b>.</li>
+<li><b>September 16</b> is observed as <b>International Ozone Day</b>.</li></ul></div>
+
+<!-- ================= 8 ================= -->
+<h2 id="activities">8. Note and seminar (page 147)</h2>
+<div class="qa"><p><b>Activity 1.</b> <span class="ml mlq">അന്തരീക്ഷ വായുവിൽ ഓക്സിജന്റെ അളവ് ഒരു പരിധിയിൽ കുറയാതെ സ്ഥിരമായി നിലനിർത്തുന്നതിന് സസ്യങ്ങൾക്കുള്ള പങ്കിനെക്കുറിച്ച് ഒരു കുറിപ്പ് തയ്യാറാക്കി ക്ലാസിൽ അവതരിപ്പിക്കുക.</span> Prepare a note on the role of plants in keeping the amount of oxygen in the air steady, and present it in class.</p>
+<div class="reveal" data-btn="Show a model note"><div class="answer">
+<b>Plants – the oxygen keepers</b><br>
+Every living thing uses oxygen for respiration, and fuels use oxygen when they burn. Yet the oxygen in air stays at about 21 %. The main reason is <b>photosynthesis</b>. Green plants (and the tiny algae and plankton in the sea) take in carbon dioxide and water and, using sunlight and chlorophyll, make glucose and give out oxygen:
+<span class="eqc" style="background:none;margin:.3em 0">6CO₂ + 6H₂O <span class="arrlab"><small>sunlight, chlorophyll</small>⟶</span> C₆H₁₂O₆ + 6O₂</span>
+So plants put back the oxygen that respiration and burning remove, and at the same time take away carbon dioxide. Forests, mangroves, paddy fields and even home gardens help. Cutting forests and filling up wetlands reduce this natural supply. <b>What we can do:</b> plant and protect trees (a tree on every school campus and birthday), save the mangroves, and burn less fuel.</div></div></div>
+<div class="qa"><p><b>Activity 2.</b> <span class="ml mlq">ഓസോൺ ശോഷണവും പരിഹാരമാർഗങ്ങളും എന്ന വിഷയത്തെ ആസ്പദമാക്കി ഒരു സെമിനാർ സംഘടിപ്പിക്കുക.</span> Organise a seminar on "Ozone depletion and remedies".</p>
+<div class="reveal" data-btn="Show a seminar outline"><div class="answer">
+<ol style="margin:.2rem 0">
+<li><b>Introduction</b> – what ozone is (O₃), where it is (stratosphere), and why it is called Earth's sunscreen.</li>
+<li><b>The ozone–oxygen cycle</b> – O₂ → 2O, O₂ + O → O₃, ozone absorbs UV and changes back; the amount stays steady (use the lab above).</li>
+<li><b>Causes of depletion</b> – CFCs from old refrigerators, ACs and some aerosol sprays release chlorine in the stratosphere.</li>
+<li><b>Effects</b> – more UV at the ground: sunburn, skin cancer, cataracts, weaker immunity, harm to crops and sea life.</li>
+<li><b>Remedies</b> – use CFC-free (HFC, hydrocarbon or ammonia) refrigerators and ACs; dispose of old appliances through authorised dealers so the gas is recovered; avoid CFC sprays; spread awareness on Ozone Day, 16 September. Countries agreed in the <b>Montreal Protocol</b> (1987) to phase out CFCs, and the ozone layer is slowly healing.</li>
+<li><b>Conclusion</b> and questions from the audience.</li></ol>
+Roles: chairperson, 4–5 speakers (one per section), a poster team, a note-taker who writes the seminar report.</div></div></div>
+
+<div class="callout warn"><div class="title">⚠️ Common mistakes</div>
+<ul style="margin:0">
+<li>Leaving out O₂ in the KMnO₄ equation or writing just "O" ✗ – oxygen gas is O₂.</li>
+<li>Using a <b>burning</b> splinter "pop" to test oxygen ✗ – that is the hydrogen test. Oxygen makes a <b>glowing</b> splinter burst into flame.</li>
+<li>"Oxygen burns" ✗ – oxygen does not burn; it <b>helps</b> other things burn (Table 7.5).</li>
+<li>"Ozone in the stratosphere is harmful" ✗ – up there it protects us by absorbing UV. The problem is the CFCs that destroy it.</li></ul></div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://en.wikipedia.org/wiki/Joseph_Priestley" target="_blank" rel="noopener noreferrer">📄 Joseph Priestley</a> <span class="src">Wikipedia</span><br><span class="note">Discovered oxygen in 1774.</span></li><li><a href="https://en.wikipedia.org/wiki/Ozone_layer" target="_blank" rel="noopener noreferrer">📄 Ozone layer</a> <span class="src">Wikipedia</span><br><span class="note">How ozone absorbs harmful ultraviolet rays.</span></li><li><a href="https://en.wikipedia.org/wiki/Ozone_depletion" target="_blank" rel="noopener noreferrer">📄 Ozone depletion</a> <span class="src">Wikipedia</span><br><span class="note">How CFCs destroy ozone.</span></li><li><a href="https://en.wikipedia.org/wiki/Chlorofluorocarbon" target="_blank" rel="noopener noreferrer">📄 Chlorofluorocarbon</a> <span class="src">Wikipedia</span><br><span class="note">CFCs in old refrigerators and air conditioners.</span></li><li><a href="https://en.wikipedia.org/wiki/Montreal_Protocol" target="_blank" rel="noopener noreferrer">📄 Montreal Protocol</a> <span class="src">Wikipedia</span><br><span class="note">The agreement to protect the ozone layer (Ozone Day, 16 September).</span></li><li><a href="https://ozone.unep.org/" target="_blank" rel="noopener noreferrer">📄 Ozone Secretariat (UNEP)</a> <span class="src">United Nations Environment Programme</span><br><span class="note">Official site on protecting the ozone layer.</span></li></ul></div>
+<h2 id="check">9. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li>Oxygen is the most abundant element in the Earth's crust; the "life gas" <span class="ml">പ്രാണവായു</span>. Discovered by Priestley (1774), named by Lavoisier (<i>oxygenes</i>, "acid producer").</li>
+<li>Lab: <b>2KMnO₄ → K₂MnO₄ + MnO₂ + O₂</b> on heating (teacher). Test: a glowing splinter bursts into flame. Industry: <b>2H₂O → 2H₂ + O₂</b> by electrolysis.</li>
+<li>Colourless, odourless, slightly soluble in water; does not burn but supports burning <span class="ml">ജ്വലനസഹായി</span>.</li>
+<li>Forms oxides: <b>C + O₂ → CO₂</b>, <b>2H₂ + O₂ → 2H₂O</b>; metals lose their shine as an oxide layer forms. Uses: combustion, rocket fuels, artificial respiration, oxy-acetylene welding.</li>
+<li>Ozone O₃ in the stratosphere: <b>O₂ → 2O</b> (UV), <b>O₂ + O → O₃</b>; ozone absorbs UV and changes back – a cycle that keeps ozone steady and stops harmful UV. CFCs release chlorine that destroys ozone. Ozone Day: 16 September.</li></ul></div>
+<p>Next: <a href="09_chlorine.html">Chlorine, bleaching and the chloride test ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Non-metals · Class 9 Chemistry", "icon": "💨", "key": "chemistry_ch7_progress", "pages": [["index.html", "Home"], ["01_metals_nonmetals_recap.html", "1 · Metals, Non-metals & Metalloids – Recap"], ["02_gases_tests_equations.html", "2 · Gases, Lab Apparatus, Tests & Equations"], ["03_hydrogen.html", "3 · Hydrogen: Preparation, Properties & Uses"], ["04_hydrogen_fuel.html", "4 · Hydrogen as a Fuel & Calorific Value"], ["05_carbon_allotropes.html", "5 · Carbon & Its Allotropes"], ["06_carbon_compounds.html", "6 · CO₂, CO, Carbonates & Bicarbonates"], ["07_nitrogen.html", "7 · Nitrogen, Nitrogen Fixation & Fertilisers"], ["08_oxygen_ozone.html", "8 · Oxygen, Ozone & the Ozone Layer"], ["09_chlorine.html", "9 · Chlorine, Bleaching & Chloride Test"], ["10_intext_questions_solutions.html", "10 · In-text Questions – Solutions"], ["11_assess_solutions.html", "11 · Let Us Assess & Extended Activities – Solutions"], ["12_applications_explore.html", "12 · Applications & Explore Online"], ["13_summary_revision.html", "13 · Summary & Quick Quiz"], ["14_model_test_paper.html", "14 · Model Test Paper"], ["15_model_test_solutions.html", "15 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ==== common helpers (same code on pages 06–08) ==== */
+const {P, el} = K;
+const $id = id => document.getElementById(id);
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+const CV = c => (c === 'none' ? 'none' : ((c.charAt(0) === '#' || c.startsWith('var(') || c.startsWith('rgb') || c.startsWith('url')) ? c : `var(--${c === 'amber' ? 'accent' : c})`));
+/* text: fs = font size (px), o.c colour class, o.w weight, o.a anchor, o.fill fixed colour */
+function T(svg, x, y, s, fs = 14, o = {}){ return el('text', {x, y, class: 'lbl' + (o.c ? ' ' + o.c : ''), 'text-anchor': o.a || 'middle', 'dominant-baseline': 'middle',
+  style: `font-size:${fs}px;font-weight:${o.w || 400}` + (o.fill ? `;fill:${o.fill}` : '') + (o.st ? ';' + o.st : ''), text: s}, svg); }
+function rect(svg, x, y, w, h, style, rx = 0){ return el('rect', {x, y, width: Math.max(0, w), height: Math.max(0, h), rx, style}, svg); }
+function circ(svg, x, y, r, style){ return el('circle', {cx: x, cy: y, r: Math.max(0, r), style}, svg); }
+function ln(svg, x1, y1, x2, y2, c = 'text', w = 2, extra = ''){ return el('line', {x1, y1, x2, y2, style: `stroke:${CV(c)};stroke-width:${w};stroke-linecap:round;${extra}`}, svg); }
+function pth(svg, d, style){ return el('path', {d, style}, svg); }
+function arrow(svg, a, b, c = 'text', w = 2.2, head = 9){ const L = K.dist(a, b); if (L < 2) return; const u = K.unit(a, b), hh = Math.min(head, L * .6), hb = P(b.x - u.x * hh, b.y - u.y * hh); ln(svg, a.x, a.y, hb.x, hb.y, c, w);
+  el('polygon', {points: `${b.x},${b.y} ${hb.x + u.y * hh * .55},${hb.y - u.x * hh * .55} ${hb.x - u.y * hh * .55},${hb.y + u.x * hh * .55}`, style: `fill:${CV(c)}`}, svg); }
+const H = (en, ml) => `${en} <span class="ml">${ml}</span>`;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+/* animation loop: fn(dt) returns false to stop; returns a stop() function */
+function loop(fn){ let last = performance.now(), raf = 0, on = true;
+  const f = now => { if (!on) return; const dt = Math.min(.05, Math.max(0, (now - last) / 1000)); last = now; if (fn(dt) === false){ on = false; return; } raf = requestAnimationFrame(f); };
+  raf = requestAnimationFrame(f); return () => { on = false; cancelAnimationFrame(raf); }; }
+/* choice buttons: <div class="yn" data-ans="1" data-why="…" data-hint="…"><button>…</button>…</div><div class="why"></div> */
+function choices(root = document){ K.$$('.yn[data-ans]', root).forEach(bx => { if (bx.dataset.wired) return; bx.dataset.wired = 1; const ans = +bx.dataset.ans, why = bx.parentElement.querySelector('.why');
+  K.$$('button', bx).forEach((b, k) => b.addEventListener('click', () => { K.$$('button', bx).forEach(x => x.classList.remove('ok', 'bad')); b.classList.add(k === ans ? 'ok' : 'bad');
+    if (why){ why.innerHTML = k === ans ? '✅ ' + (bx.dataset.why || 'Correct.') : '❌ ' + (bx.dataset.hint || 'Not quite – think again.'); why.style.color = k === ans ? 'var(--green)' : 'var(--red)'; } })); }); }
+/* ---- interactive fill-in table: cell = 'given html' | {g, l} | {s:[options], a, lab} (choose) ---- */
+const tNorm = s => String(s).trim().toLowerCase().replace(/[\s.()·]+/g, '');
+function fillTable(id, spec){
+  const root = $id(id);
+  const cell = c => { if (c && typeof c === 'object' && 'g' in c) return `<td class="given${c.l ? ' l' : ''}">${c.g}</td>`;
+    if (c && typeof c === 'object' && c.s) return `<td><select data-a="${esc(c.a)}" data-alt="" aria-label="${esc(c.lab || 'answer')}"><option value="">– choose –</option>${c.s.map(o => `<option value="${esc(o)}">${o}</option>`).join('')}</select></td>`;
+    return `<td class="given">${c}</td>`; };
+  root.insertAdjacentHTML('beforeend', `<div class="tw"><table class="ft"><thead><tr>${spec.head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${spec.rows.map(r => `<tr>${r.map(cell).join('')}</tr>`).join('')}</tbody></table></div>
+    <div class="controls"><button class="btn primary" data-f="check">✔ Check my answers</button><button class="btn ghost" data-f="clear">⟲ Clear</button><button class="btn" data-f="show">💡 Show answers</button></div><p class="score"></p>`);
+  const ins = K.$$('[data-a]', root).filter(x => x.matches('input,select')), score = root.querySelector('.score');
+  const right = inp => { const v = tNorm(inp.value); return v !== '' && tNorm(inp.dataset.a) === v; };
+  root.addEventListener('click', e => { const b = e.target.closest('button[data-f]'); if (!b) return; const f = b.dataset.f;
+    if (f === 'check'){ let ok = 0; ins.forEach(i => { const r = right(i); i.classList.toggle('ok', r); i.classList.toggle('bad', !r); if (r) ok++; });
+      score.textContent = ok === ins.length ? `🎉 All ${ins.length} correct!` : `${ok} of ${ins.length} correct – the red boxes need another look.` + (spec.hint ? ' ' + spec.hint : ''); }
+    else if (f === 'show'){ ins.forEach(i => { i.value = i.dataset.a; i.classList.add('ok'); i.classList.remove('bad'); }); score.textContent = 'All answers filled in (green). Cover them and try again tomorrow!'; }
+    else { ins.forEach(i => { i.value = ''; i.classList.remove('ok', 'bad'); }); score.textContent = ''; } });
+  const unmark = e => { if (e.target.matches('[data-a]')) e.target.classList.remove('ok', 'bad'); };
+  root.addEventListener('input', unmark); root.addEventListener('change', unmark);
+}
+/* small flame; s = size, f = flicker phase, hot = whiter */
+function flame(svg, cx, by, s, f = 0, hot = 0){ if (s <= .02) return; const k = 1 + .08 * Math.sin(f * 17);
+  pth(svg, `M${cx - 7 * s},${by} Q${cx - 9 * s},${by - 12 * s} ${cx},${by - 30 * s * k} Q${cx + 9 * s},${by - 12 * s} ${cx + 7 * s},${by} Z`, `fill:${hot > .5 ? '#fde68a' : '#f97316'};opacity:.9`);
+  pth(svg, `M${cx - 3.5 * s},${by} Q${cx - 4 * s},${by - 7 * s} ${cx},${by - 16 * s * k} Q${cx + 3.5 * s},${by - 7 * s} ${cx + 3.5 * s},${by} Z`, `fill:${hot > .5 ? '#ffffff' : '#fde047'}`); }
+const ATOM = {O: ['#ef4444', '#7f1d1d', '#fff'], Cl: ['#22c55e', '#14532d', '#fff'], F: ['#facc15', '#854d0e', '#0f172a'], C: ['#334155', '#0f172a', '#fff'], H: ['#f8fafc', '#475569', '#0f172a']};
+function atom(svg, x, y, e, r = 10){ const [f, s, tc] = ATOM[e]; circ(svg, x, y, r, `fill:${f};stroke:${s};stroke-width:1.1`); if (r >= 8) el('text', {x, y: y + .5, 'text-anchor': 'middle', 'dominant-baseline': 'middle', style: `font-size:${Math.round(r * (e.length > 1 ? .85 : 1.05))}px;font-weight:700;fill:${tc};font-family:Arial,sans-serif`, text: e}, svg); }
+/* ==== end common ==== */
+
+choices();
+
+/* ---------- Fig 7.9: heating KMnO4 ---------- */
+(function(){
+  const svg = $id('o2Svg'), out = $id('o2Out');
+  const TX = 400, TT = 70, TB = 290, HW = 20;
+  const dots = []; for (let k = 0; k < 50; k++) dots.push({x: Math.random() - .5, y: Math.random(), p: Math.random() * 6.28});
+  let st, stop = null;
+  function init(){ st = {heat: null, gas: 0, test: null, tt: 0, t: 0, msg: 'Step ①: the teacher heats the boiling tube.'}; }   /* heat: null = lamp not lit; test: null | 'match' | 'glow' */
+  function draw(){
+    K.clear(svg); const t = st.t, heating = st.heat !== null;
+    /* stand */
+    rect(svg, 220, 360, 360, 14, 'fill:#94a3b8;stroke:#475569;stroke-width:1.2', 4); rect(svg, 556, 60, 8, 300, 'fill:#94a3b8;stroke:#475569;stroke-width:1', 2);
+    rect(svg, TX + HW, 150, 556 - TX - HW, 7, 'fill:#64748b'); rect(svg, TX + HW - 2, 142, 14, 22, 'fill:#1f2937', 3);
+    /* spirit lamp */
+    pth(svg, `M${TX - 34},360 L${TX - 26},318 L${TX + 26},318 L${TX + 34},360 Z`, 'fill:#bfdbfe;opacity:.6;stroke:var(--text);stroke-width:1.6'); rect(svg, TX - 7, 306, 14, 14, 'fill:#94a3b8;stroke:var(--text);stroke-width:1.2', 2);
+    if (heating) flame(svg, TX, 306, 1.2, t);
+    /* KMnO4 and gas inside the tube */
+    const cr = st.heat === null ? 0 : Math.min(1, st.heat / 6);
+    for (let k = 0; k < 26; k++){ const x = TX - 14 + (k * 7) % 28, y = TB - 10 - Math.floor(k / 5) * 5 - (k % 2) * 2; const jig = heating ? Math.sin(t * 30 + k) * .8 : 0;
+      rect(svg, x + jig, y, 5, 4, `fill:${cr > .5 && k % 3 === 0 ? '#14532d' : cr > .7 && k % 3 === 1 ? '#1f2937' : '#6b21a8'};stroke:#3b0764;stroke-width:.5`, 1); }
+    if (st.gas > .01) dots.forEach(d => { if (d.y > st.gas) return; const y = TB - 34 - d.y * (TB - TT - 50) + Math.sin(t * 2 + d.p) * 3; circ(svg, TX + d.x * 26, y, 1.8, 'fill:#ef4444;opacity:.55'); });
+    pth(svg, `M${TX - HW - 4},${TT} L${TX - HW},${TT + 4} L${TX - HW},${TB - HW} A${HW},${HW} 0 0 0 ${TX + HW},${TB - HW} L${TX + HW},${TT + 4} L${TX + HW + 4},${TT}`, 'fill:none;stroke:var(--text);stroke-width:2.2;stroke-linejoin:round');
+    /* matchstick or splinter */
+    if (st.test){ const d = clamp(st.tt / 1, 0, 1), sx = TX - 4, sy = K.lerp(10, TT + 40, d);
+      const strong = st.gas > .3 && d > .8; ln(svg, sx, sy, sx + 70, sy - 60, st.test === 'match' ? '#fde68a' : '#a16207', st.test === 'match' ? 3 : 5);
+      if (st.test === 'match'){ circ(svg, sx, sy, 4, 'fill:#7f1d1d'); flame(svg, sx, sy, strong ? 1.6 : .8, t, strong ? 1 : 0); }
+      else { const lit = strong && st.tt > 1.2; if (lit){ circ(svg, sx, sy - 14, 20, 'fill:#fde047;opacity:.25'); flame(svg, sx, sy, 1.5, t, 1); } else { circ(svg, sx, sy, 4.5, 'fill:#f97316'); circ(svg, sx, sy, 8, 'fill:#f97316;opacity:.25'); } } }
+    /* labels */
+    T(svg, 250, 280, 'potassium', 13, {a: 'end', w: 700}); T(svg, 250, 296, 'permanganate (KMnO₄)', 13, {a: 'end', w: 700}); ln(svg, 254, 288, TX - 18, TB - 14, 'muted', 1);
+    T(svg, 250, 140, 'boiling tube', 13, {a: 'end', w: 700}); ln(svg, 254, 140, TX - HW, 160, 'muted', 1);
+    T(svg, 250, 336, 'spirit lamp', 13, {a: 'end', w: 700}); ln(svg, 254, 336, TX - 30, 340, 'muted', 1);
+    if (st.gas > .2) { T(svg, 600, 220, 'oxygen gas', 14, {a: 'start', w: 700, c: 'red'}); ln(svg, 596, 220, TX + 14, 200, 'red', 1); }
+    if (st.test) T(svg, 610, 40, st.test === 'match' ? (st.gas > .3 ? 'burns more brightly!' : 'burns normally') : (st.gas > .3 && st.tt > 1.2 ? 'bursts into flame!' : 'just glows…'), 17, {a: 'start', w: 800, c: st.gas > .3 ? 'red' : 'muted'});
+  }
+  function run(){ if (stop) return; let tk = 0, idle = 0;
+    stop = loop(dt => { st.t += dt; idle += dt;
+      if (st.heat !== null && st.heat < 8){ st.heat += dt; st.gas = Math.min(1, st.heat / 5); idle = 0; if (st.heat >= 8) st.msg = 'The tube is full of oxygen. The purple crystals have turned into a dark mixture (green K₂MnO₄ and black MnO₂). Now test the gas: ② or ③.'; }
+      if (st.test && st.tt < 3){ st.tt += dt; idle = 0; if (st.tt >= 3) st.msg = st.gas > .3 ? (st.test === 'match' ? 'The burning matchstick burns MORE BRIGHTLY in the tube. The gas supports combustion – it is oxygen.' : 'The glowing splinter BURSTS INTO FLAME. This is the test for oxygen.') : (st.test === 'match' ? 'Before heating the matchstick just burns as usual – the tube holds only air.' : 'Before heating the splinter only glows – air has too little oxygen to relight it.'); }
+      draw(); tk += dt; if (tk > .25){ tk = 0; out.textContent = st.msg; }
+      if (idle > 1.2){ out.textContent = st.msg; stop = null; return false; } }); }
+  $id('oHeat').addEventListener('click', () => { if (st.heat !== null) return; st.heat = 0; st.msg = 'Heating… the crystals crackle and a colourless gas is given off: 2KMnO₄ → K₂MnO₄ + MnO₂ + O₂.'; out.textContent = st.msg; run(); });
+  $id('oMatch').addEventListener('click', () => { st.test = 'match'; st.tt = 0; st.msg = 'Bringing a burning matchstick to the tube…'; run(); });
+  $id('oGlow').addEventListener('click', () => { st.test = 'glow'; st.tt = 0; st.msg = 'Blow out a burning splinter so it only glows, and bring it to the tube…'; run(); });
+  $id('oReset').addEventListener('click', () => { if (stop){ stop(); stop = null; } init(); draw(); out.textContent = st.msg; });
+  init(); draw(); out.textContent = st.msg;
+})();
+
+/* ---------- Table 7.5 ---------- */
+const YN = ['has (ഉണ്ട്)', 'has not (ഇല്ല)'], SOL = ['dissolves – slightly (ലയിക്കുന്നു)', 'does not dissolve (ലയിക്കുന്നില്ല)'], CMB = ['burns (കത്തുന്നു)', 'helps burning (കത്താൻ സഹായിക്കുന്നു)'];
+fillTable('ft75', {head: [H('Property', 'ഗുണം'), H('Oxygen', 'ഓക്സിജൻ')],
+  rows: [[{g: H('Colour', 'നിറം'), l: 1}, {s: YN, a: YN[1], lab: 'colour'}], [{g: H('Smell', 'ഗന്ധം'), l: 1}, {s: YN, a: YN[1], lab: 'smell'}],
+    [{g: H('Solubility in water', 'ജലത്തിലെ ലേയത്വം'), l: 1}, {s: SOL, a: SOL[0], lab: 'solubility'}], [{g: H('Combustion', 'ജ്വലന സ്വഭാവം'), l: 1}, {s: CMB, a: CMB[1], lab: 'combustion'}]],
+  hint: 'Fish breathe dissolved oxygen; the gas in the tube did not catch fire itself.'});
+
+/* ---------- electrolysis ---------- */
+(function(){
+  const svg = $id('elSvg'), out = $id('elOut');
+  const XL = 300, XR = 500, TT = 60, TB = 230, TW = 40;
+  let st, stop = null;
+  function init(){ st = {v: 0, on: false, t: 0}; }   /* v: oxygen volume fraction of its tube 0..0.5 */
+  function draw(){
+    K.clear(svg); const t = st.t;
+    rect(svg, 200, 140, 400, 160, 'fill:#93c5fd;opacity:.35', 6); pth(svg, 'M196,120 L200,124 L200,300 L600,300 L600,124 L604,120', 'fill:none;stroke:var(--text);stroke-width:2.4');
+    [[XL, 2 * st.v, 'H₂', 'hydrogen', '−'], [XR, st.v, 'O₂', 'oxygen', '+']].forEach(([x, f, sym, name, sign]) => {
+      const gh = (TB - TT - 10) * f; rect(svg, x - TW / 2 + 2, TT + 2, TW - 4, TB - TT - 2, 'fill:#93c5fd;opacity:.35'); rect(svg, x - TW / 2 + 2, TT + 2, TW - 4, gh, 'fill:var(--svgbg);opacity:.95');
+      pth(svg, `M${x - TW / 2},${TB} L${x - TW / 2},${TT + 10} A${TW / 2},${TW / 2} 0 0 1 ${x + TW / 2},${TT + 10} L${x + TW / 2},${TB}`, 'fill:none;stroke:var(--text);stroke-width:2');
+      for (let k = 0; k <= 4; k++) ln(svg, x + TW / 2 - 8, TT + 30 + k * 36, x + TW / 2, TT + 30 + k * 36, 'muted', 1);
+      rect(svg, x - 4, 240, 8, 60, 'fill:#475569', 1); T(svg, x + 14, 272, `${sign} electrode`, 12, {a: 'start', c: 'muted', w: 700});
+      if (st.on) for (let k = 0; k < (sym === 'H₂' ? 8 : 4); k++) circ(svg, x + Math.sin(k * 3 + t * 4) * 4, 240 - ((t * 70 + k * 23) % Math.max(10, 240 - (TT + gh))), 2.2, 'fill:none;stroke:#1e3a8a;stroke-width:1');
+      T(svg, x, 34, `${name} (${sym})`, 15, {w: 800, c: sym === 'O₂' ? 'red' : 'blue'}); T(svg, x + TW / 2 + 8, TT + 2 + gh / 2 + 4, f > .02 ? `${Math.round(f * 20)} mL` : '', 13, {a: 'start', w: 700}); });
+    /* battery and wires */
+    rect(svg, 690, 150, 70, 34, 'fill:var(--surface2);stroke:var(--text);stroke-width:1.6', 4); T(svg, 725, 167, st.on ? 'ON' : 'off', 13, {w: 800, c: st.on ? 'green' : 'muted'}); T(svg, 725, 136, 'battery', 12, {c: 'muted'});
+    pth(svg, `M${XL},300 L${XL},322 L740,322 L740,184`, 'fill:none;stroke:var(--blue);stroke-width:2'); pth(svg, `M${XR},300 L${XR},312 L710,312 L710,184`, 'fill:none;stroke:var(--red);stroke-width:2');
+    T(svg, 100, 170, 'H₂ : O₂', 16, {w: 800}); T(svg, 100, 196, st.v > .05 ? `${Math.round(40 * st.v)} : ${Math.round(20 * st.v)} = 2 : 1` : '– : –', 15, {w: 800, c: st.v > .05 ? 'green' : 'muted'}); }
+  function say(){ out.textContent = st.v < .01 ? 'Switch on: water splits into hydrogen and oxygen.'
+    : `Hydrogen collected: ${Math.round(40 * st.v)} mL · oxygen collected: ${Math.round(20 * st.v)} mL – always 2 : 1, just as 2H₂O → 2H₂ + O₂ says.` + (st.v >= .5 ? '\nTest: hydrogen burns with a "pop"; oxygen relights a glowing splinter.' : ''); }
+  $id('elOn').addEventListener('click', () => { if (stop) return; st.on = true; let tk = 0; stop = loop(dt => { st.t += dt; st.v = Math.min(.5, st.v + dt / 16); draw(); tk += dt; if (tk > .3){ tk = 0; say(); }
+    if (st.v >= .5){ st.on = false; draw(); say(); stop = null; return false; } }); });
+  $id('elReset').addEventListener('click', () => { if (stop){ stop(); stop = null; } init(); draw(); say(); });
+  init(); draw(); say();
+})();
+
+/* ---------- tarnishing ---------- */
+(function(){
+  const svg = $id('tnSvg'), out = $id('tnOut'), inp = $id('tnT');
+  const METALS = [['copper', '#f59e0b', '#d97706', '#3f1d0b', 1, 'copper oxide (dark)'], ['aluminium', '#e2e8f0', '#94a3b8', '#9ca3af', .45, 'aluminium oxide (dull grey)'], ['iron (moist air)', '#cbd5e1', '#64748b', '#9a3412', 1.3, 'rust (brown)']];
+  let m = 0;
+  function draw(){
+    K.clear(svg);
+    METALS.forEach(([name, c1, c2, ox, rate], i) => { const x = 40 + i * 250, w = 210, y = 48, h = 100, d = Math.min(1, m / 12 * rate);
+      rect(svg, x, y, w, h, `fill:${c1};stroke:${c2};stroke-width:2`, 10);
+      if (d < .6) pth(svg, `M${x + 20},${y + 20} L${x + 70},${y + 20} L${x + 30},${y + 90} L${x + 10},${y + 90} Z`, `fill:#ffffff;opacity:${.6 * (1 - d / .6)}`);
+      rect(svg, x, y, w, h, `fill:${ox};opacity:${.85 * d}`, 10);
+      for (let k = 0; k < Math.round(12 * d); k++) circ(svg, x + 14 + (k * 37) % (w - 28), y + 12 + ((k * 53) % (h - 24)), 2.5 + (k % 3), `fill:${ox};opacity:.7`);
+      T(svg, x + w / 2, 30, name, 15, {w: 800});
+      /* magnified edge */
+      const ey = 212; rect(svg, x + 30, ey, w - 60, 30, `fill:${c1};stroke:${c2};stroke-width:1.4`, 2); rect(svg, x + 30, ey - 12 * d, w - 60, 12 * d, `fill:${ox};opacity:.9`, 2);
+      for (let k = 0; k < 4; k++){ const ox2 = x + 50 + k * 34, oy = ey - 22 - 12 * d - ((m * 9 + k * 7) % 14); atom(svg, ox2 - 5, oy, 'O', 5); atom(svg, ox2 + 5, oy, 'O', 5); }
+      T(svg, x + w / 2, 256, d > .05 ? `layer of ${METALS[i][5]}` : 'bare, shiny metal', 12, {c: d > .05 ? 'red' : 'muted', w: 700}); });
+    T(svg, 400, 272, 'magnified edge: O₂ from the air reacts with the surface', 11, {c: 'muted'}); }
+  function say(){ out.textContent = m === 0 ? 'Freshly polished metals: bright and shiny.'
+    : `After ${m} month${m > 1 ? 's' : ''} in air: oxygen has reacted with the surface and a dull oxide layer has formed (2Cu + O₂ → 2CuO; 4Al + 3O₂ → 2Al₂O₃).` + (m >= 6 ? ' Aluminium stays only slightly dull: its thin oxide layer protects the metal underneath. Iron in moist air rusts badly – it needs both oxygen and water.' : ''); }
+  const run = K.slider('#tnT', v => { m = Math.round(v); draw(); say(); }, 0);
+  $id('tnPolish').addEventListener('click', () => { inp.value = 0; run(); });
+})();
+
+/* ---------- ozone layer ---------- */
+(function(){
+  const svg = $id('ozSvg'), out = $id('ozOut'), sel = $id('ozCFC'), uvBtn = $id('ozUV');
+  const SX0 = 40, SX1 = 640, SY0 = 120, SY1 = 250, GY = 380;
+  const PROD = 1, DEST = .1, KCL = .03;   /* O₃ made per second; fraction of O₃ broken by UV per second; extra fraction destroyed per Cl atom per second → steady 10 O₃ without CFCs */
+  let mols, st, stop = null;
+  const rnd = () => P(SX0 + 20 + Math.random() * (SX1 - SX0 - 40), SY0 + 14 + Math.random() * (SY1 - SY0 - 28));
+  function init(){ mols = []; for (let k = 0; k < 21; k++) mols.push({k: 'O2', ...rnd(), f: 0}); for (let k = 0; k < 10; k++) mols.push({k: 'O3', ...rnd(), f: 0});
+    st = {t: 0, run: 0, uv: true, cfc: [], released: 0, flash: [], o3start: 10, accP: 0, accD: 0, accC: 0}; }
+  const count = k => mols.filter(m => m.k === k).length;
+  function drawMol(m){ const x = m.x, y = m.y;
+    if (m.k === 'O2'){ atom(svg, x - 6, y, 'O', 6); atom(svg, x + 6, y, 'O', 6); }
+    else if (m.k === 'O3'){ atom(svg, x - 10, y + 4, 'O', 6); atom(svg, x + 10, y + 4, 'O', 6); atom(svg, x, y - 5, 'O', 6); circ(svg, x, y, 17, 'fill:none;stroke:#7c3aed;stroke-width:1.2;opacity:.6'); }
+    else if (m.k === 'O'){ atom(svg, x, y, 'O', 6); circ(svg, x, y, 10, 'fill:none;stroke:#f97316;stroke-width:1.2;stroke-dasharray:2 2'); }
+    else if (m.k === 'Cl'){ atom(svg, x, y, 'Cl', 9); } }
+  function draw(){
+    K.clear(svg); const n3 = count('O3'), uvDown = clamp(1 - n3 / st.o3start, 0, 1);
+    rect(svg, 0, 0, 800, GY, 'fill:#1e3a8a;opacity:.12'); rect(svg, SX0, SY0, SX1 - SX0, SY1 - SY0, `fill:#a78bfa;opacity:${.08 + .17 * Math.min(1, n3 / 12)}`, 8);
+    T(svg, SX0 + 8, SY1 + 16, '▲ stratosphere (≈ 15–35 km) – the ozone layer', 13, {a: 'start', w: 700, c: 'purple'}); T(svg, SX0 + 8, 300, 'troposphere – the air we breathe', 12, {a: 'start', c: 'muted'});
+    rect(svg, 0, GY, 800, 50, 'fill:#16a34a;opacity:.4');
+    /* sun + UV rays */
+    circ(svg, 60, 40, 26, 'fill:#facc15'); for (let k = 0; k < 8; k++){ const a = k * Math.PI / 4; ln(svg, 60 + Math.cos(a) * 32, 40 + Math.sin(a) * 32, 60 + Math.cos(a) * 42, 40 + Math.sin(a) * 42, '#facc15', 3); }
+    if (st.uv) for (let k = 0; k < 6; k++){ const x = 140 + k * 85, ph = st.t * 3 + k; const wave = (y0, y1, op) => { let d = `M${x},${y0}`; for (let y = y0; y <= y1; y += 6) d += ` L${x + Math.sin(y / 6 + ph) * 5},${y}`; pth(svg, d, `fill:none;stroke:#7c3aed;stroke-width:2.4;opacity:${op}`); };
+      wave(20, SY0 + 30, .85); if (uvDown > .05) { wave(SY1, GY - 10, Math.min(.9, uvDown * 1.4)); el('polygon', {points: `${x - 6},${GY - 14} ${x + 6},${GY - 14} ${x},${GY - 2}`, style: `fill:#7c3aed;opacity:${Math.min(.9, uvDown * 1.4)}`}, svg); } }
+    T(svg, 110, 20, 'UV', 14, {w: 800, c: 'purple', a: 'start'});
+    mols.forEach(drawMol);
+    st.flash.forEach(f => { circ(svg, f.x, f.y, 6 + f.a * 18, `fill:none;stroke:${f.c};stroke-width:2;opacity:${1 - f.a}`); });
+    st.cfc.forEach(c => { atom(svg, c.x, c.y, 'C', 6); atom(svg, c.x - 10, c.y - 6, 'Cl', 6); atom(svg, c.x + 10, c.y - 6, 'Cl', 6); atom(svg, c.x - 9, c.y + 8, 'F', 5); atom(svg, c.x + 9, c.y + 8, 'F', 5); });
+    /* fridge on the ground */
+    if (+sel.value){ rect(svg, 90, GY - 56, 40, 56, 'fill:var(--surface);stroke:var(--text);stroke-width:1.5', 4); ln(svg, 90, GY - 36, 130, GY - 36, 'text', 1.2); T(svg, 110, GY + 16, 'old fridges, ACs', 11, {w: 700}); }
+    /* person + meter */
+    circ(svg, 560, GY - 40, 8, 'fill:#a16207'); ln(svg, 560, GY - 32, 560, GY - 10, '#a16207', 4); ln(svg, 560, GY - 10, 552, GY, '#a16207', 3); ln(svg, 560, GY - 10, 568, GY, '#a16207', 3);
+    if (uvDown > .3) T(svg, 560, GY - 62, '🥵 sunburn!', 12, {w: 800, c: 'red'});
+    /* panel */
+    const PX = 660; rect(svg, PX, 20, 130, 230, 'fill:var(--surface);stroke:var(--border);stroke-width:1.4', 10);
+    T(svg, PX + 65, 40, 'ozone (O₃)', 13, {w: 700}); T(svg, PX + 65, 66, String(n3), 26, {w: 800, c: 'purple'}); T(svg, PX + 65, 92, `O₂: ${count('O2')}  ·  O: ${count('O')}`, 12, {c: 'muted'});
+    T(svg, PX + 65, 120, `Cl atoms: ${count('Cl')}`, 12, {c: count('Cl') ? 'green' : 'muted', w: 700});
+    T(svg, PX + 65, 148, 'UV reaching ground', 12, {w: 700}); rect(svg, PX + 20, 162, 90, 16, 'fill:var(--surface2);stroke:var(--text);stroke-width:1', 3); rect(svg, PX + 21, 163, 88 * uvDown, 14, `fill:${uvDown > .3 ? 'var(--red)' : 'var(--purple)'}`, 2);
+    T(svg, PX + 65, 194, uvDown < .1 ? 'very little – safe' : uvDown < .4 ? 'more than normal' : 'DANGEROUS', 12, {w: 800, c: uvDown < .1 ? 'green' : 'red'});
+    T(svg, PX + 65, 222, `t = ${Math.round(st.t)} s`, 12, {c: 'muted'}); }
+  function say(){ const n3 = count('O3'), ncl = count('Cl');
+    out.textContent = (st.t === 0 ? 'Press ▶ to run the cycle. ' : '') + (st.uv ? 'High-energy UV splits O₂ → 2O; each O joins an O₂ → O₃; ozone absorbs lower-energy UV and splits O₃ → O₂ + O. ' : 'UV is off: nothing splits, so no new ozone forms. ') +
+      `Ozone molecules: ${n3}.` + (ncl ? ` ${ncl} chlorine atom(s) from CFCs are destroying ozone (Cl + O₃ → ClO + O₂) and are not used up – the ozone layer is thinning and more UV gets through.` : (+sel.value && st.t > 0 ? ' CFC molecules are drifting up towards the stratosphere…' : ' Production and breakdown balance, so the amount of ozone stays roughly steady.')); }
+  function step(dt){
+    const pick = k => { const c = mols.filter(m => m.k === k); return c.length ? c[Math.floor(Math.random() * c.length)] : null; };
+    if (st.uv){
+      /* production: O₂ + UV → 2O, then each O + O₂ → O₃ (net 3O₂ → 2O₃) */
+      st.accP += PROD / 2 * dt; if (st.accP >= 1){ st.accP -= 1; const m = pick('O2'); if (m){ m.k = 'O'; m.f = 0; m.to = 'O2'; mols.push({k: 'O', x: m.x + 14, y: m.y, f: 0, to: 'O2'}); st.flash.push({x: m.x, y: m.y, a: 0, c: '#7c3aed'}); } }
+      /* breakdown: O₃ + UV → O₂ + O, then O + O₃ → 2O₂ (net 2O₃ → 3O₂) */
+      st.accD += DEST * count('O3') / 2 * dt; if (st.accD >= 1){ st.accD -= 1; const m = pick('O3'); if (m){ m.k = 'O2'; mols.push({k: 'O', x: m.x + 12, y: m.y + 6, f: 0, to: 'O3'}); st.flash.push({x: m.x, y: m.y, a: 0, c: '#a78bfa'}); } } }
+    mols.filter(m => m.k === 'O').forEach(o => { o.f += dt; if (o.f < .6) return; const t = pick(o.to);
+      if (!t){ o.k = null; return; }
+      if (o.to === 'O2'){ t.k = 'O3'; o.k = null; st.flash.push({x: t.x, y: t.y, a: 0, c: '#22c55e'}); } else { t.k = 'O2'; o.k = 'O2'; } });
+    /* chlorine from CFCs: Cl + O₃ → ClO + O₂ (the Cl is set free again) */
+    const ncl = count('Cl'); st.accC += KCL * ncl * count('O3') * dt;
+    if (st.accC >= 1){ st.accC -= 1; const t = pick('O3'), c = pick('Cl'); if (t){ t.k = 'O2'; if (c){ c.x = t.x + 16; c.y = t.y; } st.flash.push({x: t.x, y: t.y, a: 0, c: '#16a34a'}); } }
+    mols = mols.filter(m => m.k);
+    mols.forEach(m => { m.x += (Math.random() - .5) * 20 * dt; m.y += (Math.random() - .5) * 14 * dt; m.x = clamp(m.x, SX0 + 14, SX1 - 14); m.y = clamp(m.y, SY0 + 12, SY1 - 12); });
+    /* CFCs drift up; UV breaks them in the stratosphere and frees a chlorine atom */
+    const want = +sel.value; if (st.released < want && st.t > st.released * 2.5){ st.cfc.push({x: 110 + Math.random() * 30, y: GY - 60}); st.released++; }
+    st.cfc.forEach(c => { c.y -= 28 * dt; c.x += 14 * dt; if (c.y < SY1 - 20 && st.uv){ c.done = true; const p = rnd(); mols.push({k: 'Cl', x: p.x, y: p.y, f: 0}); st.flash.push({x: c.x, y: c.y, a: 0, c: '#22c55e'}); } });
+    st.cfc = st.cfc.filter(c => !c.done && c.y > 0);
+    st.flash.forEach(f => f.a += dt * 1.5); st.flash = st.flash.filter(f => f.a < 1); }
+  function run(sec){ st.run = sec; if (stop) return; let tk = 0;
+    stop = loop(dt => { st.t += dt; st.run -= dt; step(dt); draw(); tk += dt; if (tk > .4){ tk = 0; say(); } if (st.run <= 0){ say(); stop = null; return false; } }); }
+  $id('ozRun').addEventListener('click', () => run(30));
+  uvBtn.addEventListener('click', () => { st.uv = !st.uv; uvBtn.textContent = st.uv ? '☀️ UV: on' : '🌑 UV: off'; draw(); say(); });
+  sel.addEventListener('change', () => { if (+sel.value < st.released) st.released = +sel.value; draw(); say(); });
+  $id('ozReset').addEventListener('click', () => { if (stop){ stop(); stop = null; } sel.value = '0'; uvBtn.textContent = '☀️ UV: on'; init(); draw(); say(); });
+  init(); draw(); say();
+})();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'In the laboratory, oxygen is prepared by heating …', options: ['calcium carbonate', 'potassium permanganate', 'zinc with HCl', 'sodium chloride'], answer: 1, explain: '2KMnO₄ → K₂MnO₄ + MnO₂ + O₂ (Fig 7.9).', hint: 'The purple crystals.'});
+K.mcq('#q2', {q: 'A glowing splinter bursts into flame in a gas jar. The gas is …', options: ['hydrogen', 'carbon dioxide', 'nitrogen', 'oxygen'], answer: 3, explain: 'Oxygen supports combustion.', hint: 'The "life gas".'});
+K.mcq('#q3', {q: 'Which statement about oxygen (Table 7.5) is correct?', options: ['It has a smell', 'It burns with a pop', 'It does not burn but helps burning', 'It does not dissolve in water at all'], answer: 2, explain: 'Oxygen is a supporter of combustion (ജ്വലനസഹായി); it is slightly soluble.', hint: 'Fish need dissolved oxygen.'});
+K.mcq('#q4', {q: 'Metals slowly lose their shine in air because …', options: ['they evaporate', 'a dull oxide layer forms on the surface', 'nitrogen reacts with them', 'light fades them'], answer: 1, explain: 'e.g. 2Cu + O₂ → 2CuO.', hint: 'Slide the time in the tarnish lab.'});
+K.mcq('#q5', {q: 'Which pair of equations shows how ozone is formed in the stratosphere?', options: ['O₂ → 2O (UV) and O₂ + O → O₃', '2O₃ → 3O₂ and O → O₂', 'O₂ + O₂ → O₄', 'H₂O → H₂ + O'], answer: 0, explain: 'Page 147.', hint: 'UV splits O₂ first.'});
+K.mcq('#q6', {q: 'The ozone layer is being depleted mainly by …', options: ['carbon dioxide', 'chlorofluorocarbons (CFCs)', 'nitrogen', 'water vapour'], answer: 1, explain: 'CFCs release chlorine in the stratosphere.', hint: 'Old refrigerators and ACs.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>
