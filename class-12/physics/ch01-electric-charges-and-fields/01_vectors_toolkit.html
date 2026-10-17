@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vectors Toolkit – Electric Charges and Fields</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+@media(max-width:600px){.onpage a{white-space:normal}}
+
+</style>
+<style>
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.6rem 0;background:var(--green-soft)}
+.qbox{background:var(--surface);border:1px solid var(--border);border-left:6px solid var(--accent);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+.tablewrap{overflow-x:auto}
+.vb{font-weight:700;font-family:"Cambria Math","Times New Roman",Georgia,serif}
+svg .panel{fill:var(--surface2);stroke:var(--border);stroke-width:1.2}
+</style>
+</head>
+<body data-page="01_vectors_toolkit">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 1 · Toolkit 1 of 3</span><span class="chip amber">Basics for textbook sections 1.6–1.15</span>
+<h1>Vectors Toolkit: Components, Unit Vectors &amp; Dot Product</h1>
+<p class="lead">Electric force and electric field have a <b>direction</b> as well as a size. To add them, you must add them as arrows, not as plain numbers. Your textbook writes Coulomb's law as <span class="vb">F</span><sub>21</sub> = k q₁q₂ <span class="vb">r̂</span><sub>21</sub>/r²<sub>21</sub>, flux as <span class="vb">E</span>·Δ<span class="vb">S</span>, and torque on a dipole as <span class="vb">p</span> × <span class="vb">E</span>. This page teaches every vector idea behind those formulas from scratch: what a <b>vector</b> (<span class="ml">സദിശം</span>) is, how to add vectors, components, <b>unit vectors</b> (<span class="ml">യൂണിറ്റ് സദിശം</span>), position vectors, the dot product and the cross product. You can drag every arrow yourself.</p>
+
+<div class="callout book"><div class="title">📖 What you need</div>
+<ul style="margin:0"><li>Pythagoras' theorem: in a right triangle, hypotenuse² = base² + height².</li><li>sin θ, cos θ and tan θ for a right triangle. Remember sin 30° = 0.5, cos 60° = 0.5, cos 30° = sin 60° ≈ 0.866, cos 90° = 0, and cos 0° = 1.</li></ul></div>
+
+<h2>1. Scalars and vectors</h2>
+<p>A <b>scalar</b> (<span class="ml">അദിശം</span>) has only a <b>size</b> (magnitude) with a unit: mass 2 kg, time 5 s, temperature 30 °C, and <b>electric charge</b> 3 μC. Scalars add like ordinary numbers. Charge is a scalar, so a +2 μC charge and a −5 μC charge together make −3 μC.</p>
+<p>A <b>vector</b> (<span class="ml">സദിശം</span>) has a <b>magnitude and a direction</b>: displacement “3 m east”, velocity, acceleration, <b>force</b>, and in this chapter the <b>electric field</b>, the <b>dipole moment</b> and the <b>area vector</b>. We draw a vector as an arrow. The length of the arrow shows the magnitude and the arrowhead shows the direction. In print a vector is written in <b>bold</b> (<span class="vb">F</span>) or with a small arrow drawn over the letter. Its magnitude is written |<span class="vb">F</span>| or just F.</p>
+<div class="tablewrap"><table>
+<tr><th>Scalars (size only)</th><th>Vectors (size + direction)</th></tr>
+<tr><td>mass, time, distance, speed, energy, <b>charge q</b>, <b>flux φ</b></td><td>displacement, velocity, acceleration, <b>force F</b>, <b>electric field E</b>, <b>dipole moment p</b>, <b>area vector ΔS</b>, <b>torque τ</b></td></tr>
+</table></div>
+
+<h2>2. Adding vectors: triangle and parallelogram laws</h2>
+<p>Walk 3 m east and then 4 m north. You end up only <b>5 m</b> from the start, not 7 m. Vectors add by <b>joining arrows</b>:</p>
+<ul>
+<li><b>Triangle law (head to tail):</b> draw <span class="vb">A</span>, then start <span class="vb">B</span> at the head of <span class="vb">A</span>. The <b>resultant</b> <span class="vb">R</span> = <span class="vb">A</span> + <span class="vb">B</span> runs from the tail of <span class="vb">A</span> to the head of <span class="vb">B</span>.</li>
+<li><b>Parallelogram law:</b> draw <span class="vb">A</span> and <span class="vb">B</span> from the same point and complete the parallelogram. The diagonal from that point is <span class="vb">R</span>. Both laws give the same answer.</li>
+</ul>
+<p>If the angle between <span class="vb">A</span> and <span class="vb">B</span> is θ, the cosine rule gives the size and the direction of the resultant:</p>
+<div class="eq">R = √(A² + B² + 2AB cos θ) &nbsp;&nbsp;·&nbsp;&nbsp; tan α = B sin θ ÷ (A + B cos θ) &nbsp;(α = angle of R from A)</div>
+<p>Special cases worth remembering: θ = 0° gives R = A + B (same direction). θ = 180° gives R = |A − B| (opposite directions). θ = 90° gives R = √(A² + B²) (Pythagoras).</p>
+<div class="lab" id="addLab">
+  <div class="lab-title">🧪 Drag two vectors and see their resultant</div>
+  <svg id="addSvg" viewBox="0 0 800 400" role="img" aria-label="Two vectors A and B drawn from the same point on a grid; drag their heads. The resultant R is drawn as the diagonal of the parallelogram or as the third side of the triangle, with its magnitude and angle."></svg>
+  <div class="controls"><button class="btn primary" id="addPar">▱ Parallelogram law</button><button class="btn" id="addTri">△ Triangle law (head to tail)</button><button class="btn ghost" id="addReset">⟲ 3 east + 4 north</button></div>
+  <div class="readout" id="addOut"></div>
+  <p class="hint">Drag the <b>orange dots</b> at the heads of <b style="color:var(--blue)">A</b> and <b style="color:var(--green)">B</b>. One grid square is 1 unit; the heads snap to half-units. Make them point the same way (R = A + B), opposite ways (R = A − B) and at right angles (R = √(A² + B²)). In this chapter A and B will be <b>forces</b> or <b>fields</b> from two charges.</p>
+</div>
+
+<h3>Worked example 1 · Two forces at 60°</h3>
+<div class="qbox"><p><b>Q.</b> Two forces of 3 N and 5 N act on a small charged ball. The angle between them is 60°. Find the magnitude of the resultant force and the angle it makes with the 3 N force.</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Use R = √(A² + B² + 2AB cos θ) with A = 3 N, B = 5 N, θ = 60° and cos 60° = 0.5. Then use tan α = B sin θ ÷ (A + B cos θ).</p></div></div>
+<div class="lab" id="we1"><div class="lab-title">🎬 Exam layout, step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="A parallelogram of forces 3 newton and 5 newton at 60 degrees with the resultant 7 newton along the diagonal"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> R = √(9 + 25 + 15) = √49 = <b>7 N</b>, at α ≈ <b>38.2°</b> from the 3 N force (tan α = 4.33 ÷ 5.5 ≈ 0.787).</div></div>
+
+<h2>3. Components and the unit vectors î, ĵ, k̂</h2>
+<p>Adding arrows by drawing is slow. The quick way is to split every vector into <b>components</b> along the x- and y-axes. A vector <span class="vb">A</span> of magnitude A at an angle θ to the x-axis has</p>
+<div class="eq">A<sub>x</sub> = A cos θ &nbsp;&nbsp; A<sub>y</sub> = A sin θ &nbsp;&nbsp; A = √(A<sub>x</sub>² + A<sub>y</sub>²) &nbsp;&nbsp; tan θ = A<sub>y</sub> ÷ A<sub>x</sub></div>
+<p>A <b>unit vector</b> (<span class="ml">യൂണിറ്റ് സദിശം</span>) has magnitude exactly <b>1</b> and no unit. Its only job is to <b>show a direction</b>. The three special ones are <b>î</b> (along +x), <b>ĵ</b> (along +y) and <b>k̂</b> (along +z, out of the page). Any vector can be written as</p>
+<div class="eq"><span class="vb">A</span> = A<sub>x</sub> î + A<sub>y</sub> ĵ + A<sub>z</sub> k̂</div>
+<p>The unit vector along any vector is that vector divided by its own magnitude: <b>Â = <span class="vb">A</span> ÷ A</b>. In particular, for a position vector <span class="vb">r</span>, <b>r̂ = <span class="vb">r</span> ÷ r</b>. You will see r̂ in every field formula of this chapter. It means “the direction pointing away from the source charge”.</p>
+<div class="lab" id="compLab">
+  <div class="lab-title">🧪 Components and the unit vector</div>
+  <svg id="compSvg" viewBox="0 0 800 400" role="img" aria-label="A vector A on a grid with its x and y components drawn as dashed lines, the unit circle of radius 1, and the unit vector A-hat of length 1 along A. Drag the head of A."></svg>
+  <div class="readout" id="compOut"></div>
+  <p class="hint">Drag the orange head of <b style="color:var(--blue)">A</b>. The dashed lines are its components A<sub>x</sub> and A<sub>y</sub>. The <b style="color:var(--red)">red arrow</b> is the unit vector <b>Â</b>: it always ends on the dotted circle of radius 1, however long <b>A</b> is. Changing the length of <b>A</b> changes A but not Â; changing its direction changes both.</p>
+</div>
+
+<p><b>Adding by components</b> is just adding the numbers in front of î and in front of ĵ separately: (2î + 3ĵ) + (4î − ĵ) = 6î + 2ĵ. Subtracting works the same way. This is how you will add the forces or fields of several charges (superposition). Find the x- and y-components of each, add, then use Pythagoras.</p>
+
+<div class="lab">
+  <div class="lab-title">🧭 î, ĵ and k̂ in three dimensions</div>
+  <svg id="ijkSvg" viewBox="0 0 800 290" role="img" aria-label="Three perpendicular axes x, y and z with the unit vectors i-hat, j-hat and k-hat, and a right hand whose fingers curl from x to y while the thumb points along z"></svg>
+  <p class="hint">The three axes are at right angles to one another and form a <b>right-handed</b> set. Curl the fingers of your right hand from +x towards +y, and your thumb points along +z. On a flat page, +z comes <b>out of the page</b> (drawn ⊙) and −z goes <b>into the page</b> (drawn ⊗).</p>
+</div>
+
+<h2>4. Position vectors and r₂₁ = r₂ − r₁</h2>
+<p>The <b>position vector</b> <span class="vb">r</span> of a point is the arrow from the origin O to that point. If charge q₁ sits at <span class="vb">r</span>₁ and charge q₂ at <span class="vb">r</span>₂, the arrow <b>from q₁ to q₂</b> is</p>
+<div class="eq"><span class="vb">r</span><sub>21</sub> = <span class="vb">r</span><sub>2</sub> − <span class="vb">r</span><sub>1</sub> &nbsp;&nbsp;·&nbsp;&nbsp; r<sub>21</sub> = |<span class="vb">r</span><sub>21</sub>| &nbsp;&nbsp;·&nbsp;&nbsp; r̂<sub>21</sub> = <span class="vb">r</span><sub>21</sub> ÷ r<sub>21</sub></div>
+<p>Read the subscript “21” as “<b>to 2, from 1</b>”. The arrow <span class="vb">r</span><sub>12</sub> = <span class="vb">r</span><sub>1</sub> − <span class="vb">r</span><sub>2</sub> = −<span class="vb">r</span><sub>21</sub> points the other way. In Coulomb's law (section 1.6), the force <span class="vb">F</span><sub>21</sub> on q₂ due to q₁ is along r̂<sub>21</sub> when the charges repel.</p>
+<div class="lab" id="posLab">
+  <div class="lab-title">🧪 Two charges, two position vectors</div>
+  <svg id="posSvg" viewBox="0 0 800 400" role="img" aria-label="Two charges q1 and q2 on a grid with their position vectors r1 and r2 from the origin O, the vector r21 from q1 to q2 and its unit vector; drag the charges"></svg>
+  <div class="controls"><button class="btn" id="posSign">± Change the sign of q₁</button></div>
+  <div class="readout" id="posOut"></div>
+  <p class="hint">Drag <b>q₁</b> and <b>q₂</b>. The <b style="color:var(--purple)">purple arrow</b> <b>r</b><sub>21</sub> always goes from q₁ to q₂, and r<sub>21</sub> = r<sub>2</sub> − r<sub>1</sub> holds in every position. The short <b style="color:var(--red)">red arrows</b> preview Coulomb's law. Like charges push each other apart: the force on q₂ is along +r̂<sub>21</sub> and the force on q₁ is along −r̂<sub>21</sub>. Unlike charges pull together.</p>
+</div>
+
+<h3>Worked example 2 · Position vectors and a unit vector</h3>
+<div class="qbox"><p><b>Q.</b> Charge q₁ is at the point (1 m, 1 m) and charge q₂ at (4 m, 5 m). Find (a) <span class="vb">r</span><sub>21</sub>, (b) the distance r<sub>21</sub> between them and (c) the unit vector r̂<sub>21</sub>.</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Write <span class="vb">r</span>₁ = î + ĵ and <span class="vb">r</span>₂ = 4î + 5ĵ. Subtract component by component (2 − 1), then use Pythagoras, then divide each component by the length.</p></div></div>
+<div class="lab" id="we2"><div class="lab-title">🎬 Exam layout, step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Grid with q1 at (1,1), q2 at (4,5) and the vector r21 = 3i + 4j of length 5"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> (a) <span class="vb">r</span><sub>21</sub> = <b>3î + 4ĵ m</b>; (b) r<sub>21</sub> = √(9 + 16) = <b>5 m</b>; (c) r̂<sub>21</sub> = <b>0.6 î + 0.8 ĵ</b> (check: 0.36 + 0.64 = 1, so its length is 1).</div></div>
+
+<h2>5. The dot (scalar) product: E·S = ES cos θ</h2>
+<p>The <b>dot product</b> of two vectors gives a <b>scalar</b>:</p>
+<div class="eq"><span class="vb">A</span>·<span class="vb">B</span> = AB cos θ &nbsp;&nbsp; (θ = angle between the two arrows)</div>
+<p>Think of it as “how much of <span class="vb">A</span> lies along <span class="vb">B</span>” (A cos θ, the projection) multiplied by B. The dot product is largest when the arrows are parallel (cos 0° = 1). It is <b>zero when they are perpendicular</b> (cos 90° = 0) and negative when the angle is more than 90°. In components, <span class="vb">A</span>·<span class="vb">B</span> = A<sub>x</sub>B<sub>x</sub> + A<sub>y</sub>B<sub>y</sub> + A<sub>z</sub>B<sub>z</sub>. Work done is W = <span class="vb">F</span>·<span class="vb">s</span>. In this chapter the electric <b>flux</b> through a small surface is Δφ = <span class="vb">E</span>·Δ<span class="vb">S</span> = E ΔS cos θ. Here Δ<span class="vb">S</span> is the <b>area vector</b> (<span class="ml">ഏരിയ സദിശം</span>): its length is the area and its direction is the <b>normal</b> (perpendicular) to the surface.</p>
+<div class="lab" id="dotLab">
+  <div class="lab-title">🧪 Tilt a surface in a uniform field – the dot product as flux</div>
+  <svg id="dotSvg" viewBox="0 0 800 340" role="img" aria-label="Horizontal field lines E crossing a small flat surface seen edge-on; the area vector S is drawn along the normal. As the angle theta between E and S changes, the projection E cos theta and the flux E S cos theta change."></svg>
+  <div class="controls"><label>angle θ between <b>E</b> and <b>ΔS</b> (°) <input id="dotT" type="range" min="0" max="180" step="5" value="60"><output></output></label>
+  <label>field E (N/C) <input id="dotE" type="range" min="200" max="2000" step="200" value="1000"><output></output></label></div>
+  <div class="readout" id="dotOut"></div>
+  <p class="hint">The surface has area ΔS = 0.05 m². At θ = 0° the surface faces the field squarely and the most lines cross it. At θ = 90° the lines skim along the surface and none cross it: the flux is zero. Beyond 90° the lines cross it “backwards”, so the flux is <b>negative</b>. ⚠ The angle in E ΔS cos θ is measured from the <b>normal</b>, not from the surface itself.</p>
+</div>
+
+<h3>Worked example 3 · Flux through a tilted surface</h3>
+<div class="qbox"><p><b>Q.</b> A uniform electric field of 2 × 10³ N/C passes through a flat surface of area 0.05 m². The normal to the surface makes 60° with the field. Find the flux E·ΔS through the surface.</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Flux = E ΔS cos θ with θ = 60° (the angle with the normal). Trap: if the question says the field makes 60° with the <b>surface</b>, then θ = 90° − 60° = 30°.</p></div></div>
+<div class="lab" id="we3"><div class="lab-title">🎬 Exam layout, step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="Field lines crossing a surface whose normal is at 60 degrees to the field"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> φ = E ΔS cos θ = 2 × 10³ × 0.05 × 0.5 = <b>50 N m²/C</b>.</div></div>
+
+<h2>6. The cross (vector) product: τ = p × E</h2>
+<p>The <b>cross product</b> of two vectors gives a <b>vector</b>:</p>
+<div class="eq">|<span class="vb">A</span> × <span class="vb">B</span>| = AB sin θ, &nbsp; direction ⟂ to both <span class="vb">A</span> and <span class="vb">B</span> (right-hand rule)</div>
+<p>Its size equals the <b>area of the parallelogram</b> made by the two arrows. It is largest when they are perpendicular (sin 90° = 1) and <b>zero when they are parallel or antiparallel</b> (sin 0° = sin 180° = 0). For its direction, point the fingers of your right hand along <span class="vb">A</span> and curl them towards <span class="vb">B</span>; your thumb gives <span class="vb">A</span> × <span class="vb">B</span>. Order matters: <span class="vb">B</span> × <span class="vb">A</span> = −(<span class="vb">A</span> × <span class="vb">B</span>), and î × ĵ = k̂. Torque is <b>τ</b> = <span class="vb">r</span> × <span class="vb">F</span> (page 3). In section 1.12 the <b>torque</b> (<span class="ml">ടോർക്ക് (ബലാഘൂർണം)</span>) on an electric dipole in a field is <b>τ</b> = <span class="vb">p</span> × <span class="vb">E</span>, of size pE sin θ.</p>
+<div class="lab" id="crossLab">
+  <div class="lab-title">🧪 The cross product as an area – and the torque on a dipole</div>
+  <svg id="crossSvg" viewBox="0 0 800 340" role="img" aria-label="Left: the vectors p and E at an angle theta with the parallelogram they form shaded; its area is p E sin theta. Right: a dipole in a uniform field with forces qE and minus qE on its ends, and the direction of the torque into or out of the page."></svg>
+  <div class="controls"><label>angle θ between <b>p</b> and <b>E</b> (°) <input id="crT" type="range" min="0" max="360" step="15" value="60"><output></output></label></div>
+  <div class="readout" id="crOut"></div>
+  <p class="hint">Values used: p = 2 × 10<sup>−9</sup> C m, E = 3 × 10⁴ N/C, so pE = 6 × 10<sup>−5</sup> N m. Watch the <b>shaded area</b>: it is zero at 0° and 180° and largest at 90°. The forces +qE and −qE on the two ends are equal and opposite, so the net force is zero. They still turn the dipole towards the field. ⊙ means the torque vector points out of the page (anticlockwise turning); ⊗ means into the page (clockwise).</p>
+</div>
+
+<h3>Worked example 4 · Torque from a cross product</h3>
+<div class="qbox"><p><b>Q.</b> A dipole of moment 2 × 10<sup>−9</sup> C m makes an angle of 60° with a uniform field of 3 × 10⁴ N/C. Find the magnitude of the torque <b>τ</b> = <span class="vb">p</span> × <span class="vb">E</span>.</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>|<span class="vb">p</span> × <span class="vb">E</span>| = pE sin θ, and sin 60° ≈ 0.866. Multiply the numbers and the powers of ten separately.</p></div></div>
+<div class="lab" id="we4"><div class="lab-title">🎬 Exam layout, step by step</div><svg viewBox="0 0 800 300" role="img" aria-label="A dipole at 60 degrees to a uniform field with the torque 5.2 times ten to the minus five newton metre"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> τ = pE sin θ = 2 × 10<sup>−9</sup> × 3 × 10⁴ × 0.866 ≈ <b>5.2 × 10<sup>−5</sup> N m</b>.</div></div>
+
+<div class="callout key"><div class="title">⭐ Key ideas</div>
+<ul style="margin:0"><li>Charge and flux are <b>scalars</b>; force, field, dipole moment, area vector and torque are <b>vectors</b>.</li>
+<li>Resultant: R = √(A² + B² + 2AB cos θ). Or add components: R<sub>x</sub> = A<sub>x</sub> + B<sub>x</sub>, R<sub>y</sub> = A<sub>y</sub> + B<sub>y</sub>.</li>
+<li>Unit vector: Â = <span class="vb">A</span>/A, magnitude 1, shows direction only; î, ĵ, k̂ point along x, y, z.</li>
+<li><span class="vb">r</span><sub>21</sub> = <span class="vb">r</span><sub>2</sub> − <span class="vb">r</span><sub>1</sub> points <b>from 1 to 2</b>; r̂<sub>21</sub> = <span class="vb">r</span><sub>21</sub>/r<sub>21</sub>.</li>
+<li>Dot product <span class="vb">A</span>·<span class="vb">B</span> = AB cos θ (a scalar; zero when perpendicular) → flux E ΔS cos θ.</li>
+<li>Cross product |<span class="vb">A</span> × <span class="vb">B</span>| = AB sin θ (a vector ⟂ both; zero when parallel) → torque pE sin θ.</li></ul></div>
+
+<h2>7. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div>
+<p>Next: <a href="02_calculus_geometry_toolkit.html">Maths toolkit: powers of ten, areas, small elements and integration ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Electric Charges and Fields · 2nd PUC Physics", "icon": "⚡", "key": "puc_physics_ch1_progress", "pages": [["index.html", "Home"], ["01_vectors_toolkit.html", "1 · Vectors Toolkit: Components, Unit Vectors & Dot Product"], ["02_calculus_geometry_toolkit.html", "2 · Maths Toolkit: Areas, Small Elements & Integration"], ["03_forces_motion_recap.html", "3 · Forces, Newton's Laws & Motion Under Constant Force"], ["04_electric_charge.html", "4 · Electric Charge & Electroscopes (1.1–1.2)"], ["05_conductors_induction.html", "5 · Conductors, Insulators, Earthing & Induction (1.3–1.4)"], ["06_properties_of_charge.html", "6 · Properties of Charge: Additivity, Conservation, Quantisation (1.5)"], ["07_coulombs_law.html", "7 · Coulomb's Law (1.6)"], ["08_multiple_charges.html", "8 · Forces Between Multiple Charges – Superposition (1.7)"], ["09_electric_field.html", "9 · Electric Field (1.8)"], ["10_field_lines_flux.html", "10 · Electric Field Lines & Electric Flux (1.9–1.10)"], ["11_electric_dipole.html", "11 · Electric Dipole & Dipole in a Uniform Field (1.11–1.12)"], ["12_gauss_law.html", "12 · Continuous Charge Distribution & Gauss's Law (1.13–1.14)"], ["13_gauss_applications.html", "13 · Applications of Gauss's Law (1.15)"], ["14_exercises_1_12.html", "14 · Exercises 1.1–1.12 – Solutions"], ["15_exercises_13_24.html", "15 · Exercises 1.13–1.24 – Solutions"], ["16_additional_exercises.html", "16 · Additional Exercises 1.25–1.34 – Solutions"], ["17_applications_explore.html", "17 · Applications & Explore Online"], ["18_summary_revision.html", "18 · Summary, Points to Ponder & Quick Quiz"], ["19_model_test_paper.html", "19 · Model Question Paper (70 marks)"], ["20_model_test_solutions.html", "20 · Model Question Paper – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+const {P, text} = K;
+const $id = id => document.getElementById(id);
+const sline = (svg, a, b, attrs={}) => K.el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+const f = (v, d=2) => K.num(K.fmt(v, d));
+const L = (svg, x, y, s, cls='lbl', extra={}) => text(svg, P(x, y), s, {class: cls, 'text-anchor': 'start', ...extra});
+function arrow(svg, a, b, c='var(--red)', w=3, extra={}){
+  const g = K.group(svg, extra); const len = K.dist(a, b); if (len < 3) return g;
+  const u = K.unit(a, b), n = P(-u.y, u.x), hs = Math.min(9, len * .45), base = P(b.x - u.x * hs * 1.5, b.y - u.y * hs * 1.5);
+  sline(g, a, base, {stroke: c, 'stroke-width': w});
+  K.el('polygon', {points: `${b.x},${b.y} ${base.x + n.x * hs * .8},${base.y + n.y * hs * .8} ${base.x - n.x * hs * .8},${base.y - n.y * hs * .8}`, fill: c}, g);
+  return g; }
+function charge(svg, p, sign, r=13){
+  K.el('circle', {cx: p.x, cy: p.y, r, fill: sign > 0 ? 'var(--red)' : 'var(--blue)', stroke: 'var(--svgbg)', 'stroke-width': 2}, svg);
+  text(svg, P(p.x, p.y + 1), sign > 0 ? '+' : '−', {class: 'lbl', fill: '#fff', stroke: 'none', style: `font-size:${Math.round(r * 1.4)}px;font-weight:700`}); }
+function examStepper(sel, rows, fig, x0=400, dy=62){
+  new K.Stepper(sel, {steps: rows.map(r => r.html), draw(svg, i, t){
+    fig(svg, i, t);
+    rows.forEach((r, k) => { if (k > i) return; const o = k === i ? t : 1, y = 30 + k * dy;
+      L(svg, x0, y, r.h, 'lbl sm muted', {opacity: o});
+      L(svg, x0, y + 22, r.s, k === rows.length - 1 ? 'lbl big green' : 'lbl', {opacity: o}); });
+  }});
+}
+/* grid with origin O (px), 1 unit = U px; to screen from maths coordinates (y up) and back */
+function grid(svg, O, U, w=800, h=400){
+  const g = K.group(svg);
+  for (let x = O.x % U; x <= w; x += U) sline(g, P(x, 0), P(x, h), {stroke: 'var(--grid)', 'stroke-width': 1});
+  for (let y = O.y % U; y <= h; y += U) sline(g, P(0, y), P(w, y), {stroke: 'var(--grid)', 'stroke-width': 1});
+  sline(g, P(0, O.y), P(w, O.y), {stroke: 'var(--muted)', 'stroke-width': 1.4}); sline(g, P(O.x, 0), P(O.x, h), {stroke: 'var(--muted)', 'stroke-width': 1.4});
+  text(g, P(w - 12, O.y + 14), 'x', {class: 'lbl sm muted'}); text(g, P(O.x - 12, 12), 'y', {class: 'lbl sm muted'});
+  return g; }
+const snap = (p, O, U) => P(O.x + Math.round((p.x - O.x) / (U / 2)) * U / 2, O.y + Math.round((p.y - O.y) / (U / 2)) * U / 2);
+const ang = v => { let a = K.deg(Math.atan2(v.y, v.x)); if (a < 0) a += 360; return a; };
+
+/* ---- 1. vector addition ---- */
+(function(){ const svg = $id('addSvg'), out = $id('addOut'), O = P(300, 300), U = 40; let mode = 'par';
+  const PTS = [P(O.x + 3 * U, O.y), P(O.x, O.y - 4 * U)];
+  const toV = p => P((p.x - O.x) / U, (O.y - p.y) / U);
+  function draw(){ K.clear(svg); grid(svg, O, U);
+    const A = toV(PTS[0]), B = toV(PTS[1]), R = P(A.x + B.x, A.y + B.y), Rs = P(O.x + R.x * U, O.y - R.y * U);
+    const a = Math.hypot(A.x, A.y), b = Math.hypot(B.x, B.y), r = Math.hypot(R.x, R.y);
+    let th = Math.abs(ang(A) - ang(B)); if (th > 180) th = 360 - th; if (!a || !b) th = 0;
+    if (mode === 'par'){
+      K.polygon(svg, [O, PTS[0], Rs, PTS[1]], {fill: 'var(--accent)', 'fill-opacity': .08, stroke: 'none'});
+      sline(svg, PTS[0], Rs, {stroke: 'var(--green)', 'stroke-width': 1.4, 'stroke-dasharray': '6 5'});
+      sline(svg, PTS[1], Rs, {stroke: 'var(--blue)', 'stroke-width': 1.4, 'stroke-dasharray': '6 5'});
+      arrow(svg, O, PTS[1], 'var(--green)', 3.4);
+    } else { arrow(svg, PTS[0], Rs, 'var(--green)', 3.4); sline(svg, O, PTS[1], {stroke: 'var(--green)', 'stroke-width': 1.2, 'stroke-dasharray': '3 4', opacity: .6}); }
+    arrow(svg, O, PTS[0], 'var(--blue)', 3.4);
+    if (r > .05) arrow(svg, O, Rs, 'var(--red)', 4);
+    if (a && b && th > 2 && th < 178) K.angleArc(svg, O, PTS[0], PTS[1], 26, {cls: 'purple', label: 'θ'});
+    const lab = (p, s, c) => { const u = K.unit(O, p); text(svg, P(p.x + u.x * 18 + 6, p.y + u.y * 18), s, {class: 'lbl big ' + c}); };
+    lab(PTS[0], 'A', 'blue'); lab(mode === 'par' ? PTS[1] : Rs, 'B', 'green'); if (r > .05) text(svg, P((O.x + Rs.x) / 2 - 14, (O.y + Rs.y) / 2 - 12), 'R', {class: 'lbl big red'});
+    [PTS[0], PTS[1]].forEach(p => K.el('circle', {cx: p.x, cy: p.y, r: 7, class: 'pt drag'}, svg));
+    K.el('circle', {cx: O.x, cy: O.y, r: 4, fill: 'var(--text)'}, svg); text(svg, P(O.x - 12, O.y + 14), 'O', {class: 'lbl sm'});
+    K.el('rect', {x: 560, y: 10, width: 230, height: 120, rx: 10, class: 'panel'}, svg);
+    L(svg, 572, 32, `A = ${f(a, 2)} · B = ${f(b, 2)}`, 'lbl sm', {'font-weight': 700});
+    L(svg, 572, 56, `θ = ${f(th, 1)}°`, 'lbl sm purple', {'font-weight': 700});
+    L(svg, 572, 82, `R = √(A²+B²+2AB cos θ)`, 'lbl sm');
+    L(svg, 572, 108, `R = ${f(r, 2)} units`, 'lbl red', {'font-weight': 700});
+    out.textContent = `A = ${f(A.x, 1)} î + ${f(A.y, 1)} ĵ   (A = ${f(a, 2)})\nB = ${f(B.x, 1)} î + ${f(B.y, 1)} ĵ   (B = ${f(b, 2)})\nR = A + B = ${f(R.x, 1)} î + ${f(R.y, 1)} ĵ,  R = ${f(r, 2)}\nCheck with the formula: √(${f(a * a, 2)} + ${f(b * b, 2)} + 2 × ${f(a, 2)} × ${f(b, 2)} × cos ${f(th, 1)}°) = ${f(Math.sqrt(Math.max(0, a * a + b * b + 2 * a * b * Math.cos(K.rad(th)))), 2)}`
+      + (th < 1 && a && b ? '\nSame direction: R = A + B.' : th > 179 ? '\nOpposite directions: R = |A − B|.' : Math.abs(th - 90) < .5 ? '\nRight angle: R = √(A² + B²).' : ''); }
+  K.draggable(svg, () => PTS, k => { PTS[k] = snap(PTS[k], O, U); PTS[k].x = Math.max(20, Math.min(540, PTS[k].x)); draw(); });
+  const setMode = m => { mode = m; $id('addPar').className = 'btn' + (m === 'par' ? ' primary' : ''); $id('addTri').className = 'btn' + (m === 'tri' ? ' primary' : ''); draw(); };
+  $id('addPar').addEventListener('click', () => setMode('par')); $id('addTri').addEventListener('click', () => setMode('tri'));
+  $id('addReset').addEventListener('click', () => { PTS[0] = P(O.x + 3 * U, O.y); PTS[1] = P(O.x, O.y - 4 * U); draw(); });
+  draw(); })();
+
+/* ---- worked example 1 ---- */
+examStepper('#we1', [
+  {h: 'Given', s: 'A = 3 N,  B = 5 N,  θ = 60°', html: '<b>Given:</b> F₁ = A = 3 N, F₂ = B = 5 N, angle between them θ = 60°.'},
+  {h: 'Formula', s: 'R = √(A² + B² + 2AB cos θ)', html: '<b>Formula:</b> R = √(A² + B² + 2AB cos θ); tan α = B sin θ ÷ (A + B cos θ).'},
+  {h: 'Substitution', s: 'R = √(9 + 25 + 2·3·5·0.5) = √49', html: '<b>Substitution:</b> R = √(3² + 5² + 2 × 3 × 5 × 0.5) = √(9 + 25 + 15) = √49. tan α = (5 × 0.866) ÷ (3 + 5 × 0.5) = 4.33 ÷ 5.5 = 0.787.'},
+  {h: 'Answer', s: 'R = 7 N at α ≈ 38.2° from 3 N', html: '<b>Answer:</b> the resultant force is <b>7 N</b>, at about <b>38.2°</b> to the 3 N force.'}
+], (svg, i, t) => { const O = P(50, 262), s = 45, A = P(O.x + 3 * s, O.y), B = P(O.x + 5 * s * Math.cos(K.rad(60)), O.y - 5 * s * Math.sin(K.rad(60))), R = P(A.x + B.x - O.x, A.y + B.y - O.y);
+  K.polygon(svg, [O, A, R, B], {fill: 'var(--accent)', 'fill-opacity': .08, stroke: 'none'});
+  sline(svg, A, R, {stroke: 'var(--muted)', 'stroke-width': 1.2, 'stroke-dasharray': '5 4'}); sline(svg, B, R, {stroke: 'var(--muted)', 'stroke-width': 1.2, 'stroke-dasharray': '5 4'});
+  arrow(svg, O, A, 'var(--blue)', 3); arrow(svg, O, B, 'var(--green)', 3);
+  K.angleArc(svg, O, A, B, 30, {cls: 'purple', label: '60°', labelOff: 48});
+  text(svg, P(A.x + 4, A.y + 20), '3 N', {class: 'lbl blue', 'font-weight': 700}); text(svg, P(B.x - 26, B.y), '5 N', {class: 'lbl green', 'font-weight': 700});
+  if (i >= 2){ const e = i === 2 ? t : 1; arrow(svg, O, K.lerpPt(O, R, e), 'var(--red)', 3.6); }
+  if (i >= 3) text(svg, P(R.x + 6, R.y - 14), 'R = 7 N', {class: 'lbl red', 'font-weight': 700, opacity: t});
+});
+
+/* ---- 2. components and unit vector ---- */
+(function(){ const svg = $id('compSvg'), out = $id('compOut'), O = P(330, 230), U = 40; const PTS = [P(O.x + 4 * U, O.y - 3 * U)];
+  function draw(){ K.clear(svg); grid(svg, O, U);
+    const p = PTS[0], Ax = (p.x - O.x) / U, Ay = (O.y - p.y) / U, A = Math.hypot(Ax, Ay);
+    K.el('circle', {cx: O.x, cy: O.y, r: U, fill: 'none', stroke: 'var(--red)', 'stroke-width': 1.2, 'stroke-dasharray': '2 4'}, svg);
+    if (A > .01){
+      sline(svg, P(O.x, O.y), P(p.x, O.y), {stroke: 'var(--accent)', 'stroke-width': 4, opacity: .7}); sline(svg, P(p.x, O.y), p, {stroke: 'var(--purple)', 'stroke-width': 1.6, 'stroke-dasharray': '6 4'});
+      sline(svg, P(O.x, p.y), P(O.x, O.y), {stroke: 'var(--purple)', 'stroke-width': 4, opacity: .5}); sline(svg, P(O.x, p.y), p, {stroke: 'var(--accent)', 'stroke-width': 1.6, 'stroke-dasharray': '6 4'});
+      text(svg, P((O.x + p.x) / 2, O.y + (Ay >= 0 ? 18 : -14)), `Aₓ = ${f(Ax, 1)}`, {class: 'lbl sm amber', 'font-weight': 700});
+      text(svg, P(O.x + (Ax >= 0 ? -34 : 34), (O.y + p.y) / 2), `A_y = ${f(Ay, 1)}`.replace('A_y', 'Aᵧ'), {class: 'lbl sm purple', 'font-weight': 700});
+      arrow(svg, O, p, 'var(--blue)', 3.4);
+      const u = P(Ax / A, Ay / A); arrow(svg, O, P(O.x + u.x * U, O.y - u.y * U), 'var(--red)', 3.6);
+      const th = ang(P(Ax, Ay)); if (th > 4) K.angleArc(svg, O, P(O.x + 10, O.y), p, 54, {cls: 'green', label: `${f(th, 1)}°`, labelOff: 76});
+      const lu = K.unit(O, p); text(svg, P(p.x + lu.x * 18, p.y + lu.y * 18), 'A', {class: 'lbl big blue'});
+      text(svg, P(O.x + u.x * U * .55 - u.y * 14, O.y - u.y * U * .55 - u.x * 14), 'Â', {class: 'lbl red', 'font-weight': 700});
+      const thr = th > 180 ? th - 360 : th;
+      out.textContent = `A = ${f(Ax, 1)} î + ${f(Ay, 1)} ĵ\n|A| = √(${f(Ax, 1)}² + ${f(Ay, 1)}²) = ${f(A, 3)}   angle with +x: θ = ${f(thr, 1)}°\nAₓ = A cos θ = ${f(A * Math.cos(K.rad(thr)), 2)}   Aᵧ = A sin θ = ${f(A * Math.sin(K.rad(thr)), 2)}\nÂ = A ÷ |A| = ${f(u.x, 3)} î + ${f(u.y, 3)} ĵ   |Â| = √(${f(u.x * u.x, 3)} + ${f(u.y * u.y, 3)}) = 1`;
+    } else out.textContent = 'A has zero length here: a zero vector has no direction, so it has no unit vector. Drag the head away from O.';
+    K.el('circle', {cx: p.x, cy: p.y, r: 7, class: 'pt drag'}, svg);
+    text(svg, P(O.x - 12, O.y + 14), 'O', {class: 'lbl sm'}); text(svg, P(O.x + U + 8, O.y + 26), '1', {class: 'lbl sm red'});
+    K.el('rect', {x: 600, y: 12, width: 190, height: 66, rx: 10, class: 'panel'}, svg);
+    L(svg, 612, 34, 'red circle: radius 1', 'lbl sm red', {'font-weight': 700}); L(svg, 612, 58, 'Â always ends on it', 'lbl sm red'); }
+  K.draggable(svg, () => PTS, () => { PTS[0] = snap(PTS[0], O, U); draw(); }); draw(); })();
+
+/* ---- i j k picture ---- */
+(function(){ const svg = $id('ijkSvg'), O = P(220, 160), s = 110;
+  const X = P(O.x + s, O.y), Y = P(O.x, O.y - s), Z = P(O.x - s * .62, O.y + s * .5);
+  [[X, 'x'], [Y, 'y'], [Z, 'z']].forEach(([q, n]) => { sline(svg, O, q, {stroke: 'var(--muted)', 'stroke-width': 1.4}); const u = K.unit(O, q); text(svg, P(q.x + u.x * 16, q.y + u.y * 16), n, {class: 'lbl muted', 'font-weight': 700}); });
+  arrow(svg, O, K.lerpPt(O, X, .45), 'var(--red)', 3.4); arrow(svg, O, K.lerpPt(O, Y, .45), 'var(--green)', 3.4); arrow(svg, O, K.lerpPt(O, Z, .45), 'var(--blue)', 3.4);
+  text(svg, P(O.x + s * .3, O.y + 18), 'î', {class: 'lbl big red'}); text(svg, P(O.x - 16, O.y - s * .3), 'ĵ', {class: 'lbl big green'}); text(svg, P(O.x - s * .12, O.y + s * .38), 'k̂', {class: 'lbl big blue'});
+  text(svg, P(260, 272), 'each of length 1, all at 90° to one another', {class: 'lbl sm muted'});
+  /* right-hand rule cartoon: curled arrow from x to y, thumb along z (out of the page) */
+  const C = P(560, 150);
+  arrow(svg, P(C.x + 70, C.y), P(C.x + 120, C.y), 'var(--red)', 2.6); text(svg, P(C.x + 134, C.y), 'x', {class: 'lbl sm red'});
+  arrow(svg, P(C.x, C.y - 70), P(C.x, C.y - 106), 'var(--green)', 2.6); text(svg, P(C.x, C.y - 118), 'y', {class: 'lbl sm green'});
+  K.el('path', {d: `M${C.x + 54},${C.y - 6} A54,54 0 0,0 ${C.x + 8},${C.y - 54}`, fill: 'none', stroke: 'var(--accent)', 'stroke-width': 3}, svg);
+  K.el('polygon', {points: `${C.x - 4},${C.y - 54} ${C.x + 8},${C.y - 62} ${C.x + 8},${C.y - 46}`, fill: 'var(--accent)'}, svg);
+  K.el('circle', {cx: C.x, cy: C.y, r: 16, fill: 'var(--surface2)', stroke: 'var(--blue)', 'stroke-width': 2.4}, svg); K.el('circle', {cx: C.x, cy: C.y, r: 4, fill: 'var(--blue)'}, svg);
+  text(svg, P(C.x, C.y + 80), 'fingers curl x → y; thumb (z) points out of the page ⊙', {class: 'lbl sm', 'font-weight': 700});
+  text(svg, P(C.x, C.y + 104), 'î × ĵ = k̂   ·   ĵ × k̂ = î   ·   k̂ × î = ĵ', {class: 'lbl sm blue', 'font-weight': 700}); })();
+
+/* ---- 3. position vectors ---- */
+(function(){ const svg = $id('posSvg'), out = $id('posOut'), O = P(120, 340), U = 40; let s1 = 1;
+  const PTS = [P(O.x + 3 * U, O.y - 6 * U), P(O.x + 11 * U, O.y - 2 * U)];
+  function draw(){ K.clear(svg); grid(svg, O, U);
+    const [A, B] = PTS, r1 = P((A.x - O.x) / U, (O.y - A.y) / U), r2 = P((B.x - O.x) / U, (O.y - B.y) / U), r21 = P(r2.x - r1.x, r2.y - r1.y), d = Math.hypot(r21.x, r21.y);
+    arrow(svg, O, A, 'var(--blue)', 2.4); arrow(svg, O, B, 'var(--green)', 2.4);
+    if (d > .01) arrow(svg, A, B, 'var(--purple)', 3.4);
+    const m1 = K.mid(O, A), m2 = K.mid(O, B), m3 = K.mid(A, B);
+    text(svg, P(m1.x - 14, m1.y - 10), 'r₁', {class: 'lbl blue', 'font-weight': 700}); text(svg, P(m2.x + 14, m2.y + 12), 'r₂', {class: 'lbl green', 'font-weight': 700});
+    if (d > .01){ const u = K.unit(A, B); text(svg, P(m3.x - u.y * 18, m3.y + u.x * 18), 'r₂₁', {class: 'lbl purple', 'font-weight': 700});
+      /* force preview: like charges repel (F21 along +r̂21) */
+      const like = s1 > 0, k = 34, dirB = like ? u : P(-u.x, -u.y);
+      arrow(svg, B, P(B.x + dirB.x * k, B.y + dirB.y * k), 'var(--red)', 3); arrow(svg, A, P(A.x - dirB.x * k, A.y - dirB.y * k), 'var(--red)', 3);
+      text(svg, P(B.x + dirB.x * (k + 18) + 10, B.y + dirB.y * (k + 18) - 6), 'F₂₁', {class: 'lbl sm red', 'font-weight': 700});
+      text(svg, P(A.x - dirB.x * (k + 18) - 10, A.y - dirB.y * (k + 18) - 6), 'F₁₂', {class: 'lbl sm red', 'font-weight': 700});
+      out.textContent = `r₁ = ${f(r1.x, 1)} î + ${f(r1.y, 1)} ĵ     r₂ = ${f(r2.x, 1)} î + ${f(r2.y, 1)} ĵ\nr₂₁ = r₂ − r₁ = ${f(r21.x, 1)} î + ${f(r21.y, 1)} ĵ   (from q₁ to q₂)\nr₂₁ = √(${f(r21.x, 1)}² + ${f(r21.y, 1)}²) = ${f(d, 3)} units\nr̂₂₁ = r₂₁ ÷ r₂₁ = ${f(r21.x / d, 3)} î + ${f(r21.y / d, 3)} ĵ\n${like ? 'Like charges: F₂₁ on q₂ is along +r̂₂₁ (away from q₁); F₁₂ = −F₂₁.' : 'Unlike charges: F₂₁ on q₂ is along −r̂₂₁ (towards q₁); F₁₂ = −F₂₁.'}`; }
+    else out.textContent = 'The two charges are on top of each other: r₂₁ = 0 and has no direction. Drag them apart.';
+    charge(svg, A, s1); charge(svg, B, 1);
+    text(svg, P(A.x - 22, A.y + 22), 'q₁', {class: 'lbl', 'font-weight': 700}); text(svg, P(B.x + 22, B.y + 22), 'q₂', {class: 'lbl', 'font-weight': 700});
+    K.el('circle', {cx: O.x, cy: O.y, r: 4, fill: 'var(--text)'}, svg); text(svg, P(O.x - 12, O.y + 14), 'O', {class: 'lbl sm'}); }
+  K.draggable(svg, () => PTS, k => { PTS[k] = snap(PTS[k], O, U); PTS[k].x = Math.max(O.x, PTS[k].x); PTS[k].y = Math.min(O.y, PTS[k].y); draw(); }, 24);
+  $id('posSign').addEventListener('click', () => { s1 = -s1; draw(); });
+  draw(); })();
+
+/* ---- worked example 2 ---- */
+examStepper('#we2', [
+  {h: 'Given', s: 'r₁ = î + ĵ,   r₂ = 4î + 5ĵ  (m)', html: '<b>Given:</b> q₁ at (1, 1) m, so <b>r</b>₁ = î + ĵ; q₂ at (4, 5) m, so <b>r</b>₂ = 4î + 5ĵ.'},
+  {h: 'Formula', s: 'r₂₁ = r₂ − r₁;  r̂₂₁ = r₂₁ ÷ r₂₁', html: '<b>Formula:</b> <b>r</b>₂₁ = <b>r</b>₂ − <b>r</b>₁; r₂₁ = √(x² + y²); r̂₂₁ = <b>r</b>₂₁ ÷ r₂₁.'},
+  {h: 'Substitution', s: '(4−1)î + (5−1)ĵ;  √(3² + 4²)', html: '<b>Substitution:</b> <b>r</b>₂₁ = (4 − 1)î + (5 − 1)ĵ = 3î + 4ĵ; r₂₁ = √(9 + 16) = √25; r̂₂₁ = (3î + 4ĵ) ÷ 5.'},
+  {h: 'Answer', s: '3î + 4ĵ m;  5 m;  0.6î + 0.8ĵ', html: '<b>Answer:</b> (a) <b>3î + 4ĵ m</b>; (b) <b>5 m</b>; (c) <b>0.6î + 0.8ĵ</b>, which has length 1 as a unit vector must.'}
+], (svg, i, t) => { const O = P(40, 270), U = 42;
+  for (let k = 0; k <= 7; k++) sline(svg, P(O.x + k * U, 20), P(O.x + k * U, O.y), {stroke: 'var(--grid)', 'stroke-width': 1});
+  for (let k = 0; k <= 6; k++) sline(svg, P(O.x, O.y - k * U), P(O.x + 7 * U, O.y - k * U), {stroke: 'var(--grid)', 'stroke-width': 1});
+  const A = P(O.x + U, O.y - U), B = P(O.x + 4 * U, O.y - 5 * U);
+  if (i >= 0){ arrow(svg, O, A, 'var(--blue)', 2.2); arrow(svg, O, B, 'var(--green)', 2.2); }
+  if (i >= 2){ const e = i === 2 ? t : 1; sline(svg, A, P(A.x + 3 * U * e, A.y), {stroke: 'var(--accent)', 'stroke-width': 2, 'stroke-dasharray': '5 4'}); if (e > .5) sline(svg, P(B.x, A.y), P(B.x, A.y - 4 * U * (e - .5) * 2), {stroke: 'var(--accent)', 'stroke-width': 2, 'stroke-dasharray': '5 4'});
+    text(svg, P(A.x + 1.5 * U, A.y + 14), '3', {class: 'lbl sm amber', 'font-weight': 700}); text(svg, P(B.x + 12, A.y - 2 * U), '4', {class: 'lbl sm amber', 'font-weight': 700}); }
+  if (i >= 1) arrow(svg, A, B, 'var(--purple)', 3);
+  if (i >= 3) text(svg, P(K.mid(A, B).x - 24, K.mid(A, B).y - 6), '5 m', {class: 'lbl purple', 'font-weight': 700, opacity: t});
+  charge(svg, A, 1, 10); charge(svg, B, 1, 10); text(svg, P(A.x + 22, A.y + 14), 'q₁ (1, 1)', {class: 'lbl sm', 'text-anchor': 'start'}); text(svg, P(B.x + 16, B.y), 'q₂ (4, 5)', {class: 'lbl sm', 'text-anchor': 'start'});
+});
+
+/* ---- 4. dot product as flux ---- */
+(function(){ const svg = $id('dotSvg'), out = $id('dotOut'); let th = 60, E = 1000; const S = .05;
+  function draw(){ K.clear(svg); const C = P(250, 170);
+    /* uniform field lines (horizontal, left to right) */
+    for (let k = 0; k < 7; k++){ const y = 40 + k * 44; arrow(svg, P(20, y), P(480, y), 'var(--accent)', 1.6, {opacity: .7}); }
+    text(svg, P(500, 26), 'E', {class: 'lbl big amber'});
+    /* surface seen edge-on: perpendicular to the normal n, which is at angle th from +x */
+    const n = P(Math.cos(K.rad(th)), -Math.sin(K.rad(th))), tng = P(-n.y, n.x), h = 90;
+    sline(svg, P(C.x - tng.x * h, C.y - tng.y * h), P(C.x + tng.x * h, C.y + tng.y * h), {stroke: 'var(--blue)', 'stroke-width': 7, opacity: .8});
+    arrow(svg, C, P(C.x + n.x * 110, C.y + n.y * 110), 'var(--green)', 3.4);
+    text(svg, P(C.x + n.x * 128, C.y + n.y * 128), 'ΔS', {class: 'lbl big green'});
+    /* projection of E on the normal */
+    const pr = Math.cos(K.rad(th)) * 110; arrow(svg, C, P(C.x + 110, C.y), 'var(--accent)', 3);
+    if (Math.abs(pr) > 3) sline(svg, P(C.x + 110, C.y), P(C.x + n.x * pr, C.y + n.y * pr), {stroke: 'var(--muted)', 'stroke-width': 1.2, 'stroke-dasharray': '4 4'});
+    if (Math.abs(pr) > 6) arrow(svg, C, P(C.x + n.x * pr, C.y + n.y * pr), 'var(--red)', 4);
+    if (th > 3 && th < 177) K.angleArc(svg, C, P(C.x + 60, C.y), P(C.x + n.x * 60, C.y + n.y * 60), 38, {cls: 'purple', label: `θ = ${th}°`, labelOff: 84});
+    text(svg, P(C.x - 20, C.y + 120), 'surface (edge-on)', {class: 'lbl sm blue', 'font-weight': 700});
+    /* readout panel with a bar */
+    const phi = E * S * Math.cos(K.rad(th)), PH = 2000 * S;
+    K.el('rect', {x: 540, y: 20, width: 250, height: 300, rx: 10, class: 'panel'}, svg);
+    L(svg, 556, 46, 'E·ΔS = E ΔS cos θ', 'lbl', {'font-weight': 700});
+    L(svg, 556, 74, `= ${E} × ${S} × cos ${th}°`, 'lbl sm'); L(svg, 556, 98, `= ${E} × ${S} × ${f(Math.cos(K.rad(th)), 3)}`, 'lbl sm');
+    L(svg, 556, 128, `φ = ${f(phi, 1)} N m²/C`, 'lbl ' + (phi > .05 ? 'green' : phi < -.05 ? 'red' : 'muted'), {'font-weight': 700});
+    const zx = 665, zy = 230, bw = 90 * phi / PH;
+    sline(svg, P(zx, 200), P(zx, 300), {stroke: 'var(--muted)', 'stroke-width': 1.4});
+    K.el('rect', {x: Math.min(zx, zx + bw), y: 212, width: Math.abs(bw), height: 36, fill: phi >= 0 ? 'var(--green)' : 'var(--red)', opacity: .7}, svg);
+    text(svg, P(zx, 274), '0', {class: 'lbl sm muted'}); text(svg, P(zx + 90, 274), `+${f(PH, 0)}`, {class: 'lbl sm muted'}); text(svg, P(zx - 90, 274), `−${f(PH, 0)}`, {class: 'lbl sm muted'});
+    L(svg, 556, 160, 'red arrow = E cos θ (part of', 'lbl sm red'); L(svg, 556, 180, 'E along the normal)', 'lbl sm red');
+    out.textContent = `θ = ${th}°: cos θ = ${f(Math.cos(K.rad(th)), 3)}. Flux = ${E} N/C × ${S} m² × ${f(Math.cos(K.rad(th)), 3)} = ${f(phi, 2)} N m²/C. ` + (th === 0 ? 'Largest: the field is along the normal.' : th === 90 ? 'Zero: the field lines run along the surface, none cross it.' : th === 180 ? 'Most negative: the field points against the normal.' : th > 90 ? 'Negative: the lines cross the surface against the direction of ΔS.' : 'Positive: the lines cross the surface in the direction of ΔS.'); }
+  K.slider('#dotT', v => { th = v; draw(); }, 0); K.slider('#dotE', v => { E = v; draw(); }, 0); })();
+
+examStepper('#we3', [
+  {h: 'Given', s: 'E = 2 × 10³ N/C, ΔS = 0.05 m², θ = 60°', html: '<b>Given:</b> E = 2 × 10³ N/C; ΔS = 0.05 m²; angle between <b>E</b> and the normal θ = 60°.'},
+  {h: 'Formula', s: 'φ = E·ΔS = E ΔS cos θ', html: '<b>Formula:</b> φ = <b>E</b>·Δ<b>S</b> = E ΔS cos θ.'},
+  {h: 'Substitution', s: 'φ = 2 × 10³ × 0.05 × cos 60°', html: '<b>Substitution:</b> φ = 2 × 10³ × 0.05 × 0.5.'},
+  {h: 'Answer', s: 'φ = 50 N m²/C', html: '<b>Answer:</b> φ = <b>50 N m²/C</b>.'}
+], (svg, i, t) => { const C = P(180, 160), n = P(Math.cos(K.rad(60)), -Math.sin(K.rad(60))), tg = P(-n.y, n.x);
+  for (let k = 0; k < 5; k++) arrow(svg, P(20, 60 + k * 50), P(350, 60 + k * 50), 'var(--accent)', 1.6, {opacity: .6});
+  sline(svg, P(C.x - tg.x * 80, C.y - tg.y * 80), P(C.x + tg.x * 80, C.y + tg.y * 80), {stroke: 'var(--blue)', 'stroke-width': 6, opacity: .8});
+  if (i >= 1) arrow(svg, C, P(C.x + n.x * 100, C.y + n.y * 100), 'var(--green)', 3);
+  if (i >= 1) K.angleArc(svg, C, P(C.x + 50, C.y), P(C.x + n.x * 50, C.y + n.y * 50), 34, {cls: 'purple', label: '60°', labelOff: 54});
+  if (i >= 1) text(svg, P(C.x + n.x * 118, C.y + n.y * 118), 'ΔS', {class: 'lbl green', 'font-weight': 700});
+  text(svg, P(340, 40), 'E', {class: 'lbl big amber'});
+});
+
+/* ---- 5. cross product ---- */
+(function(){ const svg = $id('crossSvg'), out = $id('crOut'); let th = 60; const p = 2e-9, E = 3e4;
+  function draw(){ K.clear(svg);
+    /* left: parallelogram of p and E */
+    const O = P(90, 230), Lp = 130, LE = 170, a = K.rad(th);
+    const Ep = P(O.x + LE, O.y), pp = P(O.x + Lp * Math.cos(a), O.y - Lp * Math.sin(a)), far = P(Ep.x + pp.x - O.x, Ep.y + pp.y - O.y);
+    K.polygon(svg, [O, Ep, far, pp], {fill: 'var(--purple)', 'fill-opacity': .18, stroke: 'var(--purple)', 'stroke-width': 1, 'stroke-dasharray': '4 4'});
+    arrow(svg, O, Ep, 'var(--accent)', 3.4); arrow(svg, O, pp, 'var(--blue)', 3.4);
+    text(svg, P(Ep.x + 14, Ep.y), 'E', {class: 'lbl big amber'}); const up = K.unit(O, pp); text(svg, P(pp.x + up.x * 16, pp.y + up.y * 16), 'p', {class: 'lbl big blue'});
+    if (th % 180 !== 0) K.angleArc(svg, O, Ep, pp, 28, {cls: 'green', label: `${th}°`, labelOff: 46});
+    const s = Math.sin(a), tau = p * E * s;
+    text(svg, P(170, 30), 'area = pE |sin θ|', {class: 'lbl', 'font-weight': 700});
+    /* torque direction symbol */
+    const S = P(175, 300); if (Math.abs(s) > 1e-6){ K.el('circle', {cx: S.x - 70, cy: S.y, r: 14, fill: 'var(--surface2)', stroke: 'var(--red)', 'stroke-width': 2.4}, svg);
+      if (s < 0) K.el('circle', {cx: S.x - 70, cy: S.y, r: 4, fill: 'var(--red)'}, svg); else { sline(svg, P(S.x - 79, S.y - 9), P(S.x - 61, S.y + 9), {stroke: 'var(--red)', 'stroke-width': 2.4}); sline(svg, P(S.x - 79, S.y + 9), P(S.x - 61, S.y - 9), {stroke: 'var(--red)', 'stroke-width': 2.4}); }
+      L(svg, S.x - 48, S.y, s > 0 ? 'τ = p × E into the page' : 'τ = p × E out of the page', 'lbl sm red', {'font-weight': 700}); }
+    else L(svg, S.x - 84, S.y, 'τ = 0 (p parallel to E)', 'lbl sm green', {'font-weight': 700});
+    /* right: dipole in a uniform field */
+    const C = P(560, 170), h = 70;
+    for (let k = 0; k < 6; k++) arrow(svg, P(400, 40 + k * 52), P(780, 40 + k * 52), 'var(--accent)', 1.4, {opacity: .45});
+    const tip = P(C.x + h * Math.cos(a), C.y - h * Math.sin(a)), tail = P(C.x - h * Math.cos(a), C.y + h * Math.sin(a));
+    sline(svg, tail, tip, {stroke: 'var(--muted)', 'stroke-width': 3});
+    arrow(svg, tip, P(tip.x + 60, tip.y), 'var(--red)', 3); arrow(svg, tail, P(tail.x - 60, tail.y), 'var(--red)', 3);
+    charge(svg, tip, 1, 12); charge(svg, tail, -1, 12);
+    text(svg, P(tip.x + 40, tip.y - 16), '+qE', {class: 'lbl sm red', 'font-weight': 700}); text(svg, P(tail.x - 40, tail.y - 16), '−qE', {class: 'lbl sm red', 'font-weight': 700});
+    if (Math.abs(s) > 1e-6){ const cw = s > 0; K.el('path', {d: `M${C.x + 26},${C.y - 26} A37,37 0 0,0 ${C.x - 26},${C.y - 26}`, fill: 'none', stroke: 'var(--green)', 'stroke-width': 2.4}, svg);
+      const tipA = cw ? P(C.x + 26, C.y - 26) : P(C.x - 26, C.y - 26); K.el('circle', {cx: tipA.x, cy: tipA.y, r: 4, fill: 'var(--green)'}, svg);
+      text(svg, P(590, 296), cw ? 'it turns clockwise (towards E)' : 'it turns anticlockwise (towards E)', {class: 'lbl sm green', 'font-weight': 700}); }
+    text(svg, P(590, 322), 'net force = qE − qE = 0', {class: 'lbl sm', 'font-weight': 700});
+    out.textContent = `θ = ${th}°: sin θ = ${f(s, 3)}.  |τ| = pE |sin θ| = (2 × 10⁻⁹)(3 × 10⁴)(${f(Math.abs(s), 3)}) = ${f(Math.abs(tau) * 1e5, 2)} × 10⁻⁵ N m. ` + (Math.abs(s) < 1e-6 ? (th % 360 === 0 ? 'p is along E: no torque, and this is the stable position.' : 'p is opposite to E: no torque, but the slightest push turns it right round (unstable).') : Math.abs(Math.abs(s) - 1) < 1e-6 ? 'p ⟂ E: the torque is the largest possible, pE.' : 'The torque turns p towards E.'); }
+  K.slider('#crT', v => { th = v; draw(); }, 0); })();
+
+examStepper('#we4', [
+  {h: 'Given', s: 'p = 2 × 10⁻⁹ C m, E = 3 × 10⁴ N/C, θ = 60°', html: '<b>Given:</b> p = 2 × 10<sup>−9</sup> C m; E = 3 × 10⁴ N/C; θ = 60°.'},
+  {h: 'Formula', s: '|τ| = |p × E| = pE sin θ', html: '<b>Formula:</b> τ = p × E, so |τ| = pE sin θ.'},
+  {h: 'Substitution', s: 'τ = 2 × 10⁻⁹ × 3 × 10⁴ × 0.866', html: '<b>Substitution:</b> τ = (2 × 3) × 10<sup>−9 + 4</sup> × 0.866 = 6 × 10<sup>−5</sup> × 0.866.'},
+  {h: 'Answer', s: 'τ ≈ 5.2 × 10⁻⁵ N m', html: '<b>Answer:</b> τ ≈ <b>5.2 × 10<sup>−5</sup> N m</b>, turning the dipole towards the field.'}
+], (svg, i, t) => { const C = P(180, 150), a = K.rad(60), h = 70;
+  for (let k = 0; k < 5; k++) arrow(svg, P(20, 50 + k * 50), P(350, 50 + k * 50), 'var(--accent)', 1.4, {opacity: .5});
+  const tip = P(C.x + h * Math.cos(a), C.y - h * Math.sin(a)), tail = P(C.x - h * Math.cos(a), C.y + h * Math.sin(a));
+  sline(svg, tail, tip, {stroke: 'var(--muted)', 'stroke-width': 3}); charge(svg, tip, 1, 11); charge(svg, tail, -1, 11);
+  K.angleArc(svg, C, P(C.x + 60, C.y), tip, 34, {cls: 'green', label: '60°', labelOff: 52});
+  if (i >= 1){ arrow(svg, tip, P(tip.x + 50, tip.y), 'var(--red)', 2.6); arrow(svg, tail, P(tail.x - 50, tail.y), 'var(--red)', 2.6); }
+  if (i >= 3) text(svg, P(180, 280), 'τ ≈ 5.2 × 10⁻⁵ N m', {class: 'lbl green', 'font-weight': 700, opacity: t});
+});
+
+/* ---- quiz ---- */
+K.mcq('#q1', {q: 'Which one of these is a scalar?', options: ['Electric field', 'Electric charge', 'Dipole moment', 'Electric force'], answer: 1, explain: 'Charge has a size and a sign but no direction, so it adds like ordinary numbers. Field, dipole moment and force are vectors.'});
+K.numq('#q2', {q: 'Two forces of 6 N and 8 N act at right angles to each other. What is the magnitude of their resultant?', answer: 10, tol: 0.01, unit: 'N', explain: 'R = √(6² + 8²) = √100 = 10 N.', hint: 'At 90°, cos θ = 0, so R = √(A² + B²).'});
+K.mcq('#q3', {q: 'The unit vector along r = 6î + 8ĵ is', options: ['6î + 8ĵ', '0.6î + 0.8ĵ', 'î + ĵ', '10î'], answer: 1, explain: 'r = √(36 + 64) = 10, and r̂ = r/r = 0.6î + 0.8ĵ (its length is 1).'});
+K.mcq('#q4', {q: 'q₁ is at r₁ and q₂ is at r₂. The vector r₂₁ = r₂ − r₁ points', options: ['from q₂ to q₁', 'from q₁ to q₂', 'from the origin to q₂', 'from the origin to q₁'], answer: 1, explain: '“21” means “to 2, from 1”: r₂₁ starts at q₁ and ends at q₂.'});
+K.numq('#q5', {q: 'A uniform field of 500 N/C is perpendicular to the plane of a 0.2 m² surface (so it is along the normal). Find the flux E·ΔS.', answer: 100, tol: 0.01, unit: 'N m²/C', explain: 'Field along the normal: θ = 0°, cos 0° = 1, φ = 500 × 0.2 = 100 N m²/C.', hint: '“Perpendicular to the plane” means parallel to the normal, so θ = 0°.'});
+K.mcq('#q6', {q: 'The torque p × E on a dipole is zero when the angle between p and E is', options: ['30°', '45°', '90°', '180°'], answer: 3, explain: 'sin 180° = 0 (also sin 0° = 0). At 90° the torque is the largest.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

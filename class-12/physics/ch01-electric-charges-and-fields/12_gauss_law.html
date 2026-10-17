@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Continuous Charge Distribution and Gauss's Law</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+@media(max-width:600px){.onpage a{white-space:normal}}
+
+</style>
+<style>
+.qa{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.6rem 1rem;margin:.7rem 0;box-shadow:var(--shadow)}
+.qa p{margin:.25em 0}
+.qbox{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.7rem 1rem;margin:.8rem 0;box-shadow:var(--shadow)}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.tw{overflow-x:auto}
+.remarks{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.7rem;margin:.8rem 0}
+.remarks .card{margin:0}
+.remarks .card b.n{display:inline-block;min-width:2rem;color:var(--accent-ink);background:var(--accent-soft);border-radius:999px;text-align:center;margin-right:.3rem}
+.exam{font-size:.85rem;font-weight:600;color:var(--accent-ink);background:var(--accent-soft);border-radius:999px;padding:.1rem .6rem;display:inline-block}
+</style>
+</head>
+<body data-page="12_gauss_law">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 1 · Sections 1.13–1.14</span><span class="chip amber">Textbook pages 32–36</span>
+<h1>Continuous Charge Distribution &amp; Gauss's Law</h1>
+<p class="lead">Real charged objects – a charged rod, a metal sheet, a thundercloud – hold billions of billions of electrons. Instead of counting them one by one, we describe the charge by a smooth <b>density</b>. Then we meet one of the most powerful results in electrostatics: <b>Gauss's law</b> – the total flux out of any closed surface depends only on the charge inside it.</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 2, 9 and 10 of this guide)</div>
+<ul style="margin:0">
+<li>Electric field (<span class="ml">വൈദ്യുത മണ്ഡലം</span>) of a point charge: E = <span class="frac"><span>1</span><span>4πε<sub>0</sub></span></span> <span class="frac"><span>q</span><span>r<sup>2</sup></span></span> r̂, directed away from a positive charge (page 9).</li>
+<li>Flux through a small area: Δφ = <b>E</b>·Δ<b>S</b> = E ΔS cos θ; the area vector (<span class="ml">ഏരിയ സദിശം</span>) Δ<b>S</b> points along the <b>outward</b> normal of a closed surface (page 10).</li>
+<li>Areas: circle πr<sup>2</sup>, sphere 4πr<sup>2</sup>, curved surface of a cylinder 2πrl (page 2). ε<sub>0</sub> = 8.854 × 10<sup>−12</sup> C<sup>2</sup> N<sup>−1</sup> m<sup>−2</sup>.</li>
+</ul></div>
+
+<h2 id="continuous">1. Continuous charge distribution (1.13, Fig 1.24)</h2>
+<p>So far we have worked with a few <b>discrete</b> point charges (<span class="ml">ബിന്ദു ചാർജ്</span>) q<sub>1</sub>, q<sub>2</sub>, …, q<sub>n</sub>. On the surface of a charged conductor, however, it is impractical to locate every electron. We treat the charge as a <b>continuous charge distribution</b> (<span class="ml">തുടർച്ചയായ ചാർജ് വിതരണം</span>): pick a small element that is <b>tiny on the everyday (macroscopic) scale but still contains a very large number of electrons</b>, and state how much charge ΔQ it holds.</p>
+<div class="tw"><table>
+<thead><tr><th>Charge spread along…</th><th>Density</th><th>Definition</th><th>SI unit</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td>a line (thin wire, rod)</td><td><b>linear charge density</b> λ<br><span class="ml">രേഖീയ ചാർജ് സാന്ദ്രത</span></td><td>λ = <span class="frac"><span>ΔQ</span><span>Δl</span></span> &nbsp;(1.24)</td><td>C/m (C m<sup>−1</sup>)</td><td>charged thin wire</td></tr>
+<tr><td>a surface (sheet, conductor surface)</td><td><b>surface charge density</b> σ<br><span class="ml">ഉപരിതല ചാർജ് സാന്ദ്രത</span></td><td>σ = <span class="frac"><span>ΔQ</span><span>ΔS</span></span> &nbsp;(1.23)</td><td>C/m<sup>2</sup></td><td>charged metal plate, spherical shell</td></tr>
+<tr><td>a volume (cloud, solid ball)</td><td><b>volume charge density</b> ρ<br><span class="ml">വ്യാപ്ത ചാർജ് സാന്ദ്രത</span></td><td>ρ = <span class="frac"><span>ΔQ</span><span>ΔV</span></span> &nbsp;(1.25)</td><td>C/m<sup>3</sup></td><td>charged cloud, electron cloud of an atom</td></tr>
+</tbody></table></div>
+<p>So the charge in an element is ΔQ = λΔl, ΔQ = σΔS or ΔQ = ρΔV. These densities are <b>smoothed-out averages</b>: they ignore the quantisation of charge and the empty space between the charges at the atomic level – just as we speak of the density of water and forget its molecules.</p>
+
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: zoom into a charge element (Fig 1.24)</div>
+  <div class="controls"><button class="btn primary" id="dnL">Line charge λ</button><button class="btn" id="dnS">Surface charge σ</button><button class="btn" id="dnV">Volume charge ρ</button>
+  <label>element size <input id="dnSz" type="range" min="0.1" max="2" step="0.1" value="1"><output></output> mm</label></div>
+  <svg id="dnSvg" viewBox="0 0 800 330" role="img" aria-label="Left: a charged wire, surface or volume with a small element, the origin O, the point P and the vectors r, R and r-prime as in Fig 1.24. Right: a magnified view of the element filled with many tiny charges."></svg>
+  <div class="readout" id="dnOut"></div>
+  <p class="hint">Change the element size: ΔQ changes, but ΔQ ÷ (size) – the density – stays the same for a uniform distribution. Even a 0.1 mm element contains lakhs of elementary charges, so a smooth density is a very good description.</p>
+</div>
+
+<h3>Field of a continuous distribution</h3>
+<p>Divide the charge into small volume elements ΔV. The element at position <b>r</b> holds charge ρΔV and acts like a point charge. By Coulomb's law its field at the point P (position vector <b>R</b>) is</p>
+<p class="eq">Δ<b>E</b> = <span class="frac"><span>1</span><span>4πε<sub>0</sub></span></span> <span class="frac"><span>ρ ΔV</span><span>r′<sup>2</sup></span></span> r̂′ &nbsp;&nbsp;(1.26)</p>
+<p>where r′ is the distance from the element to P and r̂′ the unit vector from the element towards P. By the <b>superposition principle</b> (<span class="ml">അധ്യാരോപണ തത്വം</span>) the total field is the vector sum over all elements:</p>
+<p class="eq"><b>E</b> ≅ <span class="frac"><span>1</span><span>4πε<sub>0</sub></span></span> ∑<sub>all ΔV</sub> <span class="frac"><span>ρ ΔV</span><span>r′<sup>2</sup></span></span> r̂′ &nbsp;&nbsp;(1.27)</p>
+<p>When ΔV → 0 the sum becomes an integral, <b>E</b> = <span class="frac"><span>1</span><span>4πε<sub>0</sub></span></span> ∫ <span class="frac"><span>ρ dV</span><span>r′<sup>2</sup></span></span> r̂′. Doing this sum directly is usually very hard – which is exactly why Gauss's law, below, is so useful.</p>
+<div class="callout real"><div class="title">🌩️ Real life – charge on a thundercloud</div>
+<p>Nobody can count the electrons in a thundercloud. Meteorologists describe the cloud by a volume charge density ρ (a few nC per cubic metre in the charged regions) and the ground below by a surface charge density σ. The lightning conductor on a tall building works because charge on a sharp metal tip has a large σ and therefore a strong field near it (more on page 17).</p></div>
+
+<h2 id="gauss">2. Gauss's law – flux through a sphere around a point charge (1.14, Fig 1.25)</h2>
+<p>We now use the idea of <b>electric flux</b> (<span class="ml">വൈദ്യുത ഫ്ലക്സ്</span>) from page 10. Put a point charge q at the centre of a sphere of radius r, divide the sphere into small area elements ΔS and add up the flux through all of them. Step through the derivation – this is exactly how you should write it in the exam.</p>
+<p><span class="exam">📝 Board exam: "State Gauss's law. Show that the flux through a sphere enclosing a point charge q is q/ε₀" – write these steps with the labelled diagram.</span></p>
+<div class="lab" id="drvPt"><div class="lab-title">🎬 Derivation in exam layout – flux through a sphere enclosing q (Fig 1.25)</div>
+<svg viewBox="0 0 800 360" role="img" aria-label="A point charge q at the centre O of a sphere of radius r, divided into small area elements; the field E and the area vector delta-S at an element are both along r-hat; the working is written on the right"></svg></div>
+
+<div class="callout key"><div class="title">⭐ Gauss's law (<span class="ml">ഗോസ് നിയമം</span>) – Eq. 1.31</div>
+<p>The <b>total electric flux through any closed surface</b> is equal to <span class="frac"><span>1</span><span>ε<sub>0</sub></span></span> times the <b>total charge enclosed</b> by that surface:</p>
+<p class="eq" style="margin-bottom:.3rem">φ = ∮ <b>E</b>·d<b>S</b> = <span class="frac"><span>q<sub>enclosed</sub></span><span>ε<sub>0</sub></span></span></p>
+<p>The closed surface used to apply the law is called a <b>Gaussian surface</b> (<span class="ml">ഗോസിയൻ ഉപരിതലം</span>). The ∮ sign means "add E·dS over the whole closed surface". If no charge is enclosed, the net flux is zero.</p></div>
+<div class="callout think"><div class="title">🤔 Why does the radius r cancel?</div>
+<p>The field falls as 1/r<sup>2</sup> while the area of the sphere grows as r<sup>2</sup>. Their product stays the same, so every sphere around q – big or small – has the same flux q/ε<sub>0</sub>. In the picture of field lines (<span class="ml">വൈദ്യുത മണ്ഡലരേഖകൾ</span>): the same number of lines leaves q and crosses every sphere around it. This works only because Coulomb's law is an exact <b>inverse square law</b> (<span class="ml">വിപരീത വർഗ നിയമം</span>).</p></div>
+
+<h3>No charge inside → zero net flux (Fig 1.26)</h3>
+<p>Take a closed cylinder with its axis parallel to a <b>uniform electric field</b> (<span class="ml">ഏകീകൃത വൈദ്യുത മണ്ഡലം</span>). There is no charge inside, so Gauss's law predicts zero total flux. Check it face by face:</p>
+<div class="lab" id="drvCyl"><div class="lab-title">🎬 Zero flux through a cylinder in a uniform field (Fig 1.26)</div>
+<svg viewBox="0 0 800 300" role="img" aria-label="A closed cylinder in a uniform field E along its axis: face 1 on the left with outward normal opposite to E, face 2 on the right with outward normal along E, and the curved surface 3 with normals perpendicular to E"></svg></div>
+<p>Whenever the net flux through a closed surface is zero, the total charge inside it is zero (there may be equal + and − charges inside, but they add to zero).</p>
+
+<h2 id="remarks">3. Points to note about Gauss's law (remarks i–vi)</h2>
+<div class="remarks">
+<div class="card"><b class="n">i</b> Gauss's law is true for <b>any closed surface</b>, whatever its shape or size.</div>
+<div class="card"><b class="n">ii</b> q on the right side is the <b>sum of all charges enclosed</b> by the surface (with signs). They may be anywhere inside.</div>
+<div class="card"><b class="n">iii</b> If some charges are inside and some outside, the field <b>E</b> on the left side is due to <b>all</b> the charges, inside and outside. But q on the right side is <b>only the charge inside</b>.</div>
+<div class="card"><b class="n">iv</b> The chosen surface is the <b>Gaussian surface</b>. It must <b>not pass through a discrete charge</b> (the field there is not defined – it grows without bound). It may pass through a continuous distribution.</div>
+<div class="card"><b class="n">v</b> Gauss's law makes field calculations easy <b>when the charges have symmetry</b> – choose a Gaussian surface on which E is constant and along (or perpendicular to) the surface normal (page 13).</div>
+<div class="card"><b class="n">vi</b> Gauss's law rests on the <b>inverse square law</b> in Coulomb's law. Any violation of Gauss's law would mean a departure from 1/r<sup>2</sup>.</div>
+</div>
+<div class="callout warn"><div class="title">⚠ Common mistake</div>
+<p>"Only the charges inside produce the field on the Gaussian surface" – <b>wrong</b>. Outside charges do change <b>E</b> at each point of the surface; they only add up to <b>zero net flux</b>, because every field line of an outside charge that enters the surface also leaves it. Try it in the lab below.</p></div>
+
+<h2 id="lab">4. Gaussian-surface lab – drag charges in and out</h2>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: what does the flux meter count?</div>
+  <div class="controls"><label>surface <select id="gsShape"><option value="0">sphere (circle in cross-section)</option><option value="1">cube (square in cross-section)</option><option value="2">egg-shaped surface</option></select></label>
+  <label>size <input id="gsR" type="range" min="90" max="170" step="5" value="130"><output></output></label></div>
+  <div class="controls"><button class="btn" id="gsOwn">Show each charge's own field lines</button><button class="btn" id="gsReset">⟲ Reset charges</button></div>
+  <svg id="gsSvg" viewBox="0 0 800 440" role="img" aria-label="A cross-section of a closed Gaussian surface with four draggable charges, small arrows showing the resultant electric field of all charges, and a flux meter that shows the enclosed charge divided by epsilon-zero"></svg>
+  <div class="readout" id="gsOut"></div>
+  <p class="hint">Drag the four charges (+2q, −1q, +1q, −2q). The small arrows show the resultant field <b>E</b> of <b>all</b> four charges – they change whenever you move any charge. The flux meter changes <b>only</b> when a charge crosses the surface. Turn on "own field lines" (8 lines per q): a line of an outside charge that enters the surface (red dot) always leaves it again (green dot). This is a cross-section through the centre; the charges lie in this plane.</p>
+</div>
+
+<h2 id="ex111">5. Example 1.11 – flux through a cube (Fig 1.27)</h2>
+<div class="qbox"><p><b>Example 1.11.</b> The electric field components in Fig 1.27 are E<sub>x</sub> = αx<sup>1/2</sup>, E<sub>y</sub> = E<sub>z</sub> = 0, in which α = 800 N C<sup>−1</sup> m<sup>−1/2</sup>. Calculate (a) the flux through the cube, and (b) the charge within the cube. Assume that a = 0.1 m. (The cube of side a has its left face at x = a and its right face at x = 2a.)</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>E has only an x-component, so only the two faces perpendicular to x (left and right) have flux. On the left face the outward normal points along −x (θ = 180°); on the right face along +x (θ = 0°). The field is stronger on the right face, so more flux leaves than enters. Then use q = ε<sub>0</sub>φ.</p></div></div>
+<div class="lab" id="ex111s"><div class="lab-title">🎬 Solution in exam layout – Example 1.11</div>
+<svg viewBox="0 0 800 380" role="img" aria-label="The cube of Fig 1.27 between x = a and x = 2a with the shaded left and right faces, the outward normals n-L and n-R and field arrows that are longer on the right face; the working is on the right"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> (a) φ = αa<sup>5/2</sup>(√2 − 1) = <b>1.05 N m<sup>2</sup> C<sup>−1</sup></b> (outward). (b) q = ε<sub>0</sub>φ = <b>9.27 × 10<sup>−12</sup> C</b> (textbook value).<br><span class="small">Note: carrying all the digits, φ = 1.048 N m<sup>2</sup> C<sup>−1</sup> and q = 8.854 × 10<sup>−12</sup> × 1.048 = 9.28 × 10<sup>−12</sup> C; using the rounded φ = 1.05 gives 9.30 × 10<sup>−12</sup> C. All of these round to ≈ 9.3 × 10<sup>−12</sup> C – any of them earns the mark.</span></div></div>
+
+<h2 id="ex112">6. Example 1.12 – flux through a cylinder (Fig 1.28)</h2>
+<div class="qbox"><p><b>Example 1.12.</b> An electric field is uniform, and in the positive x direction for positive x, and uniform with the same magnitude but in the negative x direction for negative x. It is given that <b>E</b> = 200 î N/C for x &gt; 0 and <b>E</b> = −200 î N/C for x &lt; 0. A right circular cylinder of length 20 cm and radius 5 cm has its centre at the origin and its axis along the x-axis so that one face is at x = +10 cm and the other is at x = −10 cm (Fig 1.28). (a) What is the net outward flux through each flat face? (b) What is the flux through the side of the cylinder? (c) What is the net outward flux through the cylinder? (d) What is the net charge inside the cylinder?</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>On <b>both</b> flat faces the field points <b>outwards</b> (to the left on the left face, to the right on the right face), so both fluxes are positive. Area of a face = πr<sup>2</sup> with r = 0.05 m. On the curved side, <b>E</b> ⟂ Δ<b>S</b>.</p></div></div>
+<div class="lab" id="ex112s"><div class="lab-title">🎬 Solution in exam layout – Example 1.12</div>
+<svg viewBox="0 0 800 380" role="img" aria-label="The cylinder of Fig 1.28 from x = minus 10 cm to x = plus 10 cm, radius 5 cm, with the field pointing left for negative x and right for positive x and the outward area vectors on each face; the working is on the right"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> (a) <b>+1.57 N m<sup>2</sup> C<sup>−1</sup></b> through each flat face; (b) <b>zero</b> through the side; (c) φ = <b>3.14 N m<sup>2</sup> C<sup>−1</sup></b>; (d) q = ε<sub>0</sub>φ = <b>2.78 × 10<sup>−11</sup> C</b> (positive – such a field is produced by a positively charged sheet in the y-z plane, page 13).</div></div>
+
+<div class="callout real"><div class="title">🧲 Real life – Gauss's law in a laboratory</div>
+<p>Physicists have tested Gauss's law (and so the inverse square law) by charging a closed metal shell and checking for any field inside it with sensitive meters. Such experiments show that the power of r in Coulomb's 1/r<sup>2</sup> law equals 2 to within about one part in 10<sup>16</sup> – remark (vi) in action. The same idea keeps a car safe in lightning (a Faraday cage – page 17).</p></div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://en.wikipedia.org/wiki/Electric_flux" target="_blank" rel="noopener noreferrer">📄 Electric flux</a> <span class="src">Wikipedia</span><br><span class="note">Flux of a field through a surface.</span></li><li><a href="https://en.wikipedia.org/wiki/Gauss%27s_law" target="_blank" rel="noopener noreferrer">📄 Gauss&#x27;s law</a> <span class="src">Wikipedia</span><br><span class="note">Gauss&#x27;s law and its applications to symmetric charge distributions.</span></li><li><a href="https://en.wikipedia.org/wiki/Carl_Friedrich_Gauss" target="_blank" rel="noopener noreferrer">📄 Carl Friedrich Gauss</a> <span class="src">Wikipedia</span><br><span class="note">The &quot;prince of mathematicians&quot; behind Gauss&#x27;s law.</span></li><li><a href="https://en.wikipedia.org/wiki/Faraday_cage" target="_blank" rel="noopener noreferrer">📄 Faraday cage</a> <span class="src">Wikipedia</span><br><span class="note">Why the field inside a closed conductor is zero – electrostatic shielding (Exercise 1.28).</span></li></ul></div>
+
+<h2 id="check">7. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div><div id="q7"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li>Continuous distributions: λ = ΔQ/Δl (C/m), σ = ΔQ/ΔS (C/m<sup>2</sup>), ρ = ΔQ/ΔV (C/m<sup>3</sup>). Elements are small macroscopically but hold huge numbers of charges.</li>
+<li>Field of a distribution: <b>E</b> = (1/4πε<sub>0</sub>) ∑ ρΔV r̂′/r′<sup>2</sup> (superposition).</li>
+<li>Sphere around a point charge: φ = q/(4πε<sub>0</sub>r<sup>2</sup>) × 4πr<sup>2</sup> = <b>q/ε<sub>0</sub></b>, independent of r.</li>
+<li><b>Gauss's law</b>: φ = ∮<b>E</b>·d<b>S</b> = q<sub>enclosed</sub>/ε<sub>0</sub> for any closed surface. Outside charges give zero net flux, but <b>E</b> is due to all charges.</li>
+<li>Ex 1.11: φ = 1.05 N m<sup>2</sup> C<sup>−1</sup>, q = 9.27 × 10<sup>−12</sup> C. Ex 1.12: 1.57 + 1.57 + 0 = 3.14 N m<sup>2</sup> C<sup>−1</sup>, q = 2.78 × 10<sup>−11</sup> C.</li>
+</ul></div>
+<p>Next: <a href="13_gauss_applications.html">Applications of Gauss's law – wire, sheet and spherical shell ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Electric Charges and Fields · 2nd PUC Physics", "icon": "⚡", "key": "puc_physics_ch1_progress", "pages": [["index.html", "Home"], ["01_vectors_toolkit.html", "1 · Vectors Toolkit: Components, Unit Vectors & Dot Product"], ["02_calculus_geometry_toolkit.html", "2 · Maths Toolkit: Areas, Small Elements & Integration"], ["03_forces_motion_recap.html", "3 · Forces, Newton's Laws & Motion Under Constant Force"], ["04_electric_charge.html", "4 · Electric Charge & Electroscopes (1.1–1.2)"], ["05_conductors_induction.html", "5 · Conductors, Insulators, Earthing & Induction (1.3–1.4)"], ["06_properties_of_charge.html", "6 · Properties of Charge: Additivity, Conservation, Quantisation (1.5)"], ["07_coulombs_law.html", "7 · Coulomb's Law (1.6)"], ["08_multiple_charges.html", "8 · Forces Between Multiple Charges – Superposition (1.7)"], ["09_electric_field.html", "9 · Electric Field (1.8)"], ["10_field_lines_flux.html", "10 · Electric Field Lines & Electric Flux (1.9–1.10)"], ["11_electric_dipole.html", "11 · Electric Dipole & Dipole in a Uniform Field (1.11–1.12)"], ["12_gauss_law.html", "12 · Continuous Charge Distribution & Gauss's Law (1.13–1.14)"], ["13_gauss_applications.html", "13 · Applications of Gauss's Law (1.15)"], ["14_exercises_1_12.html", "14 · Exercises 1.1–1.12 – Solutions"], ["15_exercises_13_24.html", "15 · Exercises 1.13–1.24 – Solutions"], ["16_additional_exercises.html", "16 · Additional Exercises 1.25–1.34 – Solutions"], ["17_applications_explore.html", "17 · Applications & Explore Online"], ["18_summary_revision.html", "18 · Summary, Points to Ponder & Quick Quiz"], ["19_model_test_paper.html", "19 · Model Question Paper (70 marks)"], ["20_model_test_solutions.html", "20 · Model Question Paper – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ---------- page helpers (shared by pages 12–13) ---------- */
+const {P} = K;
+const COL = {red: 'var(--red)', blue: 'var(--blue)', green: 'var(--green)', amber: 'var(--accent)', purple: 'var(--purple)', text: 'var(--text)', muted: 'var(--muted)', primary: 'var(--primary)'};
+const cv = c => COL[c] || c;
+const $id = id => document.getElementById(id);
+const sline = (svg, a, b, attrs={}) => K.el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, 'stroke-linecap': 'round', ...attrs}, svg);
+const ln = (svg, a, b, c='text', w=2, extra={}) => sline(svg, a, b, {stroke: cv(c), 'stroke-width': w, ...extra});
+const rect = (svg, x, y, w, h, attrs={}) => K.el('rect', {x, y, width: Math.max(0, w), height: Math.max(0, h), ...attrs}, svg);
+const circ = (svg, c, r, attrs={}) => K.el('circle', {cx: c.x, cy: c.y, r: Math.max(0, r), ...attrs}, svg);
+const ell = (svg, c, rx, ry, attrs={}) => K.el('ellipse', {cx: c.x, cy: c.y, rx: Math.max(0, rx), ry: Math.max(0, ry), ...attrs}, svg);
+const path = (svg, d, attrs={}) => K.el('path', {d, fill: 'none', ...attrs}, svg);
+const minus = s => String(s).replace(/(^|[\s(=:,/×+[])-(?=[\d.])/g, '$1−');
+const nf = (v, d=2) => { const s = K.fmt(Math.abs(+v), d); return (+v < 0 && +s !== 0 ? '−' : '') + s; };
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const fs = n => ({style: `font-size:${n}px`});
+const SUPD = {'0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻'};
+/* scientific notation "3.60 × 10⁵" */
+function sci(v, d=2){ if (!isFinite(v) || v === 0) return '0'; let e = Math.floor(Math.log10(Math.abs(v))); let m = Math.abs(v) / Math.pow(10, e);
+  if (+m.toFixed(d) >= 10){ e += 1; m /= 10; } const ms = m.toFixed(d); return (v < 0 ? '−' : '') + (e === 0 ? ms : ms + ' × 10' + String(e).split('').map(c => SUPD[c]).join('')); }
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+/* SVG text with subscripts: "φ_L" → φ with a lowered L */
+function text(svg, p, str, attrs={}){ const s = String(str);
+  if (!/_/.test(s)) return K.text(svg, p, s, attrs);
+  return K.el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs,
+    html: esc(s).replace(/_(\w+)/g, '<tspan baseline-shift="sub" style="font-size:72%">$1</tspan>')}, svg); }
+const tl = (svg, x, y, str, cls='', extra={}) => text(svg, P(x, y), str, {class: ('lbl ' + cls).trim(), 'text-anchor': 'start', ...extra});
+const tc = (svg, x, y, str, cls='', extra={}) => text(svg, P(x, y), str, {class: ('lbl ' + cls).trim(), ...extra});
+/* working lines: rows = [[step, text, cls], …]; rows whose step ≤ i are shown, the newest fades in */
+function lines(svg, rows, i, t, o={}){ const x = o.x ?? 400, y0 = o.y ?? 30, lh = o.lh ?? 30; let k = 0;
+  rows.forEach(r => { if (r[0] > i) return; const ind = (r[1].match(/^ */)[0].length) * 4.3; text(svg, P(x + ind, y0 + k * lh), minus(r[1].trim()), {class: 'lbl ' + (r[2] || ''), 'text-anchor': 'start', opacity: r[0] === i ? t : 1}); k++; }); }
+/* arrow a→b with filled head */
+function arrow(svg, a, b, o={}){ const c = cv(o.c || 'red'), w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const L = K.dist(a, b); if (L < 1) return g; const u = K.unit(a, b), hs = Math.min(o.head ?? 11, L * .6); const base = P(b.x - u.x * hs, b.y - u.y * hs);
+  K.el('line', {x1: a.x, y1: a.y, x2: base.x, y2: base.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round', ...(o.dash ? {'stroke-dasharray': o.dash} : {})}, g);
+  K.el('polygon', {points: `${b.x},${b.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g);
+  if (o.label) text(g, P(b.x + (o.lo ? o.lo.x : 0), b.y + (o.lo ? o.lo.y : -12)), minus(o.label), {class: 'lbl sm ' + (o.lc || o.c || 'red'), 'text-anchor': o.anchor || 'middle', 'font-weight': 700});
+  return g; }
+/* a charge disc with its label */
+function charge(svg, p, q, o={}){ const r = o.r ?? 13, pos = q > 0;
+  circ(svg, p, r, {fill: pos ? 'var(--red)' : 'var(--blue)', stroke: 'var(--svgbg)', 'stroke-width': 2});
+  tc(svg, p.x, p.y + 1, pos ? '+' : '−', '', {style: `font-size:${r + 5}px;fill:#fff;stroke:none;font-weight:700`});
+  if (o.label) tc(svg, p.x + (o.lx ?? 0), p.y + (o.ly ?? -(r + 11)), o.label, 'sm', {'font-weight': 700}); }
+function radio(ids, onPick){ const els = ids.map(id => $id(id)); const set = k => { els.forEach((b, i) => b.classList.toggle('primary', i === k)); onPick(k); }; els.forEach((b, i) => b.addEventListener('click', () => set(i))); return set; }
+const rnd = k => { const s = Math.sin(k * 12.9898 + 78.233) * 43758.5453; return s - Math.floor(s); };
+
+/* ---------- Lab 1: zoom into a charge element (Fig 1.24) ---------- */
+(function(){
+  const svg = $id('dnSvg'), out = $id('dnOut'); let mode = 0, s = 1;
+  const DEN = [{sym: 'λ', val: 2, unit: 'μC/m', el: 'Δl', elU: 'mm', pow: 1, name: 'line'},
+               {sym: 'σ', val: 5, unit: 'μC/m²', el: 'ΔS', elU: 'mm²', pow: 2, name: 'surface'},
+               {sym: 'ρ', val: 50, unit: 'μC/m³', el: 'ΔV', elU: 'mm³', pow: 3, name: 'volume'}];
+  function draw(){
+    K.clear(svg); const d = DEN[mode], O = P(40, 300), Pp = P(330, 50);
+    let E; const k = 8 + s * 10;               /* element size in px */
+    if (mode === 0){ const a = P(70, 140), b = P(330, 250); ln(svg, a, b, 'red', 5); for (let j = 0; j <= 10; j++){ const q = K.lerpPt(a, b, j / 10); tc(svg, q.x - 9, q.y - 9, '+', 'sm red', {'font-weight': 700}); }
+      E = K.lerpPt(a, b, .45); const u = K.unit(a, b); ln(svg, P(E.x - u.x * k / 2, E.y - u.y * k / 2), P(E.x + u.x * k / 2, E.y + u.y * k / 2), 'amber', 9); tc(svg, E.x + 16, E.y + 16, 'Δl', 'amber', {'font-weight': 700}); }
+    else if (mode === 1){ const g = K.group(svg); for (let j = 0; j <= 6; j++){ path(g, `M${60 + j * 8},${140 + j * 22} Q${170 + j * 8},${100 + j * 22} ${290 + j * 8},${150 + j * 22}`, {stroke: 'var(--red)', 'stroke-width': 1.3, opacity: .7}); }
+      for (let j = 0; j <= 6; j++){ path(g, `M${60 + j * 38},${140 - j * 2 + (j > 3 ? (j - 3) * 6 : 0)} L${108 + j * 38},${272 - j * 2 + (j > 3 ? (j - 3) * 6 : 0)}`, {stroke: 'var(--red)', 'stroke-width': 1.3, opacity: .7}); }
+      E = P(175, 190); K.polygon(svg, [P(E.x - k / 2, E.y - k / 2), P(E.x + k / 2, E.y - k / 2 - 3), P(E.x + k / 2 + 3, E.y + k / 2), P(E.x - k / 2 + 3, E.y + k / 2 + 3)], {fill: 'var(--accent)', opacity: .8});
+      tc(svg, E.x - k / 2 - 14, E.y - k / 2 - 8, 'ΔS', 'amber', {'font-weight': 700}); }
+    else { path(svg, 'M80,200 C70,120 170,80 240,110 C320,140 330,220 270,260 C200,300 95,280 80,200 Z', {fill: 'var(--red-soft)', stroke: 'var(--red)', 'stroke-width': 2});
+      for (let j = 0; j < 26; j++){ const q = P(110 + rnd(j) * 180, 125 + rnd(j + 40) * 135); tc(svg, q.x, q.y, '+', 'sm red'); }
+      E = P(185, 195); K.cuboid(svg, P(E.x - k / 2, E.y + k / 2), k, k, k, {cls: ['fill-amber', 'fill-amber', 'fill-amber'], attrs: {opacity: .95}}); tc(svg, E.x + k / 2 + 14, E.y + k / 2 + 8, 'ΔV', 'amber', {'font-weight': 700}); }
+    /* O, P and the vectors of Fig 1.24 */
+    K.dot(svg, O); tc(svg, O.x - 12, O.y + 8, 'O', 'big'); K.dot(svg, Pp); tc(svg, Pp.x + 14, Pp.y - 6, 'P', 'big');
+    arrow(svg, O, E, {c: 'blue', w: 2, head: 9}); tc(svg, K.mid(O, E).x - 12, K.mid(O, E).y - 4, 'r', 'blue i', {'font-weight': 700});
+    arrow(svg, O, Pp, {c: 'green', w: 2, head: 9}); tc(svg, K.mid(O, Pp).x - 4, K.mid(O, Pp).y - 14, 'R', 'green i', {'font-weight': 700});
+    arrow(svg, E, Pp, {c: 'purple', w: 2, head: 9, dash: '5 4'}); tc(svg, K.mid(E, Pp).x + 14, K.mid(E, Pp).y + 4, 'r′', 'purple i', {'font-weight': 700});
+    /* magnifier */
+    const M = P(600, 160), MR = 120;
+    ln(svg, E, P(M.x - MR * .8, M.y - MR * .6), 'muted', 1, {'stroke-dasharray': '3 4'}); ln(svg, E, P(M.x - MR * .8, M.y + MR * .6), 'muted', 1, {'stroke-dasharray': '3 4'});
+    circ(svg, M, MR, {fill: 'var(--surface2)', stroke: 'var(--accent)', 'stroke-width': 3});
+    const nDots = 160; for (let j = 0; j < nDots; j++){ let q;
+      if (mode === 0) q = P(M.x - 95 + rnd(j) * 190, M.y - 10 + rnd(j + 300) * 20);
+      else if (mode === 1) q = P(M.x - 70 + rnd(j) * 140, M.y - 70 + rnd(j + 300) * 140);
+      else { const a = rnd(j) * 2 * Math.PI, rr = 85 * Math.sqrt(rnd(j + 300)); q = P(M.x + rr * Math.cos(a), M.y + rr * Math.sin(a)); }
+      circ(svg, q, 2.6, {fill: 'var(--red)', opacity: .85}); }
+    if (mode === 0) rect(svg, M.x - 100, M.y - 14, 200, 28, {fill: 'none', stroke: 'var(--accent)', 'stroke-width': 1.5, 'stroke-dasharray': '4 3'});
+    if (mode === 1) rect(svg, M.x - 75, M.y - 75, 150, 150, {fill: 'none', stroke: 'var(--accent)', 'stroke-width': 1.5, 'stroke-dasharray': '4 3'});
+    tc(svg, M.x, M.y + MR + 20, `magnified ${d.el}: very many tiny charges`, 'sm');
+    tc(svg, M.x, 18, `${d.name} charge: ΔQ = ${d.sym} ${d.el}`, 'amber', {'font-weight': 700});
+  }
+  function status(){ const d = DEN[mode], size = Math.pow(s, d.pow), dq = d.val * 1e-6 * size * Math.pow(1e-3, d.pow), N = dq / 1.6e-19;
+    out.textContent = `${d.sym} = ${d.val} ${d.unit} (uniform)    ${d.el} = ${nf(size, 3)} ${d.elU} = ${sci(size * Math.pow(1e-3, d.pow), 2)} m${d.pow > 1 ? (d.pow === 2 ? '²' : '³') : ''}\n` +
+      `ΔQ = ${d.sym} × ${d.el} = ${sci(dq, 2)} C  ≈ ${sci(N, 2)} elementary charges (e = 1.6 × 10⁻¹⁹ C)\n` +
+      `ΔQ ÷ ${d.el} = ${d.sym} = ${d.val} ${d.unit} – the same for every element size.`; }
+  radio(['dnL', 'dnS', 'dnV'], k => { mode = k; draw(); status(); });
+  K.slider('#dnSz', v => { s = v; draw(); status(); }, 1);
+})();
+
+/* ---------- Derivation: flux through a sphere around q (Fig 1.25) ---------- */
+(function(){
+  const rows = [
+    [0, 'Point charge q at the centre O;', 'blue'], [0, '  Gaussian surface: sphere of radius r', 'blue'],
+    [1, 'Field at an element ΔS (Coulomb):', ''], [1, '  E = q/(4πε₀r²) r̂', 'purple'],
+    [2, 'ΔS is along r̂ (normal is radial), θ = 0°', ''], [2, '  Δφ = E·ΔS = q ΔS/(4πε₀r²)', 'purple'],
+    [3, 'φ = Σ q ΔS/(4πε₀r²) = q/(4πε₀r²) × ΣΔS', 'purple'], [3, '  (every ΔS is at the same distance r)', 'sm muted'],
+    [4, 'ΣΔS = area of sphere = 4πr²', ''], [4, 'φ = q/(4πε₀r²) × 4πr² = q/ε₀', 'big green'],
+    [5, 'Independent of r → Gauss\'s law:', ''], [5, '  φ = ∮E·dS = q_enclosed/ε₀   (1.31)', 'green']];
+  const steps = ['<b>Setup:</b> a point charge q sits at the centre O of a sphere of radius r. Divide the sphere into small area elements ΔS.',
+    '<b>Field at an element:</b> by Coulomb\'s law, <b>E</b> = q/(4πε<sub>0</sub>r<sup>2</sup>) r̂, where r̂ points from O to the element.',
+    '<b>Flux through one element:</b> the normal to a sphere is along the radius, so Δ<b>S</b> is along r̂ (θ = 0°, |r̂| = 1): Δφ = <b>E</b>·Δ<b>S</b> = qΔS/(4πε<sub>0</sub>r<sup>2</sup>) (1.29).',
+    '<b>Add over all elements:</b> every element is at the same distance r, so q/(4πε<sub>0</sub>r<sup>2</sup>) comes out of the sum: φ = q/(4πε<sub>0</sub>r<sup>2</sup>) × ∑ΔS.',
+    '<b>Total area:</b> ∑ΔS = 4πr<sup>2</sup>, so φ = q/(4πε<sub>0</sub>r<sup>2</sup>) × 4πr<sup>2</sup> = <b>q/ε<sub>0</sub></b> (1.30).',
+    '<b>Result:</b> the flux does not depend on r – every sphere around q has the same flux. This is a simple case of <b>Gauss\'s law</b>: φ = ∮<b>E</b>·d<b>S</b> = q<sub>enclosed</sub>/ε<sub>0</sub> for any closed surface.'];
+  new K.Stepper('#drvPt', {steps, ms: 800, draw(svg, i, t){
+    const O = P(190, 185), R = 125;
+    if (i === 5){ [70, 115, 160].forEach((r, k) => circ(svg, O, r * (k === 2 ? 1 : 1), {fill: 'none', stroke: 'var(--purple)', 'stroke-width': 1.8, 'stroke-dasharray': '6 4', opacity: .8}));
+      for (let k = 0; k < 16; k++){ const a = K.rad(k * 22.5 + 5); arrow(svg, P(O.x + 18 * Math.cos(a), O.y + 18 * Math.sin(a)), P(O.x + 178 * Math.cos(a), O.y + 178 * Math.sin(a)), {c: 'red', w: 1.6, head: 7, op: t}); }
+      tc(svg, O.x, 345, 'same 16 lines cross every sphere', 'sm purple', {'font-weight': 700}); }
+    else {
+      circ(svg, O, R, {fill: i >= 4 ? 'var(--purple-soft)' : 'none', stroke: 'var(--purple)', 'stroke-width': 2, opacity: i >= 4 ? .9 : 1});
+      ell(svg, O, R, 34, {fill: 'none', stroke: 'var(--purple)', 'stroke-width': 1.2, 'stroke-dasharray': '5 4'});
+      ln(svg, O, P(O.x + R, O.y), 'muted', 1.2, {'stroke-dasharray': '4 4'}); tc(svg, O.x + R / 2, O.y + 14, 'r', 'i');
+      /* area elements */
+      const angs = i >= 3 ? Array.from({length: 12}, (_, k) => k * 30 - 60) : [-50];
+      angs.forEach((ad, k) => { const a = K.rad(ad), c = P(O.x + R * Math.cos(a), O.y + R * Math.sin(a)), tg = P(-Math.sin(a), Math.cos(a)), w = 13;
+        K.polygon(svg, [P(c.x + tg.x * w, c.y + tg.y * w), P(c.x - tg.x * w, c.y - tg.y * w), P(c.x - tg.x * w + Math.cos(a) * 4, c.y - tg.y * w + Math.sin(a) * 4), P(c.x + tg.x * w + Math.cos(a) * 4, c.y + tg.y * w + Math.sin(a) * 4)], {fill: 'var(--accent)', opacity: k === 0 || i < 3 ? 1 : .55 * t + .2});
+        if (i >= 1 && (k === 0 || i >= 3)) arrow(svg, P(c.x + Math.cos(a) * 4, c.y + Math.sin(a) * 4), P(c.x + Math.cos(a) * 46, c.y + Math.sin(a) * 46), {c: 'red', w: 2.2, head: 8, op: k === 0 ? (i === 1 ? t : 1) : t});
+        if (i >= 2 && k === 0) arrow(svg, P(c.x - tg.x * 6, c.y - tg.y * 6), P(c.x - tg.x * 6 + Math.cos(a) * 34, c.y - tg.y * 6 + Math.sin(a) * 34), {c: 'blue', w: 2.2, head: 8, op: i === 2 ? t : 1});
+      });
+      const a0 = K.rad(-50), c0 = P(O.x + R * Math.cos(a0), O.y + R * Math.sin(a0));
+      tc(svg, c0.x - 26, c0.y - 6, 'ΔS', 'amber', {'font-weight': 700});
+      if (i >= 1) tc(svg, c0.x + Math.cos(a0) * 52 + 14, c0.y + Math.sin(a0) * 52, 'E', 'red', {'font-weight': 700});
+      if (i >= 2) tc(svg, c0.x + Math.cos(a0) * 40 - 24, c0.y + Math.sin(a0) * 40 - 4, 'ΔS', 'blue', {'font-weight': 700});
+      if (i >= 1) arrow(svg, O, P(O.x + 60 * Math.cos(a0), O.y + 60 * Math.sin(a0)), {c: 'green', w: 2, head: 8, label: 'r̂', lo: {x: -14, y: 4}, lc: 'green'});
+      if (i >= 4) tc(svg, O.x, O.y + R + 28, 'total area ΣΔS = 4πr²', 'sm purple', {'font-weight': 700});
+    }
+    charge(svg, O, 1, {r: 12}); tc(svg, O.x - 20, O.y + 22, 'q', 'i', {'font-weight': 700}); tc(svg, O.x + 4, O.y + 24, 'O', 'sm');
+    lines(svg, rows, i, t, {x: 405, y: 28, lh: 27});
+  }});
+})();
+
+/* ---------- Zero flux through a cylinder in a uniform field (Fig 1.26) ---------- */
+(function(){
+  const rows = [[0, 'Uniform E along the axis; no charge inside', 'blue'], [1, 'Face 3 (curved): normal ⟂ E → φ₃ = 0', ''],
+    [2, 'Face 1: outward normal opposite to E', ''], [2, '  φ₁ = ES cos180° = −ES', 'red'], [3, 'Face 2: outward normal along E', ''], [3, '  φ₂ = ES cos0° = +ES', 'green'],
+    [4, 'φ = φ₁ + φ₂ + φ₃ = −ES + ES + 0 = 0', 'big purple'], [4, 'zero flux ⇔ zero net charge inside', 'sm']];
+  const steps = ['A closed cylinder (faces 1 and 2 of area S, curved surface 3) sits in a <b>uniform</b> field with its axis along <b>E</b>. No charge is inside.',
+    '<b>Curved surface 3:</b> the normal at every point is perpendicular to <b>E</b> (θ = 90°), so φ<sub>3</sub> = 0.',
+    '<b>Face 1:</b> the outward normal points to the left, opposite to <b>E</b> (θ = 180°): φ<sub>1</sub> = −ES. The field lines <b>enter</b> here.',
+    '<b>Face 2:</b> the outward normal points along <b>E</b> (θ = 0°): φ<sub>2</sub> = +ES. The same lines <b>leave</b> here.',
+    '<b>Total:</b> φ = −ES + ES + 0 = <b>0</b>, exactly as Gauss\'s law predicts for a surface enclosing no charge.'];
+  new K.Stepper('#drvCyl', {steps, ms: 700, draw(svg, i, t){
+    const L = 70, Rr = 300, cy = 150, ry = 62, rx = 20;
+    for (let k = 0; k < 5; k++){ const y = 40 + k * 55; arrow(svg, P(15, y), P(375, y), {c: 'red', w: 1.6, head: 8, op: .55}); }
+    tc(svg, 360, 22, 'E', 'red', {'font-weight': 700});
+    ln(svg, P(L, cy - ry), P(Rr, cy - ry), 'blue', 2); ln(svg, P(L, cy + ry), P(Rr, cy + ry), 'blue', 2);
+    ell(svg, P(L, cy), rx, ry, {fill: i === 2 ? 'var(--red-soft)' : 'var(--blue-soft)', stroke: 'var(--blue)', 'stroke-width': 2, opacity: .95});
+    ell(svg, P(Rr, cy), rx, ry, {fill: i === 3 ? 'var(--green-soft)' : 'var(--blue-soft)', stroke: 'var(--blue)', 'stroke-width': 2, opacity: .95});
+    tc(svg, L, cy, '1', 'big'); tc(svg, Rr, cy, '2', 'big'); tc(svg, (L + Rr) / 2, cy - ry + 18, '3', 'big');
+    if (i >= 1){ arrow(svg, P(185, cy - ry), P(185, cy - ry - 34), {c: 'purple', w: 2.2, head: 8, op: i === 1 ? t : 1}); arrow(svg, P(185, cy + ry), P(185, cy + ry + 34), {c: 'purple', w: 2.2, head: 8, op: i === 1 ? t : 1}); tc(svg, 205, cy - ry - 26, 'ΔS', 'purple', {'font-weight': 700}); }
+    if (i >= 2) { arrow(svg, P(L - rx, cy), P(L - rx - 44, cy + 0.01), {c: 'purple', w: 2.6, head: 9, op: i === 2 ? t : 1}); tc(svg, L - rx - 30, cy + 18, 'n̂₁', 'purple', {'font-weight': 700}); }
+    if (i >= 3) { arrow(svg, P(Rr + rx, cy), P(Rr + rx + 44, cy + 0.01), {c: 'purple', w: 2.6, head: 9, op: i === 3 ? t : 1}); tc(svg, Rr + rx + 30, cy + 18, 'n̂₂', 'purple', {'font-weight': 700}); }
+    lines(svg, rows, i, t, {x: 410, y: 40, lh: 30});
+  }});
+})();
+
+/* ---------- Lab: Gaussian surface with draggable charges ---------- */
+(function(){
+  const svg = $id('gsSvg'), out = $id('gsOut'), AW = 640, C = P(320, 220), NL = 8;
+  const Q0 = [{x: 265, y: 185, q: 2}, {x: 385, y: 268, q: -1}, {x: 565, y: 95, q: 1}, {x: 95, y: 372, q: -2}];
+  const Q = Q0.map(o => ({...o})); let shape = 0, R = 130, own = false;
+  function poly(){ const pts = [];
+    if (shape === 1){ const c = [P(C.x - R, C.y - R), P(C.x + R, C.y - R), P(C.x + R, C.y + R), P(C.x - R, C.y + R)]; for (let e = 0; e < 4; e++) for (let k = 0; k < 18; k++) pts.push(K.lerpPt(c[e], c[(e + 1) % 4], k / 18)); }
+    else { const ax = shape === 2 ? 1.35 : 1, ay = shape === 2 ? .75 : 1; for (let k = 0; k < 90; k++){ const a = k / 90 * 2 * Math.PI; const egg = shape === 2 ? (1 + .12 * Math.cos(a)) : 1; pts.push(P(C.x + ax * R * Math.cos(a) * egg, C.y + ay * R * Math.sin(a))); } }
+    return pts; }
+  const inside = (p, pts) => { let c = false; for (let a = 0, b = pts.length - 1; a < pts.length; b = a++){ const A = pts[a], B = pts[b]; if (((A.y > p.y) !== (B.y > p.y)) && (p.x < (B.x - A.x) * (p.y - A.y) / (B.y - A.y) + A.x)) c = !c; } return c; };
+  const segDist = (p, A, B) => { const dx = B.x - A.x, dy = B.y - A.y, L2 = dx * dx + dy * dy || 1; const u = clamp(((p.x - A.x) * dx + (p.y - A.y) * dy) / L2, 0, 1); return Math.hypot(p.x - A.x - u * dx, p.y - A.y - u * dy); };
+  const polyDist = (p, pts) => Math.min(...pts.map((A, k) => segDist(p, A, pts[(k + 1) % pts.length])));
+  /* distances t (> 0) at which the ray p + t·d crosses the polygon */
+  function hits(p, d, pts){ const ts = []; for (let k = 0; k < pts.length; k++){ const A = pts[k], B = pts[(k + 1) % pts.length], ex = B.x - A.x, ey = B.y - A.y, den = d.x * ey - d.y * ex; if (Math.abs(den) < 1e-9) continue;
+      const tt = ((A.x - p.x) * ey - (A.y - p.y) * ex) / den, u = ((A.x - p.x) * d.y - (A.y - p.y) * d.x) / den; if (tt > 1e-6 && u >= 0 && u < 1) ts.push(tt); } return ts.sort((a, b) => a - b); }
+  function field(p){ let ex = 0, ey = 0; for (const c of Q){ const dx = p.x - c.x, dy = p.y - c.y, r2 = dx * dx + dy * dy, r = Math.sqrt(r2); if (r < 1) continue; ex += c.q * dx / (r2 * r); ey += c.q * dy / (r2 * r); } return P(ex, ey); }
+  function draw(){
+    K.clear(svg); const pts = poly();
+    rect(svg, 0, 0, AW, 440, {fill: 'var(--svgbg)'});
+    K.polygon(svg, pts, {fill: 'var(--purple-soft)', stroke: 'var(--purple)', 'stroke-width': 2.6, 'stroke-dasharray': '9 5', opacity: .75});
+    tc(svg, C.x, shape === 1 ? C.y - R - 12 : C.y - (shape === 2 ? .75 : 1) * R - 12, 'Gaussian surface S', 'sm purple', {'font-weight': 700});
+    /* resultant field of ALL charges on a grid */
+    for (let x = 20; x < AW; x += 30) for (let y = 20; y < 440; y += 30){ const p = P(x, y); if (Q.some(c => K.dist(c, p) < 20)) continue; const E = field(p), m = Math.hypot(E.x, E.y); if (m < 1e-9) continue;
+      const L = clamp(18 * Math.sqrt(m * 2500), 4, 18), u = P(E.x / m, E.y / m); arrow(svg, P(x - u.x * L / 2, y - u.y * L / 2), P(x + u.x * L / 2, y + u.y * L / 2), {c: 'muted', w: 1.4, head: 5, op: .85}); }
+    let nIn = 0, nOut = 0;
+    if (own){ Q.forEach((c, ci) => { const n = NL * Math.abs(c.q), isIn = inside(c, pts), col = c.q > 0 ? 'var(--red)' : 'var(--blue)';
+      for (let k = 0; k < n; k++){ const a = K.rad(k * 360 / n + 7 + ci * 5), d = P(Math.cos(a), Math.sin(a)), ts = hits(c, d, pts); let end;
+        if (isIn){ end = ts.length ? ts[ts.length - 1] + 28 : 60; }
+        else if (ts.length >= 2){ end = ts[ts.length - 1] + 22; }
+        else end = 40;
+        const e = P(c.x + d.x * end, c.y + d.y * end), cross = ts.length >= (isIn ? 1 : 2);
+        sline(svg, c, e, {stroke: col, 'stroke-width': cross ? 1.6 : 1, opacity: cross ? .9 : .35});
+        if (isIn && ts.length){ const h = P(c.x + d.x * ts[ts.length - 1], c.y + d.y * ts[ts.length - 1]); circ(svg, h, 3.6, {fill: c.q > 0 ? 'var(--green)' : 'var(--red)'}); if (c.q > 0) nOut++; else nIn++; }
+        else if (!isIn && ts.length >= 2){ const h1 = P(c.x + d.x * ts[0], c.y + d.y * ts[0]), h2 = P(c.x + d.x * ts[ts.length - 1], c.y + d.y * ts[ts.length - 1]);
+          circ(svg, c.q > 0 ? h1 : h2, 3.6, {fill: 'var(--red)'}); circ(svg, c.q > 0 ? h2 : h1, 3.6, {fill: 'var(--green)'}); nIn++; nOut++; } } }); }
+    let qin = 0, onSurf = false;
+    Q.forEach(c => { const isIn = inside(c, pts); if (polyDist(c, pts) < 9) onSurf = true; if (isIn){ qin += c.q; circ(svg, c, 21, {fill: 'none', stroke: 'var(--green)', 'stroke-width': 2.5, 'stroke-dasharray': '4 3'}); }
+      charge(svg, c, c.q, {r: 13, label: (c.q > 0 ? '+' : '−') + Math.abs(c.q) + 'q'}); });
+    /* flux meter */
+    const MX = 715, Z = 220, S = 40; rect(svg, 648, 0, 152, 440, {fill: 'var(--surface2)'});
+    tc(svg, MX, 22, 'FLUX METER', 'sm', {'font-weight': 700}); tc(svg, MX, 40, 'φ in units of q/ε₀', 'sm muted', fs(11));
+    rect(svg, MX - 16, Z - 4 * S, 32, 8 * S, {rx: 6, fill: 'var(--svgbg)', stroke: 'var(--text)', 'stroke-width': 1.5});
+    for (let v = -4; v <= 4; v++){ ln(svg, P(MX + 16, Z - v * S), P(MX + 24, Z - v * S), 'text', 1.2); tl(svg, MX + 28, Z - v * S, (v > 0 ? '+' : '') + nf(v, 0), 'sm', fs(11)); }
+    const qv = clamp(qin, -4, 4); if (Math.abs(qv) > 1e-9) rect(svg, MX - 12, qv > 0 ? Z - qv * S : Z, 24, Math.abs(qv) * S, {rx: 4, fill: qv > 0 ? 'var(--red)' : 'var(--blue)', opacity: .85});
+    ln(svg, P(MX - 22, Z), P(MX + 16, Z), 'text', 2);
+    tc(svg, MX, 405, 'φ = ' + (qin > 0 ? '+' : '') + nf(qin, 0) + ' q/ε₀', qin === 0 ? '' : (qin > 0 ? 'red' : 'blue'), {'font-weight': 700});
+    tc(svg, MX, 425, qin > 0 ? 'net outward' : (qin < 0 ? 'net inward' : 'net zero'), 'sm muted', fs(11));
+    const ins = Q.filter(c => inside(c, pts)), outs = Q.filter(c => !inside(c, pts)), lab = c => (c.q > 0 ? '+' : '−') + Math.abs(c.q) + 'q';
+    out.textContent = minus(`Inside S: ${ins.length ? ins.map(lab).join(', ') : 'no charge'}  →  q_enclosed = ${qin > 0 ? '+' : ''}${qin}q\n` +
+      `Flux meter: φ = q_enclosed/ε₀ = ${qin > 0 ? '+' : ''}${qin} q/ε₀` + (qin === 0 ? ' (zero – as many lines enter as leave)' : '') + '\n' +
+      `Outside S: ${outs.length ? outs.map(lab).join(', ') : 'none'} – their lines enter and leave again: net flux 0, but they DO change the field arrows on S.` +
+      (own ? `\nField lines crossing S (8 per q): out ${nOut}, in ${nIn}; out − in = ${nOut - nIn} = 8 × (${qin}).` : '') +
+      (onSurf ? '\n⚠ A charge is ON the surface – the field there is not defined (remark iv). Move it clearly inside or outside.' : ''));
+  }
+  K.draggable(svg, () => Q, k => { Q[k].x = Math.min(Q[k].x, AW - 16); draw(); }, 24);
+  $id('gsShape').addEventListener('change', e => { shape = +e.target.value; draw(); });
+  K.slider('#gsR', v => { R = v; draw(); }, 0);
+  $id('gsOwn').addEventListener('click', e => { own = !own; e.target.textContent = own ? 'Hide own field lines' : 'Show each charge\'s own field lines'; e.target.classList.toggle('primary', own); draw(); });
+  $id('gsReset').addEventListener('click', () => { Q.forEach((c, k) => { c.x = Q0[k].x; c.y = Q0[k].y; }); draw(); });
+  draw();
+})();
+
+/* ---------- Example 1.11 ---------- */
+(function(){
+  const rows = [[0, 'Given: Eₓ = α√x , E_y = E_z = 0', 'blue'], [0, '  α = 800 N/(C √m) , a = 0.1 m', 'blue'],
+    [1, 'Only the 2 faces ⟂ x have flux (E ∥ other 4)', ''],
+    [2, 'Left (x = a): E_L = α√a , θ = 180°', ''], [2, '  φ_L = −E_L a²', 'red'],
+    [3, 'Right (x = 2a): E_R = α√(2a) , θ = 0°', ''], [3, '  φ_R = +E_R a²', 'green'],
+    [4, 'φ = a²(E_R − E_L) = αa²√a (√2 − 1)', 'purple'],
+    [5, 'φ = 800 × (0.1)²√0.1 × (1.414 − 1)', ''], [5, '  = 800 × 3.162×10⁻³ × 0.414', ''],
+    [6, 'φ = 1.05 N m² C⁻¹', 'big green'],
+    [7, '(b) q = ε₀φ = 8.854×10⁻¹² × 1.048', ''], [7, '  q ≈ 9.27 × 10⁻¹² C  (≈ 9.3 × 10⁻¹² C)', 'green']];
+  const steps = ['<b>Given:</b> E<sub>x</sub> = αx<sup>1/2</sup>, E<sub>y</sub> = E<sub>z</sub> = 0; α = 800 N C<sup>−1</sup> m<sup>−1/2</sup>; a = 0.1 m. <b>To find:</b> (a) flux φ through the cube, (b) charge q inside.',
+    '<b>Which faces?</b> <b>E</b> is along x, so on the four faces parallel to x the angle between <b>E</b> and Δ<b>S</b> is ±π/2 → zero flux. Only the two shaded faces count.',
+    '<b>Left face</b> (x = a): E<sub>L</sub> = αa<sup>1/2</sup>. Its outward normal n̂<sub>L</sub> points along −x, θ = 180°: φ<sub>L</sub> = E<sub>L</sub>ΔS cos 180° = −E<sub>L</sub>a<sup>2</sup>.',
+    '<b>Right face</b> (x = 2a): E<sub>R</sub> = α(2a)<sup>1/2</sup>. Outward normal along +x, θ = 0°: φ<sub>R</sub> = +E<sub>R</sub>a<sup>2</sup>.',
+    '<b>Formula:</b> φ = φ<sub>R</sub> + φ<sub>L</sub> = a<sup>2</sup>(E<sub>R</sub> − E<sub>L</sub>) = αa<sup>2</sup>[(2a)<sup>1/2</sup> − a<sup>1/2</sup>] = αa<sup>5/2</sup>(√2 − 1).',
+    '<b>Substitution:</b> (0.1)<sup>5/2</sup> = 3.162 × 10<sup>−3</sup> and √2 − 1 = 0.414: φ = 800 × 3.162 × 10<sup>−3</sup> × 0.414.',
+    '<b>Answer (a):</b> φ = <b>1.05 N m<sup>2</sup> C<sup>−1</sup></b> (positive – net flux is outward).',
+    '<b>(b) Gauss\'s law:</b> φ = q/ε<sub>0</sub> ⇒ q = ε<sub>0</sub>φ = 8.854 × 10<sup>−12</sup> × 1.048 ≈ <b>9.27 × 10<sup>−12</sup> C</b> (textbook value; see the note in the final answer).'];
+  new K.Stepper('#ex111s', {steps, ms: 800, draw(svg, i, t){
+    const s = 92, pr = (x, y, z) => P(105 + x * s - z * 40, 290 - y * s + z * 32);   /* x, y, z in units of a */
+    arrow(svg, pr(0, 0, 0), pr(3.0, 0, 0), {c: 'text', w: 1.5, head: 8}); tc(svg, pr(3.0, 0, 0).x - 4, pr(3.0, 0, 0).y + 16, 'x', 'i');
+    arrow(svg, pr(0, 0, 0), pr(0, 2.6, 0), {c: 'text', w: 1.5, head: 8}); tc(svg, pr(0, 2.6, 0).x - 10, pr(0, 2.6, 0).y, 'y', 'i');
+    arrow(svg, pr(0, 0, 0), pr(0, 0, 1.9), {c: 'text', w: 1.5, head: 8}); tc(svg, pr(0, 0, 1.9).x - 10, pr(0, 0, 1.9).y, 'z', 'i');
+    const face = x => [pr(x, 0, 0), pr(x, 1, 0), pr(x, 1, 1), pr(x, 0, 1)];
+    const hl = i >= 1;
+    K.polygon(svg, face(1), {fill: hl ? 'var(--blue-soft)' : 'none', stroke: 'var(--text)', 'stroke-width': 1.6, opacity: .95});
+    K.polygon(svg, face(2), {fill: hl ? 'var(--blue-soft)' : 'none', stroke: 'var(--text)', 'stroke-width': 1.6, opacity: .95});
+    [[0, 0], [1, 0], [1, 1], [0, 1]].forEach(([y, z]) => ln(svg, pr(1, y, z), pr(2, y, z), 'text', 1.6));
+    tc(svg, pr(1.5, 0, 1).x, pr(1.5, 0, 1).y + 16, 'a', 'i'); tc(svg, pr(2, 0, .5).x + 12, pr(2, 0, .5).y + 10, 'a', 'i'); tc(svg, pr(1, 0, 0).x, pr(1, 0, 0).y + 16, 'x = a', 'sm'); tc(svg, pr(2, 0, 0).x + 4, pr(2, 0, 0).y + 16, 'x = 2a', 'sm');
+    if (i >= 2){ const c = pr(1, .5, .5); arrow(svg, c, P(c.x - 55, c.y), {c: 'purple', w: 2.4, head: 9, op: i === 2 ? t : 1}); tc(svg, c.x - 62, c.y - 14, 'n̂_L', 'purple', {'font-weight': 700});
+      arrow(svg, P(c.x - 4, c.y - 22), P(c.x + 26, c.y - 22), {c: 'red', w: 2.2, head: 8, op: i === 2 ? t : 1}); tc(svg, c.x + 12, c.y - 36, 'E_L', 'sm red', {'font-weight': 700}); }
+    if (i >= 3){ const c = pr(2, .5, .5); arrow(svg, c, P(c.x + 55, c.y), {c: 'purple', w: 2.4, head: 9, op: i === 3 ? t : 1}); tc(svg, c.x + 62, c.y - 14, 'n̂_R', 'purple', {'font-weight': 700});
+      arrow(svg, P(c.x - 4, c.y - 22), P(c.x + 38, c.y - 22), {c: 'red', w: 2.2, head: 8, op: i === 3 ? t : 1}); tc(svg, c.x + 18, c.y - 36, 'E_R', 'sm red', {'font-weight': 700}); }
+    if (i >= 6) tc(svg, 200, 355, 'more flux leaves (right) than enters (left)', 'sm green', {'font-weight': 700});
+    lines(svg, rows, i, t, {x: 405, y: 22, lh: 26});
+  }});
+})();
+
+/* ---------- Example 1.12 ---------- */
+(function(){
+  const rows = [[0, 'Given: E = +200 î N/C (x > 0), −200 î (x < 0)', 'blue'], [0, '  r = 5 cm = 0.05 m, faces at x = ±10 cm', 'blue'],
+    [1, 'Area of a face S = πr² = π(0.05)²', ''], [1, '  S = 7.85 × 10⁻³ m²', ''],
+    [2, '(a) Left: E = −200 î, ΔS = −S î (outward)', ''], [2, '  φ_L = (−200 î)·(−S î) = +200 S = +1.57', 'green'],
+    [3, '  Right: E = +200 î, ΔS = +S î', ''], [3, '  φ_R = +200 S = +1.57 N m² C⁻¹', 'green'],
+    [4, '(b) Side: E ⟂ ΔS → E·ΔS = 0', ''],
+    [5, '(c) φ = 1.57 + 1.57 + 0 = 3.14 N m² C⁻¹', 'big purple'],
+    [6, '(d) q = ε₀φ = 8.854×10⁻¹² × 3.14', ''], [6, '  q = 2.78 × 10⁻¹¹ C', 'big green']];
+  const steps = ['<b>Given:</b> <b>E</b> = +200 î N/C for x &gt; 0 and −200 î N/C for x &lt; 0; cylinder radius r = 5 cm = 0.05 m, length 20 cm, faces at x = ±10 cm.',
+    '<b>Area of each flat face:</b> S = πr<sup>2</sup> = π × (0.05)<sup>2</sup> = 7.85 × 10<sup>−3</sup> m<sup>2</sup>.',
+    '<b>(a) Left face</b> (x = −10 cm): <b>E</b> = −200 î and the outward Δ<b>S</b> = −S î – both point left (parallel). φ<sub>L</sub> = (−200 î)·(−S î) = +200 S = +200 × 7.85 × 10<sup>−3</sup> = <b>+1.57 N m<sup>2</sup> C<sup>−1</sup></b>.',
+    '<b>Right face</b> (x = +10 cm): <b>E</b> = +200 î, Δ<b>S</b> = +S î, again parallel: φ<sub>R</sub> = <b>+1.57 N m<sup>2</sup> C<sup>−1</sup></b>.',
+    '<b>(b) Side:</b> at every point of the curved surface <b>E</b> (along x) is perpendicular to Δ<b>S</b> (radial), so the flux through the side is <b>zero</b>.',
+    '<b>(c) Net outward flux:</b> φ = 1.57 + 1.57 + 0 = <b>3.14 N m<sup>2</sup> C<sup>−1</sup></b>.',
+    '<b>(d) Gauss\'s law:</b> q = ε<sub>0</sub>φ = 8.854 × 10<sup>−12</sup> × 3.14 = <b>2.78 × 10<sup>−11</sup> C</b>.'];
+  new K.Stepper('#ex112s', {steps, ms: 800, draw(svg, i, t){
+    const cy = 190, x0 = 200, sc = 10, xl = x0 - 10 * sc, xr = x0 + 10 * sc, ry = 50, rx = 16;
+    arrow(svg, P(20, cy), P(385, cy), {c: 'muted', w: 1.4, head: 8}); tc(svg, 380, cy + 14, 'x', 'i'); arrow(svg, P(x0, 330), P(x0, 40), {c: 'muted', w: 1.4, head: 8}); tc(svg, x0 - 10, 44, 'y', 'i');
+    tc(svg, x0 + 8, cy + 14, 'O', 'sm');
+    ln(svg, P(xl, cy - ry), P(xr, cy - ry), 'blue', 2); ln(svg, P(xl, cy + ry), P(xr, cy + ry), 'blue', 2);
+    ell(svg, P(xl, cy), rx, ry, {fill: i >= 2 ? 'var(--green-soft)' : 'var(--blue-soft)', stroke: 'var(--blue)', 'stroke-width': 2, opacity: .9});
+    ell(svg, P(xr, cy), rx, ry, {fill: i >= 3 ? 'var(--green-soft)' : 'var(--blue-soft)', stroke: 'var(--blue)', 'stroke-width': 2, opacity: .9});
+    [-1, 1].forEach(sg => [cy - 80, cy - 25, cy + 25, cy + 80].forEach(y => arrow(svg, P(x0 + sg * 12, y), P(x0 + sg * 60, y), {c: 'red', w: 1.4, head: 6, op: .45})));
+    arrow(svg, P(xl - rx, cy - 18), P(xl - rx - 50, cy - 18), {c: 'red', w: 2.4, head: 9}); tc(svg, xl - rx - 58, cy - 30, 'E', 'red', {'font-weight': 700});
+    arrow(svg, P(xr + rx, cy - 18), P(xr + rx + 50, cy - 18), {c: 'red', w: 2.4, head: 9}); tc(svg, xr + rx + 58, cy - 30, 'E', 'red', {'font-weight': 700});
+    if (i >= 2){ arrow(svg, P(xl - rx, cy + 18), P(xl - rx - 44, cy + 18), {c: 'purple', w: 2.4, head: 9, op: i === 2 ? t : 1}); tc(svg, xl - rx - 32, cy + 34, 'ΔS', 'purple', {'font-weight': 700}); }
+    if (i >= 3){ arrow(svg, P(xr + rx, cy + 18), P(xr + rx + 44, cy + 18), {c: 'purple', w: 2.4, head: 9, op: i === 3 ? t : 1}); tc(svg, xr + rx + 32, cy + 34, 'ΔS', 'purple', {'font-weight': 700}); }
+    if (i >= 4){ arrow(svg, P(x0 + 50, cy - ry), P(x0 + 50, cy - ry - 38), {c: 'purple', w: 2.2, head: 8, op: i === 4 ? t : 1}); tc(svg, x0 + 72, cy - ry - 30, 'ΔS', 'purple', {'font-weight': 700});
+      arrow(svg, P(x0 + 50, cy - ry), P(x0 + 90, cy - ry), {c: 'red', w: 2, head: 7, op: i === 4 ? t : 1}); }
+    ln(svg, P(xl, cy + ry + 30), P(xr, cy + ry + 30), 'muted', 1.2); tc(svg, x0 + 30, cy + ry + 44, '20 cm', 'sm');
+    tc(svg, xl, cy + ry + 60, 'x = −10 cm', 'sm'); tc(svg, xr, cy + ry + 60, 'x = +10 cm', 'sm');
+    ln(svg, P(xl - 30, cy), P(xl - 30, cy - ry), 'muted', 1); tc(svg, xl - 52, cy - ry + 6, '5 cm', 'sm');
+    lines(svg, rows, i, t, {x: 405, y: 26, lh: 28});
+  }});
+})();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'A closed surface encloses charges +3 μC and −1 μC; a charge of +5 μC lies outside it. The net flux through the surface is…', options: ['(+3 − 1 + 5) μC / ε₀', '(+3 − 1) μC / ε₀ = 2 μC / ε₀', '+5 μC / ε₀', 'zero, because there is a charge outside'], answer: 1, explain: 'Only the enclosed charge counts: q = +3 − 1 = +2 μC, so φ = 2 μC/ε₀. The outside charge changes E on the surface but adds zero net flux.', hint: 'Gauss\'s law: φ = q_enclosed/ε₀.'});
+K.numq('#q2', {q: 'A point charge of 1.0 μC sits at the centre of a cube of side 10 cm. Find the total flux through the cube, in units of 10⁵ N m² C⁻¹ (ε₀ = 8.854 × 10⁻¹² C² N⁻¹ m⁻²).', answer: 1.13, tol: 0.015, unit: '× 10⁵ N m² C⁻¹', explain: 'φ = q/ε₀ = 1.0 × 10⁻⁶ ÷ 8.854 × 10⁻¹² = 1.13 × 10⁵ N m² C⁻¹. The size of the cube does not matter.', hint: 'φ = q/ε₀; the side of the cube is not needed.'});
+K.mcq('#q3', {q: 'The radius of a spherical Gaussian surface around a point charge is doubled. The flux through it…', options: ['doubles', 'becomes four times', 'becomes one-fourth', 'stays the same'], answer: 3, explain: 'E falls as 1/r² while the area grows as r²; the flux stays q/ε₀.', hint: 'Look at the derivation – what happened to r?'});
+K.mcq('#q4', {q: 'In Gauss\'s law ∮E·dS = q/ε₀, the field E on the surface is produced by…', options: ['only the charges inside the surface', 'only the charges outside the surface', 'all the charges, inside and outside', 'only the charge nearest to the surface'], answer: 2, explain: 'Remark (iii): E is due to all charges; only q on the right side is restricted to the enclosed charge.', hint: 'Watch the field arrows in the lab when you move an outside charge.'});
+K.numq('#q5', {q: 'A thin wire 50 cm long carries a charge of 4 μC spread uniformly. What is its linear charge density in μC/m?', answer: 8, tol: 0.01, unit: 'μC/m', explain: 'λ = ΔQ/Δl = 4 μC ÷ 0.5 m = 8 μC/m.', hint: 'λ = Q/l, with l in metres.'});
+K.mcq('#q6', {q: 'The SI unit of surface charge density σ is…', options: ['C/m', 'C/m²', 'C/m³', 'N/C'], answer: 1, explain: 'σ = ΔQ/ΔS – charge per unit area, C/m².', hint: 'Surface → area.'});
+K.mcq('#q7', {q: 'Why must a Gaussian surface not pass through a point (discrete) charge?', options: ['The flux would become negative', 'The field at the location of a point charge is not defined – it grows without bound', 'Gauss\'s law works only for spheres', 'The charge would leak out'], answer: 1, explain: 'Remark (iv): as you approach a point charge, E → ∞, so E·dS is not defined there. A surface may pass through a continuous distribution.', hint: 'What happens to kq/r² as r → 0?'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

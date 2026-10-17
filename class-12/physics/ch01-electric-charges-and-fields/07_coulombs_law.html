@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coulomb's Law – Electric Charges and Fields</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+@media(max-width:600px){.onpage a{white-space:normal}}
+
+</style>
+<style>
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.6rem 0;background:var(--green-soft)}
+.qbox{background:var(--surface);border:1px solid var(--border);border-left:6px solid var(--accent);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+.controls select{padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;max-width:100%}
+.tw{overflow-x:auto}
+.boxed{background:var(--surface);border:2px solid var(--purple);border-radius:12px;padding:.7rem 1rem;margin:1rem 0}
+.boxed h3{margin:.1rem 0 .4rem;color:var(--purple)}
+.eq.big{font-size:1.25rem}
+</style>
+</head>
+<body data-page="07_coulombs_law">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 1 · Section 1.6</span><span class="chip amber">Textbook pages 10–15</span>
+<h1>Coulomb's Law <span class="ml">കൂളോം നിയമം</span></h1>
+<p class="lead">How strong is the push or pull between two charges, and how does it change with distance? In 1785 Charles Augustin de Coulomb answered this with a twisting wire. His law is the most used formula of this chapter – every field, every superposition problem and half the board numericals start from it. On this page you will state it, write it in vector form, play with it in a lab and solve the textbook's Examples 1.4 and 1.5.</p>
+
+<div class="callout book"><div class="title">📖 What you need</div>
+<ul style="margin:0"><li>Point charges and q = ne (page 6); μC = 10<sup>−6</sup> C, cm → m (page 2).</li>
+<li>Vectors, unit vectors and position vectors, r<sub>21</sub> = r<sub>2</sub> − r<sub>1</sub> (page 1); Newton's third law and F = ma; gravitation F = Gm<sub>1</sub>m<sub>2</sub>/r² (page 3).</li></ul></div>
+
+<h2 id="law">1. The law</h2>
+<p><b>Coulomb's law</b> (<span class="ml">കൂളോം നിയമം</span>) is a quantitative statement about the force between two <b>point charges</b> (<span class="ml">ബിന്ദു ചാർജ്</span>) – charged bodies whose sizes are much smaller than the distance between them. Coulomb found that the force between two point charges</p>
+<ul><li>is <b>directly proportional to the product of the magnitudes</b> of the charges, q<sub>1</sub>q<sub>2</sub>;</li>
+<li>varies <b>inversely as the square of the distance</b> r between them – an <b>inverse square law</b> (<span class="ml">വിപരീത വർഗ നിയമം</span>);</li>
+<li>acts <b>along the line joining</b> the two charges.</li></ul>
+<div class="eq big">F = k <span class="frac"><span>q<sub>1</sub> q<sub>2</sub></span><span>r<sup>2</sup></span></span> &nbsp;&nbsp;&nbsp;(1.1) &nbsp;&nbsp;&nbsp;&nbsp; for two point charges in vacuum</div>
+
+<h3>How did Coulomb find it? The torsion balance</h3>
+<p>Coulomb used a <b>torsion balance</b> – a very sensitive force meter: a light horizontal bar hangs from a thin fibre; a small force on a sphere at the end of the bar twists the fibre, and the <b>angle of twist</b> measures the force. (Cavendish later used one to measure the feeble gravitational force.) But Coulomb did not know the charges on his spheres! His trick: touch a charged metal sphere (charge q) with an <b>identical uncharged sphere</b>. By symmetry the charge is shared equally – each gets <b>q/2</b>. Repeating gives q/4, q/8, … (This silently uses additivity and conservation of charge: q/2 + q/2 = q.) He varied the distance for a fixed pair of charges, then varied the charges keeping the distance fixed – and arrived at Eq. (1.1).</p>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual torsion balance</div>
+  <div class="controls"><label>distance between the spheres <input id="tbR" type="range" min="2" max="10" step="1" value="4" data-fmt="{v} cm"><output></output></label>
+  <button class="btn" id="tbHalf">🤝 Touch the fixed sphere with an identical uncharged sphere</button><button class="btn" id="tbReset">⟲ Recharge to q</button></div>
+  <svg id="tbSvg" viewBox="0 0 800 300" role="img" aria-label="A torsion balance: a bar hangs from a fibre; the repulsion of a fixed charged sphere twists the fibre; a dial shows the angle of twist"></svg>
+  <div class="readout" id="tbOut"></div>
+  <p class="hint">The twist angle is proportional to the force. Halve the distance → the twist becomes 4 times. Halve the charge on one sphere → the twist halves. A cartoon with an exaggerated angle; Coulomb's real angles were small.</p>
+</div>
+<div class="boxed"><h3>👤 Charles Augustin de Coulomb (1736–1806)</h3>
+<svg id="cardSvg" viewBox="0 0 800 160" role="img" aria-label="Name card of Charles Augustin de Coulomb"></svg>
+<p>A French physicist who began his career as a <b>military engineer in the West Indies</b>. In 1776 he returned to Paris and retired to a small estate to do research. He invented a <b>torsion balance</b> to measure forces, used it to measure the attraction and repulsion between small charged spheres, and in <b>1785</b> arrived at the <b>inverse square law</b>. Priestley and Cavendish had anticipated the law (Cavendish never published). Coulomb also found the inverse square law for the force between magnetic poles. The SI unit of charge, the coulomb, is named after him.</p></div>
+
+<h2 id="k">2. The constant k, ε₀ and the size of one coulomb</h2>
+<p>Coulomb discovered his law without knowing the size of any charge. Today it works the other way: Coulomb's law can be used to <b>define</b> a unit of charge. In Eq. (1.1) k could be any positive number; the choice of k fixes the size of the unit of charge. In SI units</p>
+<div class="eq">k ≈ 9 × 10<sup>9</sup> N m<sup>2</sup> C<sup>−2</sup></div>
+<p>Put q<sub>1</sub> = q<sub>2</sub> = 1 C and r = 1 m: F = 9 × 10<sup>9</sup> × 1 × 1 ÷ 1<sup>2</sup> = <b>9 × 10<sup>9</sup> N</b>. So <b>1 C is the charge which, placed 1 m from an equal charge in vacuum, repels it with a force of 9 × 10<sup>9</sup> N</b> – roughly the weight of a million loaded trucks! One coulomb is far too big for electrostatics; we use mC and μC. For later convenience k is written as</p>
+<div class="eq big">k = <span class="frac"><span>1</span><span>4πε<sub>0</sub></span></span> &nbsp;⇒&nbsp; F = <span class="frac"><span>1</span><span>4πε<sub>0</sub></span></span> <span class="frac"><span>q<sub>1</sub> q<sub>2</sub></span><span>r<sup>2</sup></span></span> &nbsp;&nbsp;(1.2)</div>
+<p>ε<sub>0</sub> is the <b>permittivity of free space</b> (<span class="ml">ശൂന്യസ്ഥലത്തിന്റെ പെർമിറ്റിവിറ്റി</span>): <b>ε<sub>0</sub> = 8.854 × 10<sup>−12</sup> C<sup>2</sup> N<sup>−1</sup> m<sup>−2</sup></b>. Check: 1 ÷ (4π × 8.854 × 10<sup>−12</sup>) = 8.99 × 10<sup>9</sup> ≈ 9 × 10<sup>9</sup> N m<sup>2</sup> C<sup>−2</sup>. ✔ The law has been tested from the laboratory scale down to subatomic distances (r ~ 10<sup>−10</sup> m).</p>
+
+<h2 id="lab">3. Coulomb lab</h2>
+<div class="lab">
+  <div class="lab-title">🧪 Two point charges: change q₁, q₂ and r</div>
+  <div class="controls"><label>q₁ <input id="clQ1" type="range" min="-10" max="10" step="1" value="4" data-fmt="{v} μC"><output></output></label>
+  <label>q₂ <input id="clQ2" type="range" min="-10" max="10" step="1" value="-3" data-fmt="{v} μC"><output></output></label>
+  <label>r <input id="clR" type="range" min="5" max="100" step="5" value="30" data-fmt="{v} cm"><output></output></label></div>
+  <svg id="clSvg" viewBox="0 0 800 440" role="img" aria-label="Two charges with equal and opposite force arrows, and a graph of force against distance showing the inverse square law"></svg>
+  <div class="readout" id="clOut"></div>
+  <p class="hint">Arrow lengths grow with the logarithm of the force so that both tiny and huge forces fit. On the graph, the orange point is at 2r: the force there is exactly <b>one quarter</b>. Notice that the two forces are always <b>equal and opposite</b>, even when q₁ ≠ q₂ – Newton's third law.</p>
+</div>
+
+<h2 id="vector">4. Coulomb's law in vector form (Fig 1.6)</h2>
+<p>Force is a <b>vector</b> (<span class="ml">സദിശം</span>), so we write the law with vectors. Let the position vectors of q<sub>1</sub> and q<sub>2</sub> be <b>r</b><sub>1</sub> and <b>r</b><sub>2</sub>. <b>F</b><sub>12</sub> is the force <b>on q<sub>1</sub> due to q<sub>2</sub></b>; <b>F</b><sub>21</sub> is the force <b>on q<sub>2</sub> due to q<sub>1</sub></b>. The vector from 1 to 2 is <b>r</b><sub>21</sub> = <b>r</b><sub>2</sub> − <b>r</b><sub>1</sub>, and from 2 to 1, <b>r</b><sub>12</sub> = <b>r</b><sub>1</sub> − <b>r</b><sub>2</sub> = −<b>r</b><sub>21</sub>; their magnitudes are equal (r<sub>12</sub> = r<sub>21</sub>). Directions are given by the <b>unit vectors</b> (<span class="ml">യൂണിറ്റ് സദിശം</span>) r̂<sub>21</sub> = <b>r</b><sub>21</sub>/r<sub>21</sub> and r̂<sub>12</sub> = <b>r</b><sub>12</sub>/r<sub>12</sub> = −r̂<sub>21</sub>.</p>
+<div class="eq big"><b>F</b><sub>21</sub> = <span class="frac"><span>1</span><span>4πε<sub>0</sub></span></span> <span class="frac"><span>q<sub>1</sub> q<sub>2</sub></span><span>r<sub>21</sub><sup>2</sup></span></span> r̂<sub>21</sub> &nbsp;&nbsp;(1.3)</div>
+<div class="lab">
+  <div class="lab-title">🧪 Drag q₁ and q₂ (Fig 1.6 a and b)</div>
+  <div class="controls"><label>charges <select id="vfSel"><option value="1" selected>q₁q₂ &gt; 0 (like charges)</option><option value="-1">q₁q₂ &lt; 0 (unlike charges)</option></select></label></div>
+  <svg id="vfSvg" viewBox="0 0 800 340" role="img" aria-label="Origin O, position vectors r1 and r2, the vector r21 from q1 to q2 and the forces F12 and F21"></svg>
+  <div class="readout" id="vfOut"></div>
+  <p class="hint">Drag the two dots (mouse or finger). Grey: position vectors from the origin O. Blue: <b>r</b><sub>21</sub> = <b>r</b><sub>2</sub> − <b>r</b><sub>1</sub> and its unit vector. Red: the forces – they always lie along the line joining the charges and are equal and opposite.</p>
+</div>
+<div class="callout key"><div class="title">⭐ Remarks on Eq. (1.3) – learn these</div>
+<ul style="margin:0">
+<li><b>One equation for both cases.</b> If q<sub>1</sub>q<sub>2</sub> &gt; 0 (like charges), <b>F</b><sub>21</sub> is along r̂<sub>21</sub> – <b>repulsion</b>. If q<sub>1</sub>q<sub>2</sub> &lt; 0 (unlike), <b>F</b><sub>21</sub> is along −r̂<sub>21</sub> (= r̂<sub>12</sub>) – <b>attraction</b>. No separate equations are needed.</li>
+<li><b>Newton's third law.</b> Interchanging 1 and 2: <b>F</b><sub>12</sub> = <span class="frac"><span>1</span><span>4πε<sub>0</sub></span></span> <span class="frac"><span>q<sub>1</sub>q<sub>2</sub></span><span>r<sub>12</sub><sup>2</sup></span></span> r̂<sub>12</sub> = −<b>F</b><sub>21</sub>.</li>
+<li><b>Vacuum only.</b> The law gives the force between charges in vacuum. If matter is present, its charged constituents complicate the situation (Chapter 2).</li></ul></div>
+
+<h2 id="ex14">5. Example 1.4 – electric force versus gravity</h2>
+<div class="qbox"><p><b>Q.</b> Coulomb's law for the electrostatic force between two point charges and Newton's law for the gravitational force between two stationary point masses both have inverse-square dependence on distance. (a) Compare the strength of these forces by finding the ratio of their magnitudes (i) for an electron and a proton and (ii) for two protons. (b) Estimate the accelerations of the electron and the proton due to their mutual electric attraction when they are 1 Å (= 10<sup>−10</sup> m) apart. (m<sub>p</sub> = 1.67 × 10<sup>−27</sup> kg, m<sub>e</sub> = 9.11 × 10<sup>−31</sup> kg)</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Write F<sub>e</sub> = ke²/r² and F<sub>G</sub> = Gm<sub>1</sub>m<sub>2</sub>/r². In the ratio, <b>r² cancels</b> – so the answer does not depend on distance. Use k = 9 × 10<sup>9</sup>, G = 6.67 × 10<sup>−11</sup> N m² kg<sup>−2</sup>, e = 1.6 × 10<sup>−19</sup> C. For (b), the same force acts on both particles (third law): a = F/m.</p></div></div>
+<div class="lab" id="ex14a"><div class="lab-title">🎬 Example 1.4 (a) – exam layout</div><svg viewBox="0 0 800 340" role="img" aria-label="Bars on a powers-of-ten scale comparing electric and gravitational forces"></svg></div>
+<div class="lab" id="ex14b"><div class="lab-title">🎬 Example 1.4 (b) – exam layout</div><svg viewBox="0 0 800 340" role="img" aria-label="An electron and a proton 1 angstrom apart pulled towards each other with equal forces but very different accelerations"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> (a)(i) F<sub>e</sub>/F<sub>G</sub> = ke²/(Gm<sub>p</sub>m<sub>e</sub>) ≈ <b>2.3 × 10<sup>39</sup></b>; (ii) for two protons ke²/(Gm<sub>p</sub>²) ≈ <b>1.2 × 10<sup>36</sup></b>. Both ratios are dimensionless: electric forces are enormously stronger than gravitational forces. (For two protons the electric force is repulsive while gravity attracts; inside a nucleus, ~10<sup>−15</sup> m apart, F<sub>e</sub> ~ 230 N but F<sub>G</sub> ~ 1.9 × 10<sup>−34</sup> N.)<br>(b) F = <b>2.3 × 10<sup>−8</sup> N</b>; a<sub>e</sub> = <b>2.5 × 10<sup>22</sup> m s<sup>−2</sup></b>; a<sub>p</sub> = <b>1.4 × 10<sup>19</sup> m s<sup>−2</sup></b>. Compared with g ≈ 9.8 m s<sup>−2</sup>, gravity is negligible for the motion of the electron.<br><span class="muted">Note: the textbook prints 2.4 × 10<sup>39</sup> and 1.3 × 10<sup>36</sup>. With the data given, the ratios work out to 2.27 × 10<sup>39</sup> and 1.24 × 10<sup>36</sup>; either is accepted – what matters is the order of magnitude, 10<sup>39</sup> and 10<sup>36</sup>.</span></div></div>
+
+<h2 id="ex15">6. Example 1.5 – halve the charges, halve the distance (Fig 1.7)</h2>
+<div class="qbox"><p><b>Q.</b> A charged metallic sphere A is suspended by a nylon thread. Another charged metallic sphere B, held by an insulating handle, is brought close to A so that the distance between their centres is 10 cm [Fig 1.7(a)]. The repulsion of A is noted (for example, by shining a beam of light and measuring the deflection of its shadow on a screen). Spheres A and B are touched by uncharged spheres C and D respectively [Fig 1.7(b)]. C and D are removed and B is brought closer to A, to a distance of 5.0 cm between their centres [Fig 1.7(c)]. What is the expected repulsion of A on the basis of Coulomb's law? A and C, and B and D, are identical. Ignore the sizes of A and B compared with their separation.</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Touching an identical uncharged sphere halves the charge. Write F′ with q/2, q′/2 and r/2, and compare with F = kqq′/r².</p></div></div>
+<div class="lab" id="ex15St"><div class="lab-title">🎬 Exam layout, step by step</div><svg viewBox="0 0 800 330" role="img" aria-label="Sphere A on a nylon thread and sphere B on an insulating handle; C and D touch them; B is moved closer"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> F′ = <span class="frac"><span>1</span><span>4πε<sub>0</sub></span></span> <span class="frac"><span>(q/2)(q′/2)</span><span>(r/2)<sup>2</sup></span></span> = <span class="frac"><span>1</span><span>4πε<sub>0</sub></span></span> <span class="frac"><span>qq′</span><span>r<sup>2</sup></span></span> = <b>F</b>. The repulsion on A is <b>unchanged</b>: the factor ¼ from halving both charges is exactly cancelled by the factor 4 from halving the distance.</div></div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://phet.colorado.edu/en/simulations/coulombs-law" target="_blank" rel="noopener noreferrer">🧪 Coulomb&#x27;s Law (PhET simulation)</a> <span class="src">PhET, University of Colorado Boulder</span><br><span class="note">Change the charges and the distance and read the force.</span></li><li><a href="https://www.physicsclassroom.com/class/estatics/Lesson-3/Coulomb-s-Law" target="_blank" rel="noopener noreferrer">📄 Coulomb&#x27;s Law</a> <span class="src">The Physics Classroom</span><br><span class="note">Worked examples of the inverse-square law.</span></li><li><a href="https://en.wikipedia.org/wiki/Coulomb%27s_law" target="_blank" rel="noopener noreferrer">📄 Coulomb&#x27;s law</a> <span class="src">Wikipedia</span><br><span class="note">The law, its vector form and the superposition principle.</span></li><li><a href="https://en.wikipedia.org/wiki/Charles-Augustin_de_Coulomb" target="_blank" rel="noopener noreferrer">📄 Charles-Augustin de Coulomb</a> <span class="src">Wikipedia</span><br><span class="note">The French physicist and his torsion balance.</span></li></ul></div>
+
+<h2 id="check">7. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div><div id="q7"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li>F = (1/4πε<sub>0</sub>) q<sub>1</sub>q<sub>2</sub>/r², along the line joining two point charges in vacuum; 1/4πε<sub>0</sub> ≈ 9 × 10<sup>9</sup> N m² C<sup>−2</sup>, ε<sub>0</sub> = 8.854 × 10<sup>−12</sup> C² N<sup>−1</sup> m<sup>−2</sup>.</li>
+<li>1 C: two 1 C charges 1 m apart repel with 9 × 10<sup>9</sup> N.</li>
+<li>Vector form: <b>F</b><sub>21</sub> = (1/4πε<sub>0</sub>)(q<sub>1</sub>q<sub>2</sub>/r<sub>21</sub>²) r̂<sub>21</sub>; <b>F</b><sub>12</sub> = −<b>F</b><sub>21</sub>.</li>
+<li>Electric force between e and p ≈ 10<sup>39</sup> times their gravitational attraction.</li>
+<li>Double the distance → ¼ of the force; halve both charges and the distance → same force.</li></ul></div>
+<p>Next: <a href="08_multiple_charges.html">Forces between multiple charges – superposition ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Electric Charges and Fields · 2nd PUC Physics", "icon": "⚡", "key": "puc_physics_ch1_progress", "pages": [["index.html", "Home"], ["01_vectors_toolkit.html", "1 · Vectors Toolkit: Components, Unit Vectors & Dot Product"], ["02_calculus_geometry_toolkit.html", "2 · Maths Toolkit: Areas, Small Elements & Integration"], ["03_forces_motion_recap.html", "3 · Forces, Newton's Laws & Motion Under Constant Force"], ["04_electric_charge.html", "4 · Electric Charge & Electroscopes (1.1–1.2)"], ["05_conductors_induction.html", "5 · Conductors, Insulators, Earthing & Induction (1.3–1.4)"], ["06_properties_of_charge.html", "6 · Properties of Charge: Additivity, Conservation, Quantisation (1.5)"], ["07_coulombs_law.html", "7 · Coulomb's Law (1.6)"], ["08_multiple_charges.html", "8 · Forces Between Multiple Charges – Superposition (1.7)"], ["09_electric_field.html", "9 · Electric Field (1.8)"], ["10_field_lines_flux.html", "10 · Electric Field Lines & Electric Flux (1.9–1.10)"], ["11_electric_dipole.html", "11 · Electric Dipole & Dipole in a Uniform Field (1.11–1.12)"], ["12_gauss_law.html", "12 · Continuous Charge Distribution & Gauss's Law (1.13–1.14)"], ["13_gauss_applications.html", "13 · Applications of Gauss's Law (1.15)"], ["14_exercises_1_12.html", "14 · Exercises 1.1–1.12 – Solutions"], ["15_exercises_13_24.html", "15 · Exercises 1.13–1.24 – Solutions"], ["16_additional_exercises.html", "16 · Additional Exercises 1.25–1.34 – Solutions"], ["17_applications_explore.html", "17 · Applications & Explore Online"], ["18_summary_revision.html", "18 · Summary, Points to Ponder & Quick Quiz"], ["19_model_test_paper.html", "19 · Model Question Paper (70 marks)"], ["20_model_test_solutions.html", "20 · Model Question Paper – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ==== common helpers (pages 04–07) ==== */
+const {P, el} = K;
+const $id = id => document.getElementById(id);
+const CV = c => (c[0] === '#' || c.startsWith('var(') || c.startsWith('rgb') || c === 'none') ? c : 'var(--' + (c === 'amber' ? 'accent' : c) + ')';
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+function ln(svg, a, b, c='text', w=2, extra=''){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, style: `stroke:${CV(c)};stroke-width:${w};stroke-linecap:round;${extra}`}, svg); }
+function arrow(svg, a, b, c='red', w=3, head=11){ const L = K.dist(a, b); if (L < 2) return; const hh = Math.min(head, L * .6); const u = K.unit(a, b), n = P(-u.y, u.x), base = P(b.x - u.x * hh, b.y - u.y * hh); ln(svg, a, base, c, w); K.polygon(svg, [b, P(base.x + n.x * hh * .55, base.y + n.y * hh * .55), P(base.x - n.x * hh * .55, base.y - n.y * hh * .55)], {style: `fill:${CV(c)}`}); }
+function rect(svg, x, y, w, h, style, rx=0){ return el('rect', {x, y, width: w, height: h, rx, style}, svg); }
+function circ(svg, c, r, style){ return el('circle', {cx: c.x, cy: c.y, r, style}, svg); }
+function path(svg, d, style){ return el('path', {d, style}, svg); }
+function tx(svg, x, y, s, cls='lbl', anchor='start', extra={}){ return K.text(svg, P(x, y), s, {class: cls, 'text-anchor': anchor, ...extra}); }
+function ball(svg, c, r, q, label){ circ(svg, c, r, `fill:${q > 0 ? 'var(--red-soft)' : q < 0 ? 'var(--blue-soft)' : 'var(--surface2)'};stroke:${q > 0 ? 'var(--red)' : q < 0 ? 'var(--blue)' : 'var(--muted)'};stroke-width:2`); if (label !== undefined) tx(svg, c.x, c.y, label, 'lbl ' + (q > 0 ? 'red' : q < 0 ? 'blue' : 'muted'), 'middle', {style: 'font-weight:700'}); }
+const SUP = {'0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻'};
+function sci(v, d=2){ if (v === 0) return '0'; const s = v < 0 ? '−' : ''; v = Math.abs(v); let ex = Math.floor(Math.log10(v)); let m = v / Math.pow(10, ex); if (+m.toFixed(d) >= 10){ m /= 10; ex++; }
+  return ex === 0 ? s + K.fmt(m, d) : s + K.fmt(m, d) + ' × 10' + String(ex).split('').map(c => SUP[c]).join(''); }
+function examStepper(sel, rows, fig, o={}){ const x0 = o.x0 ?? 360;
+  return new K.Stepper(sel, {steps: rows.map(r => r.html), draw(svg, i, t){ fig(svg, i, t); let y = o.top ?? 24;
+    rows.forEach((r, k) => { if (k > i) return; const op = k === i ? t : 1; tx(svg, x0, y, r.h, 'lbl sm muted', 'start', {opacity: op}); y += 21;
+      const lines = Array.isArray(r.s) ? r.s : [r.s]; lines.forEach((s, j) => { tx(svg, x0, y, s, (k === rows.length - 1 && j === lines.length - 1) ? 'lbl big green' : 'lbl', 'start', {opacity: op}); y += 21; }); y += 8; }); }}); }
+/* ==== end common ==== */
+const KC = 9e9;
+const nice = v => (v >= 0.01 && v < 1e4) ? K.fmt(v, v >= 100 ? 1 : 3) : sci(v, 2);
+
+/* ---------- 1. torsion balance ---------- */
+(function(){ const svg = $id('tbSvg'), out = $id('tbOut'); let R = 4, frac = 1, cur = null, stop = null;
+  const target = () => 40 * frac * (4 / R) * (4 / R);
+  function draw(th){ K.clear(svg); const C = P(220, 60), barY = 190, sc = 30;
+    path(svg, 'M90,40 L90,270 L500,270 L500,40', 'fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:6 5'); tx(svg, 96, 262, 'glass case', 'lbl sm muted');
+    circ(svg, C, 26, 'fill:var(--surface2);stroke:var(--text);stroke-width:2'); for (let a = -150; a <= -30; a += 20) ln(svg, K.polar(C, 22, a), K.polar(C, 26, a), 'muted', 1);
+    arrow(svg, C, K.polar(C, 22, -90 + Math.min(170, th)), 'purple', 2.5); tx(svg, C.x + 36, C.y - 10, `twist ${K.fmt(th, 0)}°`, 'lbl sm purple', 'start', {style: 'font-weight:700'});
+    ln(svg, P(220, 86), P(220, barY), 'muted', 1.3); tx(svg, 226, 130, 'fibre', 'lbl sm muted');
+    const sx = 220 + 100, shift = Math.min(18, th / 6);
+    ln(svg, P(120, barY), P(sx - shift * .2, barY - shift * .5), 'text', 3); circ(svg, P(120, barY), 9, 'fill:var(--muted)');
+    const mov = P(sx - shift * .2, barY - shift * .5); ball(svg, mov, 13, 1, '+');
+    const fx = sx + 30 + R * 13; ln(svg, P(fx, barY + 13), P(fx, 266), 'muted', 4); ball(svg, P(fx, barY), 13, frac > .01 ? 1 : 0, '+');
+    tx(svg, fx, barY - 26, `q × ${frac === 1 ? '1' : '1/' + Math.round(1 / frac)}`, 'lbl sm red', 'middle');
+    K.dim(svg, P(mov.x, barY + 20), P(fx, barY + 20), `${R} cm`, 22);
+    rect(svg, 515, 40, 270, 220, 'fill:var(--surface2);stroke:var(--border);stroke-width:1.2', 12);
+    tx(svg, 530, 72, 'force ∝ twist angle', 'lbl', 'start', {style: 'font-weight:700'});
+    tx(svg, 530, 106, `charge on fixed sphere: ${frac === 1 ? 'q' : 'q/' + Math.round(1 / frac)}`, 'lbl sm');
+    tx(svg, 530, 132, `distance: ${R} cm`, 'lbl sm');
+    tx(svg, 530, 158, `F relative to (q, 4 cm): × ${K.fmt(frac * 16 / (R * R), 3)}`, 'lbl sm');
+    tx(svg, 530, 200, 'twist ∝ (charge) × 1/r²', 'lbl green', 'start', {style: 'font-weight:700'}); }
+  function go(){ const a = cur === null ? target() : cur, b = target(); if (stop) stop(); stop = K.animate(600, t => { cur = a + (b - a) * t; draw(cur); });
+    out.textContent = `Fixed sphere has ${frac === 1 ? 'q' : 'q/' + Math.round(1 / frac)}, distance ${R} cm → force = ${K.fmt(frac * 16 / (R * R), 3)} × the force for q at 4 cm (twist ${K.fmt(target(), 1)}°).`; }
+  K.slider('#tbR', v => { R = v; go(); }, 0);
+  $id('tbHalf').addEventListener('click', () => { frac = Math.max(1 / 64, frac / 2); go(); });
+  $id('tbReset').addEventListener('click', () => { frac = 1; go(); });
+})();
+
+/* ---------- 2. name card ---------- */
+(function(){ const svg = $id('cardSvg');
+  rect(svg, 10, 10, 780, 140, 'fill:var(--purple-soft);stroke:var(--purple);stroke-width:2', 16);
+  circ(svg, P(90, 80), 50, 'fill:var(--surface);stroke:var(--purple);stroke-width:3'); tx(svg, 90, 82, 'C', 'lbl', 'middle', {style: 'font-size:46px;font-weight:700;fill:var(--purple)'});
+  tx(svg, 165, 46, 'Charles Augustin de Coulomb', 'lbl', 'start', {style: 'font-size:22px;font-weight:700'});
+  tx(svg, 165, 76, 'France · 1736–1806 · military engineer turned physicist', 'lbl sm');
+  tx(svg, 165, 102, '1785: torsion balance → F ∝ q₁q₂ / r²', 'lbl', 'start', {style: 'font-weight:700'});
+  tx(svg, 165, 128, 'SI unit of charge: the coulomb (C)', 'lbl sm purple'); })();
+
+/* ---------- 3. Coulomb lab ---------- */
+(function(){ const svg = $id('clSvg'), out = $id('clOut'); let q1 = 4, q2 = -3, R = 30;
+  const draw = () => { K.clear(svg); const F = KC * q1 * 1e-6 * q2 * 1e-6 / Math.pow(R / 100, 2), aF = Math.abs(F);
+    const xa = 400 - R * 2.6, xb = 400 + R * 2.6, y = 80;
+    ln(svg, P(xa, y), P(xb, y), 'muted', 1, 'stroke-dasharray:4 5');
+    ball(svg, P(xa, y), 12 + Math.abs(q1), q1, q1 ? (q1 > 0 ? '+' : '−') : '0'); ball(svg, P(xb, y), 12 + Math.abs(q2), q2, q2 ? (q2 > 0 ? '+' : '−') : '0');
+    tx(svg, xa, y + 40, `q₁ = ${K.num(q1)} μC`, 'lbl sm', 'middle'); tx(svg, xb, y + 40, `q₂ = ${K.num(q2)} μC`, 'lbl sm', 'middle');
+    if (aF > 0){ const L = clamp(30 + 22 * Math.log10(aF / 0.01), 14, 130), d = F > 0 ? 1 : -1, ra = 14 + Math.abs(q1), rb = 14 + Math.abs(q2);
+      if (d > 0){ const Lo = Math.max(10, Math.min(L, xa - ra - 12)); arrow(svg, P(xa - ra, y), P(xa - ra - Lo, y), 'red', 3.5); arrow(svg, P(xb + rb, y), P(xb + rb + Lo, y), 'red', 3.5); }
+      else { const Lm = Math.min(L, (xb - xa) / 2 - 20); arrow(svg, P(xa + ra, y), P(xa + ra + Math.max(10, Lm), y), 'red', 3.5); arrow(svg, P(xb - rb, y), P(xb - rb - Math.max(10, Lm), y), 'red', 3.5); } }
+    tx(svg, 400, 22, aF === 0 ? 'no force (a charge is zero)' : `F = ${nice(aF)} N  –  ${F > 0 ? 'REPULSION' : 'ATTRACTION'}`, 'lbl big ' + (aF === 0 ? 'muted' : F > 0 ? 'red' : 'green'), 'middle');
+    /* graph F vs r */
+    const gx = 90, gy = 410, W = 640, H = 200, rmin = 5, rmax = 100, Fmax = KC * Math.abs(q1 * q2) * 1e-12 / Math.pow(rmin / 100, 2);
+    ln(svg, P(gx, gy), P(gx + W + 10, gy), 'text', 1.5); ln(svg, P(gx, gy), P(gx, gy - H - 15), 'text', 1.5);
+    tx(svg, gx + W + 10, gy + 34, 'r (cm)', 'lbl sm', 'end'); tx(svg, gx + 10, gy - H - 10, '|F| (N)', 'lbl sm', 'start');
+    [5, 25, 50, 75, 100].forEach(r => { const x = gx + (r - rmin) / (rmax - rmin) * W; ln(svg, P(x, gy), P(x, gy + 5), 'text', 1); tx(svg, x, gy + 18, String(r), 'lbl sm', 'middle'); });
+    if (Fmax > 0){ tx(svg, gx - 6, gy - H, nice(Fmax), 'lbl sm', 'end'); tx(svg, gx - 6, gy, '0', 'lbl sm', 'end');
+      const pts = []; for (let r = rmin; r <= rmax; r += 0.5) pts.push(P(gx + (r - rmin) / (rmax - rmin) * W, gy - H * Math.pow(rmin / r, 2))); K.polyline(svg, pts, {style: 'stroke:var(--blue);stroke-width:2.5;fill:none'});
+      const X = r => gx + (r - rmin) / (rmax - rmin) * W, Y = r => gy - H * Math.pow(rmin / r, 2);
+      ln(svg, P(X(R), gy), P(X(R), Y(R)), 'red', 1, 'stroke-dasharray:4 4'); circ(svg, P(X(R), Y(R)), 6, 'fill:var(--red)');
+      tx(svg, X(R) + 10, Y(R) - 12, `r = ${R} cm`, 'lbl sm red');
+      if (2 * R <= rmax){ circ(svg, P(X(2 * R), Y(2 * R)), 6, 'fill:var(--accent)'); tx(svg, X(2 * R) + 10, Y(2 * R) - 12, '2r: F/4', 'lbl sm amber', 'start', {style: 'font-weight:700'}); }
+      tx(svg, gx + W, gy - H + 10, 'F ∝ 1/r²', 'lbl blue', 'end', {style: 'font-weight:700'}); }
+    else tx(svg, gx + W / 2, gy - H / 2, 'set both charges non-zero to see the graph', 'lbl muted', 'middle');
+    out.textContent = aF === 0 ? 'One charge is zero, so there is no force.' : `F = 9 × 10⁹ × (${K.num(q1)} × 10⁻⁶) × (${K.num(q2)} × 10⁻⁶) ÷ (${K.fmt(R / 100, 2)})² = ${nice(aF)} N (${F > 0 ? 'like charges: repulsion' : 'unlike charges: attraction'}). At ${2 * R} cm it would be ${nice(aF / 4)} N – one quarter.`; };
+  K.slider('#clQ1', v => { q1 = v; draw(); }, 0); K.slider('#clQ2', v => { q2 = v; draw(); }, 0); K.slider('#clR', v => { R = v; draw(); }, 0); })();
+
+/* ---------- 4. vector form ---------- */
+(function(){ const svg = $id('vfSvg'), out = $id('vfOut'), sel = $id('vfSel'); const O = P(90, 300), pts = [P(260, 190), P(560, 100)];
+  const draw = () => { K.clear(svg); const s = +sel.value, [A, B] = pts;
+    arrow(svg, O, A, 'muted', 2); arrow(svg, O, B, 'muted', 2); circ(svg, O, 4, 'fill:var(--text)'); tx(svg, O.x - 10, O.y + 14, 'O', 'lbl', 'end');
+    tx(svg, (O.x + A.x) / 2 - 14, (O.y + A.y) / 2 + 4, 'r₁', 'lbl muted', 'end', {style: 'font-weight:700'}); tx(svg, (O.x + B.x) / 2 + 12, (O.y + B.y) / 2 + 12, 'r₂', 'lbl muted', 'start', {style: 'font-weight:700'});
+    arrow(svg, A, B, 'blue', 2.5); const m = K.mid(A, B), u = K.unit(A, B), n = P(-u.y, u.x);
+    tx(svg, m.x + n.x * 18, m.y + n.y * 18, 'r₂₁ = r₂ − r₁', 'lbl sm blue', 'middle', {style: 'font-weight:700'});
+    const h0 = K.lerpPt(A, B, .3); arrow(svg, P(h0.x - n.x * 16, h0.y - n.y * 16), P(h0.x - n.x * 16 + u.x * 40, h0.y - n.y * 16 + u.y * 40), 'blue', 2); tx(svg, h0.x - n.x * 34 + u.x * 20, h0.y - n.y * 34 + u.y * 20, 'r̂₂₁', 'lbl sm blue', 'middle');
+    const L = 70; arrow(svg, B, P(B.x + s * u.x * L, B.y + s * u.y * L), 'red', 3.5); arrow(svg, A, P(A.x - s * u.x * L, A.y - s * u.y * L), 'red', 3.5);
+    tx(svg, B.x + s * u.x * (L + 18), B.y + s * u.y * (L + 18) - 8, 'F₂₁', 'lbl red', 'middle', {style: 'font-weight:700'}); tx(svg, A.x - s * u.x * (L + 18), A.y - s * u.y * (L + 18) - 8, 'F₁₂', 'lbl red', 'middle', {style: 'font-weight:700'});
+    ball(svg, A, 11, s > 0 ? 1 : 1); ball(svg, B, 11, s > 0 ? 1 : -1); tx(svg, A.x - 16, A.y + 22, 'q₁', 'lbl', 'end'); tx(svg, B.x + 16, B.y + 22, 'q₂', 'lbl');
+    tx(svg, 780, 24, s > 0 ? 'q₁q₂ > 0: F₂₁ along r̂₂₁ (repulsion)' : 'q₁q₂ < 0: F₂₁ along −r̂₂₁ (attraction)', 'lbl sm ' + (s > 0 ? 'red' : 'green'), 'end', {style: 'font-weight:700'});
+    const dx = (B.x - A.x) / 100, dy = -(B.y - A.y) / 100, r = Math.hypot(dx, dy);
+    out.textContent = `r₂₁ = (${K.num(K.fmt(dx, 2))}, ${K.num(K.fmt(dy, 2))}) units, |r₂₁| = ${K.fmt(r, 2)}; r̂₂₁ = (${K.num(K.fmt(dx / r, 2))}, ${K.num(K.fmt(dy / r, 2))}). F₂₁ points ${s > 0 ? 'along' : 'opposite to'} r̂₂₁ and F₁₂ = −F₂₁ (equal size, opposite direction).`; };
+  K.draggable(svg, () => pts, draw); sel.addEventListener('change', draw); draw(); })();
+
+/* ---------- 5. Example 1.4 (a) ---------- */
+examStepper('#ex14a', [
+  {h: 'Given', s: ['e = 1.6 × 10⁻¹⁹ C, k = 9 × 10⁹ N m² C⁻²', 'G = 6.67 × 10⁻¹¹ N m² kg⁻²', 'mₚ = 1.67 × 10⁻²⁷ kg, mₑ = 9.11 × 10⁻³¹ kg'], html: '<b>Given:</b> e = 1.6 × 10<sup>−19</sup> C; k = 1/4πε<sub>0</sub> = 9 × 10<sup>9</sup> N m² C<sup>−2</sup>; G = 6.67 × 10<sup>−11</sup> N m² kg<sup>−2</sup>; m<sub>p</sub> = 1.67 × 10<sup>−27</sup> kg; m<sub>e</sub> = 9.11 × 10<sup>−31</sup> kg.'},
+  {h: 'Formula', s: ['F(e)/F(G) = (ke²/r²) ÷ (G mₚmₑ/r²)', '         = ke² / (G mₚ mₑ)   (r² cancels)', 'two protons: F(e)/F(G) = ke² / (G mₚ²)'], html: `<b>Formula:</b> |F<sub>e</sub>| = ${K.frac('1', '4πε<sub>0</sub>')} ${K.frac('e²', 'r²')}, |F<sub>G</sub>| = G${K.frac('m<sub>p</sub>m<sub>e</sub>', 'r²')} ⇒ ${K.frac('F<sub>e</sub>', 'F<sub>G</sub>')} = ${K.frac('e²', '4πε<sub>0</sub>Gm<sub>p</sub>m<sub>e</sub>')} (r² cancels). For two protons, replace m<sub>e</sub> by m<sub>p</sub>.`},
+  {h: 'Substitution', s: ['(i) 9 × 10⁹ × 2.56 × 10⁻³⁸ ÷ 1.015 × 10⁻⁶⁷', '(ii) 9 × 10⁹ × 2.56 × 10⁻³⁸ ÷ 1.860 × 10⁻⁶⁴'], html: '<b>Substitution:</b> ke² = 9 × 10<sup>9</sup> × (1.6 × 10<sup>−19</sup>)² = 2.304 × 10<sup>−28</sup>. (i) Gm<sub>p</sub>m<sub>e</sub> = 6.67 × 10<sup>−11</sup> × 1.67 × 10<sup>−27</sup> × 9.11 × 10<sup>−31</sup> = 1.015 × 10<sup>−67</sup>. (ii) Gm<sub>p</sub>² = 6.67 × 10<sup>−11</sup> × (1.67 × 10<sup>−27</sup>)² = 1.860 × 10<sup>−64</sup>.'},
+  {h: 'Answer', s: ['(i) ≈ 2.3 × 10³⁹  (ii) ≈ 1.2 × 10³⁶'], html: '<b>Answer:</b> (i) F<sub>e</sub>/F<sub>G</sub> ≈ <b>2.3 × 10<sup>39</sup></b> (textbook: 2.4 × 10<sup>39</sup>); (ii) ≈ <b>1.2 × 10<sup>36</sup></b> (textbook: 1.3 × 10<sup>36</sup>). Dimensionless numbers: the electric force is ~10<sup>39</sup> (e–p) and ~10<sup>36</sup> (p–p) times stronger than gravity.'}
+], (svg, i, t) => { tx(svg, 20, 24, 'powers of ten (log scale)', 'lbl sm muted');
+  const base = 300, sc = 5.6; ln(svg, P(40, base), P(320, base), 'text', 1.5);
+  const bar = (x, ex, c, l1, l2, op) => { const h = ex * sc; rect(svg, x, base - h, 70, h, `fill:${CV(c)};opacity:${.8 * op}`, 4); tx(svg, x + 35, base - h - 26, l1, 'lbl sm', 'middle', {opacity: op}); tx(svg, x + 35, base - h - 10, l2, 'lbl sm', 'middle', {style: 'font-weight:700', opacity: op}); };
+  bar(70, 1, 'green', 'gravity', '1', 1);
+  if (i >= 3){ bar(160, 39.4 * 1, 'red', 'e–p electric', '× 2.3 × 10³⁹', t); bar(250, 36.1, 'purple', 'p–p electric', '× 1.2 × 10³⁶', t); } });
+
+/* ---------- 6. Example 1.4 (b) ---------- */
+examStepper('#ex14b', [
+  {h: 'Given', s: ['r = 1 Å = 10⁻¹⁰ m, e = 1.6 × 10⁻¹⁹ C', 'mₑ = 9.11 × 10⁻³¹ kg, mₚ = 1.67 × 10⁻²⁷ kg'], html: '<b>Given:</b> r = 1 Å = 10<sup>−10</sup> m; e = 1.6 × 10<sup>−19</sup> C; k = 9 × 10<sup>9</sup> N m² C<sup>−2</sup>; m<sub>e</sub> = 9.11 × 10<sup>−31</sup> kg; m<sub>p</sub> = 1.67 × 10<sup>−27</sup> kg.'},
+  {h: 'Formula', s: ['|F| = k e² / r²  (same on both, 3rd law)', 'a = F / m'], html: `<b>Formula:</b> |F| = ${K.frac('1', '4πε<sub>0</sub>')} ${K.frac('e²', 'r²')} – the same magnitude on the electron and the proton (Newton's third law); a = ${K.frac('F', 'm')} (Newton's second law).`},
+  {h: 'Substitution', s: ['F = 9 × 10⁹ × (1.6 × 10⁻¹⁹)² ÷ (10⁻¹⁰)²', 'aₑ = 2.3 × 10⁻⁸ ÷ 9.11 × 10⁻³¹', 'aₚ = 2.3 × 10⁻⁸ ÷ 1.67 × 10⁻²⁷'], html: '<b>Substitution:</b> F = 9 × 10<sup>9</sup> × (1.6 × 10<sup>−19</sup>)² ÷ (10<sup>−10</sup>)² = 2.3 × 10<sup>−8</sup> N; a<sub>e</sub> = 2.3 × 10<sup>−8</sup> ÷ 9.11 × 10<sup>−31</sup>; a<sub>p</sub> = 2.3 × 10<sup>−8</sup> ÷ 1.67 × 10<sup>−27</sup>.'},
+  {h: 'Answer', s: ['F = 2.3 × 10⁻⁸ N', 'aₑ = 2.5 × 10²² m s⁻², aₚ = 1.4 × 10¹⁹ m s⁻²'], html: '<b>Answer:</b> F = <b>2.3 × 10<sup>−8</sup> N</b>; a<sub>e</sub> = <b>2.5 × 10<sup>22</sup> m s<sup>−2</sup></b>; a<sub>p</sub> = <b>1.4 × 10<sup>19</sup> m s<sup>−2</sup></b>. The electron\'s acceleration is about 10<sup>21</sup> times g, so gravity is negligible for it. The proton, ~1800 times heavier, accelerates ~1800 times less.'}
+], (svg, i, t) => { const e = P(70, 140), p = P(270, 140);
+  ball(svg, e, 12, -1, 'e'); ball(svg, p, 24, 1, 'p'); K.dim(svg, e, p, '1 Å', 40);
+  if (i >= 1){ arrow(svg, P(e.x + 16, e.y), P(e.x + 76, e.y), 'red', 3); arrow(svg, P(p.x - 28, p.y), P(p.x - 88, p.y), 'red', 3); tx(svg, 170, 110, 'equal forces F', 'lbl sm red', 'middle'); }
+  if (i >= 3){ const op = t; rect(svg, 30, 220, 300, 22, 'fill:var(--blue);opacity:' + .8 * op, 4); rect(svg, 30, 260, Math.max(3, 300 * 19.14 / 22.4), 22, 'fill:var(--red);opacity:' + .8 * op, 4);
+    tx(svg, 36, 212, 'aₑ: 10²²·⁴ m s⁻² (log bar)', 'lbl sm blue', 'start', {opacity: op}); tx(svg, 36, 296, 'aₚ: 10¹⁹·¹ m s⁻² (log bar)', 'lbl sm red', 'start', {opacity: op}); } });
+
+/* ---------- 7. Example 1.5 (Fig 1.7) ---------- */
+examStepper('#ex15St', [
+  {h: 'Given', s: ['A: q, B: q′, r = 10 cm', 'after touching C, D: q/2 and q′/2', 'new distance r′ = 5 cm = r/2'], html: '<b>Given:</b> initial charges q (on A) and q′ (on B), separation r = 10 cm, force F [Fig 1.7(a)]. Identical uncharged C touches A and D touches B → charges q/2 and q′/2 [Fig 1.7(b)]. New separation r′ = 5.0 cm = r/2 [Fig 1.7(c)].'},
+  {h: 'Formula', s: ['F = (1/4πε₀) q q′ / r²'], html: `<b>Formula:</b> F = ${K.frac('1', '4πε<sub>0</sub>')} ${K.frac('qq′', 'r²')} (sizes of A and B neglected).`},
+  {h: 'Substitution', s: ['F′ = (1/4πε₀)(q/2)(q′/2) / (r/2)²', '    = (1/4πε₀)(qq′/4) / (r²/4)'], html: `<b>Substitution:</b> F′ = ${K.frac('1', '4πε<sub>0</sub>')} ${K.frac('(q/2)(q′/2)', '(r/2)²')} = ${K.frac('1', '4πε<sub>0</sub>')} ${K.frac('qq′/4', 'r²/4')}.`},
+  {h: 'Answer', s: ['F′ = (1/4πε₀) qq′/r² = F (unchanged)'], html: '<b>Answer:</b> F′ = <b>F</b> – the repulsion on A is <b>unchanged</b>.'}
+], (svg, i, t) => { const top = 30; rect(svg, 30, top - 8, 110, 8, 'fill:var(--muted)'); const A = P(85, 130);
+  ln(svg, P(85, top), A, 'muted', 1.2); tx(svg, 96, 70, 'nylon', 'lbl sm muted');
+  const bx = i === 0 ? 300 : i === 1 ? 300 : 300 - 107 * (i === 2 ? t : 1), B = P(bx, 130);
+  ball(svg, A, 18, 1, i >= 1 ? 'q/2' : 'q'); ball(svg, B, 18, 1, i >= 1 ? 'q′/2' : 'q′'); tx(svg, A.x - 30, A.y, 'A', 'lbl big', 'end'); tx(svg, B.x, B.y - 30, 'B', 'lbl big', 'middle');
+  ln(svg, P(bx + 18, 130), P(bx + 50, 140), 'text', 4); tx(svg, bx + 52, 158, 'handle', 'lbl sm muted', 'middle');
+  if (i === 1){ const g = K.group(svg, {opacity: t}); ball(g, P(85, 166), 18, 1, 'C'); ball(g, P(300, 166), 18, 1, 'D'); tx(g, 190, 210, 'C and D take half the charge', 'lbl sm', 'middle'); }
+  K.dim(svg, P(85, 130), P(bx, 130), i >= 2 ? (i === 2 && t < 1 ? '…' : '5 cm') : '10 cm', 90);
+  tx(svg, 20, 300, 'Fig 1.7 (' + (i === 0 ? 'a' : i === 1 ? 'b' : 'c') + ')', 'lbl sm muted');
+  if (i >= 3){ arrow(svg, P(A.x - 22, 130), P(A.x - 22 - 40 * t, 130), 'red', 3); tx(svg, 60, 260, 'F′ = F: same push', 'lbl green', 'start', {style: 'font-weight:700', opacity: t}); } });
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'If the distance between two point charges is doubled, the force between them becomes', options: ['double', 'half', 'one-fourth', 'four times'], answer: 2, explain: 'F ∝ 1/r²: (1/2)² = 1/4.'});
+K.mcq('#q2', {q: 'The SI unit of ε₀ (permittivity of free space) is', options: ['N m² C⁻²', 'C² N⁻¹ m⁻²', 'C N⁻¹ m⁻¹', 'N C⁻¹'], answer: 1, explain: 'ε₀ = q₁q₂/(4πFr²) → C²/(N m²) = C² N⁻¹ m⁻². (N m² C⁻² is the unit of k.)'});
+K.mcq('#q3', {q: 'Two charges of 2 μC and 3 μC are 30 cm apart in vacuum. The force between them is', options: ['0.06 N', '0.6 N', '6 N', '0.2 N'], answer: 1, explain: 'F = 9 × 10⁹ × 2 × 10⁻⁶ × 3 × 10⁻⁶ ÷ (0.3)² = 0.054 ÷ 0.09 = 0.6 N (repulsive).', hint: 'Convert μC → C and cm → m before substituting.'});
+K.mcq('#q4', {q: 'In vector form F₁₂ = −F₂₁. This shows that Coulomb\'s law obeys', options: ['Newton\'s first law', 'Newton\'s second law', 'Newton\'s third law', 'the law of gravitation'], answer: 2, explain: 'Equal and opposite forces on the two charges – action and reaction.'});
+K.mcq('#q5', {q: 'Both charges are halved and the distance between them is also halved. The force becomes', options: ['F/4', 'F/2', 'F', '4F'], answer: 2, explain: '(½ × ½) ÷ (½)² = 1 – Example 1.5.'});
+K.mcq('#q6', {q: 'The ratio of electric to gravitational force between an electron and a proton is of the order of', options: ['10¹⁰', '10²⁰', '10³⁶', '10³⁹'], answer: 3, explain: 'ke²/(Gmₚmₑ) ≈ 2.3 × 10³⁹ (textbook 2.4 × 10³⁹).'});
+K.mcq('#q7', {q: 'One coulomb is the charge that, placed 1 m from an equal charge in vacuum, repels it with a force of', options: ['1 N', '8.854 × 10⁻¹² N', '9 × 10⁹ N', '1.6 × 10⁻¹⁹ N'], answer: 2, explain: 'F = 9 × 10⁹ × 1 × 1 ÷ 1² = 9 × 10⁹ N.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

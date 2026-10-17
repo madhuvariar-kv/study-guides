@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forces Between Multiple Charges</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+@media(max-width:600px){.onpage a{white-space:normal}}
+
+</style>
+<style>
+.qa{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.6rem 1rem;margin:.7rem 0;box-shadow:var(--shadow)}
+.qa p{margin:.25em 0}
+.qbox{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.7rem 1rem;margin:.8rem 0;box-shadow:var(--shadow)}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.tw{overflow-x:auto}
+.vec{font-weight:700;font-style:normal}
+.eq{overflow-x:auto}
+</style>
+</head>
+<body data-page="08_multiple_charges">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 1 · Section 1.7</span><span class="chip amber">Textbook pages 15–18</span>
+<h1>Forces Between Multiple Charges – the Superposition Principle</h1>
+<p class="lead">Coulomb's law tells you the force between <i>two</i> charges. But a real charge is usually surrounded by many others. On this page you find the force on one charge due to several charges, drag charges around a virtual lab and watch the forces add as vectors, and solve Examples 1.6 and 1.7 in board-exam layout.</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 1 and 7 of this guide)</div>
+<ul style="margin:0">
+<li><b>Coulomb's law</b> (<span class="ml">കൂളോം നിയമം</span>): <b>F</b><sub>21</sub> = <span class="frac"><span>1</span><span>4πε<sub>0</sub></span></span> <span class="frac"><span>q<sub>1</sub>q<sub>2</sub></span><span>r<sub>21</sub><sup>2</sup></span></span> <b>r̂</b><sub>21</sub>, with <span class="frac"><span>1</span><span>4πε<sub>0</sub></span></span> ≈ 9 × 10<sup>9</sup> N m<sup>2</sup> C<sup>−2</sup>.</li>
+<li>Force is a <b>vector</b> (<span class="ml">സദിശം</span>): two forces add by the <b>parallelogram law</b> (or triangle law). Resultant of two equal forces F at an angle α: R = 2F cos(α/2).</li>
+<li><b>Unit vector</b> (<span class="ml">യൂണിറ്റ് സദിശം</span>) <b>r̂</b> = <b>r</b>/r – length 1, it only gives a direction.</li>
+</ul></div>
+
+<h2 id="principle">1. The principle of superposition (Fig 1.8)</h2>
+<p>Consider a system of n stationary <b>point charges</b> (<span class="ml">ബിന്ദു ചാർജ്</span>) q<sub>1</sub>, q<sub>2</sub>, q<sub>3</sub>, …, q<sub>n</sub> in vacuum. What is the force on q<sub>1</sub>? Coulomb's law alone cannot answer this – it only talks about pairs. We already know that mechanical forces add by the parallelogram law. Experiments show that electric forces do the same.</p>
+<div class="callout key"><div class="title">⭐ Superposition principle (<span class="ml">അധ്യാരോപണ തത്വം</span>)</div>
+<p>The force on any charge due to a number of other charges is the <b>vector sum</b> of all the forces on that charge due to the other charges, <b>taken one at a time</b>. The individual forces are <b>unaffected</b> by the presence of the other charges.</p></div>
+<div class="lab">
+  <div class="lab-title">🖼 Fig 1.8 – (a) three charges, (b) many charges</div>
+  <svg id="f18" viewBox="0 0 800 330" role="img" aria-label="Left: charge q1 with forces F12 away from q2 and F13 away from q3 and their parallelogram resultant F1. Right: q1 surrounded by q2 to q5 with one force arrow from each"></svg>
+</div>
+<p>For three charges (Fig 1.8 a), the force on q<sub>1</sub> due to q<sub>2</sub> is still given by Coulomb's law, even though q<sub>3</sub> is present:</p>
+<p class="eq"><b>F</b><sub>12</sub> = <span class="frac"><span>1</span><span>4πε<sub>0</sub></span></span> <span class="frac"><span>q<sub>1</sub>q<sub>2</sub></span><span>r<sub>12</sub><sup>2</sup></span></span> <b>r̂</b><sub>12</sub> &nbsp;&nbsp;&nbsp; <b>F</b><sub>13</sub> = <span class="frac"><span>1</span><span>4πε<sub>0</sub></span></span> <span class="frac"><span>q<sub>1</sub>q<sub>3</sub></span><span>r<sub>13</sub><sup>2</sup></span></span> <b>r̂</b><sub>13</sub></p>
+<p>Here <b>r̂</b><sub>12</sub> is the unit vector pointing <b>from q<sub>2</sub> to q<sub>1</sub></b> (so a positive product q<sub>1</sub>q<sub>2</sub> gives a push away from q<sub>2</sub>). The total force on q<sub>1</sub> is</p>
+<p class="eq"><b>F</b><sub>1</sub> = <b>F</b><sub>12</sub> + <b>F</b><sub>13</sub> = <span class="frac"><span>1</span><span>4πε<sub>0</sub></span></span> <span class="frac"><span>q<sub>1</sub>q<sub>2</sub></span><span>r<sub>12</sub><sup>2</sup></span></span> <b>r̂</b><sub>12</sub> + <span class="frac"><span>1</span><span>4πε<sub>0</sub></span></span> <span class="frac"><span>q<sub>1</sub>q<sub>3</sub></span><span>r<sub>13</sub><sup>2</sup></span></span> <b>r̂</b><sub>13</sub> &nbsp;&nbsp; (1.4)</p>
+<p>For n charges (Fig 1.8 b) we simply keep adding:</p>
+<p class="eq"><b>F</b><sub>1</sub> = <b>F</b><sub>12</sub> + <b>F</b><sub>13</sub> + … + <b>F</b><sub>1n</sub> = <span class="frac"><span>q<sub>1</sub></span><span>4πε<sub>0</sub></span></span> <span style="font-size:1.4em">∑</span><sub>i = 2</sub><sup>n</sup> <span class="frac"><span>q<sub>i</sub></span><span>r<sub>1i</sub><sup>2</sup></span></span> <b>r̂</b><sub>1i</sub> &nbsp;&nbsp; (1.5)</p>
+<div class="callout think"><div class="title">💭 Why this matters</div>
+<p><b>All of electrostatics is basically a consequence of Coulomb's law and the superposition principle.</b> Everything later in this chapter – electric field, field lines, dipoles, Gauss's law – is built from these two ideas.</p></div>
+<div class="callout warn"><div class="title">⚠️ Common mistake</div>
+<p>Do <b>not</b> add the magnitudes (3 N + 4 N = 7 N). Forces are vectors: two forces of 3 N and 4 N at right angles give √(3² + 4²) = 5 N, and two equal and opposite forces give zero. Always draw the arrows first.</p></div>
+
+<h2 id="lab">2. Virtual lab: drag the charges, add the forces</h2>
+<div class="lab">
+  <div class="lab-title">🧪 Vector-addition lab – <span>force on q<sub>1</sub> from up to three other charges</span></div>
+  <div class="controls">
+    <label><span>q<sub>1</sub></span> <input id="sq1" type="range" min="-3" max="3" step="1" value="1"><output></output> μC</label>
+    <label><span>q<sub>2</sub></span> <input id="sq2" type="range" min="-5" max="5" step="1" value="3"><output></output> μC</label>
+    <label><span>q<sub>3</sub></span> <input id="sq3" type="range" min="-5" max="5" step="1" value="-2"><output></output> μC</label>
+    <label><span>q<sub>4</sub></span> <input id="sq4" type="range" min="-5" max="5" step="1" value="0"><output></output> μC</label>
+  </div>
+  <div class="controls"><button class="btn primary" id="pA">Fig 1.8(a) layout</button><button class="btn" id="pB">Equal charges on a triangle (Ex 1.6)</button><button class="btn" id="pC">q, q, −q (Ex 1.7)</button><button class="btn" id="pD">Two forces at 90°</button><button class="btn" id="pPar">Hide construction</button></div>
+  <svg id="supSvg" viewBox="0 0 800 440" role="img" aria-label="Draggable charges q1 to q4 on a grid. Coloured arrows show the force on q1 due to each other charge, dashed lines show the vector addition, and a thick red arrow shows the resultant force"></svg>
+  <div class="readout" id="supOut"></div>
+  <p class="hint">Drag any charge (also q<sub>1</sub>). A charge set to 0 μC is switched off (dashed ring). Grid squares are 10 cm × 10 cm. Each coloured arrow is worked out with Coulomb's law <b>as if the other charges were not there</b>; the red arrow is their vector sum. Watch the sum of magnitudes in the readout – it is almost never equal to the size of the resultant.</p>
+</div>
+<div class="callout real"><div class="title">🌍 Real life – a salt crystal</div>
+<p>In a crystal of common salt, each Na<sup>+</sup> ion is surrounded by Cl<sup>−</sup> ions on all sides (and more Na<sup>+</sup> ions a little farther away). The force on one ion is the vector sum of thousands of Coulomb forces. For an ion deep inside, these forces cancel by symmetry – exactly the idea of Example 1.6 below – which is why the ion sits still. At the surface the cancellation is incomplete, which is one reason surfaces behave differently.</p></div>
+
+<h2 id="ex16">3. Example 1.6 – charge at the centroid (Fig 1.9)</h2>
+<div class="qbox"><p><b>Example 1.6.</b> Consider three charges q<sub>1</sub>, q<sub>2</sub>, q<sub>3</sub>, each equal to q, at the vertices of an equilateral triangle of side l. What is the force on a charge Q (with the same sign as q) placed at the centroid of the triangle (Fig 1.9)?</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Find the distance from each vertex to the centroid (AO = l/√3). All three forces then have the same size. Add two of them by the parallelogram law (they are 120° apart) and compare with the third.</p></div></div>
+<div class="lab" id="ex16s"><div class="lab-title">🎬 Solution in exam layout – Example 1.6</div>
+<svg viewBox="0 0 800 400" role="img" aria-label="Equilateral triangle ABC with charge q at each vertex and Q at the centroid O; the three repulsive forces on Q are drawn and added"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> each force has magnitude <span class="frac"><span>3</span><span>4πε<sub>0</sub></span></span><span class="frac"><span>Qq</span><span>l<sup>2</sup></span></span>, but the three forces are 120° apart, so the <b>total force on Q is zero</b>. <i>Symmetry check:</i> if the whole arrangement is turned through 120° about O it looks exactly the same, so the force must look the same too; a non-zero arrow would have turned, so the only possibility is zero. (The textbook mentions turning through 60°; a turn of 120° is the one that brings the triangle back onto itself.)</div></div>
+
+<h2 id="ex17">4. Example 1.7 – q, q and −q on a triangle (Fig 1.10)</h2>
+<div class="qbox"><p><b>Example 1.7.</b> Consider the charges q, q and −q placed at the vertices of an equilateral triangle, as shown in Fig 1.10. What is the force on each charge?</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>Every pair has charges of the same size and the same separation l, so every pair force has the same magnitude F = q²/(4πε<sub>0</sub>l²). Only the directions differ: like charges repel, unlike attract. At A and B the two forces are 120° apart; at C they are 60° apart.</p></div></div>
+<div class="lab" id="ex17s"><div class="lab-title">🎬 Solution in exam layout – Example 1.7</div>
+<svg viewBox="0 0 800 400" role="img" aria-label="Equilateral triangle with q at A and B and minus q at C; forces at each vertex and their resultants"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> with F = <span class="frac"><span>q<sup>2</sup></span><span>4πε<sub>0</sub>l<sup>2</sup></span></span>: on q at A, <b>F<sub>1</sub> = F along BC</b>; on q at B, <b>F<sub>2</sub> = F along AC</b>; on −q at C, <b>F<sub>3</sub> = √3 F along the bisector of ∠BCA</b> (pointing into the triangle). And <b>F<sub>1</sub> + F<sub>2</sub> + F<sub>3</sub> = 0</b> – as expected, because Coulomb forces obey Newton's third law, so the internal forces of an isolated system add up to zero.</div></div>
+<div class="qa"><p><b>Think (the book leaves this proof to you):</b> why must F<sub>1</sub> + F<sub>2</sub> + F<sub>3</sub> = 0 for <i>any</i> three charges, not just this triangle?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">F<sub>1</sub> + F<sub>2</sub> + F<sub>3</sub> = (F<sub>12</sub> + F<sub>13</sub>) + (F<sub>21</sub> + F<sub>23</sub>) + (F<sub>31</sub> + F<sub>32</sub>). Regroup in pairs: (F<sub>12</sub> + F<sub>21</sub>) + (F<sub>13</sub> + F<sub>31</sub>) + (F<sub>23</sub> + F<sub>32</sub>). By Coulomb's law F<sub>12</sub> = −F<sub>21</sub> (Newton's third law), so <b>every bracket is zero</b>. This works for any number of charges in any arrangement.</div></div></div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://phet.colorado.edu/en/simulations/coulombs-law" target="_blank" rel="noopener noreferrer">🧪 Coulomb&#x27;s Law (PhET simulation)</a> <span class="src">PhET, University of Colorado Boulder</span><br><span class="note">Change the charges and the distance and read the force.</span></li><li><a href="https://www.physicsclassroom.com/class/estatics/Lesson-3/Coulomb-s-Law" target="_blank" rel="noopener noreferrer">📄 Coulomb&#x27;s Law</a> <span class="src">The Physics Classroom</span><br><span class="note">Worked examples of the inverse-square law.</span></li><li><a href="https://en.wikipedia.org/wiki/Coulomb%27s_law" target="_blank" rel="noopener noreferrer">📄 Coulomb&#x27;s law</a> <span class="src">Wikipedia</span><br><span class="note">The law, its vector form and the superposition principle.</span></li><li><a href="https://en.wikipedia.org/wiki/Charles-Augustin_de_Coulomb" target="_blank" rel="noopener noreferrer">📄 Charles-Augustin de Coulomb</a> <span class="src">Wikipedia</span><br><span class="note">The French physicist and his torsion balance.</span></li></ul></div>
+
+<h2 id="check">5. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li><b>Superposition principle:</b> the force on a charge due to many charges is the <b>vector sum</b> of the forces due to each charge taken one at a time; each pair force is unaffected by the others.</li>
+<li><b>F</b><sub>1</sub> = <b>F</b><sub>12</sub> + <b>F</b><sub>13</sub> + … + <b>F</b><sub>1n</sub> = (q<sub>1</sub>/4πε<sub>0</sub>) ∑ (q<sub>i</sub>/r<sub>1i</sub><sup>2</sup>) <b>r̂</b><sub>1i</sub> – add by the parallelogram law (or components).</li>
+<li>Example 1.6: three equal charges at the corners of an equilateral triangle → <b>zero force</b> at the centroid (each force 3Qq/4πε<sub>0</sub>l², 120° apart).</li>
+<li>Example 1.7: q, q, −q → forces F, F and √3F, which add up to zero (Newton's third law).</li>
+<li>All of electrostatics = Coulomb's law + superposition.</li>
+</ul></div>
+<p>Next: <a href="09_electric_field.html">Electric field ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Electric Charges and Fields · 2nd PUC Physics", "icon": "⚡", "key": "puc_physics_ch1_progress", "pages": [["index.html", "Home"], ["01_vectors_toolkit.html", "1 · Vectors Toolkit: Components, Unit Vectors & Dot Product"], ["02_calculus_geometry_toolkit.html", "2 · Maths Toolkit: Areas, Small Elements & Integration"], ["03_forces_motion_recap.html", "3 · Forces, Newton's Laws & Motion Under Constant Force"], ["04_electric_charge.html", "4 · Electric Charge & Electroscopes (1.1–1.2)"], ["05_conductors_induction.html", "5 · Conductors, Insulators, Earthing & Induction (1.3–1.4)"], ["06_properties_of_charge.html", "6 · Properties of Charge: Additivity, Conservation, Quantisation (1.5)"], ["07_coulombs_law.html", "7 · Coulomb's Law (1.6)"], ["08_multiple_charges.html", "8 · Forces Between Multiple Charges – Superposition (1.7)"], ["09_electric_field.html", "9 · Electric Field (1.8)"], ["10_field_lines_flux.html", "10 · Electric Field Lines & Electric Flux (1.9–1.10)"], ["11_electric_dipole.html", "11 · Electric Dipole & Dipole in a Uniform Field (1.11–1.12)"], ["12_gauss_law.html", "12 · Continuous Charge Distribution & Gauss's Law (1.13–1.14)"], ["13_gauss_applications.html", "13 · Applications of Gauss's Law (1.15)"], ["14_exercises_1_12.html", "14 · Exercises 1.1–1.12 – Solutions"], ["15_exercises_13_24.html", "15 · Exercises 1.13–1.24 – Solutions"], ["16_additional_exercises.html", "16 · Additional Exercises 1.25–1.34 – Solutions"], ["17_applications_explore.html", "17 · Applications & Explore Online"], ["18_summary_revision.html", "18 · Summary, Points to Ponder & Quick Quiz"], ["19_model_test_paper.html", "19 · Model Question Paper (70 marks)"], ["20_model_test_solutions.html", "20 · Model Question Paper – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ==== page helpers (Chapter 1, pages 08–11; same code on each page) ==== */
+const {P, el} = K;
+const $id = id => document.getElementById(id);
+const COL = {red: 'var(--red)', blue: 'var(--blue)', green: 'var(--green)', amber: 'var(--accent)', purple: 'var(--purple)', text: 'var(--text)', muted: 'var(--muted)', primary: 'var(--primary)'};
+const cv = c => COL[c] || c;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const TAU = 2 * Math.PI;
+const ln = (svg, a, b, c='text', w=2, extra={}) => el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: cv(c), 'stroke-width': w, 'stroke-linecap': 'round', ...extra}, svg);
+const rect = (svg, x, y, w, h, attrs={}) => el('rect', {x, y, width: Math.max(0, w), height: Math.max(0, h), ...attrs}, svg);
+const circ = (svg, c, r, attrs={}) => el('circle', {cx: c.x, cy: c.y, r: Math.max(0, r), ...attrs}, svg);
+const path = (svg, d, attrs={}) => el('path', {d, fill: 'none', ...attrs}, svg);
+/* true minus sign for negative numbers in strings */
+const minus = s => String(s).replace(/(^|[\s(=:,/×+\[])-(?=[\d.])/g, '$1−');
+const nf = (v, d=2) => { const s = K.fmt(Math.abs(+v), d); return (+v < 0 && +s !== 0 ? '−' : '') + s; };
+/* scientific notation with d significant figures: plain-text (SVG) and HTML forms */
+const SUPC = {'-': '⁻', '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'};
+function sciParts(v, d){ if (!isFinite(v) || v === 0) return {s: '', m: '0', e: 0}; const s = v < 0 ? '−' : ''; v = Math.abs(v); let e = Math.floor(Math.log10(v)), m = v / Math.pow(10, e); let ms = m.toFixed(d - 1); if (+ms >= 10){ e++; ms = (m / 10).toFixed(d - 1); } return {s, m: ms, e}; }
+function sci(v, d=2){ const p = sciParts(v, d); if (p.m === '0') return '0'; if (p.e >= -1 && p.e <= 3) return p.s + String(+(+p.m * Math.pow(10, p.e)).toPrecision(d)); return p.s + p.m + ' × 10' + String(p.e).split('').map(c => SUPC[c]).join(''); }
+function sciH(v, d=2){ const p = sciParts(v, d); if (p.m === '0') return '0'; if (p.e >= -1 && p.e <= 3) return p.s + String(+(+p.m * Math.pow(10, p.e)).toPrecision(d)); return p.s + p.m + ' × 10<sup>' + String(p.e).replace('-', '−') + '</sup>'; }
+/* SVG text; o.size → font size via style */
+function tx(svg, x, y, s, cls='', anchor='start', o={}){ const st = (o.size ? `font-size:${o.size}px;` : '') + (o.style || ''); const a = {class: ('lbl ' + cls).trim(), 'text-anchor': anchor}; if (st) a.style = st; if (o.op !== undefined) a.opacity = o.op; if (o.fw) a['font-weight'] = o.fw; if (o.tr) a.transform = o.tr; return K.text(svg, P(x, y), minus(s), a); }
+/* working lines for exam-layout steppers: rows = [[step, text, cls], …]; rows with step ≤ i shown, newest fades in */
+function lines(svg, rows, i, t, o={}){ const x = o.x ?? 400, y0 = o.y ?? 32, lh = o.lh ?? 30; let k = 0;
+  rows.forEach(r => { if (r[0] > i) return; const ind = (r[1].match(/^ */)[0].length) * 4.3; tx(svg, x + ind, y0 + k * lh, r[1].trim(), r[2] || '', 'start', {op: r[0] === i ? t : 1, size: o.size}); k++; }); }
+/* arrow a→b with filled head; o: c, w, head, label, lo (label offset), anchor, dash, op */
+function arrow(svg, a, b, o={}){ const c = cv(o.c || 'red'), w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const L = K.dist(a, b); if (L < 1) return g; const u = K.unit(a, b), hs = Math.min(o.head ?? 11, L * .6), base = P(b.x - u.x * hs, b.y - u.y * hs);
+  el('line', {x1: a.x, y1: a.y, x2: base.x, y2: base.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round', ...(o.dash ? {'stroke-dasharray': o.dash} : {})}, g);
+  el('polygon', {points: `${b.x},${b.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g);
+  if (o.label) tx(g, b.x + (o.lo ? o.lo.x : 0), b.y + (o.lo ? o.lo.y : -12), o.label, 'sm', o.anchor || 'middle', {fw: 700, style: `fill:${c}`});
+  return g; }
+/* a point charge: sign > 0 red with +, < 0 blue with −, 0 = empty dashed ring */
+function charge(svg, c, sign, o={}){ const r = o.r || 14, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  if (!sign){ circ(g, c, r, {fill: 'none', stroke: 'var(--muted)', 'stroke-width': 1.5, 'stroke-dasharray': '4 3'}); }
+  else { circ(g, c, r, {fill: sign > 0 ? '#dc2626' : '#2563eb', stroke: 'var(--text)', 'stroke-width': 1.2});
+    ln(g, P(c.x - r * .5, c.y), P(c.x + r * .5, c.y), '#fff', 2.6); if (sign > 0) ln(g, P(c.x, c.y - r * .5), P(c.x, c.y + r * .5), '#fff', 2.6); }
+  if (o.label) tx(g, c.x + (o.lx ?? 0), c.y + (o.ly ?? r + 14), o.label, o.lc || 'sm', 'middle', {fw: 700});
+  return g; }
+/* shared animation clock: runs only while a lab is on screen and was used in the last 30 s */
+const ANIM = []; let animOn = false, animLast = 0;
+function animLoop(now){ const dt = Math.min(.05, Math.max(0, (now - animLast) / 1000)); animLast = now; let any = false;
+  for (const it of ANIM){ if (it.vis && now < it.until){ it.t += dt; try { it.fn(it.t, dt); } catch (e){ it.until = 0; throw e; } any = true; } }
+  if (any) requestAnimationFrame(animLoop); else animOn = false; }
+function animStart(){ if (!animOn){ animOn = true; animLast = performance.now(); requestAnimationFrame(animLoop); } }
+function anim(elm, fn){ const it = {elm, fn, t: 0, until: 0, vis: true}; ANIM.push(it);
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(e => { it.vis = e.isIntersecting; if (it.vis) wake(it); })).observe(elm);
+  it.fn(0, 0); wake(it); return it; }
+function wake(it){ it.until = performance.now() + 30000; animStart(); }
+/* buttons that behave like radio buttons; returns a setter */
+function radio(ids, onPick){ const els = ids.map(id => $id(id)); const set = k => { els.forEach((b, i) => b.classList.toggle('primary', i === k)); onPick(k); }; els.forEach((b, i) => b.addEventListener('click', () => set(i))); return set; }
+/* redraw at most once per frame (for dragging) */
+function throttle(fn){ let queued = false; return () => { if (queued) return; queued = true; requestAnimationFrame(() => { queued = false; fn(); }); }; }
+/* ==== end page helpers ==== */
+const KC = 9e9;
+
+/* ---------- Fig 1.8 ---------- */
+(function(){
+  const svg = $id('f18');
+  /* (a) */
+  const q1 = P(200, 190), q2 = P(70, 250), q3 = P(150, 60);
+  ln(svg, P(400, 20), P(400, 310), 'muted', 1, {'stroke-dasharray': '4 4'});
+  const u2 = K.unit(q2, q1), u3 = K.unit(q3, q1), a2 = P(q1.x + u2.x * 110, q1.y + u2.y * 110), a3 = P(q1.x + u3.x * 80, q1.y + u3.y * 80), R = P(a2.x + a3.x - q1.x, a2.y + a3.y - q1.y);
+  ln(svg, q2, q1, 'muted', 1, {'stroke-dasharray': '3 4'}); ln(svg, q3, q1, 'muted', 1, {'stroke-dasharray': '3 4'});
+  ln(svg, a2, R, 'muted', 1.4, {'stroke-dasharray': '6 4'}); ln(svg, a3, R, 'muted', 1.4, {'stroke-dasharray': '6 4'});
+  arrow(svg, q1, a2, {c: 'amber', label: 'F₁₂', lo: {x: 10, y: 16}});
+  arrow(svg, q1, a3, {c: 'purple', label: 'F₁₃', lo: {x: 22, y: 4}});
+  arrow(svg, q1, R, {c: 'red', w: 4, label: 'F₁ = F₁₂ + F₁₃', lo: {x: -10, y: -14}});
+  charge(svg, q1, 1, {label: 'q₁', lx: -20, ly: 14}); charge(svg, q2, 1, {label: 'q₂'}); charge(svg, q3, 1, {label: 'q₃', lx: -22, ly: 0});
+  tx(svg, 200, 310, '(a) three charges', 'muted', 'middle');
+  /* (b) */
+  const c1 = P(600, 165), others = [[P(470, 70), 1], [P(720, 70), -1], [P(740, 240), 1], [P(500, 270), -1]];
+  others.forEach(([p, s], k) => { ln(svg, p, c1, 'muted', 1, {'stroke-dasharray': '3 4'}); const u = s > 0 ? K.unit(p, c1) : K.unit(c1, p); arrow(svg, c1, P(c1.x + u.x * 60, c1.y + u.y * 60), {c: ['amber', 'purple', 'green', 'blue'][k], w: 2.5, head: 9, label: 'F₁' + '₂₃₄₅'[k], lo: {x: u.x * 16, y: u.y * 16}}); charge(svg, p, s, {label: 'q' + '₂₃₄₅'[k], r: 12}); });
+  charge(svg, c1, 1, {label: 'q₁', lx: 20, ly: 18});
+  tx(svg, 600, 310, '(b) multiple charges: F₁ = F₁₂ + F₁₃ + F₁₄ + F₁₅', 'muted', 'middle');
+})();
+
+/* ---------- superposition lab ---------- */
+(function(){
+  const svg = $id('supSvg'), out = $id('supOut');
+  const Q = [{x: 400, y: 250, q: 1}, {x: 210, y: 120, q: 3}, {x: 620, y: 150, q: -2}, {x: 230, y: 360, q: 0}];
+  const NAMES = ['q₁', 'q₂', 'q₃', 'q₄'], FC = ['', 'amber', 'purple', 'green'];
+  const PX = 1e-3; /* 1 px = 1 mm */
+  let showCon = true;
+  function forces(){ const t = Q[0]; return Q.slice(1).map((s, k) => { const dx = (t.x - s.x) * PX, dy = (t.y - s.y) * PX, r = Math.hypot(dx, dy); const F = s.q && t.q ? KC * t.q * s.q * 1e-12 / (r * r) : 0;
+    return {k: k + 1, fx: F * dx / r, fy: F * dy / r, F: Math.abs(F), sgn: Math.sign(F), r, on: !!s.q}; }); }
+  const ang = (fx, fy) => { let a = Math.atan2(-fy, fx) * 180 / Math.PI; return a; };
+  function draw(){
+    K.clear(svg);
+    for (let x = 0; x <= 800; x += 100) ln(svg, P(x, 0), P(x, 440), 'var(--grid)', 1);
+    for (let y = 40; y <= 440; y += 100) ln(svg, P(0, y), P(800, y), 'var(--grid)', 1);
+    ln(svg, P(20, 425), P(120, 425), 'text', 2); ln(svg, P(20, 419), P(20, 431), 'text', 2); ln(svg, P(120, 419), P(120, 431), 'text', 2); tx(svg, 70, 410, '10 cm', 'sm', 'middle');
+    const fs = forces(), t = Q[0]; const Fx = fs.reduce((s, f) => s + f.fx, 0), Fy = fs.reduce((s, f) => s + f.fy, 0), Fr = Math.hypot(Fx, Fy);
+    const act = fs.filter(f => f.F > 0); const mx = Math.max(Fr, ...act.map(f => f.F), 1e-12);
+    let sc = 100; if (mx * sc > 230) sc = 230 / mx; if (mx * sc < 110 && mx > 0) sc = 110 / mx;
+    Q.slice(1).forEach((s, k) => { if (s.q) ln(svg, s, t, 'muted', 1, {'stroke-dasharray': '3 5'}); });
+    if (showCon && act.length >= 2){ let cur = P(t.x, t.y); act.forEach((f, j) => { const nx = P(cur.x + f.fx * sc, cur.y + f.fy * sc); if (j > 0) arrow(svg, cur, nx, {c: FC[f.k], w: 1.6, head: 8, dash: '6 4', op: .7}); cur = nx; });
+      if (act.length === 2){ const a = act[0], b = act[1]; ln(svg, P(t.x + a.fx * sc, t.y + a.fy * sc), P(t.x + (a.fx + b.fx) * sc, t.y + (a.fy + b.fy) * sc), 'muted', 1.2, {'stroke-dasharray': '5 4'}); ln(svg, P(t.x + b.fx * sc, t.y + b.fy * sc), P(t.x + (a.fx + b.fx) * sc, t.y + (a.fy + b.fy) * sc), 'muted', 1.2, {'stroke-dasharray': '5 4'}); } }
+    act.forEach(f => arrow(svg, t, P(t.x + f.fx * sc, t.y + f.fy * sc), {c: FC[f.k], w: 3, label: 'F₁' + '₂₃₄'[f.k - 1], lo: {x: f.fx >= 0 ? 16 : -16, y: f.fy >= 0 ? 14 : -10}}));
+    if (Fr > 0 && Fr * sc > 3) arrow(svg, t, P(t.x + Fx * sc, t.y + Fy * sc), {c: 'red', w: 5, head: 14, label: 'F₁', lo: {x: Fx >= 0 ? 18 : -18, y: Fy >= 0 ? 16 : -14}});
+    Q.forEach((s, i) => { charge(svg, s, Math.sign(s.q), {r: i === 0 ? 15 : 14, label: `${NAMES[i]} = ${nf(s.q, 0)} μC`, ly: 26}); if (i === 0) circ(svg, s, 21, {fill: 'none', stroke: 'var(--accent)', 'stroke-width': 2, 'stroke-dasharray': '4 3'}); });
+    tx(svg, 790, 20, `arrow scale: 1 N = ${K.fmt(sc, 0)} px`, 'sm muted', 'end');
+    /* readout */
+    const L = [];
+    if (!t.q) L.push('q₁ = 0: an uncharged particle feels no Coulomb force. Set q₁ to a non-zero value.');
+    fs.forEach(f => { if (!f.on || !t.q) return; const s = Q[f.k];
+      L.push(`F₁${'₂₃₄'[f.k - 1]} = 9×10⁹ × (${nf(t.q, 0)} μC)(${nf(s.q, 0)} μC)/(${nf(f.r, 3)} m)² = ${sci(f.F, 2)} N, ${f.sgn > 0 ? 'repulsive (away from' : 'attractive (towards'} ${NAMES[f.k]})`); });
+    if (t.q && act.length){ const sum = act.reduce((s, f) => s + f.F, 0);
+      L.push(`Components (x to the right, y up):  Fx = ${sci(Fx, 3)} N,  Fy = ${sci(-Fy, 3)} N`);
+      L.push(`Resultant |F₁| = √(Fx² + Fy²) = ${sci(Fr, 3)} N` + (Fr > 1e-9 ? `, at ${nf(ang(Fx, Fy), 0)}° to the +x direction` : ' – the forces cancel!'));
+      if (act.length > 1) L.push(`Sum of the magnitudes = ${sci(sum, 3)} N ${Math.abs(sum - Fr) / sum < 0.005 ? '= |F₁| only because all forces point the same way.' : '≠ |F₁| – forces add as vectors, not as numbers.'}`); }
+    else if (t.q) L.push('All other charges are switched off – no force on q₁.');
+    out.textContent = minus(L.join('\n'));
+  }
+  const redraw = throttle(draw);
+  const runs = [1, 2, 3, 4].map(n => K.slider('#sq' + n, v => { Q[n - 1].q = v; redraw(); }, 0));
+  K.draggable(svg, () => Q, i => { Q.forEach((s, j) => { if (j === i) return; const d = K.dist(Q[i], s); if (d < 44){ const u = d > 0.1 ? K.unit(s, Q[i]) : P(1, 0); Q[i].x = clamp(s.x + u.x * 44, 10, 790); Q[i].y = clamp(s.y + u.y * 44, 10, 430); } }); redraw(); }, 26);
+  function preset(pos, qs){ pos.forEach((p, i) => { Q[i].x = p[0]; Q[i].y = p[1]; }); qs.forEach((v, i) => { const inp = $id('sq' + (i + 1)); inp.value = v; Q[i].q = v; runs[i](); }); draw(); }
+  const tri = (cx, cy, R) => [0, 1, 2].map(k => [cx + R * Math.cos(K.rad(-90 + 120 * k)), cy + R * Math.sin(K.rad(-90 + 120 * k))]);
+  const setP = radio(['pA', 'pB', 'pC', 'pD'], k => {
+    if (k === 0) preset([[400, 250], [210, 120], [620, 150], [230, 360]], [1, 3, -2, 0]);
+    if (k === 1){ const v = tri(400, 240, 170); preset([[400, 240], v[0], v[1], v[2]], [1, 2, 2, 2]); }
+    if (k === 2){ const v = tri(400, 250, 160); preset([v[2], v[1], v[0], [700, 400]], [2, 2, -2, 0]); }
+    if (k === 3) preset([[400, 260], [250, 260], [400, 110], [700, 400]], [1, 2, 2, 0]);
+  });
+  $id('pPar').addEventListener('click', e => { showCon = !showCon; e.target.textContent = showCon ? 'Hide construction' : 'Show construction'; draw(); });
+  draw();
+})();
+
+/* ---------- Example 1.6 stepper ---------- */
+(function(){
+  const O = P(195, 205), Rv = 130, V = [0, 1, 2].map(k => P(O.x + Rv * Math.cos(K.rad(-90 + 120 * k)), O.y + Rv * Math.sin(K.rad(-90 + 120 * k))));
+  /* V[0] = A (top), V[1] = C (bottom right), V[2] = B (bottom left) */
+  const A = V[0], C = V[1], B = V[2], D = K.mid(B, C);
+  const rows = [[0, 'Given: charge q at A, B and C; side = l', 'blue'], [0, 'Q (same sign as q) at the centroid O', 'blue'],
+    [1, 'AD = AC cos 30° = (√3/2) l', ''], [1, 'AO = (2/3) AD = l/√3;  AO = BO = CO', ''],
+    [2, 'Formula: F = (1/4πε₀) Qq / r²', 'purple'], [2, 'F₁ = F₂ = F₃ = (1/4πε₀) Qq / (l/√3)²', ''], [2, '        = 3Qq / (4πε₀ l²) = F (say)', 'green'],
+    [3, 'F₂ (along BO) and F₃ (along CO): 120° apart', ''], [3, '  F₂ + F₃ = 2F cos 60° = F, along OA', 'green'],
+    [4, 'F₁ = F along AO (= −F r̂, r̂ along OA)', ''], [4, 'Total force = F r̂ − F r̂ = 0', 'big green'],
+    [5, 'Symmetry: turn the figure 120° about O –', 'purple'], [5, '  it looks the same, so the force must be 0', 'purple']];
+  new K.Stepper('#ex16s', {steps: [
+    '<b>Given:</b> three equal charges q at the vertices A, B, C of an equilateral triangle of side l; a charge Q of the same sign at the centroid O. <b>To find:</b> the net force on Q.',
+    '<b>Geometry:</b> draw AD ⊥ BC. AD = AC cos 30° = (√3/2) l. The centroid divides AD in the ratio 2 : 1, so AO = (2/3) AD = l/√3. By symmetry AO = BO = CO.',
+    '<b>Formula and substitution:</b> each force F = (1/4πε<sub>0</sub>) Qq/(l/√3)² = 3Qq/(4πε<sub>0</sub>l²). All like charges repel, so F<sub>1</sub> points along AO, F<sub>2</sub> along BO and F<sub>3</sub> along CO (away from each vertex).',
+    '<b>Add F<sub>2</sub> and F<sub>3</sub></b> by the parallelogram law: equal forces 120° apart → resultant = 2F cos 60° = F, directed along OA (towards A).',
+    '<b>Answer:</b> F<sub>1</sub> = F along AO and (F<sub>2</sub> + F<sub>3</sub>) = F along OA are equal and opposite, so the <b>total force on Q is zero</b>.',
+    '<b>Symmetry argument:</b> rotate the whole system through 120° about O. The arrangement is unchanged, so the force on Q must be unchanged – but a non-zero arrow would have turned by 120°. Hence the force must be zero.'],
+    ms: 1100, draw(svg, i, t){
+      const rot = i === 5 ? 120 * t : 0, R = p => K.rotateAround(p, O, rot);
+      K.polygon(svg, [R(A), R(B), R(C)], {fill: 'var(--blue-soft)', stroke: 'var(--blue)', 'stroke-width': 2});
+      if (i < 5){ tx(svg, (A.x + B.x) / 2 - 18, (A.y + B.y) / 2, 'l', 'i', 'middle'); tx(svg, (A.x + C.x) / 2 + 18, (A.y + C.y) / 2, 'l', 'i', 'middle'); tx(svg, D.x, D.y + 18, 'l', 'i', 'middle'); }
+      if (i >= 1 && i < 5){ ln(svg, A, D, 'muted', 1.5, {'stroke-dasharray': '5 4'}); circ(svg, D, 3, {fill: 'var(--muted)'}); tx(svg, D.x + 10, D.y - 10, 'D', 'sm', 'start'); K.rightMark(svg, D, C, A, 9, {style: 'stroke:var(--muted);fill:none;stroke-width:1.5'}); K.angleArc(svg, C, A, B, 26, {cls: 'amber', label: '60°'}); tx(svg, A.x - 8, (A.y + O.y) / 2 + 10, 'AO = l/√3', 'sm blue', 'end', {fw: 700}); }
+      const L = 78;
+      if (i >= 2 && i < 5){ [[A, 'F₁', 'red'], [B, 'F₂', 'amber'], [C, 'F₃', 'purple']].forEach(([v, s, c], k) => { const u = K.unit(v, O); arrow(svg, O, P(O.x + u.x * L, O.y + u.y * L), {c, w: 3.4, label: s, lo: {x: u.x * 16 + (k === 0 ? 14 : 0), y: u.y * 16}, op: i === 2 ? t : 1}); }); }
+      if (i >= 3 && i < 5){ const u2 = K.unit(B, O), u3 = K.unit(C, O), e2 = P(O.x + u2.x * L, O.y + u2.y * L), e3 = P(O.x + u3.x * L, O.y + u3.y * L), r = P(e2.x + e3.x - O.x, e2.y + e3.y - O.y);
+        ln(svg, e2, r, 'muted', 1.3, {'stroke-dasharray': '5 4', opacity: i === 3 ? t : 1}); ln(svg, e3, r, 'muted', 1.3, {'stroke-dasharray': '5 4', opacity: i === 3 ? t : 1});
+        arrow(svg, O, P(O.x + (r.x - O.x) * (i === 3 ? t : 1), O.y + (r.y - O.y) * (i === 3 ? t : 1)), {c: 'green', w: 4, label: 'F₂ + F₃', lo: {x: 40, y: 6}}); }
+      if (i === 4) tx(svg, O.x, O.y + 120, 'net force on Q = 0', 'big green', 'middle');
+      if (i === 5){ const ghost = K.rotateAround(P(O.x + 60, O.y - 40), O, rot); arrow(svg, O, ghost, {c: 'red', w: 3, dash: '6 4', label: '?', lo: {x: 10, y: -8}}); tx(svg, O.x, O.y + 130, `rotated ${Math.round(rot)}° – triangle unchanged`, 'sm purple', 'middle', {fw: 700}); }
+      [[A, 'A', 0, -24], [B, 'B', -18, 14], [C, 'C', 18, 14]].forEach(([v, s, dx, dy]) => { const p = R(v); charge(svg, p, 1, {r: 12}); tx(svg, p.x + dx, p.y + dy, s + ' (q)', 'sm', 'middle', {fw: 700}); });
+      charge(svg, O, 1, {r: 10}); tx(svg, O.x - 16, O.y + 4, 'O', 'sm', 'end', {fw: 700}); tx(svg, O.x + 14, O.y + 14, 'Q', 'sm', 'start', {fw: 700});
+      lines(svg, rows, i, t, {x: 395, y: 26, lh: 28, size: 14});
+    }});
+})();
+
+/* ---------- Example 1.7 stepper ---------- */
+(function(){
+  const A = P(100, 330), B = P(320, 330), C = P(210, 330 - 110 * Math.sqrt(3)), L = 56;
+  const rows = [[0, 'Given: +q at A, +q at B, −q at C; side l', 'blue'],
+    [1, 'Each pair: same |charge| and same distance l', ''], [1, 'F = (1/4πε₀) q·q / l² = q² / (4πε₀ l²)', 'green'],
+    [2, 'At A: F₁₂ along BA (repulsion by B)', ''], [2, '      F₁₃ along AC (attraction by C)', ''], [2, '  120° apart ⇒ F₁ = 2F cos 60° = F, along BC', 'green'],
+    [3, 'At B: F₂₁ along AB, F₂₃ along BC', ''], [3, '  ⇒ F₂ = F, along AC', 'green'],
+    [4, 'At C: F₃₁ along CA, F₃₂ along CB (60° apart)', ''], [4, '  ⇒ F₃ = 2F cos 30° = √3 F, along the', 'green'], [4, '     bisector of ∠BCA', 'green'],
+    [5, 'Check: F r̂₁ + F r̂₂ + √3F n̂ = 0', 'big green'], [5, '(Coulomb forces obey Newton\'s third law)', 'purple']];
+  const fa = (p, from, toward) => { const u = toward ? K.unit(p, from) : K.unit(from, p); return P(p.x + u.x * L, p.y + u.y * L); };
+  function pair(svg, p, e1, e2, c1, c2, l1, l2, lr, op, o={}){
+    arrow(svg, p, e1, {c: c1, w: 2.4, head: 9, label: l1, lo: o.lo1 || {x: 0, y: -12}, op}); arrow(svg, p, e2, {c: c2, w: 2.4, head: 9, label: l2, lo: o.lo2 || {x: 0, y: -12}, op});
+    const r = P(e1.x + e2.x - p.x, e1.y + e2.y - p.y); ln(svg, e1, r, 'muted', 1.2, {'stroke-dasharray': '4 4', opacity: op}); ln(svg, e2, r, 'muted', 1.2, {'stroke-dasharray': '4 4', opacity: op});
+    arrow(svg, p, r, {c: 'red', w: 4, head: 12, label: lr, lo: o.lor || {x: 0, y: -14}, op}); }
+  new K.Stepper('#ex17s', {steps: [
+    '<b>Given:</b> charges +q at A, +q at B and −q at C, at the corners of an equilateral triangle of side l (Fig 1.10). <b>To find:</b> the force on each charge.',
+    '<b>Magnitude:</b> every pair has charges of size q and separation l, so every pair force has the same magnitude F = q²/(4πε<sub>0</sub>l²). Only the directions differ.',
+    '<b>At A:</b> B repels A → F<sub>12</sub> along BA; C attracts A → F<sub>13</sub> along AC. The angle between them is 120°, so F<sub>1</sub> = 2F cos 60° = <b>F, along BC</b> (F<sub>1</sub> = F r̂<sub>1</sub>, r̂<sub>1</sub> along BC).',
+    '<b>At B:</b> A repels B → F<sub>21</sub> along AB; C attracts B → F<sub>23</sub> along BC. Again 120° apart, so F<sub>2</sub> = <b>F, along AC</b>.',
+    '<b>At C:</b> A and B both attract −q → F<sub>31</sub> along CA and F<sub>32</sub> along CB, 60° apart. F<sub>3</sub> = 2F cos 30° = <b>√3 F, along the bisector of ∠BCA</b> (towards the midpoint of AB).',
+    '<b>Check:</b> taking x to the right and y up, r̂<sub>1</sub> = (−½, √3/2), r̂<sub>2</sub> = (½, √3/2), n̂ = (0, −1). Sum: F(−½ + ½ + 0, √3/2 + √3/2 − √3) = <b>0</b>. This is just Newton\'s third law: internal forces cancel in pairs.'],
+    ms: 1100, draw(svg, i, t){
+      K.polygon(svg, [A, B, C], {fill: 'var(--purple-soft)', stroke: 'var(--purple)', 'stroke-width': 1.6, 'stroke-dasharray': '6 4'});
+      tx(svg, (A.x + C.x) / 2 - 16, (A.y + C.y) / 2, 'l', 'i', 'middle'); tx(svg, (B.x + C.x) / 2 + 16, (B.y + C.y) / 2, 'l', 'i', 'middle'); tx(svg, (A.x + B.x) / 2, A.y + 20, 'l', 'i', 'middle');
+      const op = k => i === k ? t : 1;
+      if (i >= 2) pair(svg, A, fa(A, B, false), fa(A, C, true), 'amber', 'purple', 'F₁₂', 'F₁₃', 'F₁', op(2), {lo1: {x: -10, y: -12}, lo2: {x: 22, y: 4}, lor: {x: -14, y: -10}});
+      if (i >= 3) pair(svg, B, fa(B, A, false), fa(B, C, true), 'amber', 'purple', 'F₂₁', 'F₂₃', 'F₂', op(3), {lo1: {x: 10, y: -12}, lo2: {x: -24, y: 4}, lor: {x: 14, y: -10}});
+      if (i >= 4) pair(svg, C, fa(C, A, true), fa(C, B, true), 'amber', 'purple', 'F₃₁', 'F₃₂', 'F₃ = √3 F', op(4), {lo1: {x: -22, y: 0}, lo2: {x: 22, y: 0}, lor: {x: 46, y: 6}});
+      if (i === 5) tx(svg, 210, 380, 'F₁ + F₂ + F₃ = 0', 'big green', 'middle');
+      charge(svg, A, 1, {r: 12}); tx(svg, A.x - 6, A.y + 24, 'A (+q)', 'sm', 'middle', {fw: 700});
+      charge(svg, B, 1, {r: 12}); tx(svg, B.x + 6, B.y + 24, 'B (+q)', 'sm', 'middle', {fw: 700});
+      charge(svg, C, -1, {r: 12}); tx(svg, C.x, C.y - 24, 'C (−q)', 'sm', 'middle', {fw: 700});
+      lines(svg, rows, i, t, {x: 405, y: 24, lh: 28, size: 13});
+    }});
+})();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'According to the superposition principle, the force on q<sub>1</sub> due to q<sub>2</sub> in a system of many charges is…', options: ['reduced because the other charges screen it', 'exactly the Coulomb force between q<sub>1</sub> and q<sub>2</sub>, unaffected by the others', 'the sum of the magnitudes of all the forces', 'zero if the total charge of the system is zero'], answer: 1, explain: 'Each pair force is given by Coulomb\'s law as if the other charges were absent; the total is the vector sum.', hint: 'Read the key box in section 1.'});
+K.numq('#q2', {q: 'A charge experiences a force of 3 N due to one charge and 4 N due to another, the two forces being at right angles. What is the magnitude of the net force (in N)?', answer: 5, tol: 0.01, unit: 'N', explain: '√(3² + 4²) = 5 N – not 7 N.', hint: 'Use the parallelogram law: R = √(F₁² + F₂²) for 90°.'});
+K.numq('#q3', {q: 'A charge +1 μC is at the origin. A charge +2 μC is at x = −0.1 m and a charge −2 μC is at x = +0.1 m. Find the magnitude of the net force on the +1 μC charge (in N). Take 1/4πε<sub>0</sub> = 9 × 10<sup>9</sup> N m² C<sup>−2</sup>.', answer: 3.6, tol: 0.02, unit: 'N', explain: 'Each force = 9 × 10⁹ × (1 × 10⁻⁶)(2 × 10⁻⁶)/(0.1)² = 1.8 N. The +2 μC pushes it to the right and the −2 μC pulls it to the right, so they add: 3.6 N towards +x.', hint: 'Find each force separately, then decide whether they point the same way.'});
+K.mcq('#q4', {q: 'In Example 1.6, if the charge at vertex A is removed, the force on Q at the centroid becomes…', options: ['zero', '3Qq/(4πε₀l²) along OA (towards A)', '3Qq/(4πε₀l²) along AO (away from A)', '6Qq/(4πε₀l²) along OA'], answer: 1, explain: 'Only F₂ + F₃ remain; their resultant is F = 3Qq/(4πε₀l²) along OA, towards the empty corner.', hint: 'You found F₂ + F₃ in step 4 of the stepper.'});
+K.mcq('#q5', {q: 'In Example 1.7 (q, q, −q on an equilateral triangle) the force on the −q charge has magnitude…', options: ['F', '2F', '√3 F', 'zero'], answer: 2, explain: 'Two attractive forces F, 60° apart: 2F cos 30° = √3 F, along the bisector of ∠BCA.', hint: 'Two equal forces at angle α give 2F cos(α/2).'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

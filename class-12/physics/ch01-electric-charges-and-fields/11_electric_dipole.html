@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Electric Dipole</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+@media(max-width:600px){.onpage a{white-space:normal}}
+
+</style>
+<style>
+.qa{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.6rem 1rem;margin:.7rem 0;box-shadow:var(--shadow)}
+.qa p{margin:.25em 0}
+.qbox{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.7rem 1rem;margin:.8rem 0;box-shadow:var(--shadow)}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.tw{overflow-x:auto}
+.eq{overflow-x:auto}
+</style>
+</head>
+<body data-page="11_electric_dipole">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 1 · Sections 1.11–1.12</span><span class="chip amber">Textbook pages 27–32</span>
+<h1>Electric Dipole and a Dipole in an External Field</h1>
+<p class="lead">A water molecule, a bit of paper near a charged comb, the antenna of a radio – all behave like a pair of equal and opposite charges a small distance apart: an <b>electric dipole</b>. On this page you derive its field on the axis and on the equatorial line (two favourite board-exam derivations), solve Example 1.10, and twist a dipole in a field to see the torque τ = pE sin θ.</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 1, 3, 8 and 9 of this guide)</div>
+<ul style="margin:0">
+<li>Field of a point charge E = (1/4πε<sub>0</sub>) q/r²; fields add as vectors (superposition).</li>
+<li>Algebra: (r + a)² − (r − a)² = 4ar; if r ≫ a, then r² − a² ≈ r² and r² + a² ≈ r².</li>
+<li>Torque of a couple = one force × perpendicular distance between the two forces; cross product |<b>A</b> × <b>B</b>| = AB sin θ (pages 1 and 3).</li>
+</ul></div>
+
+<h2 id="dipole">1. What is an electric dipole?</h2>
+<p>An <b>electric dipole</b> (<span class="ml">വൈദ്യുത ദ്വിധ്രുവം</span>) is a pair of equal and opposite point charges q and −q separated by a distance 2a. The line joining them is the <b>axis</b>; by convention the <b>direction from −q to q</b> is the direction of the dipole. The mid-point is the <b>centre</b> of the dipole.</p>
+<div class="lab"><div class="lab-title">🖼 An electric dipole</div>
+<svg id="fdip" viewBox="0 0 800 220" role="img" aria-label="Charge minus q at A and plus q at B, separated by 2a, centre O; the dipole moment vector p points from minus q to plus q along the axis; the equatorial line passes through O perpendicular to the axis"></svg></div>
+<p>The total charge is zero, but the field is <b>not</b> zero: the two charges are at different places, so their fields do not cancel exactly. Far away (r ≫ 2a) they <i>nearly</i> cancel, so the dipole field falls off <b>faster than 1/r²</b>. Let us calculate it.</p>
+
+<h2 id="axial">2. Field on the axis of a dipole (Fig 1.20 a)</h2>
+<div class="lab" id="axS"><div class="lab-title">🎬 Derivation in exam layout – field at a point on the axial line</div>
+<svg viewBox="0 0 800 380" role="img" aria-label="Dipole with minus q at A and plus q at B; point P on the axis at distance r from the centre; fields due to each charge at P"></svg></div>
+<div class="callout key"><div class="title">⭐ Result – axial line</div>
+<p class="eq" style="margin:.3rem 0"><b>E</b> = <span class="frac"><span>q</span><span>4πε<sub>0</sub></span></span> <span class="frac"><span>4ar</span><span>(r<sup>2</sup> − a<sup>2</sup>)<sup>2</sup></span></span> <b>p̂</b> &nbsp;(1.14) &nbsp;&nbsp;&nbsp; r ≫ a: &nbsp; <b>E</b> = <span class="frac"><span>2<b>p</b></span><span>4πε<sub>0</sub>r<sup>3</sup></span></span> &nbsp;(1.20) – along <b>p</b></p></div>
+
+<h2 id="equatorial">3. Field on the equatorial line (Fig 1.20 b)</h2>
+<div class="lab" id="eqS"><div class="lab-title">🎬 Derivation in exam layout – field at a point on the equatorial line</div>
+<svg viewBox="0 0 800 400" role="img" aria-label="Dipole with minus q at A and plus q at B; point P on the perpendicular bisector at distance r; fields from each charge resolved into components"></svg></div>
+<div class="callout key"><div class="title">⭐ Result – equatorial line</div>
+<p class="eq" style="margin:.3rem 0"><b>E</b> = − <span class="frac"><span>2qa</span><span>4πε<sub>0</sub>(r<sup>2</sup> + a<sup>2</sup>)<sup>3/2</sup></span></span> <b>p̂</b> &nbsp;(1.17) &nbsp;&nbsp;&nbsp; r ≫ a: &nbsp; <b>E</b> = − <span class="frac"><span><b>p</b></span><span>4πε<sub>0</sub>r<sup>3</sup></span></span> &nbsp;(1.21) – opposite to <b>p</b></p></div>
+
+<h2 id="moment">4. Dipole moment and the 1/r³ law</h2>
+<p>Equations (1.15) and (1.18) contain q and a only as the product qa. This suggests the <b>dipole moment</b> (<span class="ml">ദ്വിധ്രുവ മൊമെന്റ്</span>):</p>
+<p class="eq"><b>p</b> = q × 2a <b>p̂</b> &nbsp;&nbsp; (1.19) &nbsp;&nbsp; – magnitude q × 2a, direction from −q to q; SI unit <b>C m</b> (coulomb metre)</p>
+<ul>
+<li>Far away the dipole field falls off as <b>1/r³</b> (a single charge: 1/r²).</li>
+<li>At the same distance, the axial field is <b>twice</b> the equatorial field: 2p/(4πε<sub>0</sub>r³) against p/(4πε<sub>0</sub>r³); axial is along <b>p</b>, equatorial is opposite to <b>p</b>.</li>
+<li>In general the field depends on r and on the angle between <b>r</b> and <b>p</b>.</li>
+<li><b>Point dipole:</b> let 2a → 0 and q → ∞ with p = q × 2a fixed. For a point dipole, (1.20) and (1.21) are exact at every r.</li>
+</ul>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: dipole field explorer</div>
+  <div class="controls">
+    <label>separation 2a <input id="dA" type="range" min="1" max="6" step="1" value="4"><output></output> cm</label>
+    <button class="btn primary" id="dAx">Probe on the axis</button><button class="btn" id="dEq">Probe on the equatorial line</button>
+  </div>
+  <svg id="dSvg" viewBox="0 0 800 400" role="img" aria-label="A dipole of plus and minus 1 nanocoulomb with a draggable probe point; the fields of each charge and the resultant are drawn at the probe"></svg>
+  <div class="readout" id="dOut"></div>
+  <p class="hint">Charges ±1 nC; 1 grid square = 10 cm. Drag the probe ⊕. On the axis or the equatorial line the readout compares the exact superposition result with the far-field formulas 2p/(4πε<sub>0</sub>r³) and p/(4πε<sub>0</sub>r³) – move far away and watch them agree.</p>
+</div>
+
+<h2 id="molecules">5. Physical significance – polar and non-polar molecules</h2>
+<p>In most molecules the centre of positive charge and the centre of negative charge coincide, so the dipole moment is zero – CO<sub>2</sub> and CH<sub>4</sub> are such <b>non-polar molecules</b> (<span class="ml">അധ്രുവീയ തന്മാത്ര</span>). They develop a dipole moment only when an electric field is applied (an <b>induced dipole</b>). In some molecules the centres do not coincide, so they have a <b>permanent dipole moment</b> even without a field: <b>polar molecules</b> (<span class="ml">ധ്രുവീയ തന്മാത്ര</span>) – water, H<sub>2</sub>O, is the classic example.</p>
+<div class="lab">
+  <div class="lab-title">🧪 Polar vs non-polar molecules</div>
+  <div class="controls"><button class="btn primary" id="mOn">Switch the external field ON</button></div>
+  <svg id="mSvg" viewBox="0 0 800 280" role="img" aria-label="Left: a bent water molecule with a permanent dipole moment. Right: a linear carbon dioxide molecule with zero dipole moment, which gets an induced dipole when a field is switched on"></svg>
+  <p class="hint">Water: the O atom pulls the shared electrons towards itself, so O carries a small negative charge (δ−) and each H a small positive charge (δ+); the bent shape stops the two bond dipoles from cancelling. CO<sub>2</sub> is straight and symmetric: its two bond dipoles cancel. In a field, the electron cloud of any molecule shifts slightly against E – an induced dipole along E. (Simplified sketch, not to scale.)</p>
+</div>
+<div class="callout real"><div class="title">🌍 Real life – the microwave oven</div>
+<p>A microwave oven fills the food with an electric field that reverses direction billions of times a second. The polar water molecules keep trying to turn and line up with the field (exactly the torque of section 7) and jostle their neighbours – the food heats up. Dry plates without water stay much cooler.</p></div>
+
+<h2 id="ex110">6. Example 1.10 – field of a ±10 μC dipole (Fig 1.21)</h2>
+<div class="qbox"><p><b>Example 1.10.</b> Two charges ±10 μC are placed 5.0 mm apart. Determine the electric field at (a) a point P on the axis of the dipole 15 cm away from its centre O on the side of the positive charge, as shown in Fig 1.21(a), and (b) a point Q, 15 cm away from O on a line passing through O and normal to the axis of the dipole, as shown in Fig 1.21(b).</p>
+<div class="reveal" data-btn="💡 Show a hint"><p>a = 2.5 mm = 0.25 cm, r = 15 cm. (a) Find the field of each charge at P (distances r − a and r + a) and subtract. (b) Each charge is √(r² + a²) from Q; only the components parallel to the axis survive: E = 2 E<sub>1</sub> × a/√(r² + a²). Then compare with the short formulas 2p/(4πε<sub>0</sub>r³) and p/(4πε<sub>0</sub>r³), with p = q × 2a.</p></div></div>
+<div class="lab" id="ex110a"><div class="lab-title">🎬 Solution in exam layout – Example 1.10 (a): point P on the axis</div>
+<svg viewBox="0 0 800 400" role="img" aria-label="Dipole A minus 10 microcoulomb, B plus 10 microcoulomb, and point P on the axis 15 cm from the centre"></svg></div>
+<div class="lab" id="ex110b"><div class="lab-title">🎬 Solution in exam layout – Example 1.10 (b): point Q on the equatorial line</div>
+<svg viewBox="0 0 800 400" role="img" aria-label="Dipole A minus 10 microcoulomb, B plus 10 microcoulomb, and point Q 15 cm from O on the perpendicular bisector"></svg></div>
+<div class="reveal" data-btn="✅ Show final answer"><div class="answer"><b>Answer:</b> (a) 4.13 × 10<sup>6</sup> − 3.86 × 10<sup>6</sup> = <b>2.7 × 10<sup>5</sup> N C<sup>−1</sup> along BP</b> (i.e. along <b>p</b>, from −q to +q). The short formula 2p/(4πε<sub>0</sub>r³) with p = 5 × 10<sup>−8</sup> C m gives 2.66 × 10<sup>5</sup> N C<sup>−1</sup> (the book writes 2.6 × 10<sup>5</sup>) – practically the same, because r/a = 60. (b) <b>1.33 × 10<sup>5</sup> N C<sup>−1</sup> along BA</b> (opposite to <b>p</b>); the short formula p/(4πε<sub>0</sub>r³) also gives 1.33 × 10<sup>5</sup> N C<sup>−1</sup>.</div></div>
+
+<h2 id="torque">7. Dipole in a uniform external field (Fig 1.22)</h2>
+<p>Place a permanent dipole <b>p</b> in a <b>uniform electric field</b> (<span class="ml">ഏകീകൃത വൈദ്യുത മണ്ഡലം</span>) <b>E</b>, making an angle θ with it. The charge q feels a force q<b>E</b>; the charge −q feels −q<b>E</b>. These are equal and opposite, so the <b>net force is zero</b>. But they act at different points – they form a <b>couple</b>, which produces a <b>torque</b> (<span class="ml">ടോർക്ക് (ബലാഘൂർണം)</span>).</p>
+<div class="lab" id="tqS"><div class="lab-title">🎬 Derivation in exam layout – torque on a dipole in a uniform field</div>
+<svg viewBox="0 0 800 380" role="img" aria-label="Dipole at angle theta to a uniform field; forces qE and minus qE on the two charges; the perpendicular distance between them is 2a sin theta"></svg></div>
+<div class="callout key"><div class="title">⭐ Result – torque on a dipole</div>
+<p class="eq" style="margin:.3rem 0">τ = pE sin θ &nbsp;&nbsp;&nbsp;&nbsp; <b>τ</b> = <b>p</b> × <b>E</b> &nbsp;&nbsp; (1.22)</p>
+<p>The torque tries to <b>align p with E</b>. θ = 0°: τ = 0, <b>stable equilibrium</b> (<span class="ml">സന്തുലനം (സ്ഥിര/അസ്ഥിര)</span>); θ = 90°: maximum torque pE; θ = 180°: τ = 0 again, but <b>unstable</b> – the slightest nudge turns the dipole right round. Unit of torque: N m.</p></div>
+<div class="lab">
+  <div class="lab-title">🔄 Virtual lab: the rotating dipole</div>
+  <div class="controls">
+    <label>start angle θ <input id="rT" type="range" min="0" max="180" step="5" value="60"><output></output>°</label>
+    <label>E <input id="rE" type="range" min="1" max="10" step="1" value="5"><output></output> <span>× 10<sup>4</sup> N/C</span></label>
+    <label>p <input id="rP" type="range" min="1" max="5" step="1" value="2"><output></output> <span>× 10<sup>−10</sup> C m</span></label>
+  </div>
+  <div class="controls"><button class="btn primary" id="rGo">▶ Release the dipole</button><button class="btn" id="rStop">⏸ Hold</button></div>
+  <svg id="rSvg" viewBox="0 0 800 340" role="img" aria-label="Left: a dipole in a uniform field with the forces on its charges and the torque. Right: graph of torque against angle, a sine curve, with a marker for the current angle"></svg>
+  <div class="readout" id="rOut"></div>
+  <p class="hint">Set the starting angle, then release. With a little friction (damping) the dipole swings about θ = 0 and settles along E. Try θ = 180°: the torque is zero, but release from 175° and it swings all the way round – θ = 180° is unstable.</p>
+</div>
+
+<h2 id="nonuniform">8. Dipole in a non-uniform field (Fig 1.23) – the comb and the paper</h2>
+<p>If the field is <b>not</b> uniform, the forces on +q and −q are no longer equal, so there is a <b>net force</b> as well (and in general a torque). Take the simple cases <b>p</b> parallel or antiparallel to <b>E</b> (torque zero):</p>
+<ul>
+<li><b>p parallel to E:</b> net force in the direction of <b>increasing</b> field.</li>
+<li><b>p antiparallel to E:</b> net force in the direction of <b>decreasing</b> field.</li>
+</ul>
+<div class="lab">
+  <div class="lab-title">🧪 Virtual lab: forces on a dipole in a non-uniform field</div>
+  <div class="controls"><button class="btn primary" id="nPar">p parallel to E</button><button class="btn" id="nAnti">p antiparallel to E</button><button class="btn" id="nUni">Uniform field (compare)</button>
+  <label>distance from the source <input id="nX" type="range" min="200" max="560" step="20" value="320"><output></output> px</label></div>
+  <svg id="nSvg" viewBox="0 0 800 300" role="img" aria-label="A positive source charge on the left whose field weakens to the right; a dipole on the axis with the forces on its two charges and the net force"></svg>
+  <div class="readout" id="nOut"></div>
+</div>
+<div class="callout think"><div class="title">💭 Why does a charged comb pick up bits of paper?</div>
+<p>A comb run through dry hair becomes charged, but the paper is neutral. The comb's field <b>polarises</b> the paper – it induces a dipole moment along the field (p parallel to E). The comb's field is <b>non-uniform</b>: it is stronger closer to the comb. A dipole with p ∥ E is pulled towards the stronger field, so the paper moves towards the comb – whatever the sign of the comb's charge.</p></div>
+<div class="callout real"><div class="title">🌍 Real life</div>
+<p>The same effect makes a rubbed balloon stick to a wall, makes dust cling to a TV screen or a ceiling fan blade, and is used in electrostatic precipitators, where dust particles in chimney smoke are charged or polarised and pulled out by strong non-uniform fields.</p></div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://en.wikipedia.org/wiki/Electric_dipole_moment" target="_blank" rel="noopener noreferrer">📄 Electric dipole moment</a> <span class="src">Wikipedia</span><br><span class="note">Dipoles, polar molecules and torque in a field.</span></li></ul></div>
+
+<h2 id="check">9. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li>Dipole: ±q separated by 2a; <b>p</b> = q × 2a, from −q to +q; unit C m; total charge zero but field not zero.</li>
+<li>Axial line: E = (q/4πε<sub>0</sub>)·4ar/(r² − a²)² → <b>2p/(4πε<sub>0</sub>r³)</b> along p. Equatorial line: E = 2qa/[4πε<sub>0</sub>(r² + a²)<sup>3/2</sup>] → <b>p/(4πε<sub>0</sub>r³)</b> opposite to p. Dipole field ∝ 1/r³.</li>
+<li>Polar molecules (H<sub>2</sub>O) have permanent dipoles; non-polar ones (CO<sub>2</sub>, CH<sub>4</sub>) get induced dipoles in a field.</li>
+<li>Ex 1.10: axial 2.7 × 10<sup>5</sup> N/C along BP (short formula 2.66 × 10<sup>5</sup>); equatorial 1.33 × 10<sup>5</sup> N/C along BA.</li>
+<li>Uniform field: net force 0, torque <b>τ = p × E</b>, τ = pE sin θ; aligns p with E (θ = 0 stable, 180° unstable).</li>
+<li>Non-uniform field: net force too – towards stronger field if p ∥ E (comb attracts paper).</li>
+</ul></div>
+<p>Next: <a href="12_gauss_law.html">Continuous charge distribution and Gauss's law ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Electric Charges and Fields · 2nd PUC Physics", "icon": "⚡", "key": "puc_physics_ch1_progress", "pages": [["index.html", "Home"], ["01_vectors_toolkit.html", "1 · Vectors Toolkit: Components, Unit Vectors & Dot Product"], ["02_calculus_geometry_toolkit.html", "2 · Maths Toolkit: Areas, Small Elements & Integration"], ["03_forces_motion_recap.html", "3 · Forces, Newton's Laws & Motion Under Constant Force"], ["04_electric_charge.html", "4 · Electric Charge & Electroscopes (1.1–1.2)"], ["05_conductors_induction.html", "5 · Conductors, Insulators, Earthing & Induction (1.3–1.4)"], ["06_properties_of_charge.html", "6 · Properties of Charge: Additivity, Conservation, Quantisation (1.5)"], ["07_coulombs_law.html", "7 · Coulomb's Law (1.6)"], ["08_multiple_charges.html", "8 · Forces Between Multiple Charges – Superposition (1.7)"], ["09_electric_field.html", "9 · Electric Field (1.8)"], ["10_field_lines_flux.html", "10 · Electric Field Lines & Electric Flux (1.9–1.10)"], ["11_electric_dipole.html", "11 · Electric Dipole & Dipole in a Uniform Field (1.11–1.12)"], ["12_gauss_law.html", "12 · Continuous Charge Distribution & Gauss's Law (1.13–1.14)"], ["13_gauss_applications.html", "13 · Applications of Gauss's Law (1.15)"], ["14_exercises_1_12.html", "14 · Exercises 1.1–1.12 – Solutions"], ["15_exercises_13_24.html", "15 · Exercises 1.13–1.24 – Solutions"], ["16_additional_exercises.html", "16 · Additional Exercises 1.25–1.34 – Solutions"], ["17_applications_explore.html", "17 · Applications & Explore Online"], ["18_summary_revision.html", "18 · Summary, Points to Ponder & Quick Quiz"], ["19_model_test_paper.html", "19 · Model Question Paper (70 marks)"], ["20_model_test_solutions.html", "20 · Model Question Paper – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ==== page helpers (Chapter 1, pages 08–11; same code on each page) ==== */
+const {P, el} = K;
+const $id = id => document.getElementById(id);
+const COL = {red: 'var(--red)', blue: 'var(--blue)', green: 'var(--green)', amber: 'var(--accent)', purple: 'var(--purple)', text: 'var(--text)', muted: 'var(--muted)', primary: 'var(--primary)'};
+const cv = c => COL[c] || c;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const TAU = 2 * Math.PI;
+const ln = (svg, a, b, c='text', w=2, extra={}) => el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, stroke: cv(c), 'stroke-width': w, 'stroke-linecap': 'round', ...extra}, svg);
+const rect = (svg, x, y, w, h, attrs={}) => el('rect', {x, y, width: Math.max(0, w), height: Math.max(0, h), ...attrs}, svg);
+const circ = (svg, c, r, attrs={}) => el('circle', {cx: c.x, cy: c.y, r: Math.max(0, r), ...attrs}, svg);
+const path = (svg, d, attrs={}) => el('path', {d, fill: 'none', ...attrs}, svg);
+/* true minus sign for negative numbers in strings */
+const minus = s => String(s).replace(/(^|[\s(=:,/×+\[])-(?=[\d.])/g, '$1−');
+const nf = (v, d=2) => { const s = K.fmt(Math.abs(+v), d); return (+v < 0 && +s !== 0 ? '−' : '') + s; };
+/* scientific notation with d significant figures: plain-text (SVG) and HTML forms */
+const SUPC = {'-': '⁻', '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'};
+function sciParts(v, d){ if (!isFinite(v) || v === 0) return {s: '', m: '0', e: 0}; const s = v < 0 ? '−' : ''; v = Math.abs(v); let e = Math.floor(Math.log10(v)), m = v / Math.pow(10, e); let ms = m.toFixed(d - 1); if (+ms >= 10){ e++; ms = (m / 10).toFixed(d - 1); } return {s, m: ms, e}; }
+function sci(v, d=2){ const p = sciParts(v, d); if (p.m === '0') return '0'; if (p.e >= -1 && p.e <= 3) return p.s + String(+(+p.m * Math.pow(10, p.e)).toPrecision(d)); return p.s + p.m + ' × 10' + String(p.e).split('').map(c => SUPC[c]).join(''); }
+function sciH(v, d=2){ const p = sciParts(v, d); if (p.m === '0') return '0'; if (p.e >= -1 && p.e <= 3) return p.s + String(+(+p.m * Math.pow(10, p.e)).toPrecision(d)); return p.s + p.m + ' × 10<sup>' + String(p.e).replace('-', '−') + '</sup>'; }
+/* SVG text; o.size → font size via style */
+function tx(svg, x, y, s, cls='', anchor='start', o={}){ const st = (o.size ? `font-size:${o.size}px;` : '') + (o.style || ''); const a = {class: ('lbl ' + cls).trim(), 'text-anchor': anchor}; if (st) a.style = st; if (o.op !== undefined) a.opacity = o.op; if (o.fw) a['font-weight'] = o.fw; if (o.tr) a.transform = o.tr; return K.text(svg, P(x, y), minus(s), a); }
+/* working lines for exam-layout steppers: rows = [[step, text, cls], …]; rows with step ≤ i shown, newest fades in */
+function lines(svg, rows, i, t, o={}){ const x = o.x ?? 400, y0 = o.y ?? 32, lh = o.lh ?? 30; let k = 0;
+  rows.forEach(r => { if (r[0] > i) return; const ind = (r[1].match(/^ */)[0].length) * 4.3; tx(svg, x + ind, y0 + k * lh, r[1].trim(), r[2] || '', 'start', {op: r[0] === i ? t : 1, size: o.size}); k++; }); }
+/* arrow a→b with filled head; o: c, w, head, label, lo (label offset), anchor, dash, op */
+function arrow(svg, a, b, o={}){ const c = cv(o.c || 'red'), w = o.w ?? 3, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  const L = K.dist(a, b); if (L < 1) return g; const u = K.unit(a, b), hs = Math.min(o.head ?? 11, L * .6), base = P(b.x - u.x * hs, b.y - u.y * hs);
+  el('line', {x1: a.x, y1: a.y, x2: base.x, y2: base.y, stroke: c, 'stroke-width': w, 'stroke-linecap': 'round', ...(o.dash ? {'stroke-dasharray': o.dash} : {})}, g);
+  el('polygon', {points: `${b.x},${b.y} ${base.x + u.y * hs * .55},${base.y - u.x * hs * .55} ${base.x - u.y * hs * .55},${base.y + u.x * hs * .55}`, fill: c}, g);
+  if (o.label) tx(g, b.x + (o.lo ? o.lo.x : 0), b.y + (o.lo ? o.lo.y : -12), o.label, 'sm', o.anchor || 'middle', {fw: 700, style: `fill:${c}`});
+  return g; }
+/* a point charge: sign > 0 red with +, < 0 blue with −, 0 = empty dashed ring */
+function charge(svg, c, sign, o={}){ const r = o.r || 14, g = K.group(svg, o.op !== undefined ? {opacity: o.op} : {});
+  if (!sign){ circ(g, c, r, {fill: 'none', stroke: 'var(--muted)', 'stroke-width': 1.5, 'stroke-dasharray': '4 3'}); }
+  else { circ(g, c, r, {fill: sign > 0 ? '#dc2626' : '#2563eb', stroke: 'var(--text)', 'stroke-width': 1.2});
+    ln(g, P(c.x - r * .5, c.y), P(c.x + r * .5, c.y), '#fff', 2.6); if (sign > 0) ln(g, P(c.x, c.y - r * .5), P(c.x, c.y + r * .5), '#fff', 2.6); }
+  if (o.label) tx(g, c.x + (o.lx ?? 0), c.y + (o.ly ?? r + 14), o.label, o.lc || 'sm', 'middle', {fw: 700});
+  return g; }
+/* shared animation clock: runs only while a lab is on screen and was used in the last 30 s */
+const ANIM = []; let animOn = false, animLast = 0;
+function animLoop(now){ const dt = Math.min(.05, Math.max(0, (now - animLast) / 1000)); animLast = now; let any = false;
+  for (const it of ANIM){ if (it.vis && now < it.until){ it.t += dt; try { it.fn(it.t, dt); } catch (e){ it.until = 0; throw e; } any = true; } }
+  if (any) requestAnimationFrame(animLoop); else animOn = false; }
+function animStart(){ if (!animOn){ animOn = true; animLast = performance.now(); requestAnimationFrame(animLoop); } }
+function anim(elm, fn){ const it = {elm, fn, t: 0, until: 0, vis: true}; ANIM.push(it);
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(e => { it.vis = e.isIntersecting; if (it.vis) wake(it); })).observe(elm);
+  it.fn(0, 0); wake(it); return it; }
+function wake(it){ it.until = performance.now() + 30000; animStart(); }
+/* buttons that behave like radio buttons; returns a setter */
+function radio(ids, onPick){ const els = ids.map(id => $id(id)); const set = k => { els.forEach((b, i) => b.classList.toggle('primary', i === k)); onPick(k); }; els.forEach((b, i) => b.addEventListener('click', () => set(i))); return set; }
+/* redraw at most once per frame (for dragging) */
+function throttle(fn){ let queued = false; return () => { if (queued) return; queued = true; requestAnimationFrame(() => { queued = false; fn(); }); }; }
+/* ==== end page helpers ==== */
+const KC = 9e9;
+const pvec = (svg, a, b, o={}) => arrow(svg, a, b, {c: 'purple', w: 3, head: 11, ...o});
+
+/* ---------- dipole figure ---------- */
+(function(){
+  const svg = $id('fdip'), A = P(300, 110), B = P(500, 110), O = P(400, 110);
+  ln(svg, P(120, 110), P(680, 110), 'muted', 1.2, {'stroke-dasharray': '5 4'}); tx(svg, 690, 110, 'axis', 'sm muted', 'start');
+  ln(svg, P(400, 20), P(400, 200), 'muted', 1.2, {'stroke-dasharray': '5 4'}); tx(svg, 410, 26, 'equatorial line', 'sm muted', 'start');
+  pvec(svg, P(330, 70), P(470, 70), {label: 'p', lo: {x: 12, y: -4}});
+  K.dim(svg, A, B, '2a', 58); circ(svg, O, 4, {fill: 'var(--text)'}); tx(svg, 412, 128, 'O', 'sm', 'start', {fw: 700});
+  charge(svg, A, -1, {label: 'A (−q)', ly: 28}); charge(svg, B, 1, {label: 'B (+q)', ly: 28});
+})();
+
+/* ---------- axial stepper ---------- */
+(function(){
+  const A = P(60, 170), B = P(150, 170), O = P(105, 170), Pp = P(290, 170);
+  const rows = [[0, 'Given: −q at A, +q at B, AB = 2a; OP = r', 'blue'],
+    [1, 'E(+q) = (1/4πε₀) q/(r − a)²  along p̂ (BP = r − a)', ''],
+    [2, 'E(−q) = (1/4πε₀) q/(r + a)²  along −p̂ (AP = r + a)', ''],
+    [3, 'E = E(+q) + E(−q)', 'purple'], [3, '  = (q/4πε₀) [1/(r − a)² − 1/(r + a)²] p̂', ''],
+    [4, '  = (q/4πε₀) [(r + a)² − (r − a)²] / (r² − a²)² p̂', ''], [4, 'E = (q/4πε₀) · 4ar/(r² − a²)²  p̂', 'green'],
+    [5, 'r ≫ a:  (r² − a²)² ≈ r⁴', ''], [5, 'E = 4qa/(4πε₀ r³) p̂ = 2p/(4πε₀ r³)', 'big green'], [5, 'direction: along p', 'green']];
+  new K.Stepper('#axS', {steps: [
+    '<b>Figure and given:</b> charges −q at A and +q at B, AB = 2a, centre O. Point P on the axis on the side of +q, with OP = r. So BP = r − a and AP = r + a. Let <b>p̂</b> be the unit vector along the axis from −q to q.',
+    '<b>Field due to +q</b> at P: E<sub>+q</sub> = (1/4πε<sub>0</sub>) q/(r − a)², pointing away from +q, i.e. along <b>p̂</b>.',
+    '<b>Field due to −q</b> at P: E<sub>−q</sub> = (1/4πε<sub>0</sub>) q/(r + a)², pointing towards −q, i.e. along −<b>p̂</b>. Since r − a &lt; r + a, the +q field is the bigger one.',
+    '<b>Superposition:</b> <b>E</b> = <b>E</b><sub>+q</sub> + <b>E</b><sub>−q</sub> = (q/4πε<sub>0</sub>)[1/(r − a)² − 1/(r + a)²] <b>p̂</b>.',
+    '<b>Simplify:</b> common denominator (r − a)²(r + a)² = (r² − a²)²; numerator (r + a)² − (r − a)² = 4ar. So <b>E</b> = (q/4πε<sub>0</sub>) · 4ar/(r² − a²)² <b>p̂</b> &nbsp;(1.14).',
+    '<b>Far away (r ≫ a):</b> (r² − a²)² ≈ r⁴, so <b>E</b> = 4qa/(4πε<sub>0</sub>r³) <b>p̂</b> = <b>2p/(4πε<sub>0</sub>r³)</b> with p = q × 2a (1.15, 1.20). Direction: <b>along p</b>.'],
+    ms: 1100, draw(svg, i, t){
+      ln(svg, P(30, 170), P(380, 170), 'muted', 1.2, {'stroke-dasharray': '5 4'});
+      K.dim(svg, A, B, '2a', -40); K.dim(svg, O, Pp, 'r', 52);
+      circ(svg, O, 3.5, {fill: 'var(--text)'}); tx(svg, O.x, O.y + 22, 'O', 'sm', 'middle', {fw: 700});
+      charge(svg, A, -1, {r: 12}); tx(svg, A.x, A.y + 26, 'A (−q)', 'sm', 'middle', {fw: 700}); charge(svg, B, 1, {r: 12}); tx(svg, B.x, B.y + 26, 'B (+q)', 'sm', 'middle', {fw: 700});
+      circ(svg, Pp, 5, {fill: 'var(--text)'}); tx(svg, Pp.x, Pp.y + 22, 'P', 'big', 'middle');
+      pvec(svg, P(80, 100), P(160, 100), {label: 'p', lo: {x: 12, y: -2}, w: 2.4});
+      if (i >= 1) arrow(svg, Pp, P(Pp.x + 75 * (i === 1 ? t : 1), Pp.y), {c: 'red', w: 3, label: 'E(+q)', lo: {x: -6, y: -14}});
+      if (i >= 2) arrow(svg, P(Pp.x, Pp.y - 40), P(Pp.x - 50 * (i === 2 ? t : 1), Pp.y - 40), {c: 'blue', w: 3, label: 'E(−q)', lo: {x: 0, y: -14}});
+      if (i >= 3) arrow(svg, P(Pp.x, Pp.y + 40), P(Pp.x + 30, Pp.y + 40), {c: 'green', w: 4, head: 10, label: 'E', lo: {x: 12, y: 10}, op: i === 3 ? t : 1});
+      if (i >= 4) tx(svg, 200, 300, '(r + a)² − (r − a)² = 4ar', 'sm purple', 'middle', {fw: 700});
+      if (i >= 5) tx(svg, 200, 330, 'E ∝ 1/r³  (point charge: 1/r²)', 'sm green', 'middle', {fw: 700});
+      lines(svg, rows, i, t, {x: 395, y: 26, lh: 30, size: 13});
+    }});
+})();
+
+/* ---------- equatorial stepper ---------- */
+(function(){
+  const A = P(80, 330), B = P(280, 330), O = P(180, 330), Pp = P(180, 120);
+  const rows = [[0, 'Given: −q at A, +q at B, AB = 2a; OP = r ⟂ AB', 'blue'], [0, 'AP = BP = √(r² + a²)', 'blue'],
+    [1, '|E(+q)| = |E(−q)| = (1/4πε₀) q/(r² + a²)', ''],
+    [2, 'Components ⟂ axis cancel;', ''], [2, 'components ∥ axis add (both along −p̂)', ''],
+    [3, 'E = −(E(+q) + E(−q)) cos θ  p̂,  cos θ = a/√(r² + a²)', 'purple'],
+    [4, 'E = −2 · (1/4πε₀) q/(r² + a²) · a/√(r² + a²) p̂', ''], [4, 'E = −2qa / [4πε₀ (r² + a²)^(3/2)]  p̂', 'green'],
+    [5, 'r ≫ a:  E = −2qa/(4πε₀ r³) p̂ = −p/(4πε₀ r³)', 'big green'], [5, 'direction: opposite to p', 'green']];
+  new K.Stepper('#eqS', {steps: [
+    '<b>Figure and given:</b> −q at A, +q at B, AB = 2a, centre O. P lies on the equatorial line (perpendicular bisector) with OP = r. Then AP = BP = √(r² + a²). Let θ be the angle that BP (and AP) makes with the axis.',
+    '<b>Magnitudes:</b> E<sub>+q</sub> = E<sub>−q</sub> = (1/4πε<sub>0</sub>) q/(r² + a²) (1.16) – equal, since the distances are equal. E<sub>+q</sub> points along BP away from +q; E<sub>−q</sub> points along PA towards −q.',
+    '<b>Resolve:</b> the components perpendicular to the axis (along OP) are equal and opposite – they <b>cancel</b>. The components parallel to the axis both point from +q towards −q, i.e. along −<b>p̂</b> – they <b>add</b>.',
+    '<b>Total:</b> <b>E</b> = −(E<sub>+q</sub> + E<sub>−q</sub>) cos θ <b>p̂</b>, with cos θ = a/√(r² + a²).',
+    '<b>Substitute:</b> <b>E</b> = −2 · (1/4πε<sub>0</sub>) q/(r² + a²) · a/√(r² + a²) <b>p̂</b> = <b>−2qa/[4πε<sub>0</sub>(r² + a²)<sup>3/2</sup>] p̂</b> &nbsp;(1.17).',
+    '<b>Far away (r ≫ a):</b> (r² + a²)<sup>3/2</sup> ≈ r³, so <b>E</b> = −2qa/(4πε<sub>0</sub>r³) <b>p̂</b> = <b>−p/(4πε<sub>0</sub>r³)</b> (1.18, 1.21). Direction: <b>opposite to p</b>.'],
+    ms: 1100, draw(svg, i, t){
+      ln(svg, P(30, 330), P(330, 330), 'muted', 1.2, {'stroke-dasharray': '5 4'}); ln(svg, O, P(180, 40), 'muted', 1.2, {'stroke-dasharray': '5 4'});
+      ln(svg, A, Pp, 'muted', 1.2); ln(svg, B, Pp, 'muted', 1.2);
+      K.dim(svg, A, B, '2a', 36); tx(svg, 192, 230, 'r', 'i', 'start');
+      K.angleArc(svg, B, A, Pp, 30, {cls: 'amber', label: 'θ'});
+      charge(svg, A, -1, {r: 12}); tx(svg, A.x - 6, A.y - 22, 'A (−q)', 'sm', 'middle', {fw: 700}); charge(svg, B, 1, {r: 12}); tx(svg, B.x + 6, B.y - 22, 'B (+q)', 'sm', 'middle', {fw: 700});
+      circ(svg, O, 3.5, {fill: 'var(--text)'}); tx(svg, O.x + 10, O.y + 16, 'O', 'sm', 'start', {fw: 700});
+      circ(svg, Pp, 5, {fill: 'var(--text)'}); tx(svg, Pp.x + 12, Pp.y + 12, 'P', 'big', 'start');
+      pvec(svg, P(120, 372), P(240, 372), {label: 'p', lo: {x: 12, y: -2}, w: 2.4});
+      const L = 80, u1 = K.unit(B, Pp), u2 = K.unit(Pp, A); const e1 = P(Pp.x + u1.x * L, Pp.y + u1.y * L), e2 = P(Pp.x + u2.x * L, Pp.y + u2.y * L);
+      if (i >= 1){ arrow(svg, Pp, e1, {c: 'red', w: 3, label: 'E(+q)', lo: {x: -8, y: -12}, op: i === 1 ? t : 1}); arrow(svg, Pp, e2, {c: 'blue', w: 3, label: 'E(−q)', lo: {x: -18, y: 10}, op: i === 1 ? t : 1}); }
+      if (i >= 2){ const op = i === 2 ? t : 1; ln(svg, e1, P(e1.x, Pp.y), 'red', 1.2, {'stroke-dasharray': '3 3', opacity: op}); ln(svg, e2, P(e2.x, Pp.y), 'blue', 1.2, {'stroke-dasharray': '3 3', opacity: op});
+        tx(svg, Pp.x + 26, Pp.y - 40, 'cancel ↕', 'sm muted', 'start', {op}); }
+      if (i >= 3) arrow(svg, P(Pp.x, Pp.y + 4), P(Pp.x - 2 * L * Math.abs(u1.x), Pp.y + 4), {c: 'green', w: 4.5, head: 12, label: 'E (opposite to p)', lo: {x: -20, y: 22}, op: i === 3 ? t : 1});
+      lines(svg, rows, i, t, {x: 360, y: 26, lh: 30, size: 13});
+    }});
+})();
+
+/* ---------- dipole field explorer ---------- */
+(function(){
+  const svg = $id('dSvg'), out = $id('dOut'); const O = P(330, 210); let a2 = 4; const PR = {x: 560, y: 210};
+  function draw(){
+    K.clear(svg); for (let x = 30; x <= 800; x += 100) ln(svg, P(x, 0), P(x, 400), 'var(--grid)', 1); for (let y = 10; y <= 400; y += 100) ln(svg, P(0, y), P(800, y), 'var(--grid)', 1);
+    const a = a2 * 10 / 2; /* px: 1 px = 1 mm, a2 in cm */ const A = P(O.x - a, O.y), B = P(O.x + a, O.y); const q = 1e-9, p = q * a2 * 1e-2;
+    ln(svg, P(0, O.y), P(800, O.y), 'muted', 1, {'stroke-dasharray': '5 4'}); ln(svg, P(O.x, 0), P(O.x, 400), 'muted', 1, {'stroke-dasharray': '5 4'});
+    const fld = (s, sq) => { const dx = (PR.x - s.x) * 1e-3, dy = (PR.y - s.y) * 1e-3, r = Math.hypot(dx, dy), e = KC * sq / (r * r * r); return P(e * dx, e * dy); };
+    const Ep = fld(B, q), Em = fld(A, -q), E = P(Ep.x + Em.x, Ep.y + Em.y), mE = Math.hypot(E.x, E.y), mx = Math.max(Math.hypot(Ep.x, Ep.y), Math.hypot(Em.x, Em.y));
+    const sc = 110 / mx, sc2 = clamp(60 / mE, 0, 4 * sc);
+    arrow(svg, PR, P(PR.x + Ep.x * sc, PR.y + Ep.y * sc), {c: 'red', w: 2.4, head: 9, dash: '6 3', label: 'E(+q)', lo: {x: 0, y: -12}});
+    arrow(svg, PR, P(PR.x + Em.x * sc, PR.y + Em.y * sc), {c: 'blue', w: 2.4, head: 9, dash: '6 3', label: 'E(−q)', lo: {x: 0, y: 14}});
+    arrow(svg, PR, P(PR.x + E.x * sc2, PR.y + E.y * sc2), {c: 'green', w: 4, head: 12, label: 'E', lo: {x: 14, y: -10}});
+    charge(svg, A, -1, {r: 11}); charge(svg, B, 1, {r: 11}); pvec(svg, P(O.x - 30, O.y + 34), P(O.x + 30, O.y + 34), {w: 2.2, head: 9, label: 'p', lo: {x: 12, y: 0}});
+    circ(svg, PR, 9, {fill: '#facc15', stroke: 'var(--text)', 'stroke-width': 1.5}); ln(svg, P(PR.x - 5, PR.y), P(PR.x + 5, PR.y), '#111', 1.6); ln(svg, P(PR.x, PR.y - 5), P(PR.x, PR.y + 5), '#111', 1.6);
+    tx(svg, 790, 20, `scale: dashed ×${K.fmt(sc / sc2, 2)} relative to E`, 'sm muted', 'end');
+    const r = Math.hypot(PR.x - O.x, PR.y - O.y) * 1e-3, rm = r, am = a2 * 1e-2 / 2; const onAx = Math.abs(PR.y - O.y) < 6 && Math.abs(PR.x - O.x) > a + 8, onEq = Math.abs(PR.x - O.x) < 6;
+    const L = [`p = q × 2a = 1×10⁻⁹ × ${nf(a2 / 100, 2)} = ${sci(p, 2)} C m;  r = OP = ${nf(rm, 3)} m (r/a = ${nf(rm / am, 1)})`, `|E(+q)| = ${sci(Math.hypot(Ep.x, Ep.y), 3)} N/C, |E(−q)| = ${sci(Math.hypot(Em.x, Em.y), 3)} N/C  →  |E| = ${sci(mE, 3)} N/C`];
+    if (onAx) L.push(`On the axis: exact (q/4πε₀)·4ar/(r²−a²)² = ${sci(KC * q * 4 * am * rm / Math.pow(rm * rm - am * am, 2), 3)} N/C;  far-field 2p/(4πε₀r³) = ${sci(2 * KC * p / Math.pow(rm, 3), 3)} N/C; E is along p.`);
+    else if (onEq) L.push(`On the equatorial line: exact 2qa/[4πε₀(r²+a²)^(3/2)] = ${sci(2 * KC * q * am / Math.pow(rm * rm + am * am, 1.5), 3)} N/C;  far-field p/(4πε₀r³) = ${sci(KC * p / Math.pow(rm, 3), 3)} N/C; E is opposite to p.`);
+    else L.push('Move the probe onto the axis or the equatorial line (or press a button) to compare with the formulas.');
+    out.textContent = minus(L.join('\n'));
+  }
+  const redraw = throttle(draw);
+  K.slider('#dA', v => { a2 = v; redraw(); }, 0);
+  K.draggable(svg, () => [PR], () => { const a = a2 * 5; if (Math.abs(PR.y - O.y) < 8) PR.y = O.y; if (Math.abs(PR.x - O.x) < 8) PR.x = O.x; [P(O.x - a, O.y), P(O.x + a, O.y)].forEach(c => { const d = K.dist(PR, c); if (d < 30){ const u = d > .1 ? K.unit(c, PR) : P(0, -1); PR.x = c.x + u.x * 30; PR.y = c.y + u.y * 30; } }); redraw(); }, 26);
+  radio(['dAx', 'dEq'], k => { if (k === 0){ PR.x = 560; PR.y = O.y; } else { PR.x = O.x; PR.y = 60; } draw(); });
+  draw();
+})();
+
+/* ---------- molecules ---------- */
+(function(){
+  const svg = $id('mSvg'); let on = false, f = 0;
+  function atom(c, r, col, lab, d){ circ(svg, c, r, {fill: col, stroke: 'var(--text)', 'stroke-width': 1.2}); tx(svg, c.x, c.y + 1, lab, 'sm', 'middle', {fw: 700, style: 'fill:#111;stroke:none'}); if (d) tx(svg, c.x, c.y - r - 12, d, 'sm', 'middle', {fw: 700, style: `fill:${d.includes('−') ? 'var(--blue)' : 'var(--red)'}`}); }
+  function draw(){
+    K.clear(svg);
+    if (f > 0.01) for (let y = 40; y <= 240; y += 50) arrow(svg, P(20, y), P(780, y), {c: 'green', w: 1.4, head: 8, op: .5 * f});
+    if (f > 0.01) tx(svg, 770, 22, 'E →', 'green', 'end', {fw: 700});
+    /* water */
+    const Ox = P(200, 120), H1 = P(150, 185), H2 = P(250, 185);
+    ln(svg, Ox, H1, 'text', 4); ln(svg, Ox, H2, 'text', 4); atom(Ox, 30, '#f87171', 'O', 'δ−'); atom(H1, 18, '#e5e7eb', 'H', ''); atom(H2, 18, '#e5e7eb', 'H', '');
+    tx(svg, H1.x - 26, H1.y + 22, 'δ+', 'sm red', 'middle', {fw: 700}); tx(svg, H2.x + 26, H2.y + 22, 'δ+', 'sm red', 'middle', {fw: 700});
+    const ang = f * 70 * Math.PI / 180; /* water partly turns towards E (p along E = to the right) */
+    const pc = P(200, 150), d0 = P(0, 1); const d = P(d0.x * Math.cos(ang) + d0.y * Math.sin(ang), -d0.x * Math.sin(ang) + d0.y * Math.cos(ang));
+    pvec(svg, P(pc.x - d.x * 35, pc.y - d.y * 35), P(pc.x + d.x * 45, pc.y + d.y * 45), {label: 'p', lo: {x: 14, y: 0}, w: 2.6});
+    tx(svg, 200, 262, on ? 'H₂O: permanent p feels a torque towards E' : 'H₂O (polar): permanent dipole moment', 'sm', 'middle', {fw: 700});
+    /* CO2 */
+    const C = P(580, 130), o1 = P(500, 130), o2 = P(660, 130); ln(svg, o1, o2, 'text', 4);
+    const sh = 10 * f; el('ellipse', {cx: C.x - sh, cy: C.y, rx: 120, ry: 46, fill: 'var(--blue)', 'fill-opacity': .12, stroke: 'var(--blue)', 'stroke-dasharray': '4 3'}, svg);
+    atom(o1, 26, '#f87171', 'O', ''); atom(C, 22, '#9ca3af', 'C', ''); atom(o2, 26, '#f87171', 'O', '');
+    if (f > 0.3){ tx(svg, 470, 70, '−', 'big blue', 'middle', {op: f}); tx(svg, 690, 70, '+', 'big red', 'middle', {op: f}); pvec(svg, P(540, 205), P(620, 205), {label: 'induced p', lo: {x: 0, y: 16}, w: 2.4, op: f}); }
+    tx(svg, 580, 262, on ? 'CO₂: electron cloud shifts against E → induced p along E' : 'CO₂ (non-polar): bond dipoles cancel, p = 0', 'sm', 'middle', {fw: 700});
+  }
+  const it = anim(svg, (t, dt) => { const tgt = on ? 1 : 0; f += clamp(tgt - f, -dt * 1.5, dt * 1.5); draw(); });
+  $id('mOn').addEventListener('click', e => { on = !on; e.target.textContent = on ? 'Switch the external field OFF' : 'Switch the external field ON'; wake(it); });
+})();
+
+/* ---------- Example 1.10 ---------- */
+const X = (() => { const eps = 8.854e-12, k = 1 / (4 * Math.PI * eps), q = 1e-5, a = 2.5e-3, r = .15; const Ep = k * q / Math.pow(r - a, 2), Em = k * q / Math.pow(r + a, 2), p = q * 2 * a;
+  const Eq1 = k * q / (r * r + a * a); return {Ep, Em, Ea: Ep - Em, Eapp: 2 * k * p / Math.pow(r, 3), Eq1, Eeq: 2 * Eq1 * a / Math.sqrt(r * r + a * a), Eeqapp: k * p / Math.pow(r, 3), p}; })();
+(function(){
+  const A = P(50, 200), B = P(100, 200), O = P(75, 200), Pp = P(290, 200);
+  const rows = [[0, 'Given: q = 10 μC = 10⁻⁵ C, 2a = 5 mm, a = 0.25 cm', 'blue'], [0, 'OP = r = 15 cm; BP = 14.75 cm, AP = 15.25 cm', 'blue'],
+    [1, 'E(+q) = 10⁻⁵ / [4π(8.854×10⁻¹²)(14.75×10⁻²)²]', ''], [1, '      = 4.13 × 10⁶ N/C along BP', 'green'],
+    [2, 'E(−q) = 10⁻⁵ / [4π(8.854×10⁻¹²)(15.25×10⁻²)²]', ''], [2, '      = 3.86 × 10⁶ N/C along PA', 'green'],
+    [3, 'E = 4.13 × 10⁶ − 3.86 × 10⁶ = 2.7 × 10⁵ N/C', 'big green'], [3, 'along BP (along p)', 'green'],
+    [4, 'Check: p = 10⁻⁵ × 5×10⁻³ = 5 × 10⁻⁸ C m', 'purple'], [4, 'E ≈ 2p/(4πε₀r³) = 2 × 5×10⁻⁸ × 9×10⁹/(0.15)³', 'purple'], [4, '  = 2.66 × 10⁵ N/C (book: 2.6 × 10⁵) – agrees', 'purple']];
+  new K.Stepper('#ex110a', {steps: [
+    '<b>Given:</b> q = 10 μC = 10<sup>−5</sup> C; 2a = 5.0 mm so a = 2.5 mm = 0.25 cm; OP = r = 15 cm on the side of +q (B). Hence BP = 15 − 0.25 = 14.75 cm and AP = 15 + 0.25 = 15.25 cm. (Figure not to scale.)',
+    `<b>Field due to +10 μC at B:</b> E = q/(4πε<sub>0</sub> BP²) = 10<sup>−5</sup>/[4π(8.854 × 10<sup>−12</sup>)(14.75 × 10<sup>−2</sup>)²] = <b>${sciH(X.Ep, 3)} N C<sup>−1</sup></b>, along BP (away from +q).`,
+    `<b>Field due to −10 μC at A:</b> E = 10<sup>−5</sup>/[4π(8.854 × 10<sup>−12</sup>)(15.25 × 10<sup>−2</sup>)²] = <b>${sciH(X.Em, 3)} N C<sup>−1</sup></b>, along PA (towards −q).`,
+    `<b>Answer:</b> the two fields are opposite, so E = 4.13 × 10<sup>6</sup> − 3.86 × 10<sup>6</sup> = <b>2.7 × 10<sup>5</sup> N C<sup>−1</sup> along BP</b> (unrounded: ${sciH(X.Ea, 3)} N C<sup>−1</sup>).`,
+    `<b>Check with the short formula</b> (r/a = 60 ≫ 1): p = q × 2a = 10<sup>−5</sup> × 5 × 10<sup>−3</sup> = 5 × 10<sup>−8</sup> C m; E = 2p/(4πε<sub>0</sub>r³) = ${sciH(X.Eapp, 3)} N C<sup>−1</sup> (the book rounds to 2.6 × 10<sup>5</sup>) along <b>p</b> – essentially the same as the exact value.`],
+    ms: 1100, draw(svg, i, t){
+      ln(svg, P(30, 200), P(380, 200), 'muted', 1.2, {'stroke-dasharray': '5 4'});
+      charge(svg, A, -1, {r: 11}); charge(svg, B, 1, {r: 11}); tx(svg, A.x, A.y - 24, 'A', 'sm', 'middle', {fw: 700}); tx(svg, B.x, B.y - 24, 'B', 'sm', 'middle', {fw: 700}); tx(svg, O.x, O.y - 24, 'O', 'sm', 'middle', {fw: 700});
+      tx(svg, A.x, A.y + 26, '−10 μC', 'sm', 'middle'); tx(svg, B.x + 6, B.y + 26, '+10 μC', 'sm', 'middle');
+      circ(svg, Pp, 5, {fill: 'var(--text)'}); tx(svg, Pp.x, Pp.y + 24, 'P', 'big', 'middle'); K.dim(svg, O, Pp, '15 cm', 50);
+      tx(svg, 200, 300, '(not to scale: 2a = 5 mm, r = 15 cm)', 'sm muted', 'middle');
+      if (i >= 1) arrow(svg, Pp, P(Pp.x + 41.3 * 1.5 * (i === 1 ? t : 1), Pp.y), {c: 'red', w: 3, label: '4.13×10⁶', lo: {x: 0, y: -14}});
+      if (i >= 2) arrow(svg, P(Pp.x, Pp.y - 34), P(Pp.x - 38.6 * 1.5 * (i === 2 ? t : 1), Pp.y - 34), {c: 'blue', w: 3, label: '3.86×10⁶', lo: {x: 0, y: -14}});
+      if (i >= 3) arrow(svg, P(Pp.x, Pp.y + 54), P(Pp.x + 2.7 * 6, Pp.y + 54), {c: 'green', w: 4, head: 9, label: 'E = 2.7×10⁵ N/C', lo: {x: 10, y: 20}, op: i === 3 ? t : 1});
+      lines(svg, rows, i, t, {x: 400, y: 26, lh: 30, size: 13});
+    }});
+})();
+(function(){
+  const A = P(140, 340), B = P(230, 340), O = P(185, 340), Qp = P(185, 80);
+  const rows = [[0, 'Given: q = 10⁻⁵ C, a = 0.25 cm, OQ = r = 15 cm', 'blue'], [0, 'AQ = BQ = √(15² + 0.25²) cm', 'blue'],
+    [1, 'E(+q) = 10⁻⁵/[4π(8.854×10⁻¹²)(15² + 0.25²)×10⁻⁴]', ''], [1, '      = 3.99 × 10⁶ N/C along BQ', 'green'], [1, 'E(−q) = 3.99 × 10⁶ N/C along QA', 'green'],
+    [2, 'Components along OQ cancel; along BA they add', ''],
+    [3, 'E = 2 × [0.25/√(15² + 0.25²)] × 3.99 × 10⁶', ''], [3, 'E = 1.33 × 10⁵ N/C along BA', 'big green'],
+    [4, 'Check: E ≈ p/(4πε₀r³) = 5×10⁻⁸ × 9×10⁹/(0.15)³', 'purple'], [4, '  = 1.33 × 10⁵ N/C, opposite to p – agrees', 'purple']];
+  new K.Stepper('#ex110b', {steps: [
+    '<b>Given:</b> q = 10<sup>−5</sup> C, a = 0.25 cm; Q is 15 cm from O on the line through O normal to the axis. So AQ = BQ = √(15² + 0.25²) cm. (Figure not to scale.)',
+    `<b>Field of each charge:</b> E = 10<sup>−5</sup>/[4π(8.854 × 10<sup>−12</sup>)(15² + 0.25²) × 10<sup>−4</sup>] = <b>${sciH(X.Eq1, 3)} N C<sup>−1</sup></b> – due to +10 μC along BQ (away from B), due to −10 μC along QA (towards A).`,
+    '<b>Resolve:</b> the two fields are equal; their components along OQ cancel, and their components parallel to the axis, in the direction BA, add.',
+    `<b>Answer:</b> E = 2 × cos θ × 3.99 × 10<sup>6</sup> with cos θ = 0.25/√(15² + 0.25²): E = <b>1.33 × 10<sup>5</sup> N C<sup>−1</sup> along BA</b> (unrounded ${sciH(X.Eeq, 3)}).`,
+    `<b>Check with the short formula:</b> E = p/(4πε<sub>0</sub>r³) = 5 × 10<sup>−8</sup>/[4π(8.854 × 10<sup>−12</sup>)(0.15)³] = ${sciH(X.Eeqapp, 3)} N C<sup>−1</sup>, opposite to <b>p</b> – the same.`],
+    ms: 1100, draw(svg, i, t){
+      ln(svg, P(100, 340), P(270, 340), 'muted', 1.2, {'stroke-dasharray': '5 4'}); ln(svg, O, P(185, 40), 'muted', 1.2, {'stroke-dasharray': '5 4'});
+      ln(svg, A, Qp, 'muted', 1, {'stroke-dasharray': '4 4'}); ln(svg, B, Qp, 'muted', 1, {'stroke-dasharray': '4 4'});
+      charge(svg, A, -1, {r: 11}); charge(svg, B, 1, {r: 11}); tx(svg, A.x - 20, A.y + 24, 'A (−10 μC)', 'sm', 'middle', {fw: 700}); tx(svg, B.x + 20, B.y + 24, 'B (+10 μC)', 'sm', 'middle', {fw: 700}); tx(svg, O.x, O.y + 22, 'O', 'sm', 'middle', {fw: 700});
+      circ(svg, Qp, 5, {fill: 'var(--text)'}); tx(svg, Qp.x + 14, Qp.y + 2, 'Q', 'big', 'start'); tx(svg, 196, 220, '15 cm', 'sm muted', 'start');
+      tx(svg, 185, 392, '(not to scale)', 'sm muted', 'middle');
+      const L = 75, u1 = K.unit(B, Qp), u2 = K.unit(Qp, A), e1 = P(Qp.x + u1.x * L, Qp.y + u1.y * L), e2 = P(Qp.x + u2.x * L, Qp.y + u2.y * L);
+      if (i >= 1){ arrow(svg, Qp, e1, {c: 'red', w: 3, label: 'E(+q)', lo: {x: -10, y: -10}, op: i === 1 ? t : 1}); arrow(svg, Qp, e2, {c: 'blue', w: 3, label: 'E(−q)', lo: {x: -14, y: 6}, op: i === 1 ? t : 1}); }
+      if (i >= 2){ ln(svg, e1, P(e1.x, Qp.y), 'muted', 1, {'stroke-dasharray': '3 3'}); ln(svg, e2, P(e2.x, Qp.y), 'muted', 1, {'stroke-dasharray': '3 3'}); }
+      if (i >= 3) arrow(svg, P(Qp.x, Qp.y + 2), P(Qp.x - 2 * L * Math.abs(u1.x) * 4, Qp.y + 2), {c: 'green', w: 4, head: 10, label: 'E along BA', lo: {x: -30, y: 18}, op: i === 3 ? t : 1});
+      lines(svg, rows, i, t, {x: 340, y: 26, lh: 30, size: 13});
+    }});
+})();
+
+/* ---------- torque stepper ---------- */
+(function(){
+  const O = P(190, 190), a = 90, th = 50, R = K.rad(th); const u = P(Math.cos(R), -Math.sin(R)); const Bp = P(O.x + u.x * a, O.y + u.y * a), Am = P(O.x - u.x * a, O.y - u.y * a);
+  const rows = [[0, 'Given: dipole p = q × 2a at angle θ to uniform E', 'blue'],
+    [1, 'Force on +q: qE (along E);  on −q: qE (opposite)', ''], [1, 'Net force = qE − qE = 0', 'green'],
+    [2, 'The two forces form a couple', ''], [2, 'arm (⟂ distance) = 2a sin θ', ''],
+    [3, 'τ = force × arm = qE × 2a sin θ', 'purple'], [3, 'τ = (q × 2a) E sin θ = pE sin θ', 'big green'],
+    [4, 'Vector form: τ = p × E (⟂ to the page)', 'green'], [4, 'tends to align p with E', 'green'],
+    [5, 'θ = 0°: τ = 0 (stable); θ = 90°: τ = pE (max)', ''], [5, 'θ = 180°: τ = 0 (unstable)', '']];
+  new K.Stepper('#tqS', {steps: [
+    '<b>Given:</b> a permanent dipole, charges ±q separated by 2a (p = q × 2a), in a uniform field <b>E</b>; <b>p</b> makes an angle θ with <b>E</b>.',
+    '<b>Forces:</b> +q feels q<b>E</b> along E; −q feels −q<b>E</b>, opposite to E. Equal and opposite, so the <b>net force is zero</b> – the dipole as a whole does not accelerate in a uniform field.',
+    '<b>Couple:</b> the two forces act along parallel lines a perpendicular distance 2a sin θ apart (the arm of the couple). When the net force is zero the torque is the same about any point.',
+    '<b>Torque:</b> τ = force × arm = qE × 2a sin θ = (q × 2a) E sin θ = <b>pE sin θ</b>.',
+    '<b>Direction:</b> |<b>p</b> × <b>E</b>| = pE sin θ too, and both are perpendicular to the plane of p and E. So <b>τ = p × E</b> (1.22). Here it turns p clockwise, towards E.',
+    '<b>Special cases:</b> θ = 0° → τ = 0, stable equilibrium; θ = 90° → τ = pE (maximum); θ = 180° → τ = 0 but unstable equilibrium.'],
+    ms: 1100, draw(svg, i, t){
+      for (let y = 40; y <= 340; y += 50) arrow(svg, P(20, y), P(370, y), {c: 'green', w: 1.3, head: 8, op: .5}); tx(svg, 360, 22, 'E', 'green', 'end', {fw: 700});
+      ln(svg, Am, Bp, 'text', 2.4); ln(svg, O, P(O.x + 120, O.y), 'muted', 1, {'stroke-dasharray': '4 4'}); K.angleArc(svg, O, P(O.x + 60, O.y), Bp, 40, {cls: 'amber', label: 'θ'});
+      pvec(svg, P(O.x - u.x * 30, O.y - u.y * 30), P(O.x + u.x * 50, O.y + u.y * 50), {w: 2.4, head: 9, label: 'p', lo: {x: -12, y: -6}});
+      charge(svg, Am, -1, {r: 12}); charge(svg, Bp, 1, {r: 12}); tx(svg, Am.x - 18, Am.y + 6, '−q', 'sm', 'end', {fw: 700}); tx(svg, Bp.x + 6, Bp.y - 20, '+q', 'sm', 'start', {fw: 700});
+      if (i >= 1){ const op = i === 1 ? t : 1; arrow(svg, Bp, P(Bp.x + 90, Bp.y), {c: 'red', w: 3.4, label: 'qE', lo: {x: 0, y: -14}, op}); arrow(svg, Am, P(Am.x - 90, Am.y), {c: 'red', w: 3.4, label: 'qE', lo: {x: 0, y: 16}, op}); }
+      if (i >= 2){ const op = i === 2 ? t : 1; ln(svg, P(Am.x - 60, Bp.y), P(Bp.x + 60, Bp.y), 'muted', 1, {'stroke-dasharray': '3 3', opacity: op}); ln(svg, P(Am.x - 60, Am.y), P(Bp.x + 60, Am.y), 'muted', 1, {'stroke-dasharray': '3 3', opacity: op});
+        arrow(svg, P(Am.x + 20, Am.y), P(Am.x + 20, Bp.y), {c: 'blue', w: 1.8, head: 7, op}); arrow(svg, P(Am.x + 20, Bp.y), P(Am.x + 20, Am.y), {c: 'blue', w: 1.8, head: 7, op}); tx(svg, Am.x + 28, O.y, '2a sin θ', 'sm blue', 'start', {fw: 700, op}); }
+      if (i >= 4){ path(svg, `M${O.x + 34},${O.y - 58} A60,60 0 0,1 ${O.x + 60},${O.y - 8}`, {stroke: 'var(--purple)', 'stroke-width': 2.4}); arrow(svg, P(O.x + 58, O.y - 16), P(O.x + 60, O.y - 6), {c: 'purple', w: 2.4, head: 9}); tx(svg, O.x + 70, O.y - 46, 'τ (⊗ into page)', 'sm purple', 'start', {fw: 700}); }
+      lines(svg, rows, i, t, {x: 395, y: 26, lh: 30, size: 13});
+    }});
+})();
+
+/* ---------- rotating dipole lab ---------- */
+(function(){
+  const svg = $id('rSvg'), out = $id('rOut'); let th0 = 60, th = 60, w = 0, Ef = 5, pf = 2, run = false;
+  function draw(){
+    K.clear(svg);
+    for (let y = 30; y <= 320; y += 45) arrow(svg, P(20, y), P(400, y), {c: 'green', w: 1.3, head: 8, op: .5}); tx(svg, 396, 14, 'E →', 'green', 'end', {fw: 700});
+    const O = P(210, 175), a = 85, R = K.rad(th), u = P(Math.cos(R), -Math.sin(R)), Bp = P(O.x + u.x * a, O.y + u.y * a), Am = P(O.x - u.x * a, O.y - u.y * a);
+    ln(svg, Am, Bp, 'text', 2.4); ln(svg, O, P(O.x + 110, O.y), 'muted', 1, {'stroke-dasharray': '4 4'});
+    const Fl = 22 + 6 * Ef; arrow(svg, Bp, P(Bp.x + Fl, Bp.y), {c: 'red', w: 3, head: 10, label: 'qE', lo: {x: 0, y: -12}}); arrow(svg, Am, P(Am.x - Fl, Am.y), {c: 'red', w: 3, head: 10, label: 'qE', lo: {x: 0, y: 14}});
+    pvec(svg, P(O.x - u.x * 30, O.y - u.y * 30), P(O.x + u.x * 50, O.y + u.y * 50), {w: 2.4, head: 9, label: 'p', lo: {x: -12, y: -8}});
+    charge(svg, Am, -1, {r: 12}); charge(svg, Bp, 1, {r: 12});
+    const tau = pf * 1e-10 * Ef * 1e4 * Math.sin(R);
+    if (Math.abs(Math.sin(R)) > 0.02) tx(svg, O.x, 330, tau > 0 ? 'τ ⊗ (into the page): turns p clockwise towards E' : 'τ ⊙ (out of the page): turns p anticlockwise towards E', 'sm purple', 'middle', {fw: 700});
+    else tx(svg, O.x, 330, Math.cos(R) > 0 ? 'τ = 0 – stable equilibrium (p along E)' : 'τ = 0 – unstable equilibrium (p against E)', 'sm purple', 'middle', {fw: 700});
+    /* graph τ vs θ */
+    const GX = 470, GY = 170, GW = 300, GH = 110, tm = 5e-10 * 10e4; ln(svg, P(GX, GY), P(GX + GW, GY), 'text', 1.5); ln(svg, P(GX, GY - GH - 10), P(GX, GY + GH + 10), 'text', 1.5);
+    const pts = []; for (let d = -180; d <= 180; d += 4) pts.push(P(GX + (d + 180) / 360 * GW, GY - pf * 1e-10 * Ef * 1e4 * Math.sin(K.rad(d)) / tm * GH)); K.polyline(svg, pts, {stroke: 'var(--primary)', 'stroke-width': 2.4});
+    [-180, -90, 0, 90, 180].forEach(d => tx(svg, GX + (d + 180) / 360 * GW, GY + 16, nf(d, 0) + '°', 'sm muted', 'middle'));
+    tx(svg, GX + 4, GY - GH - 14, 'τ (N m)', 'sm', 'start', {fw: 700}); tx(svg, GX + GW, GY - 14, 'θ', 'sm', 'end');
+    let dsp = ((th + 180) % 360 + 360) % 360 - 180; circ(svg, P(GX + (dsp + 180) / 360 * GW, GY - tau / tm * GH), 7, {fill: 'var(--accent)', stroke: 'var(--text)'});
+    out.textContent = minus(`θ = ${nf(dsp, 0)}°   τ = pE sin θ = (${pf}×10⁻¹⁰)(${Ef}×10⁴) sin ${nf(dsp, 0)}° = ${sci(Math.abs(tau), 3)} N m\nMaximum torque pE = ${sci(pf * 1e-10 * Ef * 1e4, 2)} N m at θ = 90°. Net force on the dipole = qE − qE = 0.`);
+  }
+  const it = anim(svg, (t, dt) => { if (run){ const k = 30 * pf * Ef / 10; for (let s = 0; s < 4; s++){ const h = dt / 4; w += (-k * Math.sin(K.rad(th)) * 57.3 - 1.2 * w) * h; th += w * h; } } draw(); });
+  K.slider('#rT', v => { th0 = v; th = v; w = 0; run = false; wake(it); draw(); }, 0);
+  K.slider('#rE', v => { Ef = v; wake(it); draw(); }, 0); K.slider('#rP', v => { pf = v; wake(it); draw(); }, 0);
+  $id('rGo').addEventListener('click', () => { th = th0; w = 0; run = true; wake(it); });
+  $id('rStop').addEventListener('click', () => { run = false; wake(it); });
+})();
+
+/* ---------- non-uniform field lab ---------- */
+(function(){
+  const svg = $id('nSvg'), out = $id('nOut'); let mode = 0, xd = 320; /* 0 parallel, 1 anti, 2 uniform */
+  const S = P(60, 150), a = 35;
+  const Eat = x => mode === 2 ? 1 : Math.pow(260 / (x - S.x), 2); /* relative field */
+  function draw(){
+    K.clear(svg);
+    if (mode !== 2){ for (let k = -4; k <= 4; k++){ const an = k * 0.18; arrow(svg, P(S.x + 26 * Math.cos(an), S.y + 26 * Math.sin(an)), P(S.x + 760 * Math.cos(an), S.y + 760 * Math.sin(an)), {c: 'green', w: 1.2, head: 8, op: .5}); } charge(svg, S, 1, {r: 18, label: 'source (e.g. charged comb)', ly: 34}); }
+    else { for (let y = 40; y <= 260; y += 44) arrow(svg, P(20, y), P(780, y), {c: 'green', w: 1.2, head: 8, op: .5}); }
+    tx(svg, 790, 20, mode === 2 ? 'uniform E →' : 'E → (weaker farther away)', 'sm green', 'end', {fw: 700});
+    const plusRight = mode !== 1; const xp = plusRight ? xd + a : xd - a, xm = plusRight ? xd - a : xd + a;
+    const Fp = Eat(xp), Fm = Eat(xm), sc = 70;
+    ln(svg, P(xd - a, 150), P(xd + a, 150), 'text', 2.4);
+    arrow(svg, P(xp, 150), P(xp + Fp * sc, 150), {c: 'red', w: 3, label: 'F on +q', lo: {x: 0, y: -14}});
+    arrow(svg, P(xm, 150), P(xm - Fm * sc, 150), {c: 'blue', w: 3, label: 'F on −q', lo: {x: 0, y: 26}});
+    charge(svg, P(xp, 150), 1, {r: 11}); charge(svg, P(xm, 150), -1, {r: 11});
+    pvec(svg, P(plusRight ? xd - 20 : xd + 20, 205), P(plusRight ? xd + 20 : xd - 20, 205), {w: 2.2, head: 8, label: 'p', lo: {x: 0, y: 16}});
+    const net = Fp - Fm;
+    if (Math.abs(net) * sc > 3) arrow(svg, P(xd, 245), P(xd + net * sc * 1.5, 245), {c: 'purple', w: 4.5, head: 12, label: 'net force', lo: {x: 0, y: 18}}); else tx(svg, xd, 250, 'net force = 0', 'sm purple', 'middle', {fw: 700});
+    out.textContent = minus(mode === 2 ? 'Uniform field: the forces on +q and −q are equal and opposite → net force 0 (only a torque if p is tilted).' :
+      `Field at +q ∝ ${nf(Fp, 2)}, at −q ∝ ${nf(Fm, 2)} (relative units).\n` + (mode === 0 ? '−q sits in the stronger field, so the pull towards the source wins: net force towards INCREASING field (towards the source).' : '+q sits in the stronger field, so the push away wins: net force towards DECREASING field (away from the source).'));
+  }
+  radio(['nPar', 'nAnti', 'nUni'], k => { mode = k; draw(); });
+  K.slider('#nX', v => { xd = v; draw(); }, 0);
+})();
+
+/* ---------- quiz ---------- */
+K.numq('#q1', {q: 'Charges +2 μC and −2 μC are 3 mm apart. Find the magnitude of the dipole moment, in units of 10<sup>−9</sup> C m.', answer: 6, tol: 0.01, unit: '× 10⁻⁹ C m', explain: 'p = q × 2a = 2 × 10⁻⁶ × 3 × 10⁻³ = 6 × 10⁻⁹ C m, from −q to +q.', hint: 'p = q × (separation); convert μC and mm.'});
+K.mcq('#q2', {q: 'For a short dipole, the ratio of the field on the axial line to that on the equatorial line at the same distance r is…', options: ['1 : 1', '1 : 2', '2 : 1', '4 : 1'], answer: 2, explain: '2p/(4πε₀r³) : p/(4πε₀r³) = 2 : 1.', hint: 'Compare equations (1.20) and (1.21).'});
+K.numq('#q3', {q: 'A dipole of moment 4 × 10<sup>−9</sup> C m makes 30° with a uniform field of 5 × 10<sup>4</sup> N/C. Find the torque, in units of 10<sup>−4</sup> N m.', answer: 1, tol: 0.01, unit: '× 10⁻⁴ N m', explain: 'τ = pE sin θ = 4×10⁻⁹ × 5×10⁴ × 0.5 = 1 × 10⁻⁴ N m.', hint: 'τ = pE sin θ.'});
+K.mcq('#q4', {q: 'An electric dipole is placed at an angle in a uniform electric field. It experiences…', options: ['a net force but no torque', 'a torque but no net force', 'both a net force and a torque', 'neither force nor torque'], answer: 1, explain: 'qE and −qE cancel (net force 0) but form a couple: τ = pE sin θ.', hint: 'The two forces are equal and opposite but act at different points.'});
+K.mcq('#q5', {q: 'At large distances, the electric field of a dipole varies as…', options: ['1/r', '1/r²', '1/r³', '1/r⁴'], answer: 2, explain: 'The fields of +q and −q nearly cancel; what remains ∝ p/r³.', hint: 'Look at the r ≫ a results.'});
+K.mcq('#q6', {q: 'The direction of the electric field at a point on the equatorial line of a dipole is…', options: ['along p', 'opposite to p', 'perpendicular to p, away from the dipole', 'zero – no direction'], answer: 1, explain: 'E = −p/(4πε₀r³): antiparallel to p (from +q towards −q).', hint: 'Look at the last step of the equatorial derivation.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>
