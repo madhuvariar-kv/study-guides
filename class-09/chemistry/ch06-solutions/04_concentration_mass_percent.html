@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concentration and Mass Percentage</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+@media(max-width:600px){.onpage a{white-space:normal}}
+
+</style>
+<style>
+/* ==== common styles (same on pages 04–06) ==== */
+.qa,.qbox{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.7rem 1rem;margin:.8rem 0;box-shadow:var(--shadow)}
+.qa p,.qbox p{margin:.3em 0}
+.qa ol,.qa ul{margin:.3rem 0}
+.mlq{display:block;font-weight:500;margin:.2rem 0 .4rem}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.answer ul{margin:.2rem 0}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.keyml{display:block;margin:.2rem 0 .4rem}
+.btn.ok{background:var(--green-soft);border-color:var(--green);color:var(--text)}
+.btn.bad{background:var(--red-soft);border-color:var(--red);color:var(--text)}
+.yn{display:inline-flex;gap:.3rem;flex-wrap:wrap}
+.yn .btn{padding:.25rem .6rem;font-size:.88rem}
+.why{font-size:.92rem;margin-top:.3rem;min-height:1.2em}
+.ask{margin:.55rem 0;padding:.45rem .7rem;border-radius:10px;background:var(--surface2)}
+.ask p{margin:.1rem 0 .35rem}
+.sidebox{border:2px solid var(--blue);background:var(--blue-soft);border-radius:14px;padding:.7rem 1rem;margin:1rem 0}
+.sidebox .title{font-weight:700;color:var(--blue);margin-bottom:.3rem}
+.sidebox p:last-child{margin-bottom:0}
+.further{border-left:6px solid var(--purple);background:var(--purple-soft);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+.further .title{font-weight:700;color:var(--purple);margin-bottom:.3rem}
+.eqc{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.3rem;padding:.55em .6em;margin:.7em 0;background:var(--surface2);border-radius:10px;line-height:1.6;overflow-x:auto}
+.eqc .frac{font-size:.85em}
+.coll{border:2px solid var(--primary);border-radius:12px;padding:.55rem .9rem;margin:.8rem 0;background:var(--surface)}
+.coll .title{font-weight:700;color:var(--primary-ink);margin-bottom:.25rem}
+.ct td,.ct th{vertical-align:middle}
+.ct th .ml,.ct td .ml{display:block;font-size:.85em}
+.svgscroll{overflow-x:auto;border-radius:10px}
+.svgscroll svg{min-width:600px}
+.lab input[type=number]{width:6.2em;padding:.3rem .4rem;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem}
+.lab select{padding:.3rem .4rem;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:.92rem;max-width:100%}
+.inl{display:inline-flex;gap:.4rem;align-items:center;flex-wrap:wrap}
+.inl input{width:5.5em;padding:.25rem .4rem;border-radius:6px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem}
+.inl input.ok{border-color:var(--green);background:var(--green-soft)}
+.inl input.bad{border-color:var(--red);background:var(--red-soft)}
+/* ==== page 04 ==== */
+.steps-mini{margin:.3rem 0;padding-left:1.3em}
+</style>
+</head>
+<body data-page="04_concentration_mass_percent">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 6 · Section 4</span><span class="chip amber">Textbook pages 117–118</span>
+<h1>Concentration and Mass Percentage <span class="ml">ലായനിയുടെ ഗാഢത · മാസ് പെർസെന്റേജ്</span></h1>
+<p class="lead">"Too much salt in the sambar!" "The curry needs a pinch more!" We all taste the difference between a little and a lot of salt. This page puts a number on it. You will drop potassium permanganate crystals into water, meet <b>dilute</b> and <b>concentrated</b> solutions, and learn the chemist's favourite way to write concentration: the <b>mass percentage</b>. There is also <b>ppm</b> for very tiny amounts, and a calculator that solves problems both forwards and backwards.</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 2 and 3 of this guide)</div>
+<ul style="margin:0">
+<li><b>Solute</b> <span class="ml">ലീനം</span> + <b>solvent</b> <span class="ml">ലായകം</span> = <b>solution</b> <span class="ml">ലായനി</span>. In an <b>aqueous solution</b> <span class="ml">ജലീയ ലായനി</span> the solvent is water (<a href="03_solutions_solvents.html">page 3</a>).</li>
+<li><b>Per cent</b> means "out of 100": 10 % = 10 parts in every 100 parts (<a href="02_percentages_graphs.html">page 2</a>).</li>
+<li>1 mL of water has a mass of about 1 g, so 90 mL of water ≈ 90 g.</li></ul></div>
+
+<!-- ================= 1 ================= -->
+<h2 id="kmno4">1. Light pink or deep purple? (the KMnO₄ experiment)</h2>
+<p><span class="ml">ആഹാരപദാർഥങ്ങൾക്ക് ഉപ്പ് കൂടിപ്പോയി, കുറഞ്ഞുപോയി എന്നൊക്കെയുള്ള പരാതികൾ നിങ്ങൾ കേട്ടിരിക്കും.</span> – You must have heard complaints that the food has too much salt, or too little. That difference in taste depends on the <b>amount</b> of salt added. Let us see the same idea with colour.</p>
+<p><span class="ml">രണ്ട് ബീക്കറുകളിൽ ഒരേ അളവിൽ ജലം എടുക്കുക. ഒരെണ്ണത്തിൽ ഒന്നോ രണ്ടോ തരി പൊട്ടാസ്യം പെർമാംഗനേറ്റ് (KMnO₄) ഇടുക. രണ്ടാമത്തേതിൽ അഞ്ചോ ആറോ തരികൾ ഇടുക.</span> Take the <b>same amount</b> of water in two beakers. Put one or two crystals of <b>potassium permanganate</b> (KMnO₄) in the first, and five or six crystals in the second.</p>
+<div class="safety">⚠️ Potassium permanganate is an <b>oxidiser</b> and leaves brown stains on skin and clothes. Pick up the crystals with tweezers or a spatula, never with your fingers, use only a few crystals, and never taste or swallow the solution.</div>
+<div class="lab" id="kmLab">
+  <div class="lab-title">🟣 Virtual lab – KMnO₄ crystals in two beakers of water</div>
+  <div class="svgscroll"><svg id="kmSvg" viewBox="0 0 800 340" role="img" aria-label="Two beakers holding the same volume of water. Purple crystals drop to the bottom and colour spreads upwards until the whole beaker is evenly coloured. Beaker 1 with few crystals turns light pink-purple; beaker 2 with more crystals turns deep purple. A colour scale on the right runs from dilute to concentrated."></svg></div>
+  <div class="controls">
+    <label>Beaker 1: crystals <input type="range" id="kmA" min="1" max="10" step="1" value="2"><output></output></label>
+    <label>Beaker 2: crystals <input type="range" id="kmB" min="1" max="10" step="1" value="6"><output></output></label></div>
+  <div class="controls"><button class="btn primary" id="kmGo">▶ Drop the crystals in again</button></div>
+  <div class="readout" id="kmOut"></div>
+  <p class="hint">Both beakers hold the same volume of water. The colour depth in the model grows with the number of crystals, as it does in real life. The exact shades are illustrative.</p>
+</div>
+<div class="qa"><p><b>Observe (page 117).</b> <span class="ml mlq">രണ്ട് ബീക്കറുകളിലെയും നിറവ്യത്യാസം നിരീക്ഷിക്കുക.</span> Observe the difference in colour in the two beakers.</p>
+<div class="ask"><p><b>Beaker 1</b> (1–2 crystals):</p><div class="yn" data-ans="0" data-why="Only a little KMnO₄ has dissolved, so the colour is light pink (pale purple)." data-hint="Set beaker 1 to 2 crystals and look again."><button class="btn">light pink / pale purple</button><button class="btn">deep purple</button><button class="btn">colourless</button></div><div class="why"></div></div>
+<div class="ask"><p><b>Beaker 2</b> (5–6 crystals):</p><div class="yn" data-ans="1" data-why="Much more KMnO₄ has dissolved in the same amount of water, so the colour is deep purple." data-hint="Set beaker 2 to 6 crystals and look again."><button class="btn">light pink / pale purple</button><button class="btn">deep purple</button><button class="btn">colourless</button></div><div class="why"></div></div>
+<p><span class="ml mlq">രണ്ട് ലായനികളിലെയും നിറവ്യത്യാസത്തിന് കാരണം എന്താണ്?</span> <b>Q.</b> What is the reason for the difference in colour between the two solutions?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">Both beakers have the <b>same amount of water</b>, but beaker 2 has <b>more solute</b> (KMnO₄) dissolved in it. More solute in the same amount of solution means a <b>higher concentration</b> <span class="ml">ഗാഢത</span>, so the colour is deeper. Beaker 1 holds a <b>dilute solution</b> <span class="ml">നേർത്ത ലായനി</span> and beaker 2 holds a <b>concentrated solution</b> <span class="ml">ഗാഢലായനി</span>.</div></div></div>
+<p><span class="ml">ലീനത്തിന്റെ അളവ് കൂടുതലുള്ള ലായനിക്ക് ഗാഢത കൂടുതലാണെന്ന് പറയാം. ലായനിയുടെ ഗാഢത ലീനത്തിന്റെ അളവിനെ ആശ്രയിച്ചിരിക്കുന്നുവെന്ന് ഇതിൽ നിന്ന് മനസ്സിലാക്കാം.</span> – A solution with more solute has a higher concentration. So the concentration of a solution depends on the amount of solute in it.</p>
+<div class="callout key"><div class="title">⭐ Concentration of a solution (page 117)</div>
+<span class="ml keyml">ഒരു നിശ്ചിത അളവ് ലായനിയിൽ ലയിച്ചു ചേർന്ന ലീനത്തിന്റെ അളവാണ് ലായനിയുടെ ഗാഢത. ഒരു ലായനിയിൽ ലീനത്തിന്റെ അളവ് കുറവാണെങ്കിൽ അത് നേർത്ത ലായനി (dilute solution) യും കൂടുതലാണെങ്കിൽ ഗാഢലായനി (concentrated solution) യുമാണ്.</span>
+<p style="margin:0">The amount of solute dissolved in a definite amount of solution is the <b>concentration of the solution</b> <span class="ml">ലായനിയുടെ ഗാഢത</span>. If a solution has only a little solute it is a <b>dilute solution</b> <span class="ml">നേർത്ത ലായനി</span>; if it has more solute it is a <b>concentrated solution</b> <span class="ml">ഗാഢലായനി</span>.</p></div>
+<div class="callout think"><div class="title">🧠 "Dilute" and "concentrated" are comparisons</div>
+<p>A spoon of sugar in a glass of water is dilute compared with sugar syrup for jalebi, but concentrated compared with a pinch of sugar in a bucket. To compare solutions exactly we need a <b>number</b>. <span class="ml">ഒരു ലായനിയുടെ ഗാഢത പ്രസ്താവിക്കാൻ പല അളവുകളും ഉപയോഗിച്ച് വരുന്നുണ്ട്. ഇതിൽ ഒന്ന് നമുക്ക് പരിചയപ്പെടാം.</span> Many measures are used to state the concentration of a solution. Let us meet one of them.</p></div>
+
+<!-- ================= 2 ================= -->
+<h2 id="masspc">2. Mass percentage <span class="ml">മാസ് പെർസെന്റേജ്</span></h2>
+<p><span class="ml">ലായനിയിൽ ലയിച്ചു ചേർന്ന ലീനത്തിന്റെ മാസ് ശതമാനത്തിൽ പ്രസ്താവിക്കുന്ന രീതിയാണിത്. അതായത് 100 g ലായനിയിൽ എത്ര ഗ്രാം ലീനം അടങ്ങിയിരിക്കുന്നുവെന്ന് പ്രസ്താവിക്കുന്നു.</span> – Mass percentage states the mass of the solute dissolved in the solution <b>as a percentage</b>. In other words, it tells <b>how many grams of solute there are in 100 g of the solution</b>.</p>
+<div class="eqc">Mass percentage of the solution = <span class="frac"><span>mass of the solute</span><span>mass of the solution</span></span> × 100
+<br><span class="ml" style="font-size:.7em">ലായനിയുടെ മാസ് പെർസെന്റേജ് = (ലീനത്തിന്റെ മാസ് ÷ ലായനിയുടെ മാസ്) × 100</span></div>
+<div class="coll"><div class="title">🔑 Mass of the solution = mass of the solute + mass of the solvent</div>
+<p style="margin:0">The bottom of the fraction is the whole <b>solution</b>, not just the water. This is the most common mistake in this chapter!</p></div>
+
+<h3>Worked example: 10 g of salt in 90 g of water</h3>
+<p><span class="ml">ഉദാഹരണമായി 10 g ഉപ്പ് 90 g ജലത്തിൽ ലയിപ്പിച്ചുവെന്നിരിക്കട്ടെ. മാസ് പെർസെന്റേജിന്റെ അടിസ്ഥാനത്തിൽ എങ്ങനെയാണ് ഗാഢത കണക്കാക്കുന്നത്?</span> Suppose 10 g of salt is dissolved in 90 g of water. How do we work out the concentration as a mass percentage? Step through it:</p>
+<div class="lab" id="ms1"><div class="lab-title">🎬 Step by step · 10 g salt + 90 g water</div>
+<div class="svgscroll"><svg viewBox="0 0 800 300" role="img" aria-label="A heap of 10 g of salt and a beaker of 90 g of water; the salt is tipped into the water to make 100 g of solution; a grid of 100 squares then fills 10 squares to show 10 per cent"></svg></div></div>
+<div class="tw"><table class="ct" style="max-width:560px"><tbody>
+<tr><td>Mass of the solute <span class="ml">ലീനത്തിന്റെ മാസ്</span></td><td>= <b>10 g</b></td></tr>
+<tr><td>Mass of the solvent <span class="ml">ലായകത്തിന്റെ മാസ്</span></td><td>= <b>90 g</b></td></tr>
+<tr><td>Mass of the solution <span class="ml">ലായനിയുടെ മാസ്</span></td><td>= 10 g + 90 g = <b>100 g</b></td></tr>
+<tr><td>Mass percentage <span class="ml">ലായനിയുടെ മാസ് പെർസെന്റേജ്</span></td><td>= <span class="frac"><span>10</span><span>100</span></span> × 100 = <b>10 %</b></td></tr></tbody></table></div>
+
+<h3>What does "15 %" mean?</h3>
+<div class="qa"><p><b>Q (page 118).</b> <span class="ml mlq">ഒരാൾ തയ്യാറാക്കിയ ഉപ്പുവെള്ളത്തിന്റെ ഗാഢത 15% ആണ് എന്ന് പറഞ്ഞാൽ അതിന്റെ അർഥമെന്താണ്?</span> If someone says the concentration of the salt water they made is 15 %, what does it mean?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>15 g of salt is present in 100 g of the solution.</b> <span class="ml">15 g ഉപ്പാണ് 100 g ലായനിയിൽ ഉള്ളത്.</span> The other 100 − 15 = <b>85 g</b> is water. (It does <b>not</b> mean 15 g of salt in 100 g of water.) Step through the picture below.</div></div></div>
+<div class="lab" id="ms2"><div class="lab-title">🎬 Step by step · the meaning of a 15 % salt solution</div>
+<div class="svgscroll"><svg viewBox="0 0 800 300" role="img" aria-label="A grid of 100 squares stands for 100 g of solution; 15 squares are coloured as salt and 85 as water; then two such grids show that 200 g of the solution holds 30 g of salt"></svg></div></div>
+
+<h3>Your turn: the in-text question</h3>
+<div class="qa"><p><b>? (page 118).</b> <span class="ml mlq">18 g ജലത്തിൽ A എന്ന പദാർഥത്തിന്റെ 2 g ചേർത്ത് ഒരു ലായനി തയ്യാറാക്കി. ലായനിയുടെ മാസ് പെർസെന്റേജ് കണക്കാക്കുക.</span> A solution is made by adding 2 g of a substance A to 18 g of water. Calculate the mass percentage of the solution.</p>
+<div class="inl">Your answer: <input id="q18" inputmode="decimal" autocomplete="off" aria-label="mass percentage of A"> % <button class="btn primary" id="q18c">Check</button></div><div class="why" id="q18f"></div>
+<div class="reveal" data-btn="Show the working"><div class="answer">Mass of solute (A) = <b>2 g</b> · mass of solvent (water) = <b>18 g</b> · mass of solution = 2 + 18 = <b>20 g</b><br>
+Mass percentage = <span class="frac"><span>2</span><span>20</span></span> × 100 = <b>10 %</b>.<br>
+(If you divided by 18 and got 11.1 %, you used the solvent instead of the solution.) Watch it step by step below.</div></div></div>
+<div class="lab" id="ms3"><div class="lab-title">🎬 Step by step · 2 g of A + 18 g of water</div>
+<div class="svgscroll"><svg viewBox="0 0 800 300" role="img" aria-label="2 g of substance A and 18 g of water make 20 g of solution; scaled up to 100 g there would be 10 g of A, so 10 squares of the 100-square grid are coloured: 10 per cent"></svg></div></div>
+
+<!-- ================= 3 ================= -->
+<h2 id="uses">3. Why industry cares: the bleaching solution</h2>
+<p><span class="ml">മാസ് പെർസെന്റേജിന്റെ അടിസ്ഥാനത്തിൽ ലായനിയുടെ ഗാഢത കണ്ടെത്തുന്നത് പല വ്യാവസായിക ഉൽപന്നങ്ങളുടെ നിർമ്മാണത്തിലും പ്രധാനമാണ്. ഉദാഹരണത്തിന് വ്യാവസായിക ആവശ്യത്തിനായി ഉപയോഗിക്കുന്ന ബ്ലീച്ചിങ് ലായനി എന്നത് 3.62 മാസ് പെർസെന്റേജ് സോഡിയം ഹൈപ്പോക്ലോറൈറ്റിന്റെ (NaOCl) ജലീയലായനിയാണ്.</span> – Finding concentration as a mass percentage is important when many industrial products are made. For example, the <b>bleaching solution</b> used in industry is an <b>aqueous solution</b> <span class="ml">ജലീയ ലായനി</span> of <b>sodium hypochlorite (NaOCl)</b> with a mass percentage of <b>3.62</b>.</p>
+<div class="callout real"><div class="title">🧴 What 3.62 % NaOCl means</div>
+<ul style="margin:0">
+<li>100 g of the bleaching solution contains <b>3.62 g</b> of sodium hypochlorite and 100 − 3.62 = <b>96.38 g</b> of water.</li>
+<li>1 kg (1000 g) of it contains 3.62 × 10 = <b>36.2 g</b> of NaOCl.</li>
+<li>Too weak and it will not bleach or disinfect; too strong and it damages cloth and is dangerous. <span class="ml">അളവുകൾ കൃത്യമായിരിക്കേണ്ടതിന്റെ പ്രാധാന്യമാണല്ലോ ഇത് നമ്മെ ബോധ്യപ്പെടുത്തുന്നത്.</span> This shows why measurements must be exact.</li></ul></div>
+<div class="safety">⚠️ Bleach is corrosive. Never mix bleach with acids (toilet cleaners) or with ammonia: poisonous gases form. Use it only as the label says, with gloves, in a well-aired place.</div>
+
+<!-- ================= 4 ================= -->
+<h2 id="ppm">4. Very tiny amounts: parts per million (ppm) <span class="ml">പാർട്സ് പെർ മില്ല്യൺ</span></h2>
+<div class="sidebox"><div class="title">📚 Side box (page 118) – other measures of concentration <span class="ml">ലായനിയുടെ ഗാഢത പ്രസ്താവിക്കുന്ന മറ്റ് ചില അളവുകൾ</span></div>
+<span class="ml keyml">ഒരു നിശ്ചിത മാസ് ലായനിയുടെ ദശലക്ഷം (10⁶) ഭാഗത്തിൽ എത്രഭാഗം ലീനം ഉണ്ടെന്ന് സൂചിപ്പിക്കുന്ന അളവാണ് പാർട്സ് പെർ മില്ല്യൺ. വളരെ കുറഞ്ഞ അളവിൽ അടങ്ങിയിരിക്കുന്ന ലീനത്തിന്റെ സാന്നിധ്യം പ്രസ്താവിക്കാനാണ് സാധാരണ ppm ഉപയോഗിക്കുന്നത്.</span>
+<ul style="margin:.2rem 0">
+<li><b>Parts per million (ppm)</b> tells how many parts of solute there are in a <b>million (10⁶) parts</b> of the solution, by mass. It is used for solutes present in <b>very small amounts</b>.</li>
+<li>Chlorine in <b>drinking water</b>: <b>4 ppm</b>.</li>
+<li>Oxygen dissolved in <b>sea water</b>: <b>5.8 ppm</b>.</li>
+<li>Carbon dioxide (CO₂), a <b>greenhouse gas</b>, in the atmosphere: <b>270 ppm</b> before industrialisation → <b>414 ppm</b> today. This rise is one of the causes of <b>global warming</b>.</li>
+<li>Other measures of concentration: <b>volume percentage</b>, <b>molarity</b> and <b>molality</b> <span class="ml">വോളിയം പെർസെന്റേജ്, മൊളാരിറ്റി, മൊളാലിറ്റി</span> (you will meet these in higher classes).</li></ul></div>
+<div class="lab" id="ppmLab">
+  <div class="lab-title">🔎 What does a ppm look like?</div>
+  <div class="svgscroll"><svg id="ppmSvg" viewBox="0 0 800 280" role="img" aria-label="A one-kilogram mass of water drawn as a big block of a million milligram cubes; a tiny highlighted corner shows the few milligrams of solute; on the right, bars compare carbon dioxide in air before industrialisation and today"></svg></div>
+  <div class="controls"><label>Example <select id="ppmSel">
+    <option value="0">chlorine in drinking water – 4 ppm</option>
+    <option value="1">oxygen in sea water – 5.8 ppm</option>
+    <option value="2">CO₂ in air, before industry – 270 ppm</option>
+    <option value="3">CO₂ in air, today – 414 ppm</option></select></label></div>
+  <div class="readout" id="ppmOut"></div>
+  <p class="hint">1 ppm = 1 g in 1 000 000 g = 1 mg in 1 kg. 1 % = 10 000 ppm.</p>
+</div>
+<div class="further"><div class="title">🔭 Go further</div>
+<p style="margin:0">For gases in the air, scientists usually count ppm by <b>volume</b> (molecules), not by mass. 414 ppm of CO₂ means 414 out of every million molecules of air. As a percentage that is only 414 ÷ 10 000 = <b>0.0414 %</b>, yet the rise from 270 ppm (an increase of 144 ppm, about 53 %) is enough to warm the whole planet.</p></div>
+
+<!-- ================= 5 ================= -->
+<h2 id="calc">5. Mass-percentage calculator – forwards and backwards</h2>
+<p>Real problems come in three shapes. Pick one, type the numbers and read the working. The bar shows the whole solution split into solute and solvent; the 100-square grid shows the percentage.</p>
+<div class="lab" id="calcLab">
+  <div class="lab-title">🧮 Mass-percentage calculator</div>
+  <div class="controls"><label>I know … <select id="cMode">
+    <option value="f">solute and solvent → find the mass %</option>
+    <option value="s">mass of solution and % → find the solute (and water)</option>
+    <option value="w">solute and % → find the water needed</option></select></label></div>
+  <div class="controls" id="cIn"></div>
+  <div class="svgscroll"><svg id="cSvg" viewBox="0 0 800 250" role="img" aria-label="A long bar for the solution, split into a solute part and a solvent part with their masses, and a grid of 100 squares with the percentage coloured"></svg></div>
+  <div class="readout" id="cOut"></div>
+</div>
+<div class="qa"><p><b>Practice: backwards problems</b> (type the number, then check)</p>
+<div class="ask"><p>1. How much sugar is needed to make <b>250 g</b> of an <b>8 %</b> sugar solution? How much water?</p>
+<div class="inl">sugar <input data-a="20" aria-label="mass of sugar"> g · water <input data-a="230" aria-label="mass of water"> g <button class="btn primary" data-chk>Check</button></div><div class="why"></div></div>
+<div class="ask"><p>2. Anu has <b>25 g</b> of salt. How much water must she add to make a <b>10 %</b> salt solution?</p>
+<div class="inl">water <input data-a="225" aria-label="mass of water"> g <button class="btn primary" data-chk>Check</button></div><div class="why"></div></div>
+<div class="ask"><p>3. A bottle holds <b>500 g</b> of the 3.62 % bleaching solution. What mass of NaOCl does it contain?</p>
+<div class="inl">NaOCl <input data-a="18.1" aria-label="mass of sodium hypochlorite"> g <button class="btn primary" data-chk>Check</button></div><div class="why"></div></div>
+<div class="reveal" data-btn="Show the working"><div class="answer">
+1. Solute = 250 × 8 ÷ 100 = <b>20 g</b> sugar; water = 250 − 20 = <b>230 g</b>.<br>
+2. 25 g must be 10 % of the solution, so the solution = 25 × 100 ÷ 10 = 250 g; water = 250 − 25 = <b>225 g</b> (225 mL).<br>
+3. NaOCl = 500 × 3.62 ÷ 100 = <b>18.1 g</b>.</div></div></div>
+
+<div class="callout warn"><div class="title">⚠️ Common mistakes</div>
+<ul style="margin:0">
+<li>Dividing by the mass of the <b>solvent</b> ✗ – always divide by the mass of the <b>solution</b> (solute + solvent).</li>
+<li>"15 % means 15 g in 100 g of water" ✗ – it means 15 g in 100 g of <b>solution</b> (85 g water).</li>
+<li>Forgetting "× 100" and writing 0.1 instead of 10 %.</li>
+<li>Thinking a dark colour always means "concentrated" – a colourless sugar solution can be very concentrated too. Colour is only a clue for coloured solutes like KMnO₄.</li></ul></div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://phet.colorado.edu/en/simulations/concentration" target="_blank" rel="noopener noreferrer">🧪 Concentration (PhET simulation)</a> <span class="src">PhET, University of Colorado Boulder</span><br><span class="note">Add solute, add or remove water, and watch the concentration and saturation.</span></li><li><a href="https://en.wikipedia.org/wiki/Mass_fraction_(chemistry)" target="_blank" rel="noopener noreferrer">📄 Mass fraction (chemistry)</a> <span class="src">Wikipedia</span><br><span class="note">Mass percentage = mass of solute ÷ mass of solution × 100.</span></li><li><a href="https://en.wikipedia.org/wiki/Parts-per_notation" target="_blank" rel="noopener noreferrer">📄 Parts-per notation</a> <span class="src">Wikipedia</span><br><span class="note">What ppm means (chlorine in drinking water, CO₂ in air).</span></li><li><a href="https://phet.colorado.edu/en/simulations/molarity" target="_blank" rel="noopener noreferrer">🧪 Molarity (PhET simulation)</a> <span class="src">PhET, University of Colorado Boulder</span><br><span class="note">Go further: another way to measure concentration.</span></li></ul></div>
+<h2 id="check">6. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li><b>Concentration</b> <span class="ml">ലായനിയുടെ ഗാഢത</span> = the amount of solute in a definite amount of solution. Little solute → <b>dilute</b> <span class="ml">നേർത്ത ലായനി</span>; more solute → <b>concentrated</b> <span class="ml">ഗാഢലായനി</span>.</li>
+<li><b>Mass percentage</b> <span class="ml">മാസ് പെർസെന്റേജ്</span> = (mass of solute ÷ mass of solution) × 100 = grams of solute in 100 g of solution.</li>
+<li>10 g salt + 90 g water → 10 %. 2 g A + 18 g water → 10 %. 15 % → 15 g salt in 100 g solution.</li>
+<li>Industrial bleaching solution: 3.62 % NaOCl. <b>ppm</b> = parts in 10⁶ parts: chlorine in drinking water 4 ppm, O₂ in sea water 5.8 ppm, CO₂ in air 270 → 414 ppm.</li></ul></div>
+<p>Next: <a href="05_saturated_solutions.html">Saturated, unsaturated and supersaturated solutions ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Solutions · Class 9 Chemistry", "icon": "🧪", "key": "chemistry_ch6_progress", "pages": [["index.html", "Home"], ["01_mixtures_states.html", "1 · Mixtures, States of Matter & Dissolving"], ["02_percentages_graphs.html", "2 · Percentages, Units & Reading Graphs"], ["03_solutions_solvents.html", "3 · Solutions, Solutes & Solvents"], ["04_concentration_mass_percent.html", "4 · Concentration & Mass Percentage"], ["05_saturated_solutions.html", "5 · Saturated, Unsaturated & Supersaturated Solutions"], ["06_solubility.html", "6 · Solubility & Solubility Curves"], ["07_suspensions_colloids.html", "7 · True Solutions, Suspensions & Colloids"], ["08_drinks_additives.html", "8 · Colloids in Daily Life, Drinks & Food Additives"], ["09_intext_questions_solutions.html", "9 · In-text Questions – Solutions"], ["10_assess_solutions.html", "10 · Let Us Assess & Extended Activities – Solutions"], ["11_applications_explore.html", "11 · Applications & Explore Online"], ["12_summary_revision.html", "12 · Summary & Quick Quiz"], ["13_model_test_paper.html", "13 · Model Test Paper"], ["14_model_test_solutions.html", "14 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ==== common helpers (same code on pages 04–06) ==== */
+const {P, el} = K;
+const $id = id => document.getElementById(id);
+const CV = c => (c === 'none' ? 'none' : ((c.charAt(0) === '#' || c.startsWith('var(') || c.startsWith('rgb') || c.startsWith('url')) ? c : `var(--${c === 'amber' ? 'accent' : c})`));
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+/* text: fs = font size (px), o.c colour class, o.w weight, o.a anchor, o.fill fixed colour */
+function T(svg, x, y, s, fs = 14, o = {}){ return el('text', {x, y, class: 'lbl' + (o.c ? ' ' + o.c : ''), 'text-anchor': o.a || 'middle', 'dominant-baseline': 'middle',
+  style: `font-size:${fs}px;font-weight:${o.w || 400}` + (o.fill ? `;fill:${o.fill}` : '') + (o.st ? ';' + o.st : ''), text: s}, svg); }
+function rect(svg, x, y, w, h, style, rx = 0){ return el('rect', {x, y, width: Math.max(0, w), height: Math.max(0, h), rx, style}, svg); }
+function circ(svg, x, y, r, style){ return el('circle', {cx: x, cy: y, r: Math.max(0, r), style}, svg); }
+function ln(svg, x1, y1, x2, y2, c = 'text', w = 2, extra = ''){ return el('line', {x1, y1, x2, y2, style: `stroke:${CV(c)};stroke-width:${w};stroke-linecap:round;${extra}`}, svg); }
+function pth(svg, d, style){ return el('path', {d, style}, svg); }
+function arrow(svg, a, b, c = 'text', w = 2.2, head = 9){ const L = K.dist(a, b); if (L < 2) return; const u = K.unit(a, b), hh = Math.min(head, L * .6), hb = P(b.x - u.x * hh, b.y - u.y * hh); ln(svg, a.x, a.y, hb.x, hb.y, c, w);
+  el('polygon', {points: `${b.x},${b.y} ${hb.x + u.y * hh * .55},${hb.y - u.x * hh * .55} ${hb.x - u.y * hh * .55},${hb.y + u.x * hh * .55}`, style: `fill:${CV(c)}`}, svg); }
+const WATER = '#bfdbfe';
+/* beaker with a lip; liquid from level y = lvl to the bottom; o.fill liquid colour, o.op its opacity */
+function beaker(svg, x, y, w, h, lvl, o = {}){
+  if (lvl !== null && lvl < y + h){ rect(svg, x + 2, lvl, w - 4, y + h - lvl - 2, `fill:${o.base || WATER};opacity:${o.bop ?? .55}`, 2);
+    if (o.fill) rect(svg, x + 2, lvl, w - 4, y + h - lvl - 2, `fill:${o.fill};opacity:${o.op ?? .5}`, 2);
+    ln(svg, x + 2, lvl, x + w - 2, lvl, '#3b82f6', 1.2, 'opacity:.6'); }
+  pth(svg, `M${x - 7},${y - 4} L${x},${y + 4} L${x},${y + h} L${x + w},${y + h} L${x + w},${y + 4} L${x + w + 5},${y - 4}`, 'fill:none;stroke:var(--text);stroke-width:2.4;stroke-linejoin:round');
+  ln(svg, x + 8, y + 18, x + 8, y + h - 14, '#ffffff', 3, 'opacity:.35'); }
+/* yes/no style choice buttons */
+function choices(root = document){ K.$$('.yn[data-ans]', root).forEach(bx => { if (bx.dataset.wired) return; bx.dataset.wired = 1; const ans = +bx.dataset.ans, why = bx.parentElement.querySelector('.why');
+  K.$$('button', bx).forEach((b, k) => b.addEventListener('click', () => { K.$$('button', bx).forEach(x => x.classList.remove('ok', 'bad')); b.classList.add(k === ans ? 'ok' : 'bad');
+    if (why){ why.innerHTML = k === ans ? '✅ ' + (bx.dataset.why || 'Correct.') : '❌ ' + (bx.dataset.hint || 'Not quite – think again.'); why.style.color = k === ans ? 'var(--green)' : 'var(--red)'; } })); }); }
+/* number boxes: <input data-a="20"> … <button data-chk> inside .inl, feedback in the next .why */
+function numChecks(){ K.$$('[data-chk]').forEach(b => { const box = b.closest('.inl'), why = box.parentElement.querySelector('.why'), ins = K.$$('input[data-a]', box);
+  b.addEventListener('click', () => { let ok = 0; ins.forEach(i => { const v = parseFloat(String(i.value).replace(',', '.')), r = !isNaN(v) && Math.abs(v - +i.dataset.a) <= Math.max(.01, Math.abs(+i.dataset.a) * .005); i.classList.toggle('ok', r); i.classList.toggle('bad', !r); if (r) ok++; });
+    why.innerHTML = ok === ins.length ? '✅ Correct!' : '❌ Not yet – use mass of solution = solute + solvent, and "× 100 ÷ 100" carefully.'; why.style.color = ok === ins.length ? 'var(--green)' : 'var(--red)'; }); }); }
+/* 10 × 10 grid of squares; n squares filled (row by row) */
+function grid100(svg, x, y, s, n, col = '#a855f7', rest = null, o = {}){ const c = s / 10;
+  for (let k = 0; k < 100; k++){ const gx = x + (k % 10) * c, gy = y + Math.floor(k / 10) * c, on = k + 1 <= n + 1e-6;
+    const part = !on && k < n ? n - k : 0;
+    rect(svg, gx + 1, gy + 1, c - 2, c - 2, `fill:${rest || 'var(--surface2)'};stroke:var(--border);stroke-width:1`, 2);
+    if (on || part > 0) rect(svg, gx + 1, gy + 1, (c - 2) * (on ? 1 : part), c - 2, `fill:${col};opacity:${o.op ?? .9}`, 2); } }
+/* ==== end common ==== */
+
+choices(); numChecks();
+
+/* ---------- KMnO4 beakers ---------- */
+(function(){
+  const svg = $id('kmSvg'), out = $id('kmOut'); const n = [2, 6]; let p = 1, stop = null;
+  const B = [{x: 70, y: 70, w: 190, h: 220}, {x: 340, y: 70, w: 190, h: 220}], LV = 105;
+  const opac = k => 1 - Math.exp(-.32 * k);
+  const word = k => k <= 2 ? 'light pink / pale purple' : k <= 4 ? 'purple' : 'deep purple';
+  function draw(){
+    K.clear(svg);
+    B.forEach((b, i) => { const k = n[i], fin = opac(k), bot = b.y + b.h - 3;
+      T(svg, b.x + b.w / 2, 22, `Beaker ${i + 1}`, 16, {w: 700}); T(svg, b.x + b.w / 2, 44, `${k} crystal${k > 1 ? 's' : ''} of KMnO₄`, 13, {c: 'muted'});
+      beaker(svg, b.x, b.y, b.w, b.h, LV);
+      /* colour spreading up from the bottom */
+      const bands = 22, H = bot - LV;
+      for (let j = 0; j < bands; j++){ const h = j / bands, front = p * 1.5, a = fin * clamp((front - h) / .45, 0, 1) * (p < 1 ? (1 - .35 * h) : 1);
+        if (a > .01) rect(svg, b.x + 2, bot - (j + 1) * H / bands, b.w - 4, H / bands + .6, `fill:#86198f;opacity:${(a * .85).toFixed(3)}`); }
+      if (p < 1) for (let s = 0; s < 4; s++){ const sx = b.x + 40 + s * 36, top = bot - H * p * 1.2 * (0.6 + .1 * s); pth(svg, `M${sx},${bot - 6} C${sx + 18},${bot - 40} ${sx - 18},${(bot + top) / 2} ${sx + 6},${Math.max(LV + 4, top)}`, `fill:none;stroke:#86198f;stroke-width:5;opacity:${(.5 * fin * (1 - p)).toFixed(2)};stroke-linecap:round`); }
+      /* crystals */
+      for (let c = 0; c < k; c++){ const cx = b.x + 30 + ((c * 47) % (b.w - 60)), fall = clamp(p * 4, 0, 1), cy = 58 + (bot - 8 - 58) * fall, sz = 7 * (1 - clamp((p - .25) / .75, 0, 1)) + .01;
+        if (sz > .5) el('polygon', {points: `${cx},${cy - sz} ${cx + sz * .8},${cy} ${cx},${cy + sz * .7} ${cx - sz * .8},${cy}`, style: 'fill:#4a044e;stroke:#c026d3;stroke-width:1'}, svg); }
+      T(svg, b.x + b.w / 2, 312, p >= 1 ? word(k) : 'dissolving…', 15, {w: 700, fill: p >= 1 ? (k <= 2 ? '#db2777' : '#a21caf') : null, c: p >= 1 ? '' : 'muted'});
+      T(svg, b.x + b.w / 2, 332, p >= 1 ? (k === n[1 - i] ? 'same as the other beaker' : (k < n[1 - i] ? 'more dilute' : 'more concentrated')) : '', 13, {c: 'muted'}); });
+    /* colour scale */
+    T(svg, 668, 22, 'colour scale', 15, {w: 700}); const sx = 630, sy = 50, sh = 240;
+    for (let k = 1; k <= 10; k++){ const y = sy + (10 - k) * sh / 10; rect(svg, sx, y, 60, sh / 10 - 2, `fill:${WATER};opacity:.55`, 3); rect(svg, sx, y, 60, sh / 10 - 2, `fill:#86198f;opacity:${(opac(k) * .85).toFixed(3)}`, 3); T(svg, sx - 10, y + sh / 20, String(k), 12, {a: 'end', c: 'muted'}); }
+    T(svg, sx + 70, sy + 6, 'concentrated', 12, {a: 'start', c: 'red', w: 700}); T(svg, sx + 70, sy + sh - 10, 'dilute', 12, {a: 'start', c: 'blue', w: 700});
+    n.forEach((k, i) => { const y = sy + (10 - k) * sh / 10 + sh / 20; arrow(svg, P(sx + 112, y), P(sx + 66, y), i ? 'red' : 'blue', 2); T(svg, sx + 118, y, `B${i + 1}`, 12, {a: 'start', w: 700}); });
+  }
+  function say(){ out.textContent = `Same volume of water in both beakers.\nBeaker 1: ${n[0]} crystal(s) → ${word(n[0])}.   Beaker 2: ${n[1]} crystal(s) → ${word(n[1])}.\n` +
+    (n[0] === n[1] ? 'Same amount of solute in the same amount of water → same concentration, same colour.' : `Beaker ${n[0] > n[1] ? 1 : 2} has more solute dissolved in the same amount of water → higher concentration → deeper colour.`); }
+  function go(){ if (stop) stop(); p = 0; stop = K.animate(3200, (u, raw) => { p = raw; draw(); }, () => { p = 1; draw(); stop = null; }); say(); }
+  K.slider('#kmA', v => { n[0] = v; go(); }, 0); K.slider('#kmB', v => { n[1] = v; go(); }, 0);
+  $id('kmGo').addEventListener('click', go);
+})();
+
+/* ---------- mass-percentage steppers ---------- */
+const SALT = '#f8fafc', SALTE = '#64748b', SOLC = '#a855f7';
+function heap(svg, cx, by, s, lab){ pth(svg, `M${cx - 40 * s},${by} Q${cx - 20 * s},${by - 30 * s} ${cx},${by - 34 * s} Q${cx + 20 * s},${by - 30 * s} ${cx + 40 * s},${by} Z`, `fill:${SALT};stroke:${SALTE};stroke-width:1.4`);
+  for (let k = 0; k < 12; k++) rect(svg, cx - 26 * s + ((k * 17) % 50) * s, by - 6 - ((k * 7) % 20) * s, 4, 4, `fill:#e2e8f0;stroke:${SALTE};stroke-width:.6`);
+  if (lab) T(svg, cx, by + 16, lab, 13, {w: 700}); }
+function massStepper(sel, a, b, name, solv){
+  const m = a + b, pc = a / m * 100, F = K.fmt;
+  const steps = [`<b>Mass of the solute</b> <span class="ml">ലീനത്തിന്റെ മാസ്</span> = <b>${a} g</b> (${name}).`,
+    `<b>Mass of the solvent</b> <span class="ml">ലായകത്തിന്റെ മാസ്</span> = <b>${b} g</b> (${solv}).`,
+    `Dissolve: <b>mass of the solution</b> <span class="ml">ലായനിയുടെ മാസ്</span> = ${a} g + ${b} g = <b>${m} g</b>.`,
+    `<b>Mass percentage</b> = ${a} ÷ ${m} × 100 = <b>${F(pc, 2)} %</b>.` + (m !== 100 ? ` In ${m} g of solution there are ${a} g of ${name}, so in 100 g there would be ${F(pc, 2)} g.` : ' 10 g of every 100 g of the solution is salt.')];
+  new K.Stepper(sel, {steps, ms: 1200, gap: 3200, draw(svg, i, t){
+    const bx = 200, by = 90, bw = 130, bh = 150, lvl = by + 40;
+    rect(svg, 10, 10, 780, 280, 'fill:none;stroke:var(--border);stroke-width:1.2', 14);
+    /* solute heap moves into the beaker at step 2 */
+    const mv = i < 2 ? 0 : (i === 2 ? t : 1);
+    if (mv < 1){ const hx = 90 + (bx + bw / 2 - 90) * mv, hy = 240 - 90 * Math.sin(Math.PI * mv); heap(svg, hx, hy, 1 - mv * .7, mv === 0 ? `${a} g ${name}` : '');
+      if (i === 0) arrow(svg, P(90, 150), P(90, 196), 'accent', 2.5); }
+    beaker(svg, bx, by, bw, bh, lvl, {fill: i >= 2 ? SOLC : null, op: i >= 2 ? .18 * (i === 2 ? t : 1) : 0});
+    T(svg, bx + bw / 2, by + bh + 18, i < 2 ? `${b} g ${solv}` : `${m} g solution`, 13, {w: 700, c: i >= 2 ? 'purple' : ''});
+    if (i === 1) arrow(svg, P(bx + bw + 40, by + 70), P(bx + bw + 8, by + 70), 'accent', 2.5);
+    /* equation lines */
+    const L = [`mass of solute = ${a} g`, `mass of solvent = ${b} g`, `mass of solution = ${a} + ${b} = ${m} g`, `mass % = ${a} / ${m} × 100 = ${F(pc, 2)} %`];
+    L.forEach((s, k) => { if (k <= i) T(svg, 370, 60 + k * 34, s, 15, {a: 'start', w: k === i ? 700 : 400, c: k === i ? (k === 3 ? 'green' : 'blue') : 'muted'}); });
+    /* grid */
+    const gx = 610, gy = 70, gs = 160; T(svg, gx + gs / 2, 46, i < 3 ? '100 g of solution' : `${F(pc, 2)} squares of 100`, 13, {w: 700});
+    grid100(svg, gx, gy, gs, i < 3 ? 0 : pc * (i === 3 ? t : 1), SOLC, `${WATER}`);
+    T(svg, gx + gs / 2, gy + gs + 18, 'each square = 1 % of the solution', 11, {c: 'muted'});
+    if (i === 3 && m !== 100) T(svg, 370, 220, `${a} g in ${m} g  =  ${F(pc, 2)} g in 100 g`, 15, {a: 'start', w: 700, c: 'purple'});
+  }});
+}
+massStepper('#ms1', 10, 90, 'salt', 'water');
+massStepper('#ms3', 2, 18, 'A', 'water');
+
+/* the meaning of 15 % */
+(function(){
+  const steps = ['A <b>15 %</b> salt solution: think of exactly <b>100 g of the solution</b> (100 squares).',
+    '<b>15 g</b> of it is <b>salt</b> (the solute) – 15 squares.',
+    'The remaining 100 − 15 = <b>85 g</b> is <b>water</b> (the solvent). So 15 % ≠ "15 g salt in 100 g water".',
+    'Any amount of the same solution has the same concentration: <b>200 g</b> of it holds 2 × 15 = <b>30 g</b> salt and 170 g water.'];
+  new K.Stepper('#ms2', {steps, ms: 1100, gap: 3200, draw(svg, i, t){
+    rect(svg, 10, 10, 780, 280, 'fill:none;stroke:var(--border);stroke-width:1.2', 14);
+    const g1 = 60, gy = 70, gs = 170;
+    T(svg, g1 + gs / 2, 46, '100 g of 15 % salt solution', 14, {w: 700});
+    grid100(svg, g1, gy, gs, i === 0 ? 0 : 15 * (i === 1 ? t : 1), '#f59e0b', i >= 2 ? WATER : null);
+    if (i >= 1) T(svg, 300, 110, '■ salt: 15 g', 16, {a: 'start', w: 700, fill: '#d97706'});
+    if (i >= 2) T(svg, 300, 145, '■ water: 85 g', 16, {a: 'start', w: 700, c: 'blue'});
+    if (i >= 2) T(svg, 300, 180, 'total: 100 g of solution', 14, {a: 'start', c: 'muted'});
+    if (i === 3){ const g2 = 520, s2 = 110; [0, 1].forEach(k => grid100(svg, g2 + k * (s2 + 16), 90, s2, 15 * t, '#f59e0b', WATER));
+      T(svg, g2 + s2 + 8, 62, '200 g of the same solution', 14, {w: 700}); T(svg, g2 + s2 + 8, 230, 'salt = 15 + 15 = 30 g · water = 170 g', 14, {w: 700, c: 'green'}); }
+  }});
+})();
+
+/* in-text 2 g + 18 g check */
+$id('q18c').addEventListener('click', () => { const v = parseFloat(String($id('q18').value).replace(',', '.')), f = $id('q18f'), inp = $id('q18');
+  const ok = !isNaN(v) && Math.abs(v - 10) < .05; inp.classList.toggle('ok', ok); inp.classList.toggle('bad', !ok);
+  f.innerHTML = isNaN(v) ? 'Type a number first.' : ok ? '✅ Correct! 2 ÷ (2 + 18) × 100 = 10 %.' : (Math.abs(v - 11.11) < .1 ? '❌ You divided by 18, the mass of the solvent. Divide by the mass of the <b>solution</b>.' : '❌ Not yet. Mass of solution = 2 + 18 = 20 g.');
+  f.style.color = ok ? 'var(--green)' : 'var(--red)'; });
+
+/* ---------- ppm picture ---------- */
+(function(){
+  const svg = $id('ppmSvg'), out = $id('ppmOut'), sel = $id('ppmSel');
+  const EX = [{v: 4, what: 'chlorine', where: 'drinking water'}, {v: 5.8, what: 'dissolved oxygen', where: 'sea water'}, {v: 270, what: 'carbon dioxide', where: 'air (before industry)'}, {v: 414, what: 'carbon dioxide', where: 'air (today)'}];
+  function draw(){ const e = EX[+sel.value]; K.clear(svg);
+    /* a 1 kg block = 1 000 000 mg drawn as 100 × 100 tiny squares in the zoom */
+    const gas = +sel.value >= 2, U = gas ? 'particles' : 'mg';
+    T(svg, 150, 20, gas ? '1 000 000 particles of air' : '1 kg of solution = 1 000 000 mg', 14, {w: 700});
+    rect(svg, 40, 40, 220, 220, `fill:${WATER};opacity:.55;stroke:var(--text);stroke-width:1.5`, 4);
+    for (let k = 1; k < 10; k++){ ln(svg, 40 + k * 22, 40, 40 + k * 22, 260, 'border', .8); ln(svg, 40, 40 + k * 22, 260, 40 + k * 22, 'border', .8); }
+    rect(svg, 40, 40, 22, 22, 'fill:none;stroke:var(--red);stroke-width:2.5', 2);
+    T(svg, 150, 272, `each small square = 10 000 ${U}`, 11, {c: 'muted'});
+    /* zoom of one square: 100 × 100 = 10 000 mg */
+    ln(svg, 62, 40, 300, 40, 'red', 1.2, 'stroke-dasharray:4 4'); ln(svg, 62, 62, 300, 260, 'red', 1.2, 'stroke-dasharray:4 4');
+    rect(svg, 300, 40, 220, 220, `fill:${WATER};opacity:.55;stroke:var(--red);stroke-width:2`, 4);
+    const mg = e.v; /* mg of solute in 1 kg */
+    const cells = Math.min(10000, Math.round(mg)), c = 2.2;
+    for (let k = 0; k < Math.min(cells, 10000); k++){ const gx = 300 + (k % 100) * c, gy = 40 + Math.floor(k / 100) * c; rect(svg, gx, gy, c, c, 'fill:#dc2626'); }
+    T(svg, 410, 272, `zoom on one small square (10 000 ${U})`, 11, {c: 'muted'});
+    if (cells < 50){ circ(svg, 305, 45, 16, 'fill:none;stroke:var(--red);stroke-width:2'); arrow(svg, P(380, 110), P(318, 56), 'red', 2); T(svg, 384, 118, `the ${K.fmt(e.v, 1)} ${U} are here!`, 12, {a: 'start', w: 700, c: 'red'}); }
+    T(svg, 410, 20, gas ? `all the CO₂: ${e.v} particles (1 red dot = 1)` : `all the ${e.what} in 1 kg: ${K.fmt(e.v, 1)} mg (1 red dot = 1 mg)`, 12, {w: 700, c: 'red'});
+    /* CO2 bars */
+    T(svg, 665, 20, 'CO₂ in air', 14, {w: 700});
+    [[270, 'before industry'], [414, 'today']].forEach(([v, l], k) => { const h = v / 450 * 200, x = 590 + k * 90; rect(svg, x, 250 - h, 60, h, `fill:${k ? 'var(--red)' : 'var(--blue)'};opacity:${(+sel.value === 2 + k) ? .95 : .45}`, 4);
+      T(svg, x + 30, 240 - h, `${v} ppm`, 13, {w: 700}); T(svg, x + 30, 265, l, 11, {c: 'muted'}); });
+  }
+  function say(){ const e = EX[+sel.value];
+    out.textContent = `${e.what} in ${e.where}: ${K.fmt(e.v, 1)} ppm\n= ${K.fmt(e.v, 1)} g in 1 000 000 g (one tonne)  = ${K.fmt(e.v, 1)} mg in 1 kg (about 1 L of water)\n= ${K.fmt(e.v / 10000, 5)} % – far too small to write comfortably as a percentage.` +
+      (+sel.value >= 2 ? '\nCO₂ rose from 270 to 414 ppm: 144 ppm more, an increase of about 53 %.' : ''); }
+  sel.addEventListener('change', () => { draw(); say(); });
+  draw(); say();
+})();
+
+/* ---------- calculator ---------- */
+(function(){
+  const svg = $id('cSvg'), out = $id('cOut'), mode = $id('cMode'), box = $id('cIn'), F = K.fmt;
+  const DEF = {f: [['solute (g)', 10], ['solvent (g)', 90]], s: [['solution (g)', 250], ['mass %', 8]], w: [['solute (g)', 25], ['mass %', 10]]};
+  let vals = [];
+  function inputs(){ const d = DEF[mode.value]; box.innerHTML = d.map((q, k) => `<label>${q[0]} <input type="number" min="0" step="any" value="${q[1]}" data-k="${k}"></label>`).join(''); vals = d.map(q => q[1]);
+    K.$$('input', box).forEach(i => i.addEventListener('input', () => { vals[+i.dataset.k] = parseFloat(i.value); run(); })); run(); }
+  function run(){ const md = mode.value, [x, y] = vals; let a, b, pc, msg = '', bad = '';
+    if (!(x >= 0) || !(y >= 0)) bad = 'Type positive numbers.';
+    else if (md === 'f'){ if (x + y <= 0) bad = 'The solution must have some mass.'; else { a = x; b = y; pc = a / (a + b) * 100;
+      msg = `mass of solution = ${F(a, 2)} + ${F(b, 2)} = ${F(a + b, 2)} g\nmass % = ${F(a, 2)} ÷ ${F(a + b, 2)} × 100 = ${F(pc, 2)} %`; } }
+    else if (md === 's'){ if (y <= 0 || y >= 100) bad = 'The percentage must be between 0 and 100.'; else { pc = y; a = x * y / 100; b = x - a;
+      msg = `solute = ${F(x, 2)} × ${F(y, 2)} ÷ 100 = ${F(a, 3)} g\nsolvent (water) = ${F(x, 2)} − ${F(a, 3)} = ${F(b, 3)} g`; } }
+    else { if (y <= 0 || y >= 100) bad = 'The percentage must be between 0 and 100.'; else { pc = y; a = x; const m = x * 100 / y; b = m - a;
+      msg = `${F(a, 2)} g must be ${F(y, 2)} % of the solution\nmass of solution = ${F(a, 2)} × 100 ÷ ${F(y, 2)} = ${F(m, 3)} g\nwater needed = ${F(m, 3)} − ${F(a, 2)} = ${F(b, 3)} g  (≈ ${F(b, 1)} mL)`; } }
+    K.clear(svg);
+    if (bad){ out.textContent = bad; T(svg, 400, 125, bad, 15, {c: 'red', w: 700}); return; }
+    out.textContent = msg + `\n→ In every 100 g of this solution there are ${F(pc, 2)} g of solute.`;
+    const X0 = 30, W = 470, fa = a / (a + b);
+    T(svg, X0, 30, `solution = ${F(a + b, 2)} g`, 15, {a: 'start', w: 700, c: 'purple'});
+    rect(svg, X0, 50, W * fa, 56, 'fill:#f59e0b;opacity:.9', 4); rect(svg, X0 + W * fa, 50, W * (1 - fa), 56, `fill:${WATER};opacity:.9`, 4);
+    rect(svg, X0, 50, W, 56, 'fill:none;stroke:var(--text);stroke-width:1.6', 4);
+    T(svg, X0, 128, `■ solute ${F(a, 2)} g`, 14, {a: 'start', w: 700, fill: '#d97706'}); T(svg, X0 + W, 128, `■ solvent ${F(b, 2)} g`, 14, {a: 'end', w: 700, c: 'blue'});
+    T(svg, X0, 170, md === 'f' ? 'Divide by the WHOLE bar (the solution), not by the blue part.' : 'The orange share of the bar is the mass percentage.', 13, {a: 'start', c: 'muted'});
+    T(svg, X0, 205, `mass % = ${F(pc, 2)} %`, 20, {a: 'start', w: 800, c: 'green'});
+    grid100(svg, 590, 40, 170, pc, '#f59e0b', WATER); T(svg, 675, 225, `${F(pc, 2)} of 100 squares`, 13, {w: 700});
+  }
+  mode.addEventListener('change', inputs); inputs();
+})();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'The concentration of a solution is …', options: ['the mass of the solvent', 'the amount of solute dissolved in a definite amount of solution', 'the colour of the solution', 'the temperature at which the solute dissolves'], answer: 1, explain: 'Key box, page 117.', hint: 'Think of the KMnO₄ beakers: the same water, different amounts of solute.'});
+K.mcq('#q2', {q: 'Beaker P has 2 crystals of KMnO₄ in 100 mL of water; beaker Q has 6 crystals in 100 mL of water. Which is correct?', options: ['P is concentrated, Q is dilute', 'P is dilute, Q is concentrated', 'Both have the same concentration', 'Neither is a solution'], answer: 1, explain: 'More solute in the same amount of water → more concentrated (deeper purple).', hint: 'Which beaker had the deeper colour?'});
+K.numq('#q3', {q: '5 g of sugar is dissolved in 45 g of water. What is the mass percentage of sugar?', unit: '%', answer: 10, tol: .05, explain: '5 ÷ (5 + 45) × 100 = 10 %.', hint: 'Mass of solution = 5 + 45 = 50 g.'});
+K.mcq('#q4', {q: 'A student writes: "10 g salt in 90 g water → 10 ÷ 90 × 100 = 11.1 %". What went wrong?', options: ['Nothing, it is correct', 'She should divide by the mass of the solution, 100 g, giving 10 %', 'She should multiply by 1000', 'She should divide 90 by 10'], answer: 1, explain: 'The formula uses the mass of the solution (solute + solvent).', hint: 'Look at the bottom of the fraction in the formula.'});
+K.numq('#q5', {q: 'How many grams of salt are there in 300 g of a 15 % salt solution?', unit: 'g', answer: 45, tol: .05, explain: '300 × 15 ÷ 100 = 45 g salt (and 255 g water).', hint: '15 % means 15 g in every 100 g of solution.'});
+K.mcq('#q6', {q: 'The chlorine content of drinking water is 4 ppm. This means …', options: ['4 g of chlorine in 100 g of water', '4 g of chlorine in 1000 g of water', '4 parts of chlorine in a million (10⁶) parts of water, i.e. 4 mg in 1 kg', '4 % chlorine'], answer: 2, explain: 'ppm = parts per million. 4 ppm = 4 mg per kg.', hint: 'ppm = parts per million.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

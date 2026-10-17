@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>True Solutions, Suspensions and Colloids</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+@media(max-width:600px){.onpage a{white-space:normal}}
+
+</style>
+<style>
+/* ==== common styles (same on pages 07–09) ==== */
+.qa,.qbox{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.7rem 1rem;margin:.8rem 0;box-shadow:var(--shadow)}
+.qa p,.qbox p{margin:.3em 0}
+.qbox ol,.qbox ul,.qa ol,.qa ul{margin:.3rem 0}
+.mlq{display:block;font-weight:500;margin:.2rem 0 .4rem}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.answer ul{margin:.2rem 0}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.keyml{display:block;margin:.2rem 0 .4rem}
+.ft{width:auto;min-width:min(100%,520px)}
+.ft td,.ft th{text-align:center;vertical-align:middle;padding:.35rem .45rem}
+.ft th{font-size:.88rem;line-height:1.3}
+.ft th .ml,.ft td .ml{display:block;font-size:.85em}
+.ft td.l{text-align:left}
+.ft input,.ft select{padding:.25rem .3rem;border-radius:6px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:.92rem}
+.ft input{width:9em;text-align:center}
+.ft select{max-width:13em}
+.ft .ok{border-color:var(--green);background:var(--green-soft)}
+.ft .bad{border-color:var(--red);background:var(--red-soft)}
+.ft td.given{font-weight:600}
+.score{font-weight:700;color:var(--primary-ink);margin:.4rem 0 0;min-height:1.3em}
+.ans-tab td,.ans-tab th{text-align:center;vertical-align:middle}
+.ans-tab th .ml,.ans-tab td .ml{display:block;font-size:.85em}
+.ans-tab td.l{text-align:left}
+td.fill{font-weight:700;color:var(--green)}
+.btn.ok{background:var(--green-soft);border-color:var(--green);color:var(--text)}
+.btn.bad{background:var(--red-soft);border-color:var(--red);color:var(--text)}
+.btn.primary .ml{color:#fff}
+.yn{display:inline-flex;gap:.3rem;flex-wrap:wrap}
+.yn .btn{padding:.25rem .6rem;font-size:.88rem}
+.why{font-size:.92rem;margin-top:.3rem;min-height:1.2em}
+.ask{margin:.55rem 0;padding:.45rem .7rem;border-radius:10px;background:var(--surface2)}
+.ask p{margin:.1rem 0 .35rem}
+.sidebox{border:2px solid var(--blue);background:var(--blue-soft);border-radius:14px;padding:.7rem 1rem;margin:1rem 0}
+.sidebox .title{font-weight:700;color:var(--blue);margin-bottom:.3rem}
+.sidebox p:last-child{margin-bottom:0}
+.further{border-left:6px solid var(--purple);background:var(--purple-soft);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+.further .title{font-weight:700;color:var(--purple);margin-bottom:.3rem}
+.eqc{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.35rem;padding:.55em .6em;margin:.7em 0;background:var(--surface2);border-radius:10px;line-height:1.6;overflow-x:auto;white-space:nowrap}
+.eqc sub{font-size:.65em}
+.eqc .st{font-size:.7em;color:var(--muted)}
+.coll{border:2px solid var(--primary);border-radius:12px;padding:.55rem .9rem;margin:.8rem 0;background:var(--surface)}
+.coll .title{font-weight:700;color:var(--primary-ink);margin-bottom:.25rem}
+.ct td,.ct th{vertical-align:middle}
+.ct th .ml,.ct td .ml{display:block;font-size:.85em}
+.controls select{padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem}
+/* ==== page 07 ==== */
+.sizebox{display:grid;grid-template-columns:auto 1fr;gap:.2rem .9rem;margin:.3rem 0 0}
+.sizebox b{white-space:nowrap}
+.tick{display:grid;grid-template-columns:1fr auto;gap:.3rem .8rem;align-items:center}
+.tick .yn{justify-content:flex-end}
+.verdict{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin:.4rem 0}
+</style>
+</head>
+<body data-page="07_suspensions_colloids">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 6 · Section 7</span><span class="chip amber">Textbook pages 123–126</span>
+<h1>True Solutions, Suspensions and Colloids <span class="ml">യഥാർഥ ലായനി · സസ്പെൻഷൻ · കൊളോയിഡുകൾ</span></h1>
+<p class="lead">Stir sugar into water and it vanishes. Stir chalk powder into water and the water turns cloudy, then slowly clears as the chalk sinks. Milk does neither. It stays white and never settles. And why can you see the beam of the projector in a dusty classroom but not in clean air? On this page you sort mixtures into <b>true solutions</b> <span class="ml">യഥാർഥ ലായനി</span>, <b>suspensions</b> <span class="ml">സസ്പെൻഷൻ</span> and <b>colloids</b> <span class="ml">കൊളോയിഡുകൾ</span>, and you meet the <b>Tyndall effect</b> <span class="ml">ടിൻഡൽ പ്രഭാവം</span>.</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 1 and 2 of this guide)</div>
+<ul style="margin:0">
+<li>A <b>homogeneous mixture</b> <span class="ml">ഏകാത്മക മിശ്രിതങ്ങൾ</span> has the same properties in all its parts. A <b>heterogeneous mixture</b> <span class="ml">ഭിന്നാത്മക മിശ്രിതം</span> does not (<a href="01_mixtures_states.html">page 1</a>).</li>
+<li>Filtering separates solid pieces that are bigger than the holes in the filter paper (<a href="01_mixtures_states.html">page 1</a>).</li>
+<li>1 nanometre (nm) = one-billionth of a metre = 10<sup>−9</sup> m. A human hair is about 70 000 nm thick (<a href="02_percentages_graphs.html">page 2</a>).</li>
+</ul></div>
+
+<!-- ================= 1 ================= -->
+<h2 id="sugarchalk">1. Sugar water and chalk water <span class="ml">യഥാർഥ ലായനി, സസ്പെൻഷൻ</span> (Fig 6.7)</h2>
+<p><span class="ml">പദാർഥങ്ങൾ പരസ്പരം കലർത്തിയാൽ ലായനികൾ ഉണ്ടാകുമോ? കലർത്തിനോക്കാം.</span> Does mixing two substances always make a solution? Let us mix and see.</p>
+<p><b>Beaker 1</b> <span class="ml">ബീക്കർ 1</span>: water + sugar &nbsp;·&nbsp; <b>Beaker 2</b> <span class="ml">ബീക്കർ 2</span>: water + chalk powder. <span class="ml">രണ്ട് ബീക്കറുകളിലെയും ഘടകങ്ങളെ നന്നായി ഇളക്കിയതിനുശേഷം നിരീക്ഷിക്കുക.</span> Stir both well and observe. Then do the three tests in the lab: leave them undisturbed, shine a strong beam of light through the side, and filter each one.</p>
+<div class="lab" id="f67Lab">
+  <div class="lab-title">🔦 Virtual lab – Fig 6.7: sugar solution and chalk water</div>
+  <svg id="f67Svg" viewBox="0 0 800 360" role="img" aria-label="Two beakers of water. Beaker 1 has sugar, beaker 2 has chalk powder. After stirring, the sugar disappears and the liquid stays clear, while the chalk water is cloudy with visible white specks. Left undisturbed, the chalk specks sink to the bottom. A torch shines a beam through the side of each beaker; the path of the beam is visible only in the chalk water. A filter funnel over each beaker keeps the chalk on the paper, but nothing is left on the paper from the sugar solution."></svg>
+  <div class="controls"><button class="btn primary" id="f67Stir">① Stir both</button><button class="btn" id="f67Wait">② ⏳ Leave undisturbed</button><button class="btn" id="f67Torch">③ 🔦 Shine the torch</button><button class="btn" id="f67Filter">④ Filter each</button><button class="btn ghost" id="f67Reset">⟲ Reset</button></div>
+  <div class="readout" id="f67Out"></div>
+  <p class="hint">In the real experiment, do the light test in a dim room with a strong torch. Shine it from the side and look at the beaker from the front.</p>
+</div>
+<div class="qa"><p><b>Q (page 123–124).</b> Answer from the experiment:</p>
+<div class="ask"><p><span class="ml">കണങ്ങളെ കാണാൻ കഴിയുന്നത് ഏത് ബീക്കറിലാണ്?</span> In which beaker can you see the particles?</p>
+<div class="yn" data-ans="1" data-why="Beaker 2. Chalk particles are big enough to be seen with the naked eye. Sugar breaks up into single molecules, far too small to see." data-hint="Which beaker looked cloudy with tiny white specks?"><button class="btn">Beaker 1 (sugar)</button><button class="btn">Beaker 2 (chalk)</button><button class="btn">both</button><button class="btn">neither</button></div><div class="why"></div></div>
+<div class="ask"><p><span class="ml">കുറച്ചുസമയം അനക്കാതെവെച്ചതിനുശേഷം പരിശോധിച്ചാലോ? കണങ്ങൾ അടിഞ്ഞത് ഏത് ബീക്കറിലാണ്?</span> After leaving them undisturbed for some time, in which beaker have the particles settled?</p>
+<div class="yn" data-ans="1" data-why="Beaker 2. Gravity pulls the heavy chalk particles down. Sugar molecules never settle, however long you wait." data-hint="Press ② and watch the bottom of each beaker."><button class="btn">Beaker 1 (sugar)</button><button class="btn">Beaker 2 (chalk)</button><button class="btn">both</button><button class="btn">neither</button></div><div class="why"></div></div>
+<div class="ask"><p><span class="ml">പ്രകാശത്തിന്റെ പാത ദൃശ്യമാകുന്നത് ഏത് ബീക്കറിലാണ്?</span> Stir both again and pass a strong beam of light through the side. In which beaker is the path of the light visible?</p>
+<div class="yn" data-ans="1" data-why="Beaker 2. The chalk particles scatter the light sideways into your eyes, so you see the path of the beam." data-hint="Press ③ and compare the inside of the two beakers."><button class="btn">Beaker 1 (sugar)</button><button class="btn">Beaker 2 (chalk)</button><button class="btn">both</button><button class="btn">neither</button></div><div class="why"></div></div>
+<div class="ask"><p><span class="ml">ഓരോ മിശ്രിതവും ഫിൽട്ടർ പേപ്പർ ഉപയോഗിച്ച് അരിക്കുക. കണങ്ങളെ വേർതിരിക്കാൻ കഴിഞ്ഞത് ഏതിലാണ്?</span> Filter each mixture through filter paper. In which one could the particles be separated?</p>
+<div class="yn" data-ans="1" data-why="Beaker 2. The chalk stays on the filter paper as a residue. Sugar passes through the paper with the water." data-hint="Press ④ and look at the filter papers."><button class="btn">Beaker 1 (sugar)</button><button class="btn">Beaker 2 (chalk)</button><button class="btn">both</button><button class="btn">neither</button></div><div class="why"></div></div>
+<div class="reveal" data-btn="Show all four answers"><div class="answer">
+1. Particles visible: <b>beaker 2</b> (chalk). 2. Particles settled: <b>beaker 2</b>. 3. Path of light visible: <b>beaker 2</b>. 4. Particles separated by filtering: <b>beaker 2</b>, where the chalk is left on the filter paper.<br>
+In beaker 1 you see none of these things. The sugar solution stays clear, nothing settles, the beam cannot be seen inside it, and nothing is left on the filter paper.</div></div></div>
+
+<div class="callout key"><div class="title">⭐ True solution and suspension (page 124)</div>
+<span class="ml keyml">വെള്ളവും പഞ്ചസാരയും ചേർന്ന മിശ്രിതം ഒരു യഥാർഥ ലായനി ആണ്. ഇവ ഏകാത്മക മിശ്രിതമായതിനാൽ ഘടകങ്ങൾ മിശ്രിതത്തിന്റെ എല്ലാ ഭാഗത്തും ഒരേ അനുപാതത്തിലാണ് ചേർന്നിരിക്കുന്നത്. ചോക്ക് പൊടി വെള്ളത്തിൽ കലർത്തിയ മിശ്രിതം സസ്പെൻഷൻ എന്ന പേരിൽ ആണ് അറിയപ്പെടുന്നത്.</span>
+<p style="margin:0">The mixture of water and sugar is a <b>true solution</b> <span class="ml">യഥാർഥ ലായനി</span>. It is a homogeneous mixture, so its components are in the <b>same proportion in every part</b> of the mixture. The mixture of chalk powder and water is called a <b>suspension</b> <span class="ml">സസ്പെൻഷൻ</span>. If the components are <b>not</b> in the same proportion in every part of a mixture, it is called a <b>heterogeneous mixture</b> <span class="ml">ഭിന്നാത്മക മിശ്രിതം</span>.</p></div>
+<div class="qa"><p><b>Q (page 124).</b> <span class="ml">ഇവ ഭിന്നാത്മക (heterogeneous) മിശ്രിതമായിരിക്കുന്നത് എന്തുകൊണ്ടായിരിക്കും? മിശ്രിതത്തിന്റെ എല്ലാ ഭാഗത്തും ഘടകങ്ങൾ ഒരേ അനുപാതത്തിലാണോ ചേർന്നിരിക്കുന്നത്?</span> Why is chalk water a heterogeneous mixture? Are the components in the same proportion in every part of the mixture?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>No.</b> The chalk particles are scattered unevenly, and on standing they collect at the bottom. A spoonful from the bottom then has much more chalk than a spoonful from the top. Since the proportion is different in different parts, chalk water is <b>heterogeneous</b>.</div></div>
+<p><span class="ml">ഭിന്നാത്മകമിശ്രിതങ്ങൾക്ക് കൂടുതൽ ഉദാഹരണങ്ങൾ കണ്ടെത്തൂ.</span> <b>Q.</b> Find more examples of heterogeneous mixtures.</p>
+<div class="reveal" data-btn="Show examples"><div class="answer">Sand in water, muddy water (<span class="ml">ചെളിവെള്ളം</span>), oil and water, wheat flour or rice flour stirred into water, sawdust in water, iron filings mixed with sulphur powder, a mixture of salt and sand, and the soil itself.</div></div>
+<p><span class="ml">ചെളിവെള്ളം ഒരു സസ്പെൻഷനാണ് എന്ന് പറയുന്നത് എന്തെല്ലാം സവിശേഷതകളുടെ അടിസ്ഥാനത്തിലാണ്?</span> <b>Q.</b> On the basis of which features do we say that muddy water is a suspension?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">
+<ul><li>The mud particles can be <b>seen</b> with the naked eye.</li>
+<li>On standing, they <b>settle</b> at the bottom and the water above becomes clearer.</li>
+<li>They can be <b>separated by filtering</b> and are left on the filter paper.</li>
+<li>A beam of light passing through it is <b>visible</b>, because the particles scatter the light.</li></ul>
+These are exactly the properties of the chalk water in beaker 2.</div></div></div>
+
+<!-- ================= 2 ================= -->
+<h2 id="t63">2. Table 6.3 – true solution or suspension?</h2>
+<div class="qbox"><p><span class="ml mlq">നിങ്ങൾ നടത്തിയ നിരീക്ഷണങ്ങളിൽ നിന്ന് യഥാർഥ ലായനി, സസ്പെൻഷൻ എന്നിവയുടെ സവിശേഷതകൾ പട്ടികപ്പെടുത്താമല്ലോ. വിട്ടുപോയത് പൂർത്തിയാക്കുക.</span> From your observations, list the features of a true solution and a suspension. Complete the blanks: choose from each box, then press <b>Check</b>.</p>
+<div id="ft63"></div></div>
+<div class="qa"><p><b>Q (page 124).</b> <span class="ml">ഇവിടെ നിരീക്ഷണങ്ങളിലുള്ള വ്യത്യാസത്തിന് കാരണമെന്തായിരിക്കും? ലീനത്തിന്റെ കണികകളുടെ വലിപ്പ വ്യത്യാസമായിരിക്കില്ലേ?</span> What could be the reason for the difference in the observations? Isn't it the difference in the <b>size of the particles</b>?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">
+<b>Yes, it is the particle size.</b><br>
+<b>True solution:</b> <span class="ml">യഥാർഥ ലായനിയിൽ ലീനകണങ്ങളുടെ വലിപ്പം തീരെ കുറവാണ്.</span> The solute particles are extremely small. They cannot be seen with the naked eye or even with a microscope. Because they are so small, they <b>cannot scatter light</b>, so the path of the light is not visible. They also pass through filter paper and never settle.<br>
+<b>Suspension:</b> <span class="ml">സസ്പെൻഷനുകളിൽ ലീനകണങ്ങൾ നഗ്നനേത്രങ്ങൾകൊണ്ട് കാണാൻ കഴിയുന്നത്ര വലിപ്പമുള്ളവയാണ്.</span> The particles are large enough to be seen with the naked eye. They <b>scatter light</b>, and because of <b>gravity</b> <span class="ml">ഗുരുത്വാകർഷണം</span> they slowly settle. They can also be <b>filtered off</b>.</div></div></div>
+
+<!-- ================= 3 ================= -->
+<h2 id="colloid">3. Colloids <span class="ml">കൊളോയിഡുകൾ</span> – is milk a solution or a suspension?</h2>
+<p><span class="ml">ലായനികളെക്കുറിച്ചും സസ്പെൻഷനുകളെ കുറിച്ചും നാം മനസ്സിലാക്കി. ഇവ രണ്ടിലും പെടാത്ത മിശ്രിതങ്ങൾ ഉണ്ടോ? പാൽ ഈ പറയുന്ന വിഭാഗത്തിൽ വരുമോ?</span> We have learnt about solutions and suspensions. Are there mixtures that belong to neither group? Does milk belong to such a group? <span class="ml">ഒരു ബീക്കറിൽ പാലും വെള്ളവും കലർന്ന മിശ്രിതമെടുത്ത് മുമ്പ് നടത്തിയ പ്രവർത്തനങ്ങൾ ആവർത്തിക്കൂ.</span> Take a mixture of milk and water in a beaker and repeat the tests you did before.</p>
+<div class="lab" id="milkLab">
+  <div class="lab-title">🥛 Virtual lab – milk + water: look, shine, wait, filter</div>
+  <svg id="milkSvg" viewBox="0 0 800 330" role="img" aria-label="A beaker of milk and water with a torch on the left and a white card behind it. A magnifier panel shows what you see when you look closely, and a filter panel shows what happens on the filter paper. The beam path is clearly visible inside the milky liquid, no separate particles can be seen, nothing settles after an hour, and the liquid passes through the filter paper still white."></svg>
+  <div class="controls"><button class="btn" data-act="look">🔍 Look closely</button><button class="btn primary" data-act="torch">🔦 Torch on/off</button><button class="btn" data-act="wait">⏳ Leave for 1 hour</button><button class="btn" data-act="filter">🧻 Filter a little</button><button class="btn ghost" data-act="reset">⟲ Reset</button></div>
+  <div class="readout" id="milkOut"></div>
+</div>
+<div class="qa"><p><b>Q (page 125).</b> <span class="ml">നിരീക്ഷണങ്ങൾ ടിക്ക് (✓) ചെയ്യുക.</span> Tick your observations: true <span class="ml">ശരി</span> or false <span class="ml">തെറ്റ്</span>?</p>
+<div class="ask tick"><span><span class="ml">കണങ്ങളെ നഗ്നനേത്രങ്ങൾ കൊണ്ട് കാണാൻ കഴിയുന്നു.</span> The particles can be seen with the naked eye.</span>
+<div class="yn" data-ans="1" data-why="False – milk looks evenly white; no separate particles can be seen." data-hint="Press 🔍 in the lab."><button class="btn">✓ true</button><button class="btn">✗ false</button></div><div class="why" style="grid-column:1/-1"></div></div>
+<div class="ask tick"><span><span class="ml">പ്രകാശത്തിന്റെ പാത ദൃശ്യമാണ്.</span> The path of the light is visible.</span>
+<div class="yn" data-ans="0" data-why="True – the beam shows up clearly inside the milky water." data-hint="Press 🔦 in the lab."><button class="btn">✓ true</button><button class="btn">✗ false</button></div><div class="why" style="grid-column:1/-1"></div></div>
+<div class="ask tick"><span><span class="ml">കണങ്ങൾ അരിച്ചെടുക്കാൻ കഴിയുന്നു.</span> The particles can be filtered off.</span>
+<div class="yn" data-ans="1" data-why="False – the milky liquid runs through the filter paper; nothing is left on the paper." data-hint="Press 🧻 in the lab."><button class="btn">✓ true</button><button class="btn">✗ false</button></div><div class="why" style="grid-column:1/-1"></div></div>
+<div class="reveal" data-btn="Show answers"><div class="answer">Particles seen with the naked eye – <b>false</b> ✗. Path of light visible – <b>true</b> ✓. Particles can be filtered – <b>false</b> ✗.<br>
+<span class="ml">ലായനികളിലേതെന്നപോലെ ഇവയിലെ കണങ്ങളെ നഗ്നനേത്രങ്ങൾകൊണ്ട് കാണാൻ കഴിയില്ല. സസ്പെൻഷനുകളിലേതുപോലെ അടിയുകയുമില്ല. പ്രകാശബീം കടത്തിവിട്ടാൽ പാത ദൃശ്യമാവുകയും ചെയ്യും.</span>
+As in solutions, the particles in milk cannot be seen with the naked eye. Unlike a suspension, they do <b>not settle</b>. But when a beam of light is passed through, its <b>path is visible</b>.</div></div></div>
+<div class="callout key"><div class="title">⭐ Colloids (page 125)</div>
+<span class="ml keyml">ലായനികൾക്കും സസ്പെൻഷനുകൾക്കും ഇടയിലുള്ള ഇത്തരം മിശ്രിതമാണ് കൊളോയിഡുകൾ. പാൽ ഒരു കൊളോയിഡാണെന്ന് മനസ്സിലാക്കാമല്ലോ.</span>
+<p style="margin:0">Mixtures like this, which lie <b>between solutions and suspensions</b>, are called <b>colloids</b> <span class="ml">കൊളോയിഡുകൾ</span>. So milk is a colloid.</p></div>
+
+<div class="qa"><p><b>Q (page 125).</b> <span class="ml">സിനിമാതീയറ്ററുകളിലും സ്മാർട്ട് ക്ലാസ്സ്റൂമുകളിലും പ്രൊജക്ടറിലൂടെ ചിത്രങ്ങൾ പ്രദർശിപ്പിച്ചു കൊണ്ടിരിക്കുമ്പോൾ വായുവിൽ പൊടിപടലങ്ങൾ ഉയർന്നാൽ പ്രകാശപാത വ്യക്തമായി കാണാൻ കഴിയുന്നത് ശ്രദ്ധിച്ചിട്ടില്ലേ. എന്താണ് ഇതിനു കാരണം?</span> In a cinema theatre or a smart classroom, when dust rises into the air while the projector is showing pictures, the path of the light becomes clearly visible. What is the reason?</p>
+<div class="reveal" data-btn="Show answer"><div class="answer"><span class="ml">പൊടിപടലങ്ങളിലെ കണികാവലിപ്പം കൊളോയിഡുകളിലേതിന് തുല്യമാണ്.</span> The <b>size of the dust particles is the same as that of colloid particles</b>. Dust in air is a colloid. The tiny dust particles <b>scatter</b> the light from the projector sideways into our eyes, so we see the beam. In clean air there is nothing big enough to scatter the light, and the beam cannot be seen from the side.</div></div></div>
+
+<!-- ================= 4 ================= -->
+<h2 id="size">4. How big are the particles? <span class="ml">കണികാവലിപ്പം – നാനോമീറ്ററിൽ</span></h2>
+<div class="sidebox"><div class="title">📏 Side box (page 125) – particle size in nanometres <span class="ml">കണികാവലിപ്പം – നാനോമീറ്ററിൽ</span></div>
+<div class="sizebox"><b>True solution <span class="ml">യഥാർഥ ലായനി</span></b><span>0.01 to 1 nm</span>
+<b>Colloid <span class="ml">കൊളോയിഡ്</span></b><span>1 to 1000 nm</span>
+<b>Suspension <span class="ml">സസ്പെൻഷൻ</span></b><span>more than 1000 nm <span class="ml">1000 nm ൽ കൂടുതൽ</span></span></div></div>
+<p>These sizes span a huge range, from a hundredth of a nanometre up to a thousand and more. On an ordinary ruler they would not fit, so the ruler below is a <b>log scale</b>: every big step to the right is <b>10 times</b> bigger than the one before. Slide the particle along it.</p>
+<div class="lab" id="rulLab">
+  <div class="lab-title">📏 Size ruler – from ions to sand grains (log scale, nm)</div>
+  <svg id="rulSvg" viewBox="0 0 800 315" role="img" aria-label="A ruler from 0.01 nanometre to one million nanometres, where each mark is ten times the one before. It is coloured in three bands: true solution from 0.01 to 1 nanometre, colloid from 1 to 1000 nanometres, and suspension above 1000 nanometres. Everyday particles are marked on it: a sodium ion, a water molecule, a sugar molecule, milk protein particles, smoke, a bacterium, chalk powder, a human hair and a grain of fine sand. A pointer shows the particle chosen with the slider."></svg>
+  <div class="controls"><label>particle size <input type="range" id="rulS" min="-2" max="6" step="0.1" value="0"> <output></output></label><span id="rulPick"></span></div>
+  <div class="readout" id="rulOut"></div>
+  <p class="hint">Sizes of the everyday particles are rough, typical values. Real milk, smoke and dust have particles of many sizes.</p>
+</div>
+
+<!-- ================= 5 ================= -->
+<h2 id="t64">5. Table 6.4 – three kinds of mixture</h2>
+<div class="qbox"><p><span class="ml mlq">മുകളിൽ നടത്തിയ പ്രവർത്തനങ്ങളിൽ നിന്ന് യഥാർഥ ലായനി, സസ്പെൻഷൻ, കൊളോയിഡ് എന്നിവയുടെ സവിശേഷതകൾ പട്ടികപ്പെടുത്താമല്ലോ.</span> From the activities above, list the features of a true solution, a suspension and a colloid. The book leaves Table 6.4 empty for you. Choose an entry for every box and press <b>Check</b>.</p>
+<div id="ft64"></div></div>
+<div class="further"><div class="title">🔭 Go further – does a colloid look homogeneous?</div>
+<p style="margin:0">To the eye, milk looks the same all through, like a solution. Under a powerful microscope you would see tiny droplets of fat and clusters of protein floating in the water. So a colloid <b>appears homogeneous</b> but is really <b>heterogeneous</b> on a very small scale. That is why it sits between the two.</p></div>
+
+<!-- ================= 6 ================= -->
+<h2 id="thio">6. Watching a colloid form – sodium thiosulphate and acid (Fig 6.8)</h2>
+<p><span class="ml">ഒരു ബീക്കറിൽ 50 mL ജലമെടുത്ത് അതിൽ 2 g സോഡിയം തയോസൾഫേറ്റ് (Na₂S₂O₃.5H₂O) ചേർത്ത് ലായനി തയ്യാറാക്കുക. ചിത്രത്തിൽ കാണുന്നപോലെ ബീക്കർ പ്രകാശപാതയിൽ ക്രമീകരിച്ചശേഷം രണ്ടോ, മൂന്നോ തുള്ളി നേർപ്പിച്ച ഹൈഡ്രോക്ലോറിക് ആസിഡ് (HCl) ചേർത്ത് നന്നായി ഇളക്കുക. കുറച്ചു സമയം നിരീക്ഷിക്കുക.</span> Take 50 mL of water in a beaker and dissolve 2 g of <b>sodium thiosulphate</b> (Na₂S₂O₃·5H₂O) in it. Place the beaker in the path of a beam of light, as in the picture. Add two or three drops of dilute hydrochloric acid (HCl) and stir well. Watch for some time.</p>
+<div class="safety">⚠️ Dilute HCl is handled by the teacher. The reaction gives off a little sulphur dioxide, a choking gas: use only the small amounts given, in a well-ventilated room, and do not smell the beaker. Never look straight into the torch.</div>
+<div class="lab" id="thLab">
+  <div class="lab-title">⏱️ Virtual lab – Fig 6.8: a light beam through sodium thiosulphate + HCl</div>
+  <svg id="thSvg" viewBox="0 0 800 330" role="img" aria-label="A beaker of clear sodium thiosulphate solution in the path of a torch beam. After dilute hydrochloric acid is added, the liquid slowly turns milky and pale yellow and the path of the beam becomes clearly visible. A gauge shows the sulphur particles growing from below 1 nanometre into the colloid range and then above 1000 nanometres, when yellow specks appear and settle at the bottom as a suspension. A clock shows the time in minutes."></svg>
+  <div class="controls"><button class="btn primary" id="thAdd">Add 2–3 drops of dilute HCl and stir</button><button class="btn" id="thFast">⏩ Speed ×4</button><button class="btn ghost" id="thReset">⟲ Reset</button></div>
+  <div class="readout" id="thOut"></div>
+  <p class="hint">The clock runs about 90 times faster than real time at normal speed. The times and sizes are illustrative: in a real beaker they depend on the amounts and the temperature.</p>
+</div>
+<div class="qa"><p><b>Q (page 126).</b> <span class="ml">നിരീക്ഷണഫലം</span> Write down your observation.</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">
+At first the solution is clear and the beam cannot be seen inside it. After a short time the liquid slowly becomes <b>milky (cloudy), pale yellow</b>, and the <b>path of the beam becomes clearly visible</b>. Later, yellowish particles appear and slowly <b>settle at the bottom</b>.<br>
+<span class="ml">രാസപ്രവർത്തന ഫലമായി കൊളോയിഡ് രൂപത്തിലുള്ള സൾഫർ ഉണ്ടാകുന്നു. പ്രകാശപാത രൂപപ്പെടുന്നു. സമയം കഴിയുന്തോറും കൂടുതൽ സൾഫർ കണങ്ങൾ വേർതിരിയുകയും കണികകളുടെ വലിപ്പം വർദ്ധിക്കുകയും ചെയ്യുന്നു. അവസാനം സൾഫർ സസ്പെൻഷൻ രൂപത്തിൽ അടിയുന്നു.</span>
+The reaction produces <b>sulphur in colloidal form</b>, so a path of light forms. As time passes more sulphur separates and the particles <b>grow bigger</b>. In the end the sulphur settles as a <b>suspension</b>.<br>
+Go further, the equation: Na₂S₂O₃ + 2HCl → 2NaCl + SO₂ + H₂O + S↓.</div></div></div>
+<div class="callout key"><div class="title">⭐ Tyndall effect (page 126)</div>
+<span class="ml keyml">കൊളോയിഡൽ കണികകളിൽ തട്ടി പ്രകാശം വിസരിക്കുന്നതാണ് ടിൻഡൽ പ്രഭാവം (Tyndall effect) എന്നറിയപ്പെടുന്നത്.</span>
+<p style="margin:0">The <b>scattering of light</b> when it strikes <b>colloidal particles</b> is known as the <b>Tyndall effect</b> <span class="ml">ടിൻഡൽ പ്രഭാവം</span>. It is the easiest way to tell a colloid from a true solution that looks just as clear.</p></div>
+
+<!-- ================= 7 ================= -->
+<h2 id="tyndall">7. The Tyndall effect in daily life</h2>
+<p><span class="ml">നിത്യജീവിതത്തിൽ ഇത്തരം പ്രതിഭാസങ്ങൾക്ക് കൂടുതൽ ഉദാഹരണങ്ങൾ കണ്ടെത്താൻ ശ്രമിക്കൂ.</span> <b>Q (page 126).</b> Try to find more examples of this effect in daily life. Look at the four scenes below first.</p>
+<div class="lab" id="tyLab">
+  <div class="lab-title">🌄 Spot the Tyndall effect</div>
+  <svg id="tySvg" viewBox="0 0 800 300" role="img" aria-label="Four everyday scenes, one at a time: sunlight through a gap in the roof of a dark, dusty room; car headlights in the mist on a hill road; morning sunbeams through trees in the mist; and the beam of a cinema projector over the audience. In each, the path of the light is visible because tiny particles in the air scatter it."></svg>
+  <div class="controls"><button class="btn primary" data-sc="0">🏠 Dusty room</button><button class="btn" data-sc="1">🚗 Headlights in mist</button><button class="btn" data-sc="2">🌳 Sunbeams through trees</button><button class="btn" data-sc="3">🎬 Cinema projector</button></div>
+  <div class="readout" id="tyOut"></div>
+</div>
+<div class="reveal" data-btn="Show more examples"><div class="answer">
+<ul><li>Sunlight entering a dark room through a gap in the roof tiles or a window. The beam shows the dust in the air.</li>
+<li>The headlights of a vehicle on a misty ghat road (for example on the way to Munnar or Wayanad), or in fog. The tiny water droplets of the mist scatter the light.</li>
+<li>Sunbeams through the trees of a forest on a misty morning.</li>
+<li>The beam of a cinema or classroom projector when there is dust or smoke in the air.</li>
+<li>The beam of a torch shone into smoke from a kitchen fire or a mosquito coil.</li>
+<li>A torch beam through a glass of diluted milk or kanji vellam (rice water).</li></ul>
+In each case the light is scattered by particles of colloidal size: dust, smoke, or droplets of water.</div></div>
+
+<!-- ================= 8 ================= -->
+<h2 id="lab">8. The torch-beam lab – test any mixture</h2>
+<p>Pick a mixture, run the four tests and then decide: <b>true solution</b>, <b>colloid</b> or <b>suspension</b>? Use the three clues together, as a chemist would. One clue on its own can mislead you. Milk and chalk water both look cloudy, but only one of them settles.</p>
+<div class="lab" id="tbLab">
+  <div class="lab-title">🔦 Torch-beam lab – solution, colloid or suspension?</div>
+  <svg id="tbSvg" viewBox="0 0 800 330" role="img" aria-label="A beaker of the chosen mixture with a torch on the left and a white card behind it. A magnifier panel shows what you see close up, and a filter panel shows what stays on the filter paper. A clock shows how long the mixture has been left standing."></svg>
+  <div class="controls"><label>mixture <select id="tbPick" aria-label="choose a mixture"></select></label><button class="btn" data-act="look">🔍 Look closely</button><button class="btn primary" data-act="torch">🔦 Torch on/off</button><button class="btn" data-act="wait">⏳ Leave for 1 hour</button><button class="btn" data-act="filter">🧻 Filter a little</button><button class="btn ghost" data-act="reset">⟲ Reset</button></div>
+  <div class="readout" id="tbOut"></div>
+  <div class="verdict" id="tbVerdict"><b>My verdict:</b> <button class="btn" data-v="sol">true solution</button><button class="btn" data-v="col">colloid</button><button class="btn" data-v="sus">suspension</button></div>
+  <div class="why" id="tbWhy"></div>
+</div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://en.wikipedia.org/wiki/Colloid" target="_blank" rel="noopener noreferrer">📄 Colloid</a> <span class="src">Wikipedia</span><br><span class="note">Particles between 1 and 1000 nm; the eight kinds of colloids.</span></li><li><a href="https://en.wikipedia.org/wiki/Suspension_(chemistry)" target="_blank" rel="noopener noreferrer">📄 Suspension (chemistry)</a> <span class="src">Wikipedia</span><br><span class="note">Large particles that settle and can be filtered.</span></li><li><a href="https://en.wikipedia.org/wiki/Tyndall_effect" target="_blank" rel="noopener noreferrer">📄 Tyndall effect</a> <span class="src">Wikipedia</span><br><span class="note">Colloid particles scatter light so the beam becomes visible.</span></li><li><a href="https://en.wikipedia.org/wiki/Emulsion" target="_blank" rel="noopener noreferrer">📄 Emulsion</a> <span class="src">Wikipedia</span><br><span class="note">Milk, mayonnaise and paint – liquids dispersed in liquids.</span></li></ul></div>
+<h2 id="check">9. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li><b>True solution</b> <span class="ml">യഥാർഥ ലായനി</span> (sugar water): particles 0.01–1 nm; cannot be seen even with a microscope; do not settle; pass through filter paper; the path of light is not visible; homogeneous.</li>
+<li><b>Suspension</b> <span class="ml">സസ്പെൻഷൻ</span> (chalk water, muddy water): particles larger than 1000 nm; visible; settle under gravity; can be filtered; scatter light, so the path is visible; heterogeneous.</li>
+<li><b>Colloid</b> <span class="ml">കൊളോയിഡുകൾ</span> (milk, dust in air): particles 1–1000 nm; not visible to the naked eye; do not settle; pass through filter paper; the path of light <b>is</b> visible.</li>
+<li><b>Tyndall effect</b> <span class="ml">ടിൻഡൽ പ്രഭാവം</span>: the scattering of light by colloidal particles. Na₂S₂O₃ + dilute HCl gives colloidal sulphur, which shows it. The particles then grow and settle as a suspension.</li>
+<li>The difference between the three is the <b>size of the particles</b>.</li>
+</ul></div>
+<p>Next: <a href="08_drinks_additives.html">Colloids in daily life, drinks and food additives ▶</a></p>
+
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Solutions · Class 9 Chemistry", "icon": "🧪", "key": "chemistry_ch6_progress", "pages": [["index.html", "Home"], ["01_mixtures_states.html", "1 · Mixtures, States of Matter & Dissolving"], ["02_percentages_graphs.html", "2 · Percentages, Units & Reading Graphs"], ["03_solutions_solvents.html", "3 · Solutions, Solutes & Solvents"], ["04_concentration_mass_percent.html", "4 · Concentration & Mass Percentage"], ["05_saturated_solutions.html", "5 · Saturated, Unsaturated & Supersaturated Solutions"], ["06_solubility.html", "6 · Solubility & Solubility Curves"], ["07_suspensions_colloids.html", "7 · True Solutions, Suspensions & Colloids"], ["08_drinks_additives.html", "8 · Colloids in Daily Life, Drinks & Food Additives"], ["09_intext_questions_solutions.html", "9 · In-text Questions – Solutions"], ["10_assess_solutions.html", "10 · Let Us Assess & Extended Activities – Solutions"], ["11_applications_explore.html", "11 · Applications & Explore Online"], ["12_summary_revision.html", "12 · Summary & Quick Quiz"], ["13_model_test_paper.html", "13 · Model Test Paper"], ["14_model_test_solutions.html", "14 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ==== common helpers (same code on pages 07–09) ==== */
+const {P, el} = K;
+const $id = id => document.getElementById(id);
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+const CV = c => (c === 'none' ? 'none' : ((c.charAt(0) === '#' || c.startsWith('var(') || c.startsWith('rgb') || c.startsWith('url')) ? c : `var(--${c === 'amber' ? 'accent' : c})`));
+function tx(svg, x, y, s, cls = '', anchor = 'middle', extra = {}){ return K.text(svg, P(x, y), s, {class: ('lbl ' + cls).trim(), 'text-anchor': anchor, ...extra}); }
+function rect(svg, x, y, w, h, style, rx = 0, extra = {}){ return el('rect', {x, y, width: Math.max(0, w), height: Math.max(0, h), rx, style, ...extra}, svg); }
+function circ(svg, c, r, style, extra = {}){ return el('circle', {cx: c.x, cy: c.y, r: Math.max(0, r), style, ...extra}, svg); }
+function ln(svg, a, b, c = 'text', w = 2, extra = ''){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, style: `stroke:${CV(c)};stroke-width:${w};stroke-linecap:round;${extra}`}, svg); }
+function pth(svg, d, style, extra = {}){ return el('path', {d, style, ...extra}, svg); }
+const H = (en, ml) => `${en} <span class="ml">${ml}</span>`;
+const LIQ = '#60a5fa';
+/* animation loop: fn(dt) returns false to stop; returns a stop() function */
+function loop(fn){ let last = performance.now(), raf = 0, on = true;
+  const f = now => { if (!on) return; const dt = Math.min(.05, Math.max(0, (now - last) / 1000)); last = now; if (fn(dt) === false){ on = false; return; } raf = requestAnimationFrame(f); };
+  raf = requestAnimationFrame(f); return () => { on = false; cancelAnimationFrame(raf); }; }
+/* choice buttons: <div class="yn" data-ans="1" data-why="…" data-hint="…"><button>…</button>…</div><div class="why"></div> */
+function choices(root = document){ K.$$('.yn[data-ans]', root).forEach(bx => { const ans = +bx.dataset.ans, why = bx.parentElement.querySelector('.why');
+  K.$$('button', bx).forEach((b, k) => b.addEventListener('click', () => { K.$$('button', bx).forEach(x => x.classList.remove('ok', 'bad')); b.classList.add(k === ans ? 'ok' : 'bad');
+    if (why){ why.innerHTML = k === ans ? '✅ ' + (bx.dataset.why || 'Correct.') : '❌ ' + (bx.dataset.hint || 'Not quite – think again.'); why.style.color = k === ans ? 'var(--green)' : 'var(--red)'; } })); }); }
+/* ---- interactive fill-in table: cell = 'given html' | {g, l} | {a, alt:[...], lab} (typed) | {s:[options], a, lab} (choose) ---- */
+const SUBC = '₀₁₂₃₄₅₆₇₈₉';
+const tNorm = s => String(s).trim().toLowerCase().replace(/[₀-₉]/g, c => SUBC.indexOf(c)).replace(/sulf/g, 'sulph').replace(/[−–—-]/g, '').replace(/[\s.()]+/g, '');
+function fillTable(id, spec){
+  const root = $id(id);
+  const cell = c => { if (c && typeof c === 'object' && 'g' in c) return `<td class="given${c.l ? ' l' : ''}">${c.g}</td>`;
+    if (c && typeof c === 'object' && c.s) return `<td><select data-a="${esc(c.a)}" data-alt="" aria-label="${esc(c.lab || 'answer')}"><option value="">– choose –</option>${c.s.map(o => `<option value="${esc(o)}">${o}</option>`).join('')}</select></td>`;
+    if (c && typeof c === 'object') return `<td><input type="text" autocomplete="off" spellcheck="false" autocapitalize="off" data-a="${esc(c.a)}" data-alt="${esc((c.alt || []).join('|'))}" aria-label="${esc(c.lab || 'answer')}"></td>`;
+    return `<td class="given">${c}</td>`; };
+  root.insertAdjacentHTML('beforeend', `<div class="tw"><table class="ft"><thead><tr>${spec.head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${spec.rows.map(r => `<tr>${r.map(cell).join('')}</tr>`).join('')}</tbody></table></div>
+    <div class="controls"><button class="btn primary" data-f="check">✔ Check my answers</button><button class="btn ghost" data-f="clear">⟲ Clear</button><button class="btn" data-f="show">💡 Show answers</button></div><p class="score"></p>`);
+  const ins = K.$$('[data-a]', root).filter(x => x.matches('input,select')), score = root.querySelector('.score');
+  const right = inp => { const v = tNorm(inp.value); return v !== '' && [inp.dataset.a, ...inp.dataset.alt.split('|').filter(Boolean)].some(a => tNorm(a) === v); };
+  root.addEventListener('click', e => { const b = e.target.closest('button[data-f]'); if (!b) return; const f = b.dataset.f;
+    if (f === 'check'){ let ok = 0; ins.forEach(i => { const r = right(i); i.classList.toggle('ok', r); i.classList.toggle('bad', !r); if (r) ok++; });
+      score.textContent = ok === ins.length ? `🎉 All ${ins.length} correct!` : `${ok} of ${ins.length} correct – the red boxes need another look.` + (spec.hint ? ' ' + spec.hint : ''); }
+    else if (f === 'show'){ ins.forEach(i => { i.value = i.dataset.a; i.classList.add('ok'); i.classList.remove('bad'); }); score.textContent = 'All answers filled in (green). Cover them and try again tomorrow!'; }
+    else { ins.forEach(i => { i.value = ''; i.classList.remove('ok', 'bad'); }); score.textContent = ''; } });
+  const unmark = e => { if (e.target.matches('[data-a]')) e.target.classList.remove('ok', 'bad'); };
+  root.addEventListener('input', unmark); root.addEventListener('change', unmark);
+}
+/* ==== end common ==== */
+
+choices();
+
+/* ---------- shared glassware for this page ---------- */
+const BEAM = '#fde047';
+/* a beaker (open top with lip) from x0 to x1, top to bot; liquid from lvl */
+function beakerGlass(svg, x0, x1, top, bot){ pth(svg, `M${x0 - 6},${top - 4} L${x0},${top + 4} L${x0},${bot - 8} Q${x0},${bot} ${x0 + 8},${bot} L${x1 - 8},${bot} Q${x1},${bot} ${x1},${bot - 8} L${x1},${top}`, 'fill:none;stroke:var(--text);stroke-width:2.4;stroke-linejoin:round'); }
+function liquid(svg, x0, x1, lvl, bot, style){ pth(svg, `M${x0 + 2},${lvl} L${x0 + 2},${bot - 8} Q${x0 + 2},${bot - 2} ${x0 + 9},${bot - 2} L${x1 - 9},${bot - 2} Q${x1 - 2},${bot - 2} ${x1 - 2},${bot - 8} L${x1 - 2},${lvl} Z`, style); }
+function torch(svg, x, y, on){ /* body pointing right, mouth at x */
+  rect(svg, x - 62, y - 9, 44, 18, 'fill:#475569;stroke:var(--text);stroke-width:1.4', 4); pth(svg, `M${x - 18},${y - 9} L${x},${y - 15} L${x},${y + 15} L${x - 18},${y + 9} Z`, 'fill:#94a3b8;stroke:var(--text);stroke-width:1.4');
+  rect(svg, x - 48, y - 13, 8, 4, `fill:${on ? '#ef4444' : '#64748b'}`, 1); if (on) ln(svg, P(x, y - 13), P(x, y + 13), BEAM, 3); }
+/* faint beam in clean air (hardly visible) */
+function airBeam(svg, xa, xb, y, h0, h1){ el('polygon', {points: `${xa},${y - h0} ${xb},${y - h1} ${xb},${y + h1} ${xa},${y + h0}`, style: `fill:${BEAM};opacity:.07`}, svg); }
+/* filter funnel with paper cone; residue fraction r (0..1) of colour rc; drips if dripping */
+function funnel(svg, cx, top, w, r, rc, dripCol, t){
+  pth(svg, `M${cx - w},${top} L${cx + w},${top} L${cx + 7},${top + w * 1.05} L${cx + 7},${top + w * 1.05 + 32} L${cx - 7},${top + w * 1.05 + 32} L${cx - 7},${top + w * 1.05} Z`, 'fill:none;stroke:var(--text);stroke-width:2');
+  el('polygon', {points: `${cx - w + 8},${top + 4} ${cx + w - 8},${top + 4} ${cx},${top + w * 1.0} `, style: 'fill:var(--surface2);stroke:var(--muted);stroke-width:1.2'}, svg);
+  if (r > 0){ const k = .25 + .45 * r; el('polygon', {points: `${cx - (w - 8) * k},${top + 4 + (w * .96) * (1 - k)} ${cx + (w - 8) * k},${top + 4 + (w * .96) * (1 - k)} ${cx},${top + w * 1.0}`, style: `fill:${rc};stroke:var(--muted);stroke-width:.8`}, svg); }
+  if (dripCol) for (let k = 0; k < 3; k++) circ(svg, P(cx, top + w * 1.05 + 40 + ((t * 90 + k * 22) % 60)), 2.6, `fill:${dripCol}`); }
+
+/* ---------- Fig 6.7 lab ---------- */
+(function(){
+  const svg = $id('f67Svg'), out = $id('f67Out');
+  const BX = [215, 585], HW = 105, TOP = 120, BOT = 330, LV = 160, BY = 250;
+  const grains = []; for (let k = 0; k < 190; k++) grains.push({fx: Math.random(), fy: Math.random(), sp: .55 + Math.random() * .9, r: 1.3 + Math.random() * 1.7, hx: Math.random(), hy: Math.random()});
+  const sugar = []; for (let k = 0; k < 40; k++) sugar.push({hx: Math.random(), hy: Math.random()});
+  let st, stop = null;
+  function init(){ st = {stir: 0, stirring: false, stirT: 0, settle: 0, waiting: false, torch: false, filt: 0, filtering: false, t: 0}; }
+  function suspended(){ return st.stir * (1 - Math.min(1, st.settle)); }
+  function eff(){ return suspended() * (1 - st.filt); }
+  function draw(){
+    K.clear(svg);
+    BX.forEach((cx, b) => { const x0 = cx - HW, x1 = cx + HW;
+      tx(svg, cx, 18, b ? 'Beaker 2: water + chalk powder' : 'Beaker 1: water + sugar', '', 'middle', {style: 'font-size:15px;font-weight:700'});
+      tx(svg, cx, 38, b ? 'വെള്ളം + ചോക്കുപൊടി' : 'വെള്ളം + പഞ്ചസാര', 'purple', 'middle', {style: 'font-size:13px'});
+      /* liquid */
+      liquid(svg, x0, x1, LV, BOT, `fill:${LIQ};opacity:.16`);
+      if (b && st.stir > 0) liquid(svg, x0, x1, LV, BOT, `fill:#e2e8f0;opacity:${.38 * eff()}`);
+      /* torch beam */
+      if (st.torch){ airBeam(svg, x0 - 40, x0, BY, 13, 17);
+        const s = b ? Math.min(1, eff()) : 0;
+        if (s > .02) el('polygon', {points: `${x0 + 2},${BY - 17} ${x1 - 2},${BY - 24} ${x1 - 2},${BY + 24} ${x0 + 2},${BY + 17}`, style: `fill:${BEAM};opacity:${.6 * s}`}, svg);
+        airBeam(svg, x1, x1 + 40, BY, 24 - 14 * s, 28 - 16 * s); }
+      torch(svg, x0 - 40, BY, st.torch);
+      /* undissolved heaps / grains */
+      if (!b){ sugar.forEach(g => { const f = 1 - st.stir; if (f <= .02) return; circ(svg, P(cx - 30 + g.hx * 60, BOT - 6 - g.hy * 10 * (1 - g.hx * .4)), 2.6 * f, 'fill:#f8fafc;stroke:#64748b;stroke-width:.7'); }); }
+      else grains.forEach((g, k) => { if (g.fy < st.filt) return;
+        let x, y; const heap = P(cx - 40 + g.hx * 80, BOT - 6 - g.hy * 12 * (1 - Math.abs(g.hx - .5)));
+        const mixed = P(x0 + 10 + g.fx * (2 * HW - 20), LV + 10 + g.fy * (BOT - LV - 24));
+        const settled = P(x0 + 8 + g.fx * (2 * HW - 16), BOT - 5 - g.hy * 8);
+        const m = st.stir, d = Math.min(1, st.settle * g.sp * 1.4);
+        x = K.lerp(heap.x, mixed.x, m); y = K.lerp(heap.y, mixed.y, m); x = K.lerp(x, settled.x, d * m); y = K.lerp(y, settled.y, d * m);
+        if (st.stirring){ x += Math.sin(st.t * 9 + k) * 6; }
+        circ(svg, P(x, y), g.r, 'fill:#f8fafc;stroke:#64748b;stroke-width:.6'); });
+      beakerGlass(svg, x0, x1, TOP, BOT);
+      if (st.stirring){ const a = st.t * 8; ln(svg, P(cx + Math.sin(a) * 40, LV - 70), P(cx + Math.sin(a) * 30, BOT - 20), 'muted', 6, 'opacity:.6'); }
+      /* filter */
+      if (st.filt > 0 || st.filtering){ funnel(svg, cx, 52, 46, b ? st.filt : 0, '#cbd5e1', st.filtering ? (b ? LIQ : LIQ) : null, st.t);
+        tx(svg, cx + 58, 76, b ? (st.filt > .5 ? 'chalk left on the paper' : 'filter paper') : (st.filt > .5 ? 'nothing on the paper' : 'filter paper'), b && st.filt > .5 ? 'green' : 'sm muted', 'start', {style: 'font-size:12px;font-weight:600'}); }
+    });
+  }
+  function say(){ const L = [];
+    if (!st.stir) L.push('Sugar and chalk are lying at the bottom of the water. Step ①: stir both.');
+    else if (st.stirring) L.push('Stirring…');
+    else { L.push('Beaker 1: the sugar has disappeared and the liquid is clear. You cannot see any sugar particles.  Beaker 2: ' + (eff() > .15 ? 'the water is cloudy, with white chalk specks you can see.' : 'the chalk specks can still be seen – at the bottom or on the filter paper.'));
+      if (st.settle > 0) L.push(st.settle >= 1 ? 'Left undisturbed: the chalk has SETTLED at the bottom of beaker 2 and the water above is clear again. Nothing settled in beaker 1.' : 'Left undisturbed… the chalk specks are sinking in beaker 2.');
+      if (st.torch) L.push(eff() > .15 ? 'Torch: the path of the beam is VISIBLE in beaker 2 (the chalk scatters light). Beaker 1: no path visible.' : (st.filt > .9 ? 'Torch: the chalk was filtered off, so the beam is no longer visible in beaker 2 either. Beaker 1: no path at all.' : 'Torch: the chalk has settled, so the beam is now faint in beaker 2 too. Stir again to see it clearly. Beaker 1: no path at all.'));
+      if (st.filt >= 1) L.push('Filtering: chalk is left on the filter paper (residue) and a clear liquid comes through. From the sugar solution nothing is left on the paper: sugar passes through.');
+      if (!st.settle && !st.torch && !st.filt) L.push('Now try ② leave undisturbed, ③ shine the torch, ④ filter.'); }
+    out.textContent = L.join('\n'); }
+  function run(){ if (stop) return; let tk = 0, idle = 0;
+    stop = loop(dt => { st.t += dt; idle += dt;
+      if (st.stirring){ if (st.stir < 1) st.stir = Math.min(1, st.stir + dt / 1.5); else st.settle = Math.max(0, st.settle - dt); st.stirT += dt; if (st.stir >= 1 && st.settle <= 0 && st.stirT > 1.2) st.stirring = false; idle = 0; }
+      if (st.waiting){ st.settle = Math.min(1, st.settle + dt / 5); if (st.settle >= 1) st.waiting = false; idle = 0; }
+      if (st.filtering){ st.filt = Math.min(1, st.filt + dt / 3); if (st.filt >= 1) st.filtering = false; idle = 0; }
+      draw(); tk += dt; if (tk > .3){ tk = 0; say(); }
+      if (idle > .5){ say(); stop = null; return false; } }); }
+  $id('f67Stir').addEventListener('click', () => { st.stirring = true; st.stirT = 0; st.waiting = false; st.filt = 0; st.filtering = false; run(); say(); });
+  $id('f67Wait').addEventListener('click', () => { if (st.stir < 1){ out.textContent = 'Stir first (step ①).'; return; } st.waiting = true; run(); });
+  $id('f67Torch').addEventListener('click', () => { st.torch = !st.torch; $id('f67Torch').classList.toggle('primary', st.torch); draw(); say(); });
+  $id('f67Filter').addEventListener('click', () => { if (st.stir < 1){ out.textContent = 'Stir first (step ①), then filter.'; return; } if (st.filt >= 1) return; st.filtering = true; run(); });
+  $id('f67Reset').addEventListener('click', () => { if (stop){ stop(); stop = null; } init(); $id('f67Torch').classList.remove('primary'); draw(); say(); });
+  init(); draw(); say();
+})();
+
+/* ---------- the bench: one mixture, four tests (used by the milk lab and the torch-beam lab) ---------- */
+const SAMPLES = {
+  sugar: {name: 'sugar solution', ml: 'പഞ്ചസാര ലായനി', kind: 'sol', liq: LIQ, op: .16, haze: 0},
+  salt: {name: 'salt solution', ml: 'ഉപ്പ് ലായനി', kind: 'sol', liq: LIQ, op: .16, haze: 0},
+  cuso4: {name: 'copper sulphate solution', ml: 'തുരിശ് ലായനി', kind: 'sol', liq: '#0ea5e9', op: .5, haze: 0},
+  milk: {name: 'milk + water', ml: 'പാലും വെള്ളവും', kind: 'col', liq: LIQ, op: .1, haze: .8, hazeCol: '#f8fafc', scat: .95},
+  kanji: {name: 'kanji vellam (rice water)', ml: 'കഞ്ഞിവെള്ളം', kind: 'col', liq: LIQ, op: .1, haze: .45, hazeCol: '#f1f5f9', scat: .7},
+  chalk: {name: 'chalk powder + water', ml: 'ചോക്കുപൊടി + വെള്ളം', kind: 'sus', liq: LIQ, op: .14, haze: .35, hazeCol: '#e2e8f0', grain: '#f8fafc', res: '#cbd5e1', scat: .8},
+  mud: {name: 'muddy water', ml: 'ചെളിവെള്ളം', kind: 'sus', liq: '#a16207', op: .18, haze: .4, hazeCol: '#b45309', grain: '#78350f', scat: .8}
+};
+const KIND = {sol: 'true solution', col: 'colloid', sus: 'suspension'};
+function makeBench(svgId, outId, getKey){
+  const svg = $id(svgId), out = $id(outId);
+  const X0 = 120, X1 = 300, TOP = 80, BOT = 292, LV = 122, BY = 196, CARD = 336;
+  const grains = []; for (let k = 0; k < 150; k++) grains.push({fx: Math.random(), fy: Math.random(), sp: .5 + Math.random(), r: 1.3 + Math.random() * 1.6, hx: Math.random()});
+  let st, stop = null;
+  function init(){ st = {torch: false, look: false, wait: 0, waiting: false, filt: 0, filtering: false, t: 0}; }
+  const S = () => SAMPLES[getKey()];
+  function draw(){
+    K.clear(svg); const s = S(), sus = s.kind === 'sus', left = sus ? 1 - Math.min(1, st.wait) : 1;
+    tx(svg, (X0 + X1) / 2, 20, s.name, '', 'middle', {style: 'font-size:15px;font-weight:700'}); tx(svg, (X0 + X1) / 2, 40, s.ml, 'purple', 'middle', {style: 'font-size:13px'});
+    liquid(svg, X0, X1, LV, BOT, `fill:${s.liq};opacity:${s.op}`);
+    if (s.haze) liquid(svg, X0, X1, LV, BOT, `fill:${s.hazeCol};opacity:${s.haze * (sus ? left : 1)}`);
+    if (sus){ const layer = 10 * Math.min(1, st.wait); if (layer > .5) liquid(svg, X0, X1, BOT - 2 - layer, BOT, `fill:${s.grain};opacity:.85`);
+      grains.forEach(g => { const d = Math.min(1, st.wait * g.sp * 1.3); const y = K.lerp(LV + 8 + g.fy * (BOT - LV - 20), BOT - 6, d); if (d >= 1) return; circ(svg, P(X0 + 8 + g.fx * (X1 - X0 - 16), y), g.r, `fill:${s.grain};stroke:#475569;stroke-width:.5`); }); }
+    /* beam */
+    const sc = (s.scat || 0) * (sus ? left : 1);
+    if (st.torch){ airBeam(svg, 72, X0, BY, 13, 18);
+      if (sc > .02) el('polygon', {points: `${X0 + 2},${BY - 18} ${X1 - 2},${BY - 26} ${X1 - 2},${BY + 26} ${X0 + 2},${BY + 18}`, style: `fill:${BEAM};opacity:${.65 * sc}`}, svg);
+      airBeam(svg, X1, CARD, BY, 26, 32);
+      circ(svg, P(CARD, BY), 26, `fill:${BEAM};opacity:${.9 - .55 * sc}`); }
+    torch(svg, 72, BY, st.torch);
+    rect(svg, CARD - 4, 90, 10, 210, 'fill:var(--surface2);stroke:var(--text);stroke-width:1.2', 2); tx(svg, CARD + 1, 312, 'card', 'sm muted', 'middle', {style: 'font-size:11px'});
+    beakerGlass(svg, X0, X1, TOP, BOT);
+    /* magnifier */
+    const M = P(470, 150); tx(svg, M.x, 20, 'close-up (naked eye)', '', 'middle', {style: 'font-size:14px;font-weight:700'});
+    circ(svg, M, 70, 'fill:var(--svgbg);stroke:var(--text);stroke-width:3'); ln(svg, P(M.x + 50, M.y + 50), P(M.x + 85, M.y + 85), 'text', 9);
+    if (st.look){ circ(svg, M, 66, `fill:${s.liq};opacity:${s.op + .05}`); if (s.haze) circ(svg, M, 66, `fill:${s.hazeCol};opacity:${s.haze * (sus ? left : 1)}`);
+      if (sus) for (let k = 0; k < 40 * left; k++){ const g = grains[k]; circ(svg, P(M.x + (g.fx - .5) * 100, M.y + (g.fy - .5) * 100), 2.5 + g.r * 1.6, `fill:${s.grain};stroke:#475569;stroke-width:.7`); }
+      tx(svg, M.x, 246, s.kind === 'sol' ? 'nothing to see: clear' : s.kind === 'col' ? 'evenly cloudy: no separate grains' : (left > .1 ? 'grains you can see!' : 'clear now: grains at the bottom'), s.kind === 'sus' && left > .1 ? 'red' : '', 'middle', {style: 'font-size:13px;font-weight:700'}); }
+    else tx(svg, M.x, M.y, 'press 🔍', 'sm muted', 'middle', {style: 'font-size:13px'});
+    /* filter */
+    const FX = 680; tx(svg, FX, 20, 'filter paper', '', 'middle', {style: 'font-size:14px;font-weight:700'});
+    funnel(svg, FX, 50, 52, sus ? st.filt * left : 0, s.res || s.grain || '#e5e7eb', st.filtering ? (s.haze && !sus ? s.hazeCol : s.liq) : null, st.t);
+    pth(svg, `M${FX - 24},170 L${FX - 24},196 L${FX - 52},298 L${FX + 52},298 L${FX + 24},196 L${FX + 24},170`, 'fill:none;stroke:var(--text);stroke-width:2');
+    if (st.filt > 0){ const h = 40 * st.filt; pth(svg, `M${FX - 52 + h * .27},${298 - h} L${FX + 52 - h * .27},${298 - h} L${FX + 52},298 L${FX - 52},298 Z`, `fill:${sus ? LIQ : s.liq};opacity:${sus ? .2 : s.op + .1}`);
+      if (!sus && s.haze) pth(svg, `M${FX - 52 + h * .27},${298 - h} L${FX + 52 - h * .27},${298 - h} L${FX + 52},298 L${FX - 52},298 Z`, `fill:${s.hazeCol};opacity:${s.haze}`); }
+    if (st.filt >= 1) tx(svg, FX, 316, sus ? (left > .1 ? 'residue on paper · clear filtrate' : 'little left to filter') : s.kind === 'col' ? 'nothing on paper · filtrate still cloudy' : 'nothing on paper · filtrate the same', sus && left > .1 ? 'green' : '', 'middle', {style: 'font-size:12px;font-weight:700'});
+    /* clock */
+    tx(svg, 14, 300, `⏳ ${Math.round(60 * Math.min(1, st.wait))} min`, 'muted', 'start', {style: 'font-size:13px;font-weight:700'});
+  }
+  function say(){ const s = S(), sus = s.kind === 'sus', left = sus ? 1 - Math.min(1, st.wait) : 1, L = [];
+    if (st.look) L.push('🔍 ' + (s.kind === 'sol' ? 'The liquid is perfectly clear. No particles can be seen, not even with a microscope.' : s.kind === 'col' ? 'Evenly cloudy all through. No separate particles can be seen with the naked eye.' : left > .1 ? 'You can SEE the particles floating in the liquid.' : 'The particles have sunk; you can see them as a layer at the bottom.'));
+    if (st.torch) L.push('🔦 ' + ((s.scat || 0) * left > .2 ? 'The path of the beam is VISIBLE inside the liquid: the particles scatter the light.' : s.kind === 'sus' ? 'The beam is now faint: most of the particles have settled.' : 'The path of the beam is NOT visible inside the liquid. Only the spot on the card shows the light went through.'));
+    if (st.wait >= 1) L.push('⏳ After an hour: ' + (sus ? 'the particles have SETTLED at the bottom.' : 'nothing has settled; it looks just the same.'));
+    if (st.filt >= 1) L.push('🧻 ' + (sus ? (left > .1 ? 'The particles are left on the filter paper (residue); the liquid that comes through is clear.' : 'Most particles had already settled; the clear liquid above runs through.') : s.kind === 'col' ? 'Nothing is left on the paper: the particles are small enough to pass through. The filtrate is still cloudy.' : 'Nothing is left on the paper: everything passes through.'));
+    out.textContent = L.length ? L.join('\n') : `${s.name}: run the tests – look closely, shine the torch, leave it standing, filter.`; }
+  function run(){ if (stop) return; let tk = 0, idle = 0;
+    stop = loop(dt => { st.t += dt; idle += dt;
+      if (st.waiting){ st.wait = Math.min(1, st.wait + dt / 4); if (st.wait >= 1) st.waiting = false; idle = 0; }
+      if (st.filtering){ st.filt = Math.min(1, st.filt + dt / 2.5); if (st.filt >= 1) st.filtering = false; idle = 0; }
+      draw(); tk += dt; if (tk > .3){ tk = 0; say(); }
+      if (idle > .4){ say(); stop = null; return false; } }); }
+  function act(a){ if (a === 'look') st.look = !st.look; else if (a === 'torch') st.torch = !st.torch;
+    else if (a === 'wait'){ if (st.wait < 1){ st.waiting = true; run(); } } else if (a === 'filter'){ if (st.filt < 1){ st.filtering = true; run(); } }
+    else if (a === 'reset'){ if (stop){ stop(); stop = null; } init(); }
+    draw(); say(); }
+  init(); draw(); say();
+  return {act, reset: () => act('reset'), get: () => st};
+}
+(function(){
+  const b = makeBench('milkSvg', 'milkOut', () => 'milk');
+  K.$$('#milkLab [data-act]').forEach(x => x.addEventListener('click', () => { b.act(x.dataset.act); if (x.dataset.act === 'torch') x.classList.toggle('primary', b.get().torch); }));
+})();
+(function(){
+  const pick = $id('tbPick'), why = $id('tbWhy');
+  pick.innerHTML = Object.entries(SAMPLES).map(([k, s]) => `<option value="${k}">${s.name}</option>`).join('');
+  pick.value = 'kanji';
+  const b = makeBench('tbSvg', 'tbOut', () => pick.value);
+  pick.addEventListener('change', () => { b.reset(); why.textContent = ''; K.$$('#tbVerdict button').forEach(x => x.classList.remove('ok', 'bad')); });
+  K.$$('#tbLab [data-act]').forEach(x => x.addEventListener('click', () => b.act(x.dataset.act)));
+  const REASON = {sol: 'The particles are 0.01–1 nm: invisible, they do not settle, pass through filter paper and do not scatter light.',
+    col: 'The particles are 1–1000 nm: invisible to the naked eye and they do not settle or filter off, but they scatter light (Tyndall effect).',
+    sus: 'The particles are bigger than 1000 nm: you can see them, they settle and filter off, and they scatter light.'};
+  K.$$('#tbVerdict button').forEach(x => x.addEventListener('click', () => { const s = SAMPLES[pick.value], st = b.get(), ok = x.dataset.v === s.kind;
+    K.$$('#tbVerdict button').forEach(y => y.classList.remove('ok', 'bad')); x.classList.add(ok ? 'ok' : 'bad');
+    const tests = (st.look ? 1 : 0) + (st.torch ? 1 : 0) + (st.wait >= 1 ? 1 : 0) + (st.filt >= 1 ? 1 : 0);
+    why.style.color = ok ? 'var(--green)' : 'var(--red)';
+    why.textContent = ok ? `✅ Yes – ${s.name} is a ${KIND[s.kind]}. ${REASON[s.kind]}` + (tests < 3 ? ' (Next time, run at least three tests before deciding.)' : '')
+      : `❌ Not quite. ${tests < 3 ? 'Run more of the tests first. ' : ''}Ask: can I see the particles? Do they settle? Is the beam visible? Is anything left on the paper?`; }));
+})();
+
+/* ---------- size ruler (log scale) ---------- */
+(function(){
+  const svg = $id('rulSvg'), out = $id('rulOut'), pickEl = $id('rulPick');
+  const X0 = 50, X1 = 760, Y = 172, LMIN = -2, LMAX = 6;
+  const px = l => X0 + (X1 - X0) * (l - LMIN) / (LMAX - LMIN);
+  const ITEMS = [[-0.7, 'Na⁺ ion', '0.2 nm', 2], [-0.55, 'water molecule', '0.3 nm', 1], [-0.05, 'sugar molecule', '≈ 0.9 nm', 0], [2, 'milk protein cluster', '≈ 100 nm', 2], [2.5, 'smoke particle', '≈ 300 nm', 1],
+    [3, 'bacterium', '≈ 1000 nm', 0], [4, 'chalk powder grain', '≈ 10 000 nm', 1], [4.85, 'thickness of a hair', '≈ 70 000 nm', 2], [5.3, 'fine sand grain', '≈ 200 000 nm', 1]];
+  let L = 0;
+  const nice = l => { const v = Math.pow(10, l); return v < 1 ? K.fmt(v, v < .1 ? 3 : 2) : v < 100 ? K.fmt(v, 1) : Math.round(v).toLocaleString('en-IN'); };
+  function draw(){
+    K.clear(svg);
+    [[LMIN, 0, 'blue', 'TRUE SOLUTION', 'യഥാർഥ ലായനി'], [0, 3, 'purple', 'COLLOID', 'കൊളോയിഡ്'], [3, LMAX, 'accent', 'SUSPENSION', 'സസ്പെൻഷൻ']].forEach(([a, b, c, n, m]) => {
+      rect(svg, px(a), Y - 24, px(b) - px(a), 48, `fill:var(--${c});opacity:${(L >= a && L < b) || (b === LMAX && L >= a) ? .3 : .14}`);
+      tx(svg, (px(a) + px(b)) / 2, Y - 8, n, c === 'accent' ? 'amber' : c, 'middle', {style: 'font-size:13px;font-weight:800'}); tx(svg, (px(a) + px(b)) / 2, Y + 11, m, 'purple', 'middle', {style: 'font-size:12px'}); });
+    ln(svg, P(X0, Y + 24), P(X1, Y + 24), 'text', 2);
+    for (let l = LMIN; l <= LMAX; l++){ ln(svg, P(px(l), Y + 24), P(px(l), Y + 34), 'text', 2); tx(svg, px(l), Y + 48, l < 0 ? String(Math.pow(10, l)) : Math.pow(10, l).toLocaleString('en-IN'), '', 'middle', {style: 'font-size:12px'});
+      if (l < LMAX) for (let m = 2; m < 10; m++) ln(svg, P(px(l + Math.log10(m)), Y + 24), P(px(l + Math.log10(m)), Y + 29), 'muted', 1); }
+    tx(svg, X1, Y + 132, 'size in nanometres (nm) – each step to the right is ×10', 'sm muted', 'end', {style: 'font-size:12px'});
+    ITEMS.forEach(([l, n, v, row]) => { const lo = row === 1, x = px(l), y = lo ? Y + 84 : row === 2 ? Y - 80 : Y - 48; ln(svg, P(x, lo ? Y + 36 : Y - 26), P(x, lo ? y - 12 : y + 8), 'muted', 1.2, 'stroke-dasharray:3 3'); circ(svg, P(x, lo ? Y + 36 : Y - 26), 3, 'fill:var(--muted)');
+      tx(svg, x, y, n, '', 'middle', {style: 'font-size:12px;font-weight:600'}); tx(svg, x, y + 15, v, 'sm muted', 'middle', {style: 'font-size:11px'}); });
+    /* pointer */
+    const x = px(L); el('polygon', {points: `${x},${Y - 104} ${x - 9},${Y - 126} ${x + 9},${Y - 126}`, style: 'fill:var(--red)'}, svg);
+    ln(svg, P(x, Y - 104), P(x, Y + 24), 'red', 2.5, 'opacity:.8');
+    tx(svg, Math.max(X0 + 60, Math.min(X1 - 60, x)), 24, `your particle: ${nice(L)} nm`, 'red', 'middle', {style: 'font-size:15px;font-weight:800'});
+  }
+  function say(){ const v = Math.pow(10, L), k = L < 0 ? 'sol' : L < 3 ? 'col' : 'sus';
+    const P2 = {sol: 'TRUE SOLUTION range (0.01–1 nm): cannot be seen even with a microscope · does not settle · passes through filter paper · does not scatter light.',
+      col: 'COLLOID range (1–1000 nm): not visible to the naked eye · does not settle · passes through filter paper · scatters light → Tyndall effect.',
+      sus: 'SUSPENSION range (above 1000 nm): visible · settles under gravity · stays on filter paper · scatters light.'};
+    out.textContent = `${nice(L)} nm = ${K.fmt(v / 1e6, 6)} mm.  A hair (70 000 nm) is about ${v < 70000 ? Math.round(70000 / v).toLocaleString('en-IN') + ' times wider' : v > 70000 ? K.fmt(v / 70000, 1) + ' times narrower' : 'the same'}.\n` + P2[k]; }
+  K.slider('#rulS', v => { L = v; draw(); say(); }, 1);
+  pickEl.innerHTML = '<span class="muted small">jump to: </span>' + [['Na⁺', -0.7], ['sugar', -0.05], ['milk', 2], ['chalk', 4], ['sand', 5.3]].map(([n, l]) => `<button class="btn" data-l="${l}" style="padding:.2rem .5rem;font-size:.85rem">${n}</button>`).join(' ');
+  pickEl.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const s = $id('rulS'); s.value = b.dataset.l; s.dispatchEvent(new Event('input')); });
+})();
+
+/* ---------- Table 6.3 and 6.4 ---------- */
+const TS = ['can be separated (residue on the paper)', 'cannot be separated'], LP = ['path of light visible', 'path of light not visible'], SE = ['particles settle', 'particles do not settle'];
+fillTable('ft63', {head: [H('Activity', 'പ്രവർത്തനം'), H('True solution', 'യഥാർഥ ലായനി'), H('Suspension', 'സസ്പെൻഷൻ')],
+  rows: [[{g: H('Filtering through filter paper', 'ഫിൽട്ടർ പേപ്പർ ഉപയോഗിച്ച് അരിക്കുന്നു'), l: 1}, {g: H('cannot separate the components', 'ഘടകങ്ങളെ അരിച്ച് വേർതിരിക്കാൻ കഴിയുന്നില്ല')}, {s: TS, a: TS[0], lab: 'suspension, filtering'}],
+    [{g: H('Passing a strong beam of light', 'ശക്തമായ പ്രകാശബീം കടത്തിവിടുന്നു'), l: 1}, {s: LP, a: LP[1], lab: 'true solution, light beam'}, {g: H('path of light visible', 'പ്രകാശപാത ദൃശ്യമാണ്')}],
+    [{g: H('Keeping undisturbed', 'അനക്കാതെ വയ്ക്കുന്നു'), l: 1}, {s: SE, a: SE[1], lab: 'true solution, undisturbed'}, {s: SE, a: SE[0], lab: 'suspension, undisturbed'}]],
+  hint: 'Look again at beaker 1 and beaker 2 in the Fig 6.7 lab.'});
+const SZ = ['0.01–1 nm', '1–1000 nm', 'more than 1000 nm'], VI = ['visible to the naked eye', 'not visible to the naked eye', 'not visible even with a microscope'], ST = ['settle', 'do not settle'],
+  FI = ['separated by filter paper', 'pass through filter paper'], LT = ['path of light visible (scattered)', 'path of light not visible'], HO = ['homogeneous', 'heterogeneous', 'looks homogeneous'];
+const row = (name, ml, opts, a) => [{g: H(name, ml), l: 1}, ...a.map((x, k) => ({s: opts, a: opts[x], lab: name + ', ' + ['true solution', 'suspension', 'colloid'][k]}))];
+fillTable('ft64', {head: ['Property', H('True solution', 'യഥാർഥ ലായനി'), H('Suspension', 'സസ്പെൻഷൻ'), H('Colloid', 'കൊളോയിഡ്')],
+  rows: [row('Size of particles', 'കണികാവലിപ്പം', SZ, [0, 2, 1]), row('Can the particles be seen?', 'കണങ്ങളെ കാണാൻ കഴിയുമോ', VI, [2, 0, 1]), row('On standing', 'അനക്കാതെ വയ്ക്കുമ്പോൾ', ST, [1, 0, 1]),
+    row('Filtering', 'അരിക്കുമ്പോൾ', FI, [1, 0, 1]), row('Beam of light', 'പ്രകാശബീം', LT, [1, 0, 0]), row('Type of mixture', 'മിശ്രിതം', HO, [0, 1, 2])],
+  hint: 'Particle size decides everything: the colloid is in between.'});
+
+/* ---------- Na2S2O3 + HCl (Fig 6.8) ---------- */
+(function(){
+  const svg = $id('thSvg'), out = $id('thOut');
+  const X0 = 180, X1 = 420, TOP = 80, BOT = 300, LV = 120, BY = 200;
+  const specks = []; for (let k = 0; k < 120; k++) specks.push({fx: Math.random(), fy: Math.random(), sp: .6 + Math.random() * .8, r: 1 + Math.random() * 1.5});
+  let st, stop = null;
+  function init(){ st = {tm: null, speed: 1.5, t: 0}; }   /* tm: minutes since the acid was added; null = not added yet */
+  const m = () => st.tm === null ? -1e9 : st.tm;
+  const amount = () => st.tm === null ? 0 : 1 - Math.exp(-Math.max(0, m() - .6) / 3.5);
+  const logd = () => st.tm === null ? -0.3 : -0.3 + 4.4 * Math.min(1, m() / 16);
+  const settle = () => Math.max(0, Math.min(1, (m() - 12.5) / 7));
+  function draw(){
+    K.clear(svg); const a = amount(), ld = logd(), sett = settle(), floating = a * (1 - sett);
+    tx(svg, (X0 + X1) / 2, 20, st.tm === null ? 'Na₂S₂O₃ solution (2 g in 50 mL water)' : 'Na₂S₂O₃ + dilute HCl', '', 'middle', {style: 'font-size:15px;font-weight:700'});
+    liquid(svg, X0, X1, LV, BOT, `fill:${LIQ};opacity:.12`);
+    if (ld > 0) liquid(svg, X0, X1, LV, BOT, `fill:#fef3c7;opacity:${.85 * floating}`);
+    const lay = 14 * sett * a; if (lay > .5) liquid(svg, X0, X1, BOT - 2 - lay, BOT, 'fill:#facc15;opacity:.9');
+    if (ld > 3) specks.forEach(g => { const d = Math.min(1, sett * g.sp * 1.3); if (d >= 1 || g.fx > a) return; circ(svg, P(X0 + 8 + g.fx * (X1 - X0 - 16), K.lerp(LV + 8 + g.fy * (BOT - LV - 20), BOT - 8, d)), g.r * Math.min(1.6, ld - 2.6), 'fill:#eab308;stroke:#a16207;stroke-width:.5'); });
+    const sc = ld > 0 ? Math.min(1, floating * 1.3) : 0;
+    airBeam(svg, 100, X0, BY, 13, 18);
+    if (sc > .02) el('polygon', {points: `${X0 + 2},${BY - 18} ${X1 - 2},${BY - 28} ${X1 - 2},${BY + 28} ${X0 + 2},${BY + 18}`, style: `fill:${BEAM};opacity:${.7 * sc}`}, svg);
+    airBeam(svg, X1, 480, BY, 28, 32); circ(svg, P(480, BY), 28, `fill:${BEAM};opacity:${.9 - .5 * sc}`); rect(svg, 476, 100, 10, 200, 'fill:var(--surface2);stroke:var(--text);stroke-width:1.2', 2);
+    torch(svg, 100, BY, true);
+    beakerGlass(svg, X0, X1, TOP, BOT);
+    /* clock */
+    const CX = 590, CY = 70; circ(svg, P(CX, CY), 36, 'fill:var(--surface2);stroke:var(--text);stroke-width:1.6');
+    const ang = K.rad((st.tm === null ? 0 : st.tm) * 6 * 6 - 90); ln(svg, P(CX, CY), P(CX + Math.cos(ang) * 28, CY + Math.sin(ang) * 28), 'red', 2.4);
+    tx(svg, CX, CY + 54, st.tm === null ? '0 min' : `${K.fmt(st.tm, 1)} min`, '', 'middle', {style: 'font-size:16px;font-weight:800'});
+    /* size gauge */
+    const GX = 700, GT = 40, GB = 300, gy = l => GB - (GB - GT) * (l + 1) / 6;
+    tx(svg, GX, 22, 'particle size', '', 'middle', {style: 'font-size:13px;font-weight:700'});
+    [[-1, 0, 'blue', 'solution'], [0, 3, 'purple', 'colloid'], [3, 5, 'accent', 'suspension']].forEach(([p, q, c, n]) => { rect(svg, GX - 16, gy(q), 32, gy(p) - gy(q), `fill:var(--${c});opacity:.25`); tx(svg, GX + 24, (gy(p) + gy(q)) / 2, n, c === 'accent' ? 'amber' : c, 'start', {style: 'font-size:12px;font-weight:700'}); });
+    [[-1, '0.1'], [0, '1'], [1, '10'], [2, '100'], [3, '1000'], [4, '10⁴'], [5, '10⁵']].forEach(([l, s]) => { ln(svg, P(GX - 22, gy(l)), P(GX - 16, gy(l)), 'text', 1.4); tx(svg, GX - 26, gy(l), s, 'sm muted', 'end', {style: 'font-size:10px'}); });
+    tx(svg, GX - 26, GB + 14, 'nm', 'sm muted', 'end', {style: 'font-size:10px'});
+    if (st.tm !== null){ const y = gy(Math.max(-1, Math.min(5, ld))); el('polygon', {points: `${GX - 18},${y} ${GX - 30},${y - 7} ${GX - 30},${y + 7}`, style: 'fill:var(--red)'}, svg); }
+    tx(svg, 300, 322, st.tm === null ? 'clear: the path of the beam is not visible inside' : ld < 0 ? 'still clear – sulphur is just forming' : ld < 3 ? 'colloidal sulphur: the beam path is visible (Tyndall effect)' : sett < .9 ? 'particles grow > 1000 nm: a suspension, settling' : 'sulphur has settled at the bottom', ld >= 0 && ld < 3 ? 'purple' : '', 'middle', {style: 'font-size:13px;font-weight:700'});
+  }
+  function say(){ if (st.tm === null){ out.textContent = 'A clear, colourless solution. The torch beam goes straight through and you cannot see its path inside the liquid (a true solution). Add the acid.'; return; }
+    const ld = logd(), d = Math.pow(10, ld);
+    out.textContent = `t = ${K.fmt(st.tm, 1)} min · sulphur particles ≈ ${d < 1 ? K.fmt(d, 2) : Math.round(d).toLocaleString('en-IN')} nm\n` +
+      (ld < 0 ? 'Sulphur atoms are forming, but the particles are still smaller than 1 nm: no beam path yet.'
+        : ld < 3 ? 'The sulphur particles are now of COLLOIDAL size (1–1000 nm). The liquid turns milky pale yellow and the path of the beam is clearly visible → Tyndall effect.'
+        : settle() < .95 ? 'The particles have grown bigger than 1000 nm: the mixture is now a SUSPENSION. You can see yellowish specks and they begin to settle.'
+        : 'The sulphur has settled at the bottom as a yellow layer. Colloid → suspension, just as the book says.'); }
+  function run(){ if (stop) return; let tk = 0;
+    stop = loop(dt => { st.t += dt; st.tm = Math.min(22, st.tm + dt * st.speed); draw(); tk += dt; if (tk > .3){ tk = 0; say(); }
+      if (st.tm >= 22){ say(); stop = null; return false; } }); }
+  $id('thAdd').addEventListener('click', () => { if (st.tm !== null) return; st.tm = 0; run(); say(); });
+  $id('thFast').addEventListener('click', () => { st.speed = st.speed > 2 ? 1.5 : 6; $id('thFast').classList.toggle('primary', st.speed > 2); $id('thFast').textContent = st.speed > 2 ? '⏩ Normal speed' : '⏩ Speed ×4'; });
+  $id('thReset').addEventListener('click', () => { if (stop){ stop(); stop = null; } const sp = st.speed; init(); st.speed = sp; draw(); say(); });
+  init(); draw(); say();
+})();
+
+/* ---------- Tyndall scenes ---------- */
+(function(){
+  const svg = $id('tySvg'), out = $id('tyOut');
+  const dust = []; for (let k = 0; k < 90; k++) dust.push({x: Math.random(), y: Math.random(), r: .6 + Math.random() * 1.3});
+  const TEXT = ['A dark room with a gap in the roof tiles. Tiny dust particles floating in the air are of colloidal size. They scatter the sunlight sideways, so the beam shows up as a bright "rod" of light. Dust in air is a colloid (an aerosol).',
+    'A hill road at night in mist (moodalmanju). Mist is made of tiny water droplets floating in air, a liquid aerosol, which is a colloid. They scatter the headlight beams, so the cones of light are visible.',
+    'Morning in a forest or a tea estate. Mist and dust in the air scatter the sunlight coming through gaps in the leaves, so the sunbeams show up as rays.',
+    'A cinema hall. Dust and smoke particles in the air scatter the light of the projector, so its beam is visible all the way from the projector to the screen.'];
+  let sc = 0, ph = 0, stop = null;
+  function beam(pts, op){ el('polygon', {points: pts.map(p => p.join(',')).join(' '), style: `fill:#fef08a;opacity:${op * 1.4}`}, svg); }
+  function motes(pts, n, t){ /* dust inside a polygon's bounding area, crude: sample along the polygon */
+    const [a, b, c, d] = pts; for (let k = 0; k < n; k++){ const g = dust[k % dust.length], u = (g.x + t * .01 * (1 + g.r)) % 1, v = g.y;
+      const top = [K.lerp(a[0], b[0], u), K.lerp(a[1], b[1], u)], bot = [K.lerp(d[0], c[0], u), K.lerp(d[1], c[1], u)]; circ(svg, P(K.lerp(top[0], bot[0], v), K.lerp(top[1], bot[1], v)), g.r, 'fill:#fffbeb;opacity:.9'); } }
+  function draw(){
+    K.clear(svg); const t = ph;
+    if (sc === 0){ rect(svg, 0, 0, 800, 300, 'fill:#1f2937'); rect(svg, 0, 260, 800, 40, 'fill:#374151'); rect(svg, 180, 0, 60, 14, 'fill:#fde68a');
+      const B = [[180, 14], [240, 14], [560, 260], [470, 260]]; beam(B, .35); motes(B, 70, t); el('ellipse', {cx: 515, cy: 266, rx: 60, ry: 8, style: 'fill:#fde68a;opacity:.6'}, svg);
+      tx(svg, 120, 40, 'gap in the roof tiles', '', 'middle', {style: 'font-size:13px;fill:#f8fafc;stroke:none'}); }
+    else if (sc === 1){ rect(svg, 0, 0, 800, 300, 'fill:#1e293b'); pth(svg, 'M0,170 Q200,90 400,150 T800,120 L800,300 L0,300 Z', 'fill:#0f172a'); rect(svg, 0, 250, 800, 50, 'fill:#334155');
+      for (let k = 0; k < 6; k++) el('ellipse', {cx: (k * 160 + t * 8) % 900 - 50, cy: 140 + (k % 3) * 30, rx: 140, ry: 30, style: 'fill:#cbd5e1;opacity:.12'}, svg);
+      rect(svg, 90, 205, 120, 40, 'fill:#ef4444', 8); rect(svg, 115, 185, 70, 26, 'fill:#b91c1c', 6); circ(svg, P(120, 247), 11, 'fill:#111827'); circ(svg, P(185, 247), 11, 'fill:#111827');
+      [215, 230].forEach((y, i) => { const B = [[210, y - 4], [210, y + 4], [720, y + 60 - i * 10], [720, y - 50 - i * 10]]; beam([B[0], B[3], B[2], B[1]], .28); motes([B[0], B[3], B[2], B[1]], 40, t); circ(svg, P(208, y), 5, 'fill:#fef9c3'); });
+      tx(svg, 400, 30, 'headlights in mist', '', 'middle', {style: 'font-size:14px;fill:#f8fafc;stroke:none'}); }
+    else if (sc === 2){ rect(svg, 0, 0, 800, 300, 'fill:#14532d'); circ(svg, P(640, 20), 30, 'fill:#fde047');
+      for (let k = 0; k < 9; k++){ const x = 40 + k * 95; rect(svg, x - 8, 120, 16, 180, 'fill:#422006'); circ(svg, P(x, 90 + (k % 2) * 20), 60, 'fill:#166534'); }
+      [[560, 0, 40], [600, 0, 220], [520, 0, 400]].forEach(([x, y, x2]) => { const B = [[x - 6, 60], [x + 6, 60], [x2 + 40, 300], [x2 - 10, 300]]; beam(B, .22); motes(B, 30, t); });
+      tx(svg, 140, 30, 'sunbeams through trees', '', 'middle', {style: 'font-size:14px;fill:#f8fafc;stroke:none'}); }
+    else { rect(svg, 0, 0, 800, 300, 'fill:#0f172a'); rect(svg, 560, 30, 220, 150, 'fill:#e2e8f0'); rect(svg, 30, 40, 50, 36, 'fill:#475569', 4); circ(svg, P(80, 58), 8, 'fill:#fef9c3');
+      const B = [[80, 52], [560, 30], [560, 180], [80, 64]]; beam(B, .22); motes(B, 80, t);
+      for (let r = 0; r < 3; r++) for (let k = 0; k < 10; k++) circ(svg, P(120 + k * 50 + r * 12, 230 + r * 26), 14, 'fill:#1e293b');
+      tx(svg, 670, 200, 'screen', '', 'middle', {style: 'font-size:13px;fill:#f8fafc;stroke:none'}); }
+  }
+  function show(k){ sc = k; K.$$('#tyLab [data-sc]').forEach(b => b.classList.toggle('primary', +b.dataset.sc === k)); out.textContent = TEXT[k]; draw();
+    if (stop) stop(); let tt = 0; stop = loop(dt => { ph += dt; tt += dt; draw(); if (tt > 12){ stop = null; return false; } }); }
+  K.$$('#tyLab [data-sc]').forEach(b => b.addEventListener('click', () => show(+b.dataset.sc)));
+  show(0);
+})();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'Sugar dissolved in water is a true solution because …', options: ['its particles settle on standing', 'its particles are 0.01–1 nm, so they cannot be seen, do not settle and pass through filter paper', 'it shows the Tyndall effect', 'it can be separated by filtering'], answer: 1, explain: 'A true solution is homogeneous; the particles are far too small to see or to scatter light.', hint: 'Think about the size of the particles.'});
+K.mcq('#q2', {q: 'Which of these is a suspension?', options: ['milk', 'salt solution', 'muddy water', 'copper sulphate solution'], answer: 2, explain: 'Mud particles are visible, settle and can be filtered.', hint: 'Which one settles on standing?'});
+K.mcq('#q3', {q: 'The particle size of a colloid is …', options: ['0.01–1 nm', '1–1000 nm', 'more than 1000 nm', 'less than 0.01 nm'], answer: 1, explain: 'Colloids lie between true solutions (0.01–1 nm) and suspensions (above 1000 nm).', hint: 'Side box, page 125.'});
+K.mcq('#q4', {q: 'The scattering of light by colloidal particles is called …', options: ['the Tyndall effect', 'crystallization', 'filtration', 'dispersion medium'], answer: 0, explain: 'Tyndall effect (ടിൻഡൽ പ്രഭാവം).', hint: 'Page 126.'});
+K.mcq('#q5', {q: 'A beam of light is passed through milk diluted with water. What is seen?', options: ['nothing; milk is a true solution', 'the path of the beam is visible, and the particles do not settle', 'the particles settle at once', 'the milk is left on the filter paper'], answer: 1, explain: 'Milk is a colloid: the beam path is visible, but nothing settles or filters off.', hint: 'Tick-box questions on page 125.'});
+K.mcq('#q6', {q: 'In the sodium thiosulphate + dilute HCl experiment, what finally settles at the bottom?', options: ['salt', 'sulphur', 'sodium thiosulphate crystals', 'chlorine'], answer: 1, explain: 'Colloidal sulphur forms first; the particles grow and settle as a suspension.', hint: 'The liquid turned pale yellow.'});
+
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>

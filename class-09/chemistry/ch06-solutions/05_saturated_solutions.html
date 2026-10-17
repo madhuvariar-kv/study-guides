@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Saturated, Unsaturated and Supersaturated Solutions</title>
+<style>
+/* ===== Similar Triangles – shared kit CSS ===== */
+:root{
+  --bg:#f4f7fb; --surface:#ffffff; --surface2:#f1f5f9; --text:#1e293b; --muted:#64748b;
+  --primary:#0f766e; --primary-soft:#ccfbf1; --primary-ink:#134e4a;
+  --accent:#d97706; --accent-soft:#fef3c7; --accent-ink:#78350f;
+  --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
+  --red:#dc2626; --red-soft:#fee2e2; --purple:#7c3aed; --purple-soft:#ede9fe;
+  --border:#dbe2ea; --radius:14px; --shadow:0 2px 12px rgba(15,23,42,.07);
+  --svgbg:#ffffff; --grid:#e2e8f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+    --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+    --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+    --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+    --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+    --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --surface:#1e293b; --surface2:#273548; --text:#e2e8f0; --muted:#94a3b8;
+  --primary:#2dd4bf; --primary-soft:#134e4a; --primary-ink:#ccfbf1;
+  --accent:#fbbf24; --accent-soft:#4a3410; --accent-ink:#fde68a;
+  --blue:#60a5fa; --blue-soft:#1e3a8a; --green:#4ade80; --green-soft:#14532d;
+  --red:#f87171; --red-soft:#7f1d1d; --purple:#a78bfa; --purple-soft:#3b1f7a;
+  --border:#334155; --shadow:0 2px 12px rgba(0,0,0,.35); --svgbg:#0b1220; --grid:#1f2b3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Roboto,"Noto Sans","Noto Sans Malayalam",Ubuntu,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{line-height:1.25;margin:1.4em 0 .5em;color:var(--primary-ink)}
+h1{font-size:1.9rem;margin-top:.4em}
+h2{font-size:1.45rem;border-bottom:3px solid var(--primary-soft);padding-bottom:.25em}
+h3{font-size:1.15rem}
+p{margin:.6em 0}
+ul,ol{padding-left:1.4em}
+li{margin:.25em 0}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95em}
+img,svg{max-width:100%}
+.ml{color:var(--purple);font-weight:600}
+.term{font-weight:700;color:var(--primary-ink)}
+.muted{color:var(--muted)}
+.small{font-size:.9em}
+.center{text-align:center}
+sup{font-size:.7em}
+/* square roots */
+.sqrt{display:inline-flex;align-items:flex-start;vertical-align:baseline;line-height:1.15;white-space:nowrap}
+.sqrt>.rad{font-size:1.2em;line-height:1;margin-right:-.06em;transform:translateY(-.02em)}
+.sqrt>.rnd{border-top:1.5px solid currentColor;padding:0 .18em 0 .12em;line-height:1.15}
+.sqrt .frac{line-height:1}
+/* fractions */
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.1}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .25em}
+.frac>span:last-child{padding:0 .25em}
+.math{font-family:"Cambria Math","Times New Roman",Georgia,serif;font-style:italic;font-size:1.05em}
+.eq{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.2em;margin:.8em 0;padding:.5em;background:var(--surface2);border-radius:10px}
+/* layout */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+header.top .wrap{max-width:1040px;margin:0 auto;padding:.5rem 16px;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+header.top .home{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;font-size:1rem}
+header.top .spacer{flex:1}
+header.top select{max-width:min(46vw,380px);padding:.35rem .5rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem}
+.navbtn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.9rem;white-space:nowrap}
+.navbtn:hover{background:var(--primary-soft);text-decoration:none}
+.navbtn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.navbtn.disabled{opacity:.4;pointer-events:none}
+main.page{max-width:1040px;margin:0 auto;padding:1rem 16px 3rem}
+.lead{font-size:1.1rem;color:var(--muted)}
+.chip{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:var(--primary-soft);color:var(--primary-ink);font-size:.8rem;font-weight:600;margin-right:.3rem}
+.chip.amber{background:var(--accent-soft);color:var(--accent-ink)}
+.chip.blue{background:var(--blue-soft);color:var(--blue)}
+.chip.green{background:var(--green-soft);color:var(--green)}
+.chip.red{background:var(--red-soft);color:var(--red)}
+footer.bottomnav{max-width:1040px;margin:0 auto;padding:1rem 16px 2.5rem;display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--border)}
+footer.bottomnav label{display:flex;align-items:center;gap:.4rem;font-size:.95rem;cursor:pointer}
+/* cards & callouts */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.grid .card{margin:0}
+.callout{border-left:6px solid var(--primary);background:var(--primary-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.callout .title{font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.callout.key{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.callout.key .title{color:var(--accent-ink)}
+.callout.real{border-color:var(--green);background:var(--green-soft)}
+.callout.think{border-color:var(--blue);background:var(--blue-soft)}
+.callout.warn{border-color:var(--red);background:var(--red-soft)}
+.callout.book{border-color:var(--purple);background:var(--purple-soft)}
+.callout p:first-child{margin-top:0}.callout p:last-child{margin-bottom:0}
+details.card{padding:.6rem 1rem}
+details summary{cursor:pointer;font-weight:700;color:var(--primary-ink);padding:.3rem 0}
+details[open] summary{margin-bottom:.4rem}
+/* interactive lab */
+.lab{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.8rem;margin:1rem 0;box-shadow:var(--shadow)}
+.lab .lab-title{font-weight:700;color:var(--primary-ink);display:flex;align-items:center;gap:.4rem;margin:.1rem 0 .5rem}
+.lab svg{display:block;width:100%;height:auto;background:var(--svgbg);border-radius:10px;border:1px solid var(--border);touch-action:none;user-select:none}
+.lab .hint{font-size:.9rem;color:var(--muted);margin:.4rem 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.6rem 0}
+.controls label{display:flex;align-items:center;gap:.5rem;font-size:.95rem}
+.controls input[type=range]{width:min(220px,50vw);accent-color:var(--primary)}
+.controls output{font-weight:700;min-width:3ch;color:var(--primary-ink)}
+.btn{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--primary-soft)}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default}
+.readout{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface2);border-radius:8px;padding:.5rem .8rem;margin:.5rem 0;font-size:.95rem;line-height:1.5;white-space:pre-wrap}
+.split{display:grid;grid-template-columns:1fr;gap:.8rem}
+@media(min-width:820px){.split{grid-template-columns:3fr 2fr;align-items:start}}
+/* stepper */
+.stepper .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.6rem 0}
+.stepper .step-count{font-weight:700;color:var(--primary-ink);padding:0 .4rem}
+.step-list{list-style:none;padding:0;margin:.4rem 0 0;max-height:300px;overflow:auto;border-top:1px dashed var(--border)}
+.step-list li{padding:.5rem .7rem;margin:.25rem 0;border-radius:8px;background:var(--surface2);border-left:4px solid transparent;font-size:.97rem}
+.step-list li.active{background:var(--accent-soft);border-left-color:var(--accent);animation:pop .35s ease}
+@keyframes pop{from{transform:translateX(-4px);opacity:.4}to{transform:none;opacity:1}}
+/* SVG semantic classes */
+svg .tri-big{fill:var(--blue-soft);stroke:var(--blue);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-small{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-amber{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-red{fill:var(--red-soft);stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-purple{fill:var(--purple-soft);stroke:var(--purple);stroke-width:2.2;stroke-linejoin:round}
+svg .tri-none{fill:none;stroke:var(--text);stroke-width:2;stroke-linejoin:round}
+svg .ln{stroke:var(--text);stroke-width:2;stroke-linecap:round;fill:none}
+svg .ln-blue{stroke:var(--blue);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-green{stroke:var(--green);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-red{stroke:var(--red);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-amber{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-purple{stroke:var(--purple);stroke-width:2.2;stroke-linecap:round;fill:none}
+svg .ln-muted{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;fill:none}
+svg .thin{stroke-width:1.2}
+svg .thick{stroke-width:3.2}
+svg .dash{stroke-dasharray:6 5}
+svg .dot{stroke-dasharray:2 4}
+svg .lbl{fill:var(--text);font-size:15px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .lbl.big{font-size:18px;font-weight:700}
+svg .lbl.sm{font-size:12px}
+svg .lbl.i{font-style:italic;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:17px}
+svg .lbl.blue{fill:var(--blue)}svg .lbl.green{fill:var(--green)}svg .lbl.red{fill:var(--red)}svg .lbl.amber{fill:var(--accent)}svg .lbl.purple{fill:var(--purple)}svg .lbl.muted{fill:var(--muted)}
+svg .ang{fill:none;stroke:var(--red);stroke-width:2}
+svg .ang.blue{stroke:var(--blue)}svg .ang.green{stroke:var(--green)}svg .ang.amber{stroke:var(--accent)}svg .ang.purple{stroke:var(--purple)}
+svg .ang-fill{fill:var(--red);opacity:.18;stroke:none}
+svg .ang-fill.blue{fill:var(--blue)}svg .ang-fill.green{fill:var(--green)}svg .ang-fill.amber{fill:var(--accent)}svg .ang-fill.purple{fill:var(--purple)}
+svg .ang-lbl{fill:var(--red);font-size:13px;font-family:"Segoe UI",Roboto,Arial,sans-serif;paint-order:stroke;stroke:var(--svgbg);stroke-width:3px;stroke-linejoin:round}
+svg .ang-lbl.blue{fill:var(--blue)}svg .ang-lbl.green{fill:var(--green)}svg .ang-lbl.amber{fill:var(--accent)}svg .ang-lbl.purple{fill:var(--purple)}
+svg .pt{fill:var(--text);stroke:var(--svgbg);stroke-width:1.5}
+svg .pt.drag{fill:var(--accent);r:7;stroke:var(--surface);stroke-width:2;cursor:grab}
+svg .pt.blue{fill:var(--blue)}svg .pt.green{fill:var(--green)}svg .pt.red{fill:var(--red)}
+svg .grid line{stroke:var(--grid);stroke-width:1}
+svg .fill-blue{fill:var(--blue-soft)}svg .fill-green{fill:var(--green-soft)}svg .fill-amber{fill:var(--accent-soft)}svg .fill-red{fill:var(--red-soft)}svg .fill-purple{fill:var(--purple-soft)}svg .fill-none{fill:var(--svgbg)}svg .fill-surface{fill:var(--surface2)}
+svg .hl-blue{fill:var(--blue-soft);stroke:var(--blue)!important;stroke-width:2!important}svg .hl-green{fill:var(--green-soft);stroke:var(--green)!important;stroke-width:2!important}svg .hl-amber{fill:var(--accent-soft);stroke:var(--accent)!important;stroke-width:2!important}svg .hl-red{fill:var(--red-soft);stroke:var(--red)!important;stroke-width:2!important}svg .hl-purple{fill:var(--purple-soft);stroke:var(--purple)!important;stroke-width:2!important}
+svg .ground{stroke:var(--muted);stroke-width:2}
+svg .sun{fill:#fbbf24}
+/* quiz */
+.quiz{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;margin:1rem 0}
+.quiz .q{font-weight:600;margin-bottom:.6rem}
+.quiz .opts{display:grid;gap:.4rem}
+.quiz .opt{text-align:left;padding:.5rem .8rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;color:var(--text);font-size:.97rem}
+.quiz .opt:hover{background:var(--primary-soft)}
+.quiz .opt.right{background:var(--green-soft);border-color:var(--green)}
+.quiz .opt.wrong{background:var(--red-soft);border-color:var(--red)}
+.quiz .fb{margin-top:.6rem;font-size:.95rem;min-height:1.2em}
+.quiz .fb.ok{color:var(--green)}.quiz .fb.no{color:var(--red)}
+.quiz input[type=text],.quiz input[type=number]{padding:.4rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:1rem;width:9rem}
+/* tables */
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.97rem}
+th,td{border:1px solid var(--border);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--surface2)}
+/* progress on index */
+.toc-list{list-style:none;padding:0;margin:0;display:grid;gap:.6rem}
+.toc-list a.item{display:flex;gap:.8rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.toc-list a.item:hover{border-color:var(--primary);text-decoration:none;transform:translateY(-1px)}
+.toc-list .num{font-weight:800;color:var(--primary);min-width:2.2rem;font-size:1.1rem}
+.toc-list .desc{color:var(--muted);font-size:.9rem}
+.toc-list .done{margin-left:auto;font-size:1.2rem}
+.onpage{background:var(--surface2);border-radius:10px;padding:.6rem .9rem;margin:.8rem 0;font-size:.93rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem;align-items:center}
+.onpage b{margin-right:.2rem}
+.onpage a{white-space:nowrap}
+/* print */
+@media print{
+  header.top,footer.bottomnav,.noprint,.step-controls{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  main.page{max-width:none;padding:0}
+  .card,.lab,.quiz,.callout{box-shadow:none;break-inside:avoid}
+}
+@media(max-width:600px){body{font-size:16px}h1{font-size:1.5rem}h2{font-size:1.25rem}}
+/* ---- Physics: "Explore online" link boxes (filled in by build.py from links.json) ---- */
+.explore{border-left:6px solid var(--blue);background:var(--blue-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.explore .title{font-weight:700;margin-bottom:.3rem;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;color:var(--blue)}
+.explore .net{font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.explore ul{margin:.2rem 0 0;padding-left:1.1rem}.explore li{margin:.35rem 0}
+.explore a{font-weight:600;overflow-wrap:anywhere}.explore .src{font-size:.8rem;color:var(--muted)}.explore .note{font-size:.88rem}
+.safety{border:2px solid var(--red);border-radius:10px;padding:.4rem .8rem;margin:.6rem 0;background:var(--red-soft);font-weight:600}
+@media print{.explore{display:none}}
+@media(max-width:600px){.onpage a{white-space:normal}}
+
+</style>
+<style>
+/* ==== common styles (same on pages 04–06) ==== */
+.qa,.qbox{border-left:6px solid var(--primary);background:var(--surface);border-radius:10px;padding:.7rem 1rem;margin:.8rem 0;box-shadow:var(--shadow)}
+.qa p,.qbox p{margin:.3em 0}
+.qa ol,.qa ul{margin:.3rem 0}
+.mlq{display:block;font-weight:500;margin:.2rem 0 .4rem}
+.answer{border:2px dashed var(--green);border-radius:10px;padding:.5rem .9rem;margin:.5rem 0;background:var(--green-soft)}
+.answer b{color:var(--green)}
+.answer ul{margin:.2rem 0}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.keyml{display:block;margin:.2rem 0 .4rem}
+.btn.ok{background:var(--green-soft);border-color:var(--green);color:var(--text)}
+.btn.bad{background:var(--red-soft);border-color:var(--red);color:var(--text)}
+.yn{display:inline-flex;gap:.3rem;flex-wrap:wrap}
+.yn .btn{padding:.25rem .6rem;font-size:.88rem}
+.why{font-size:.92rem;margin-top:.3rem;min-height:1.2em}
+.ask{margin:.55rem 0;padding:.45rem .7rem;border-radius:10px;background:var(--surface2)}
+.ask p{margin:.1rem 0 .35rem}
+.sidebox{border:2px solid var(--blue);background:var(--blue-soft);border-radius:14px;padding:.7rem 1rem;margin:1rem 0}
+.sidebox .title{font-weight:700;color:var(--blue);margin-bottom:.3rem}
+.sidebox p:last-child{margin-bottom:0}
+.further{border-left:6px solid var(--purple);background:var(--purple-soft);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+.further .title{font-weight:700;color:var(--purple);margin-bottom:.3rem}
+.eqc{display:block;text-align:center;font-family:"Cambria Math","Times New Roman",Georgia,serif;font-size:1.3rem;padding:.55em .6em;margin:.7em 0;background:var(--surface2);border-radius:10px;line-height:1.6;overflow-x:auto}
+.eqc .frac{font-size:.85em}
+.coll{border:2px solid var(--primary);border-radius:12px;padding:.55rem .9rem;margin:.8rem 0;background:var(--surface)}
+.coll .title{font-weight:700;color:var(--primary-ink);margin-bottom:.25rem}
+.ct td,.ct th{vertical-align:middle}
+.ct th .ml,.ct td .ml{display:block;font-size:.85em}
+.svgscroll{overflow-x:auto;border-radius:10px}
+.svgscroll svg{min-width:600px}
+.lab input[type=number]{width:6.2em;padding:.3rem .4rem;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem}
+.lab select{padding:.3rem .4rem;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:.92rem;max-width:100%}
+.inl{display:inline-flex;gap:.4rem;align-items:center;flex-wrap:wrap}
+.inl input{width:5.5em;padding:.25rem .4rem;border-radius:6px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:.95rem}
+.inl input.ok{border-color:var(--green);background:var(--green-soft)}
+.inl input.bad{border-color:var(--red);background:var(--red-soft)}
+/* ==== page 05 ==== */
+.stat{display:inline-block;padding:.1rem .55rem;border-radius:999px;font-weight:700;font-size:.9rem}
+.stat.u{background:var(--green-soft);color:var(--green)}.stat.s{background:var(--accent-soft);color:var(--accent-ink)}.stat.x{background:var(--red-soft);color:var(--red)}
+</style>
+</head>
+<body data-page="05_saturated_solutions">
+<header class="top"></header>
+<main class="page">
+
+<span class="chip">Chapter 6 · Section 5</span><span class="chip amber">Textbook pages 118–121</span>
+<h1>Saturated, Unsaturated and Supersaturated Solutions <span class="ml">പൂരിത · അപൂരിത · അതിപൂരിത ലായനി</span></h1>
+<p class="lead">Keep adding sugar to your tea and, sooner or later, sugar starts to collect at the bottom of the glass. The water cannot take any more. This page finds out exactly <b>how much</b> solute a solvent can hold, what heating changes, and how a solution can be tricked into holding <b>more</b> than it should, until a single seed crystal sets off a shower of crystals. In the saturation lab you do all three activities of the textbook yourself.</p>
+
+<div class="callout book"><div class="title">📖 What you need (pages 3 and 4 of this guide)</div>
+<ul style="margin:0">
+<li>Solute <span class="ml">ലീനം</span> dissolves in a solvent <span class="ml">ലായകം</span> to form a solution <span class="ml">ലായനി</span> (<a href="03_solutions_solvents.html">page 3</a>).</li>
+<li>Concentration <span class="ml">ലായനിയുടെ ഗാഢത</span> = amount of solute in a definite amount of solution (<a href="04_concentration_mass_percent.html">page 4</a>).</li>
+<li>100 mL of water has a mass of about 100 g.</li></ul></div>
+
+<p><span class="ml">വ്യത്യസ്ത തരത്തിലുള്ള ലീനങ്ങളെയും ലായകങ്ങളേയും നാം പരിചയപ്പെട്ടു. ഒരു ലായകത്തിൽ ലീനത്തെ എത്രത്തോളം ലയിപ്പിക്കാം?</span> – We have met different kinds of solutes and solvents. <b>How much</b> solute can be dissolved in a solvent? Let us do the activities below.</p>
+
+<!-- ================= 1 ================= -->
+<h2 id="sat">1. Saturated solution <span class="ml">പൂരിത ലായനി</span> (Activity 1)</h2>
+<p><span class="ml">ഒരു ബീക്കറിൽ 100 mL ജലം എടുക്കുക. അതിൽ അമോണിയം ക്ലോറൈഡ് (NH₄Cl) കുറേശ്ശെയായി ലയിപ്പിക്കുക. ലീനം ലയിച്ചു ചേരുന്നതായി കാണാം. കൂടുതൽ അമോണിയം ക്ലോറൈഡ് തരികൾ ചേർത്ത് ഇളക്കിക്കൊണ്ടേയിരിക്കുക.</span> Take <b>100 mL of water</b> in a beaker. Dissolve <b>ammonium chloride</b> (NH₄Cl) in it, a little at a time. The solute dissolves. Keep adding more crystals of ammonium chloride and keep stirring.</p>
+<div class="lab"><div class="lab-title">🖼️ Fig 6.2 (redrawn)</div>
+<div class="svgscroll"><svg id="f62" viewBox="0 0 800 330" role="img" aria-label="Figure 6.2 redrawn: three beakers at the same temperature t degrees Celsius. One: 100 mL of water. Two: x grams of solute added from a spoon and stirred with a glass rod; it all dissolves. Three: more than x grams added; the extra solute remains undissolved at the bottom."></svg></div></div>
+<p><span class="ml">ഒരു ഘട്ടത്തിൽ അധികമുള്ള ലീനം ലയിച്ചുചേരാത്ത അവസ്ഥ സംജാതമാകുന്നത് കണ്ടല്ലോ. ഇങ്ങനെ കിട്ടുന്ന ലായനിയെ പൂരിത ലായനി എന്നുവിളിക്കാം. താപനില സ്ഥിരമായിരിക്കുന്നത് ശ്രദ്ധിക്കുക.</span> – At one stage the extra solute <b>no longer dissolves</b>. The solution we get is called a <b>saturated solution</b>. Notice that the <b>temperature is kept constant</b> (t °C in every beaker).</p>
+<div class="callout key"><div class="title">⭐ Saturated solution (page 119)</div>
+<span class="ml keyml">ഒരു നിശ്ചിത താപനിലയിൽ പരമാവധി ലീനം ലയിച്ചുചേർന്നാൽ ലഭിക്കുന്ന ലായനിയാണ് പൂരിത ലായനി.</span>
+<p style="margin:0">A <b>saturated solution</b> <span class="ml">പൂരിത ലായനി</span> is the solution obtained when the <b>maximum amount of solute</b> has dissolved at a <b>given temperature</b>.</p></div>
+
+<!-- ================= 2 ================= -->
+<h2 id="unsat">2. Unsaturated solution <span class="ml">അപൂരിത ലായനി</span> (Activity 2)</h2>
+<p><span class="ml">പൂരിത ലായനി ഉണ്ടാകുന്നതിനുമുമ്പുള്ള അവസ്ഥയിൽ അമോണിയം ക്ലോറൈഡ് തരികൾ ജലത്തിൽ ലയിച്ചുചേരുന്നത് നിങ്ങൾ കണ്ടല്ലോ. ഇതിനെ അപൂരിത ലായനി എന്നു വിളിക്കുന്നു.</span> – Before the solution became saturated, you saw the ammonium chloride crystals dissolving in the water. A solution at that stage is called an <b>unsaturated solution</b>.</p>
+<div class="lab"><div class="lab-title">🖼️ Fig 6.3 (redrawn)</div>
+<div class="svgscroll"><svg id="f63" viewBox="0 0 800 312" role="img" aria-label="Figure 6.3 redrawn: two beakers at t degrees Celsius. In the first, NH4Cl is added and the solute dissolves. In the second, more NH4Cl is added and more solute still dissolves; nothing is left at the bottom."></svg></div></div>
+<div class="callout key"><div class="title">⭐ Unsaturated solution (page 119)</div>
+<span class="ml keyml">ഒരു നിശ്ചിത താപനിലയിൽ പൂരിതമാകാൻ ആവശ്യമായതിനേക്കാൾ കുറവ് ലീനം ലയിപ്പിച്ച ലായനിയെ അപൂരിത ലായനി എന്നുപറയുന്നു.</span>
+<p style="margin:0">A solution in which <b>less solute</b> is dissolved than is needed to make it saturated at a given temperature is an <b>unsaturated solution</b> <span class="ml">അപൂരിത ലായനി</span>.</p></div>
+<p><span class="ml">അപൂരിത ലായനിയിൽ വീണ്ടും ലീനത്തെ ലയിപ്പിക്കാൻ കഴിയുമെന്ന് കണ്ടല്ലോ.</span> – So more solute <b>can still be dissolved</b> in an unsaturated solution.</p>
+<div class="callout think"><div class="title">🧪 How can you tell them apart?</div>
+<p>Add a <b>small crystal</b> of the same solute at the same temperature and stir. If it <b>dissolves</b>, the solution was <b>unsaturated</b>. If it stays <b>undissolved</b>, the solution is <b>saturated</b>. (In a supersaturated solution, which you meet next, the crystal makes even more solute come out!)</p></div>
+
+<!-- ================= 3 ================= -->
+<h2 id="super">3. Supersaturated solution <span class="ml">അതിപൂരിത ലായനി</span> (Activity 3)</h2>
+<p><span class="ml">അമോണിയം ക്ലോറൈഡിന്റെ പൂരിത ലായനി തയ്യാറാക്കിയ സന്ദർഭത്തിൽ അല്പം ലീനം ലയിക്കാതെ അവശേഷിച്ചത് നിരീക്ഷിച്ചുവല്ലോ? ഇതിനെ ലയിപ്പിക്കാൻ എന്തെങ്കിലും മാർഗമുണ്ടോ? ചൂടാക്കി നോക്കൂ. കുറച്ചുകൂടി ലീനം ചേർത്ത് ചൂടാക്കുന്നത് തുടരുക.</span> When you made the saturated solution of ammonium chloride, a little solute was left undissolved. Is there a way to dissolve it? Try <b>heating</b>. Add a little more solute and continue heating.</p>
+<div class="safety">⚠️ Heating needs an <b>adult (teacher) to supervise</b>: use a tripod, wire gauze and a burner, keep hair and sleeves away from the flame, and hold hot beakers only with tongs or a cloth. Ammonium chloride must not be tasted, and its solution should not be boiled dry (it gives off irritating fumes).</div>
+<div class="lab"><div class="lab-title">🖼️ Fig 6.4 (redrawn)</div>
+<div class="svgscroll"><svg id="f64" viewBox="0 0 800 380" role="img" aria-label="Figure 6.4 redrawn. Left: a beaker on a tripod and wire gauze over a burner flame; more solute is added from a spoon and dissolves at the higher temperature. Right: the same solution after being cooled; crystals of the extra solute have formed at the bottom."></svg></div></div>
+<div class="qa"><p><b>Q (page 119).</b> <span class="ml mlq">എന്താണ് സംഭവിച്ചത്? ലീനം ലയിക്കുന്നുണ്ടോ?</span> What happened? Does the solute dissolve?</p>
+<div class="yn" data-ans="0" data-why="On heating, the undissolved NH₄Cl dissolves, and even the extra solute you add dissolves. More solute can dissolve at a higher temperature." data-hint="Try it in the saturation lab below: add solute until some is left, then move the temperature slider up."><button class="btn">yes – it dissolves</button><button class="btn">no – nothing changes</button></div><div class="why"></div>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>Yes.</b> When the solution is heated, the solute left at the bottom <b>dissolves</b>, and the extra solute added also dissolves. At a <b>higher temperature more NH₄Cl can dissolve</b> in the same 100 g of water (from the textbook's table: 37 g at 20 °C, 55 g at 60 °C).</div></div></div>
+<p><span class="ml">ഇനി ലായനിയെ അനക്കാതെ സാധാരണ താപനിലയിലേക്ക് സാവധാനം തണുപ്പിക്കുക. ലീനം അവക്ഷിപ്തപ്പെടുന്നുണ്ടോ? നിരീക്ഷണ ഫലം രേഖപ്പെടുത്തുക.</span> Now cool the solution <b>slowly</b> to room temperature <b>without disturbing it</b>. Does the solute <b>precipitate</b> (come out as a solid)? Record your observation.</p>
+<div class="qa"><p><b>Observation (page 120).</b></p>
+<div class="reveal" data-btn="Show answer"><div class="answer">Usually, as the solution cools, <b>crystals of NH₄Cl separate out</b> (Fig 6.4, right). The cold water cannot hold as much solute as the hot water did, so the extra comes out as crystals.<br>
+But if the cooling is done <b>very carefully</b> (clean beaker, no dust, no shaking, no crystals left at the bottom), the solution often stays <b>clear</b> at room temperature even though it now holds <b>more solute than a saturated solution can</b> at that temperature. Such a solution is <b>supersaturated</b>.</div></div></div>
+<div class="callout key"><div class="title">⭐ Supersaturated solution (page 120)</div>
+<span class="ml keyml">ഒരു നിശ്ചിത താപനിലയിൽ പൂരിതമാകാൻ ആവശ്യമായതിൽ കൂടുതൽ ലീനം ലയിച്ചു ചേർന്ന ലായനിയെ അതിപൂരിത ലായനി എന്നു പറയുന്നു.</span>
+<p style="margin:0">A solution in which <b>more solute</b> is dissolved than is needed to make it saturated at a given temperature is a <b>supersaturated solution</b> <span class="ml">അതിപൂരിത ലായനി</span>.</p></div>
+
+<!-- ================= 4 ================= -->
+<h2 id="lab">4. Virtual lab: the saturation lab</h2>
+<p>100 g (100 mL) of water and a jar of ammonium chloride. Each spoonful is <b>5 g</b>. The water is stirred all the time, except while you "cool slowly". Watch the beaker, the meter and the point on the solubility curve.</p>
+<div class="lab" id="satLab">
+  <div class="lab-title">🥄 Saturation lab – NH₄Cl in 100 g of water</div>
+  <div class="svgscroll"><svg id="satSvg" viewBox="0 0 800 420" role="img" aria-label="Left: a beaker of water on a tripod with a thermometer and a glass rod; spoonfuls of ammonium chloride fall in; dissolved particles are shown as faint dots and undissolved solid or crystals collect at the bottom; a burner flame shows when it is heated. Middle: a meter of grams dissolved with a red line at the saturation limit for the current temperature. Right: the solubility curve of ammonium chloride with the current state marked as a point: below the curve unsaturated, on it saturated, above it supersaturated."></svg></div>
+  <div class="controls">
+    <button class="btn primary" id="sAdd">🥄 Add a spoonful (5 g)</button>
+    <label>Temperature <input type="range" id="sT" min="10" max="80" step="1" value="30" data-fmt="{v} °C"><output></output></label></div>
+  <div class="controls">
+    <button class="btn" id="sCool">❄️ Cool slowly to 30 °C, undisturbed</button>
+    <label><input type="checkbox" id="sCare"> very careful: clean beaker, no dust, no shaking</label>
+    <button class="btn" id="sSeed">💎 Drop in a seed crystal</button>
+    <button class="btn ghost" id="sReset">⟲ Start again</button></div>
+  <div class="readout" id="satOut"></div>
+  <p class="hint">Moving the temperature slider means heating or cooling <b>while stirring</b>. The solubility values are those of the textbook's table (Let us assess, question 6: 24, 37, 41, 55 and 66 g per 100 g of water at 10, 20, 40, 60 and 80 °C), joined by straight lines. The dots in the beaker stand for dissolved particles, which in real life you cannot see.</p>
+</div>
+<div class="qa"><p><b>Try these in the lab</b></p>
+<ol>
+<li>At 30 °C add spoonfuls one by one. After how many spoonfuls is some solid left at the bottom?</li>
+<li>Heat to 60 °C. What happens to the solid? Add spoonfuls until it is saturated again.</li>
+<li>Untick "very careful" and press "Cool slowly". What do you see?</li>
+<li>Start again, make a saturated solution at 60 °C <b>with nothing left at the bottom</b>, tick "very careful" and cool slowly. Where is the point on the curve? Now drop in a seed crystal.</li></ol>
+<div class="reveal" data-btn="Show what happens"><div class="answer">
+1. At 30 °C the textbook values give about <b>39 g</b> per 100 g of water. After 7 spoonfuls (35 g) everything has dissolved: <b>unsaturated</b>. The 8th spoonful (40 g) leaves about 1 g undissolved: <b>saturated</b>.<br>
+2. At 60 °C up to <b>55 g</b> can dissolve, so the solid disappears. 11 spoonfuls (55 g) make it just saturated at 60 °C.<br>
+3. As it cools, the limit falls from 55 g to 39 g, so about <b>16 g</b> of NH₄Cl comes out as <b>crystals</b>. The solution left is saturated at 30 °C.<br>
+4. The point stays <b>above</b> the curve: 55 g dissolved where only 39 g should – a <b>supersaturated</b> solution. The seed crystal makes the extra 16 g crystallise at once, and the point drops back onto the curve.</div></div></div>
+
+<!-- ================= 5 ================= -->
+<h2 id="stable">5. Is a supersaturated solution stable?</h2>
+<div class="qa"><p><b>Q (page 120).</b> <span class="ml mlq">അതിപൂരിത ലായനി സ്ഥിരമായി നിലനിൽക്കുമോ? എന്തുകൊണ്ടായിരിക്കും?</span> Will a supersaturated solution remain stable? Why?</p>
+<div class="yn" data-ans="1" data-why="It is unstable. Shaking, a speck of dust, scratching the glass or a seed crystal makes the extra solute crystallise." data-hint="What happened in the lab when you dropped in a seed crystal?"><button class="btn">yes, it stays as it is for ever</button><button class="btn">no, it is unstable</button></div><div class="why"></div>
+<div class="reveal" data-btn="Show answer"><div class="answer"><b>No.</b> A supersaturated solution holds <b>more solute than the solvent can normally hold</b> at that temperature, so it is <b>unstable</b>. A small disturbance – shaking, stirring, a speck of dust, scratching the glass or adding a tiny <b>seed crystal</b> – makes the <b>extra solute crystallise out</b>, and what remains is a <b>saturated</b> solution.<br>
+<span class="ml">അധികം ചേർത്ത ലീനത്തെ അവക്ഷിപ്തപ്പെടുത്തി വീണ്ടും അതിനെ പൂരിത ലായനിയായി മാറ്റാം. എന്നാൽ ശ്രദ്ധാപൂർവം ഇതിനെ സാധാരണ താപനിലയിലേക്ക് കൊണ്ടുവന്നാൽ പലപ്പോഴും ലയിച്ച ലീനം അടിയുന്നില്ല.</span> The extra solute can be made to precipitate, turning it back into a saturated solution. But if it is brought to room temperature carefully, the dissolved solute often does not settle out.</div></div></div>
+
+<!-- ================= 6 ================= -->
+<h2 id="grow">6. Growing crystals <span class="ml">വളരുന്ന പരൽ</span></h2>
+<p><span class="ml">കോപ്പർ സൾഫേറ്റിന്റെ (CuSO₄) യും പൊട്ടാസിയം നൈട്രേറ്റിന്റെയും (KNO₃) അതിപൂരിത ലായനികൾ പ്രത്യേകം ബീക്കറുകളിൽ തയ്യാറാക്കുക. അവയിൽ യഥാക്രമം കോപ്പർ സൾഫേറ്റിന്റെയും പൊട്ടാസിയം നൈട്രേറ്റിന്റെയും ഓരോ ചെറിയ ക്രിസ്റ്റൽ (seed crystal) നൂലിൽ കെട്ടി ചിത്രത്തിൽ കാണുന്നതുപോലെ ലായനികളിൽ തൂക്കിയിടുക.</span> Prepare <b>supersaturated</b> solutions of <b>copper sulphate</b> (CuSO₄) and <b>potassium nitrate</b> (KNO₃) in separate beakers. Tie a small crystal (a <b>seed crystal</b>) of copper sulphate and one of potassium nitrate to threads, and hang each in its own solution as in Fig 6.5.</p>
+<div class="safety">⚠️ Making these solutions needs hot water – an adult must supervise. Copper sulphate is harmful if swallowed and irritates the eyes: wear gloves, and wash your hands afterwards. Never taste the crystals.</div>
+<div class="lab" id="grLab">
+  <div class="lab-title">💎 Fig 6.5 as a time-lapse – seed crystals on threads</div>
+  <div class="svgscroll"><svg id="grSvg" viewBox="0 0 800 340" role="img" aria-label="Two beakers, each with a glass rod across the top and a thread holding a seed crystal in the solution: blue copper sulphate on the left and colourless potassium nitrate on the right. As the hours pass, the crystals grow in a supersaturated solution, stay the same in a saturated one and shrink in an unsaturated one."></svg></div>
+  <div class="controls">
+    <label>Time after hanging the seed <input type="range" id="grT" min="0" max="24" step="1" value="0" data-fmt="{v} h"><output></output></label>
+    <label>The solutions are <select id="grType"><option value="x">supersaturated (as in the book)</option><option value="s">just saturated</option><option value="u">unsaturated</option></select></label>
+    <button class="btn primary" id="grPlay">▶ Play 24 hours</button></div>
+  <div class="readout" id="grOut"></div>
+  <p class="hint">Sizes are illustrative. Real crystals grow for days if the beaker is covered and left undisturbed.</p>
+</div>
+<div class="qa"><p><b>Q (page 120).</b> <span class="ml mlq">അല്പസമയത്തിനുശേഷം എന്തുമാറ്റമാണ് കണ്ടത്? ഒരു ദിവസത്തിനുശേഷം വീണ്ടും നിരീക്ഷിക്കുക. നിരീക്ഷിച്ച ഫലങ്ങൾ രേഖപ്പെടുത്തുക.</span> What change did you see after a short time? Observe again after a day and record your observations.</p>
+<div class="reveal" data-btn="Show answer"><div class="answer">After a short time the seed crystals <b>start to grow</b>: new solid builds up on their faces. After a day they are <b>much bigger</b>: a large <b>blue</b> crystal of copper sulphate with flat, slanting faces, and <b>colourless, needle-like</b> crystals of potassium nitrate. Small crystals may also form on the thread and at the bottom.<br>
+<b>Why?</b> The solutions hold more solute than they can keep dissolved. The seed crystal gives the extra solute a place to settle, so the particles come out of the solution and join the crystal in a regular pattern.</div></div></div>
+<div class="callout book"><div class="title">📚 Crystallization <span class="ml">പരലീകരണം</span> (page 121)</div>
+<span class="ml keyml">അതിപൂരിത ലായനിയെ സാവധാനത്തിൽ തണുപ്പിക്കുമ്പോൾ ലീനത്തിന്റെ ക്രിസ്റ്റലുകൾ രൂപപ്പെട്ട് വരുന്ന പ്രക്രിയയെ പരലീകരണം (crystallization) എന്നു പറയുന്നു.</span>
+<p style="margin:0">The process in which <b>crystals of the solute form</b> when a <b>supersaturated solution is cooled slowly</b> is called <b>crystallization</b> <span class="ml">പരലീകരണം</span>.</p></div>
+<div class="callout real"><div class="title">🌴 Crystals around you</div>
+<ul style="margin:0">
+<li><b>Kalkandam</b> (sugar candy): a hot, very concentrated sugar syrup is cooled slowly with threads hanging in it, and big sugar crystals grow on the threads.</li>
+<li>Honey or a bottle of thick sugar syrup kept for a long time sometimes turns grainy: sugar crystals are coming out of a supersaturated solution.</li>
+<li>"Hot ice" hand-warmers contain a supersaturated solution of sodium acetate. Clicking a metal disc starts crystallisation, which gives out heat (go further).</li></ul></div>
+
+<div class="tw"><table class="ct"><thead><tr><th>At a given temperature</th><th>Solute dissolved compared with the saturation amount</th><th>Add a crystal of solute</th><th>Stable?</th></tr></thead><tbody>
+<tr><td><span class="stat u">Unsaturated</span> <span class="ml">അപൂരിത ലായനി</span></td><td>less</td><td>it dissolves</td><td>yes</td></tr>
+<tr><td><span class="stat s">Saturated</span> <span class="ml">പൂരിത ലായനി</span></td><td>equal (the maximum)</td><td>it stays undissolved</td><td>yes</td></tr>
+<tr><td><span class="stat x">Supersaturated</span> <span class="ml">അതിപൂരിത ലായനി</span></td><td>more</td><td>extra solute crystallises</td><td>no</td></tr></tbody></table></div>
+
+<div class="callout warn"><div class="title">⚠️ Common mistakes</div>
+<ul style="margin:0">
+<li>Forgetting the temperature ✗ – "saturated" always means saturated <b>at a given temperature</b>. A solution saturated at 30 °C becomes unsaturated when heated.</li>
+<li>"Saturated = concentrated, unsaturated = dilute" ✗ – a saturated solution of a slightly soluble substance can still be very dilute.</li>
+<li>Thinking a supersaturated solution is made by just adding more solute ✗ – it is made by dissolving at a <b>higher temperature</b> and cooling <b>slowly and undisturbed</b>.</li></ul></div>
+
+<div class="explore"><div class="title">🌐 Explore online <span class="net">needs internet · opens in a new tab</span></div><ul><li><a href="https://en.wikipedia.org/wiki/Saturation_(chemistry)" target="_blank" rel="noopener noreferrer">📄 Saturation (chemistry)</a> <span class="src">Wikipedia</span><br><span class="note">Saturated and unsaturated solutions.</span></li><li><a href="https://en.wikipedia.org/wiki/Supersaturation" target="_blank" rel="noopener noreferrer">📄 Supersaturation</a> <span class="src">Wikipedia</span><br><span class="note">Solutions holding more solute than they normally can.</span></li><li><a href="https://en.wikipedia.org/wiki/Crystallization" target="_blank" rel="noopener noreferrer">📄 Crystallization</a> <span class="src">Wikipedia</span><br><span class="note">How crystals grow from a supersaturated solution.</span></li><li><a href="https://en.wikipedia.org/wiki/Solubility" target="_blank" rel="noopener noreferrer">📄 Solubility</a> <span class="src">Wikipedia</span><br><span class="note">Solubility curves and how temperature and pressure change solubility.</span></li><li><a href="https://en.wikipedia.org/wiki/Sodium_sulfate" target="_blank" rel="noopener noreferrer">📄 Sodium sulfate</a> <span class="src">Wikipedia</span><br><span class="note">Glauber’s salt and its unusual solubility curve.</span></li><li><a href="https://en.wikipedia.org/wiki/Chemical_garden" target="_blank" rel="noopener noreferrer">📄 Chemical garden</a> <span class="src">Wikipedia</span><br><span class="note">The sodium silicate &quot;crystal garden&quot; of extended activity 1.</span></li></ul></div>
+<h2 id="check">7. Check yourself</h2>
+<div id="q1"></div><div id="q2"></div><div id="q3"></div><div id="q4"></div><div id="q5"></div><div id="q6"></div>
+
+<div class="callout"><div class="title">🧭 Summary</div>
+<ul style="margin:0">
+<li><b>Saturated</b> <span class="ml">പൂരിത ലായനി</span>: maximum solute dissolved at a given temperature. <b>Unsaturated</b> <span class="ml">അപൂരിത ലായനി</span>: less than that – more can still dissolve.</li>
+<li>Heating lets more solute dissolve. Cooling slowly and without disturbance can give a <b>supersaturated</b> solution <span class="ml">അതിപൂരിത ലായനി</span>, which holds more solute than the saturation amount.</li>
+<li>A supersaturated solution is <b>unstable</b>: a disturbance or a seed crystal makes the extra solute crystallise.</li>
+<li>Seed crystals of CuSO₄ (blue) and KNO₃ (colourless needles) <b>grow</b> in their supersaturated solutions <span class="ml">വളരുന്ന പരൽ</span>. Crystals forming when a supersaturated solution is cooled slowly = <b>crystallization</b> <span class="ml">പരലീകരണം</span>.</li></ul></div>
+<p>Next: <a href="06_solubility.html">Solubility and solubility curves ▶</a></p>
+</main>
+<footer class="bottomnav"></footer>
+<script>window.KIT_CONFIG={"title": "Solutions · Class 9 Chemistry", "icon": "🧪", "key": "chemistry_ch6_progress", "pages": [["index.html", "Home"], ["01_mixtures_states.html", "1 · Mixtures, States of Matter & Dissolving"], ["02_percentages_graphs.html", "2 · Percentages, Units & Reading Graphs"], ["03_solutions_solvents.html", "3 · Solutions, Solutes & Solvents"], ["04_concentration_mass_percent.html", "4 · Concentration & Mass Percentage"], ["05_saturated_solutions.html", "5 · Saturated, Unsaturated & Supersaturated Solutions"], ["06_solubility.html", "6 · Solubility & Solubility Curves"], ["07_suspensions_colloids.html", "7 · True Solutions, Suspensions & Colloids"], ["08_drinks_additives.html", "8 · Colloids in Daily Life, Drinks & Food Additives"], ["09_intext_questions_solutions.html", "9 · In-text Questions – Solutions"], ["10_assess_solutions.html", "10 · Let Us Assess & Extended Activities – Solutions"], ["11_applications_explore.html", "11 · Applications & Explore Online"], ["12_summary_revision.html", "12 · Summary & Quick Quiz"], ["13_model_test_paper.html", "13 · Model Test Paper"], ["14_model_test_solutions.html", "14 · Model Test – Solved"]]};</script>
+<script>
+/* ===== Interactive chapter guides – shared kit JS (window.K) ===== */
+window.K = (function(){
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const DEFAULT_PAGES = [
+    ['index.html','Home'],
+    ['01_triangle_basics.html','1 · Triangle Basics'],
+    ['02_congruent_triangles.html','2 · Congruent Triangles'],
+    ['03_parallel_lines.html','3 · Parallel Lines & Ratios in Triangles'],
+    ['04_ratio_and_scale.html','4 · Ratios & Scale Factor'],
+    ['05_angles_and_sides.html','5 · Angles and Sides (Section 1)'],
+    ['06_exercise_1_solutions.html','6 · Exercise 1 – Solutions'],
+    ['07_sides_and_angles.html','7 · Sides and Angles (Section 2)'],
+    ['08_exercise_2_solutions.html','8 · Exercise 2 – Solutions'],
+    ['09_third_way.html','9 · The Third Way (Section 3)'],
+    ['10_exercise_3_solutions.html','10 · Exercise 3 – Solutions'],
+    ['11_applications.html','11 · Real-World Applications'],
+    ['12_summary_revision.html','12 · Summary & Quick Quiz'],
+    ['13_model_test_paper.html','13 · Model Test Paper'],
+    ['14_model_test_solutions.html','14 · Model Test – Solved']
+  ];
+  const CFG = Object.assign({title: 'Similar Triangles · Class 9', icon: '📐', key: 'similar_triangles_ch6_progress', pages: DEFAULT_PAGES}, window.KIT_CONFIG || {});
+  const PAGES = CFG.pages;
+  const $  = (s, r=document) => (typeof s === 'string' ? r.querySelector(s) : s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  /* ---------- geometry ---------- */
+  const P = (x, y) => ({x, y});
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const lerpPt = (a, b, t) => P(lerp(a.x, b.x, t), lerp(a.y, b.y, t));
+  const dist = (a, b) => Math.hypot(b.x - a.x, b.y - a.y);
+  const mid = (a, b) => lerpPt(a, b, .5);
+  const add = (a, b) => P(a.x + b.x, a.y + b.y);
+  const sub = (a, b) => P(a.x - b.x, a.y - b.y);
+  const scale = (a, k) => P(a.x * k, a.y * k);
+  const unit = (a, b) => { const L = dist(a, b) || 1; return P((b.x - a.x) / L, (b.y - a.y) / L); };
+  const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+  const angleAt = (V, A, B) => { const a1 = Math.atan2(A.y - V.y, A.x - V.x), a2 = Math.atan2(B.y - V.y, B.x - V.x); let d = Math.abs(a1 - a2); if (d > Math.PI) d = 2 * Math.PI - d; return deg(d); };
+  const polar = (c, r, angDeg) => P(c.x + r * Math.cos(rad(angDeg)), c.y + r * Math.sin(rad(angDeg)));
+  const centroid = arr => P(arr.reduce((s, p) => s + p.x, 0) / arr.length, arr.reduce((s, p) => s + p.y, 0) / arr.length);
+  const rotateAround = (p, c, angDeg) => { const a = rad(angDeg), dx = p.x - c.x, dy = p.y - c.y; return P(c.x + dx * Math.cos(a) - dy * Math.sin(a), c.y + dx * Math.sin(a) + dy * Math.cos(a)); };
+  /* point on line AB nearest to Q */
+  const foot = (Q, A, B) => { const u = unit(A, B); const t = (Q.x - A.x) * u.x + (Q.y - A.y) * u.y; return P(A.x + u.x * t, A.y + u.y * t); };
+  /* intersection of lines AB and CD (as infinite lines) */
+  const intersect = (A, B, C, D) => { const d = (A.x - B.x) * (C.y - D.y) - (A.y - B.y) * (C.x - D.x); if (Math.abs(d) < 1e-9) return null; const t = ((A.x - C.x) * (C.y - D.y) - (A.y - C.y) * (C.x - D.x)) / d; return P(A.x + t * (B.x - A.x), A.y + t * (B.y - A.y)); };
+  /* third vertex of a triangle given base A,B and base angles (deg) at A and B, on the side given by sign (+1 = "above" in screen coords => smaller y) */
+  const thirdVertex = (A, B, angA, angB, up=true) => { const s = up ? -1 : 1; const dirA = Math.atan2(B.y - A.y, B.x - A.x) + s * rad(angA); const dirB = Math.atan2(A.y - B.y, A.x - B.x) - s * rad(angB); return intersect(A, P(A.x + Math.cos(dirA), A.y + Math.sin(dirA)), B, P(B.x + Math.cos(dirB), B.y + Math.sin(dirB))); };
+  /* triangle from three side lengths a=BC, b=CA, c=AB placed with A at origin-ish: returns [A,B,C] with AB horizontal, C above; unit = px per length unit */
+  const triSSS = (a, b, c, origin, unitPx, up=true) => { const A = P(origin.x, origin.y), B = P(origin.x + c * unitPx, origin.y); const cosA = (b * b + c * c - a * a) / (2 * b * c); const angA = Math.acos(Math.max(-1, Math.min(1, cosA))); const s = up ? -1 : 1; const C = P(A.x + b * unitPx * Math.cos(angA), A.y + s * b * unitPx * Math.sin(angA)); return [A, B, C]; };
+  const fmt = (n, d=1) => { const s = (+n).toFixed(d); return s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s; };
+  const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+  const mixed = (w, n, d) => `${w}${frac(n, d)}`;
+  /* typeset square roots in HTML: sqrt('2') → √2 with an overline; sqrt('2','3') → 3√2; sqrt(frac(2,3)) works too */
+  const sqrt = (rnd, coeff='') => `${coeff}<span class="sqrt"><span class="rad">√</span><span class="rnd">${rnd}</span></span>`;
+  const sq = x => `${x}<sup>2</sup>`;
+  /* display a number with a true minus sign (U+2212) */
+  const num = v => { const t = (typeof v === 'number') ? fmt(v, 4) : String(v); return t.replace(/-/g, '−'); };
+
+  /* ---------- SVG helpers ---------- */
+  function el(tag, attrs={}, parent=null){ const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)){ if (k === 'text') e.textContent = v; else if (k === 'html') e.innerHTML = v; else if (v !== null && v !== undefined) e.setAttribute(k, v); } if (parent) parent.appendChild(e); return e; }
+  function clear(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function group(svg, attrs={}){ return el('g', attrs, svg); }
+  const pts = arr => arr.map(p => `${fmt(p.x, 2)},${fmt(p.y, 2)}`).join(' ');
+  function polygon(svg, arr, attrs={}){ return el('polygon', {points: pts(arr), ...attrs}, svg); }
+  function polyline(svg, arr, attrs={}){ return el('polyline', {points: pts(arr), fill: 'none', ...attrs}, svg); }
+  function seg(svg, a, b, attrs={}){ return el('line', {x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'ln', ...attrs}, svg); }
+  function ray(svg, a, dirTo, len, attrs={}){ const u = unit(a, dirTo); return seg(svg, a, P(a.x + u.x * len, a.y + u.y * len), attrs); }
+  function circle(svg, c, r, attrs={}){ return el('circle', {cx: c.x, cy: c.y, r, class: 'ln', ...attrs}, svg); }
+  function dot(svg, p, attrs={}){ return el('circle', {cx: p.x, cy: p.y, r: 4, class: 'pt', ...attrs}, svg); }
+  function text(svg, p, str, attrs={}){ return el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs, text: str}, svg); }
+  /* label next to the midpoint of a→b, offset perpendicular; positive off = to the right of travel direction (outside for a CCW-on-screen polygon) */
+  function sideLabel(svg, a, b, str, off=15, attrs={}){ const m = mid(a, b), u = unit(a, b); return text(svg, P(m.x - u.y * off, m.y + u.x * off), str, attrs); }
+  /* label placed away from a polygon's centre */
+  function vertexLabel(svg, V, center, str, off=17, attrs={}){ const u = unit(center, V); return text(svg, P(V.x + u.x * off, V.y + u.y * off), str, {class: 'lbl big', ...attrs}); }
+  function labelTriangle(svg, tri, names, off=17, attrs={}){ const c = centroid(tri); tri.forEach((V, i) => vertexLabel(svg, V, c, names[i], off, attrs)); }
+  /* angle arc at V between rays VA and VB, smaller angle; optional label; filled wedge if fill=true */
+  function angleArc(svg, V, A, B, r=24, opts={}){ const {cls='', label=null, labelOff=null, fill=false, fillCls=''} = opts; const a1 = Math.atan2(A.y - V.y, A.x - V.x); let d = Math.atan2(B.y - V.y, B.x - V.x) - a1; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const sweep = d > 0 ? 1 : 0; const p1 = P(V.x + r * Math.cos(a1), V.y + r * Math.sin(a1)), p2 = P(V.x + r * Math.cos(a1 + d), V.y + r * Math.sin(a1 + d)); const g = group(svg); if (fill) el('path', {d: `M${fmt(V.x,2)},${fmt(V.y,2)} L${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)} Z`, class: ('ang-fill ' + (fillCls || cls)).trim()}, g); el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 0,${sweep} ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: ('ang ' + cls).trim()}, g); if (label !== null){ const am = a1 + d / 2, lr = labelOff ?? (r + 13); text(g, P(V.x + lr * Math.cos(am), V.y + lr * Math.sin(am)), label, {class: ('ang-lbl ' + cls).trim()}); } return g; }
+  /* double arc (for marking a second pair of equal angles) */
+  function angleArc2(svg, V, A, B, r=24, opts={}){ const g = group(svg); angleArc(g, V, A, B, r, {...opts, label: null}); angleArc(g, V, A, B, r - 5, opts); return g; }
+  function rightMark(svg, V, A, B, s=11, attrs={}){ const ua = unit(V, A), ub = unit(V, B); return polyline(svg, [P(V.x + ua.x * s, V.y + ua.y * s), P(V.x + (ua.x + ub.x) * s, V.y + (ua.y + ub.y) * s), P(V.x + ub.x * s, V.y + ub.y * s)], {class: 'ang', ...attrs}); }
+  /* n small ticks across the middle of segment ab (equal-length marks) */
+  function ticks(svg, a, b, n=1, len=5, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 5; const c = P(m.x + u.x * o, m.y + u.y * o); el('line', {x1: c.x + u.y * len, y1: c.y - u.x * len, x2: c.x - u.y * len, y2: c.y + u.x * len}, g); } return g; }
+  /* n chevrons at the middle of ab pointing a→b (parallel marks) */
+  function arrows(svg, a, b, n=1, size=6, attrs={}){ const m = mid(a, b), u = unit(a, b); const g = group(svg, {class: 'ln', ...attrs}); for (let i = 0; i < n; i++){ const o = (i - (n - 1) / 2) * 7; const tip = P(m.x + u.x * (o + size / 2), m.y + u.y * (o + size / 2)); const base = P(tip.x - u.x * size, tip.y - u.y * size); polyline(g, [P(base.x + u.y * size * .8, base.y - u.x * size * .8), tip, P(base.x - u.y * size * .8, base.y + u.x * size * .8)]); } return g; }
+  /* arrowhead line for dimensions */
+  function dim(svg, a, b, str, off=22, attrs={}){ const u = unit(a, b), n = P(-u.y, u.x); const a2 = P(a.x + n.x * off, a.y + n.y * off), b2 = P(b.x + n.x * off, b.y + n.y * off); const g = group(svg, {class: 'ln-muted thin'}); seg(g, a, a2, {class: 'ln-muted thin dot'}); seg(g, b, b2, {class: 'ln-muted thin dot'}); seg(g, a2, b2, {class: 'ln-muted thin'}); const s = 5; polyline(g, [P(a2.x + u.x * s + n.x * s * .6, a2.y + u.y * s + n.y * s * .6), a2, P(a2.x + u.x * s - n.x * s * .6, a2.y + u.y * s - n.y * s * .6)]); polyline(g, [P(b2.x - u.x * s + n.x * s * .6, b2.y - u.y * s + n.y * s * .6), b2, P(b2.x - u.x * s - n.x * s * .6, b2.y - u.y * s - n.y * s * .6)]); text(g, P(mid(a2, b2).x + n.x * 11, mid(a2, b2).y + n.y * 11), str, {class: 'lbl sm muted', ...attrs}); return g; }
+  function gridLines(svg, w, h, step=20){ const g = group(svg, {class: 'grid'}); for (let x = 0; x <= w; x += step) el('line', {x1: x, y1: 0, x2: x, y2: h}, g); for (let y = 0; y <= h; y += step) el('line', {x1: 0, y1: y, x2: w, y2: y}, g); return g; }
+  /* text with tspans separated by \n */
+  function multiText(svg, p, lines, attrs={}, lh=18){ const t = el('text', {x: p.x, y: p.y, class: 'lbl', 'text-anchor': 'middle', 'dominant-baseline': 'middle', ...attrs}, svg); lines.forEach((ln, i) => el('tspan', {x: p.x, dy: i === 0 ? 0 : lh, text: ln}, t)); return t; }
+
+
+  /* ---------- area models & number grids (chapter 4) ---------- */
+  /* areaModel(svg, origin, colWidths[], rowHeights[], {cls:[[..]], lbl:[[..]], top:[], bottom:[], left:[], right:[], labelCls}) */
+  function areaModel(svg, origin, cw, rh, opts={}){ const {cls=null, lbl=null, top=null, left=null, bottom=null, right=null, labelCls='lbl', opacity=null} = opts; const g = group(svg, opacity === null ? {} : {opacity}); let y = origin.y;
+    for (let r = 0; r < rh.length; r++){ let x = origin.x; for (let c = 0; c < cw.length; c++){ el('rect', {x, y, width: cw[c], height: rh[r], class: (cls && cls[r] && cls[r][c]) || 'fill-amber', stroke: 'var(--text)', 'stroke-width': 1.5}, g); if (lbl && lbl[r] && lbl[r][c] !== null && lbl[r][c] !== undefined && cw[c] > 4 && rh[r] > 4) text(g, P(x + cw[c] / 2, y + rh[r] / 2), String(lbl[r][c]), {class: labelCls}); x += cw[c]; } y += rh[r]; }
+    const W = cw.reduce((a, b) => a + b, 0), H = rh.reduce((a, b) => a + b, 0);
+    if (top){ let x = origin.x; cw.forEach((w, c) => { if (top[c] !== null && top[c] !== undefined) text(g, P(x + w / 2, origin.y - 13), String(top[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (bottom){ let x = origin.x; cw.forEach((w, c) => { if (bottom[c] !== null && bottom[c] !== undefined) text(g, P(x + w / 2, origin.y + H + 15), String(bottom[c]), {class: 'lbl sm blue'}); x += w; }); }
+    if (left){ let yy = origin.y; rh.forEach((h, r) => { if (left[r] !== null && left[r] !== undefined) text(g, P(origin.x - 8, yy + h / 2), String(left[r]), {class: 'lbl sm blue', 'text-anchor': 'end'}); yy += h; }); }
+    if (right){ let yy = origin.y; rh.forEach((h, r) => { if (right[r] !== null && right[r] !== undefined) text(g, P(origin.x + W + 8, yy + h / 2), String(right[r]), {class: 'lbl sm blue', 'text-anchor': 'start'}); yy += h; }); }
+    return g; }
+  /* numberGrid(svg, origin, cells[][] (null = blank), cellW, cellH, {hl:(r,c,v)=>cssClass|null, textCls, stroke}) */
+  function numberGrid(svg, origin, cells, cellW, cellH, opts={}){ const g = group(svg); cells.forEach((row, r) => row.forEach((v, c) => { const x = origin.x + c * cellW, y = origin.y + r * cellH; const hc = opts.hl ? opts.hl(r, c, v) : null; const attrs = {x, y, width: cellW, height: cellH, stroke: opts.stroke || 'var(--border)', 'stroke-width': 1}; if (hc) attrs.class = hc; else attrs.fill = 'none'; el('rect', attrs, g); if (v !== null && v !== undefined) text(g, P(x + cellW / 2, y + cellH / 2), String(v), {class: 'lbl' + (opts.textCls ? ' ' + opts.textCls : '')}); })); return g; }
+
+
+  /* ---------- construction helpers (chapter 3) ---------- */
+  /* circular arc centred at c, radius r, from angle a1 to a2 (degrees, screen coords: y down, angles clockwise-positive) */
+  function arc(svg, c, r, a1, a2, attrs={}){ const p1 = polar(c, r, a1), p2 = polar(c, r, a2); let d = a2 - a1; while (d < 0) d += 360; while (d >= 360) d -= 360; const large = d > 180 ? 1 : 0; return el('path', {d: `M${fmt(p1.x,2)},${fmt(p1.y,2)} A${r},${r} 0 ${large},1 ${fmt(p2.x,2)},${fmt(p2.y,2)}`, class: 'ln-red thin', fill: 'none', ...attrs}, svg); }
+  /* short compass arc around point p "aimed" at angle ang (deg), half-width w deg */
+  function compassArc(svg, c, r, ang, w=14, attrs={}){ return arc(svg, c, r, ang - w, ang + w, {class: 'ln-red thin', ...attrs}); }
+  /* the line through A and B extended `before` px behind A and `after` px beyond B */
+  function extendLine(svg, A, B, before=40, after=40, attrs={}){ const u = unit(A, B); return seg(svg, P(A.x - u.x*before, A.y - u.y*before), P(B.x + u.x*after, B.y + u.y*after), {class: 'ln-muted thin', ...attrs}); }
+  /* n equally spaced horizontal rules from y0 with spacing dy (ruled-paper look) */
+  function rules(svg, x0, x1, y0, dy, n, attrs={}){ const g = group(svg, {class: 'ln-red thin', ...attrs}); for (let i = 0; i < n; i++) el('line', {x1: x0, y1: y0 + i*dy, x2: x1, y2: y0 + i*dy}, g); return g; }
+  /* point on segment AB at fraction t */
+  const along = (A, B, t) => lerpPt(A, B, t);
+  /* nice mixed-number string for a length given as numerator/denominator, e.g. mixedStr(7,3) -> "2⅓" */
+  function mixedStr(num, den){ const g = (a, b) => b ? g(b, a % b) : a; const k = g(num, den); num /= k; den /= k; const w = Math.floor(num / den), r = num - w*den; const vul = {'1/2':'½','1/3':'⅓','2/3':'⅔','1/4':'¼','3/4':'¾','1/5':'⅕','2/5':'⅖','3/5':'⅗','4/5':'⅘','1/6':'⅙','5/6':'⅚','1/8':'⅛','3/8':'⅜','5/8':'⅝','7/8':'⅞'}; if (r === 0) return String(w); const v = vul[r + '/' + den]; const f = v || (r + '/' + den); return (w ? w + (v ? '' : ' ') : '') + f; }
+
+
+  /* ---------- polynomials (chapter 10) ---------- */
+  /* coefficients are listed from the HIGHEST power down: [4,2,3,7] = 4x³ + 2x² + 3x + 7 */
+  const SUP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const supStr = n => String(n).split('').map(c => SUP[c] || c).join('');
+  /* plain-text polynomial (for SVG text): polyStr([1,5,6]) → "x² + 5x + 6"; coefficients may be numbers or strings like '√2', '½' */
+  function polyStr(co, v='x'){ const n = co.length - 1; let out = ''; co.forEach((c, k) => { const pw = n - k; if (c === 0 || c === '0') return; let neg = false, a = c; if (typeof c === 'number'){ neg = c < 0; a = Math.abs(c); a = (a === 1 && pw > 0) ? '' : fmt(a, 4); } else if (/^-/.test(c)){ neg = true; a = c.slice(1); } const term = a + (pw === 0 ? '' : v + (pw > 1 ? supStr(pw) : '')); out += out ? (neg ? ' − ' : ' + ') + term : (neg ? '−' : '') + term; }); return out || '0'; }
+  /* HTML version with <sup> powers */
+  function polyHtml(co, v='x'){ return polyStr(co, v).replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, m => '<sup>' + m.split('').map(c => Object.keys(SUP).find(k => SUP[k] === c)).join('') + '</sup>'); }
+  /* value of a polynomial with numeric coefficients (Horner) */
+  const polyEval = (co, x) => co.reduce((acc, c) => acc * x + c, 0);
+  /* isometric box: front-bottom-left corner at o, length l (to the right), width w (going back), height h, in px. opts.cls = [front, top, side] fill classes */
+  function cuboid(svg, o, l, w, h, opts={}){ const {cls=['fill-blue','fill-amber','fill-green'], ang=30, k=.5, labels=null, attrs={}} = opts; const dx = w * k * Math.cos(rad(ang)), dy = -w * k * Math.sin(rad(ang)); const g = group(svg, attrs);
+    const A = o, B = P(o.x + l, o.y), C = P(o.x + l, o.y - h), D = P(o.x, o.y - h); const sh = q => P(q.x + dx, q.y + dy);
+    polygon(g, [A, B, C, D], {class: cls[0], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [D, C, sh(C), sh(D)], {class: cls[1], stroke: 'var(--text)', 'stroke-width': 1.5}); polygon(g, [B, sh(B), sh(C), C], {class: cls[2], stroke: 'var(--text)', 'stroke-width': 1.5});
+    if (labels){ if (labels[0]) text(g, P(o.x + l / 2, o.y + 16), labels[0], {class: 'lbl sm blue'}); if (labels[1]) text(g, P(o.x + l + dx / 2 + 14, o.y + dy / 2 + 4), labels[1], {class: 'lbl sm blue', 'text-anchor': 'start'}); if (labels[2]) text(g, P(o.x - 8, o.y - h / 2), labels[2], {class: 'lbl sm blue', 'text-anchor': 'end'}); }
+    return g; }
+
+  /* ---------- animation ---------- */
+  const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  function animate(ms, fn, done){ const t0 = performance.now(); let raf; let stopped = false; function step(now){ if (stopped) return; const t = Math.min(1, (now - t0) / ms); fn(ease(t), t); if (t < 1) raf = requestAnimationFrame(step); else if (done) done(); } raf = requestAnimationFrame(step); return () => { stopped = true; cancelAnimationFrame(raf); }; }
+  /* sub-range of t: returns 0..1 as t goes from a..b */
+  const sub01 = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  /* ---------- Stepper (animated step-by-step explanations) ---------- */
+  class Stepper{
+    constructor(root, opts){
+      this.root = $(root); this.steps = opts.steps; this.drawFn = opts.draw; this.ms = opts.ms || 800; this.gap = opts.gap || 2600; this.i = -1; this.cancel = null; this.timer = null;
+      this.svg = this.root.querySelector('svg');
+      const ctr = document.createElement('div'); ctr.className = 'step-controls';
+      ctr.innerHTML = '<button class="btn" data-a="prev">◀ Back</button><span class="step-count"></span><button class="btn primary" data-a="next">Next ▶</button><button class="btn ghost" data-a="play">▶▶ Auto play</button><button class="btn ghost" data-a="reset">⟲ Restart</button>';
+      this.list = document.createElement('ol'); this.list.className = 'step-list';
+      this.root.classList.add('stepper'); this.root.appendChild(ctr); this.root.appendChild(this.list); this.ctr = ctr;
+      ctr.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.a; if (a === 'prev') this.go(this.i - 1); else if (a === 'next') this.go(this.i + 1); else if (a === 'reset') { this.stop(); this.go(0); } else if (a === 'play') this.play(); });
+      this.go(opts.start ?? 0, false);
+    }
+    go(i, anim=true){
+      if (i < 0 || i >= this.steps.length) return; this.i = i; if (this.cancel) this.cancel();
+      const render = t => { clear(this.svg); this.drawFn(this.svg, i, t); };
+      if (anim) this.cancel = animate(this.ms, render); else render(1);
+      this.list.innerHTML = ''; for (let k = 0; k <= i; k++){ const li = document.createElement('li'); li.innerHTML = this.steps[k]; if (k === i) li.className = 'active'; this.list.appendChild(li); }
+      this.list.scrollTop = this.list.scrollHeight;
+      this.ctr.querySelector('.step-count').textContent = `Step ${i + 1} of ${this.steps.length}`;
+      this.ctr.querySelector('[data-a=prev]').disabled = (i === 0); this.ctr.querySelector('[data-a=next]').disabled = (i === this.steps.length - 1);
+      if (i === this.steps.length - 1) this.stop();
+    }
+    stop(){ if (this.timer){ clearInterval(this.timer); this.timer = null; } this.ctr.querySelector('[data-a=play]').textContent = '▶▶ Auto play'; }
+    play(){ if (this.timer){ this.stop(); return; } if (this.i >= this.steps.length - 1) this.go(0); this.ctr.querySelector('[data-a=play]').textContent = '⏸ Pause'; this.timer = setInterval(() => { if (this.i >= this.steps.length - 1){ this.stop(); return; } this.go(this.i + 1); }, this.gap); }
+  }
+
+  /* ---------- controls ---------- */
+  function slider(input, fn, digits=2){ const inp = $(input); const out = inp.parentElement.querySelector('output'); const run = () => { if (out) out.textContent = (inp.dataset.fmt ? inp.dataset.fmt.replace('{v}', fmt(inp.value, digits)) : fmt(inp.value, digits)).replace(/-/g, '\u2212'); fn(+inp.value); }; inp.addEventListener('input', run); run(); return run; }
+  /* make points draggable inside an svg: getPts() returns the array of live point objects (mutated in place) */
+  function draggable(svg, getPts, onMove, radius=22){
+    let active = null;
+    const toSvg = e => { const pt = svg.createSVGPoint(); const t = e.touches ? e.touches[0] : e; pt.x = t.clientX; pt.y = t.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const down = e => { const p = toSvg(e); let best = null, bd = radius; getPts().forEach((q, i) => { const d = dist(p, q); if (d < bd){ bd = d; best = i; } }); if (best !== null){ active = best; e.preventDefault(); } };
+    const move = e => { if (active === null) return; const p = toSvg(e); const arr = getPts(); const vb = svg.viewBox.baseVal; arr[active].x = Math.max(vb.x + 8, Math.min(vb.x + vb.width - 8, p.x)); arr[active].y = Math.max(vb.y + 8, Math.min(vb.y + vb.height - 8, p.y)); onMove(active); e.preventDefault(); };
+    const up = () => { active = null; };
+    svg.addEventListener('mousedown', down); svg.addEventListener('touchstart', down, {passive: false});
+    window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+    window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+  }
+
+  /* ---------- quizzes ---------- */
+  function mcq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="opts">${q.options.map((o, i) => `<button class="opt" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}</div><div class="fb"></div>`;
+    c.querySelector('.opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; const i = +b.dataset.i; $$('.opt', c).forEach(x => x.classList.remove('right', 'wrong')); const fb = c.querySelector('.fb'); if (i === q.answer){ b.classList.add('right'); fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { b.classList.add('wrong'); fb.className = 'fb no'; fb.innerHTML = '❌ Not quite. ' + (q.hint || 'Think again and try another option.'); } });
+  }
+  function numq(container, q){
+    const c = $(container); c.classList.add('quiz');
+    c.innerHTML = `<div class="q">${q.q}</div><div class="controls"><input type="number" step="any" placeholder="your answer"> <span>${q.unit || ''}</span> <button class="btn primary">Check</button></div><div class="fb"></div>`;
+    const inp = c.querySelector('input'), fb = c.querySelector('.fb');
+    const check = () => { const v = parseFloat(inp.value); if (isNaN(v)){ fb.className = 'fb no'; fb.textContent = 'Type a number first.'; return; } if (Math.abs(v - q.answer) <= (q.tol ?? 0.01)){ fb.className = 'fb ok'; fb.innerHTML = '✅ Correct! ' + (q.explain || ''); } else { fb.className = 'fb no'; fb.innerHTML = '❌ Not yet. ' + (q.hint || 'Check your working and try again.'); } };
+    c.querySelector('button').addEventListener('click', check); inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+  /* reveal-answer block: <div class="reveal" data-btn="Show answer"> ... </div> */
+  function reveals(){ $$('.reveal').forEach(d => { if (d.dataset.ready) return; d.dataset.ready = 1; const b = document.createElement('button'); b.className = 'btn'; b.textContent = d.dataset.btn || 'Show answer'; const body = document.createElement('div'); while (d.firstChild) body.appendChild(d.firstChild); body.style.display = 'none'; d.appendChild(b); d.appendChild(body); b.addEventListener('click', () => { const open = body.style.display !== 'none'; body.style.display = open ? 'none' : ''; b.textContent = open ? (d.dataset.btn || 'Show answer') : 'Hide'; }); }); }
+
+  /* ---------- progress ---------- */
+  const KEY = CFG.key;
+  function getDone(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e){ return {}; } }
+  function setDone(page, v){ try { const d = getDone(); d[page] = !!v; localStorage.setItem(KEY, JSON.stringify(d)); } catch (e){} }
+
+  /* ---------- page chrome ---------- */
+  function initPage(){
+    const file = (location.pathname.split('/').pop() || 'index.html');
+    const idx = Math.max(0, PAGES.findIndex(p => p[0] === file));
+    const prev = PAGES[idx - 1], next = PAGES[idx + 1];
+    const header = $('header.top');
+    if (header){
+      header.innerHTML = `<div class="wrap"><a class="home" href="index.html">${CFG.icon} <span>${CFG.title}</span></a><span class="spacer"></span>
+        <select aria-label="Go to page">${PAGES.map((p, i) => `<option value="${p[0]}" ${i === idx ? 'selected' : ''}>${p[1]}</option>`).join('')}</select>
+        <a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ Prev</a><a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">Next ▶</a></div>`;
+      header.querySelector('select').addEventListener('change', e => { location.href = e.target.value; });
+    }
+    const footer = $('footer.bottomnav');
+    if (footer){
+      const doneNow = !!getDone()[file];
+      footer.innerHTML = `<a class="navbtn ${prev ? '' : 'disabled'}" href="${prev ? prev[0] : '#'}">◀ ${prev ? prev[1] : ''}</a>
+        ${idx > 0 ? `<label><input type="checkbox" ${doneNow ? 'checked' : ''}> Mark this page as completed</label>` : ''}
+        <a class="navbtn primary ${next ? '' : 'disabled'}" href="${next ? next[0] : '#'}">${next ? next[1] : ''} ▶</a>`;
+      const cb = footer.querySelector('input'); if (cb) cb.addEventListener('change', () => setDone(file, cb.checked));
+    }
+    /* "on this page" list from h2 */
+    const main = $('main.page'); const h2s = $$('main.page h2');
+    if (main && h2s.length > 2 && !$('.onpage')){
+      const nav = document.createElement('div'); nav.className = 'onpage noprint';
+      nav.innerHTML = '<b>On this page:</b> ' + h2s.map((h, i) => { if (!h.id) h.id = 'sec' + (i + 1); return `<a href="#${h.id}">${h.textContent.replace(/^[^\w\d]+/, '').trim()}</a>`; }).join('');
+      const anchor = $('main.page .lead') || $('main.page h1'); if (anchor) anchor.insertAdjacentElement('afterend', nav);
+    }
+    reveals();
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+
+  return {PAGES, CFG, $, $$, P, lerp, lerpPt, dist, mid, add, sub, scale, unit, deg, rad, angleAt, polar, centroid, rotateAround, foot, intersect, thirdVertex, triSSS, fmt, frac, mixed, sqrt, sq, num,
+    el, clear, group, polygon, polyline, seg, ray, circle, dot, text, sideLabel, vertexLabel, labelTriangle, angleArc, angleArc2, rightMark, ticks, arrows, dim, gridLines, multiText, areaModel, numberGrid, arc, compassArc, extendLine, rules, along, mixedStr,
+    supStr, polyStr, polyHtml, polyEval, cuboid,
+    ease, animate, sub01, Stepper, slider, draggable, mcq, numq, reveals, getDone, setDone};
+})();
+
+</script>
+<script>
+(function(){
+/* ==== common helpers (same code on pages 04–06) ==== */
+const {P, el} = K;
+const $id = id => document.getElementById(id);
+const CV = c => (c === 'none' ? 'none' : ((c.charAt(0) === '#' || c.startsWith('var(') || c.startsWith('rgb') || c.startsWith('url')) ? c : `var(--${c === 'amber' ? 'accent' : c})`));
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+/* text: fs = font size (px), o.c colour class, o.w weight, o.a anchor, o.fill fixed colour */
+function T(svg, x, y, s, fs = 14, o = {}){ return el('text', {x, y, class: 'lbl' + (o.c ? ' ' + o.c : ''), 'text-anchor': o.a || 'middle', 'dominant-baseline': 'middle',
+  style: `font-size:${fs}px;font-weight:${o.w || 400}` + (o.fill ? `;fill:${o.fill}` : '') + (o.st ? ';' + o.st : ''), text: s}, svg); }
+function rect(svg, x, y, w, h, style, rx = 0){ return el('rect', {x, y, width: Math.max(0, w), height: Math.max(0, h), rx, style}, svg); }
+function circ(svg, x, y, r, style){ return el('circle', {cx: x, cy: y, r: Math.max(0, r), style}, svg); }
+function ln(svg, x1, y1, x2, y2, c = 'text', w = 2, extra = ''){ return el('line', {x1, y1, x2, y2, style: `stroke:${CV(c)};stroke-width:${w};stroke-linecap:round;${extra}`}, svg); }
+function pth(svg, d, style){ return el('path', {d, style}, svg); }
+function arrow(svg, a, b, c = 'text', w = 2.2, head = 9){ const L = K.dist(a, b); if (L < 2) return; const u = K.unit(a, b), hh = Math.min(head, L * .6), hb = P(b.x - u.x * hh, b.y - u.y * hh); ln(svg, a.x, a.y, hb.x, hb.y, c, w);
+  el('polygon', {points: `${b.x},${b.y} ${hb.x + u.y * hh * .55},${hb.y - u.x * hh * .55} ${hb.x - u.y * hh * .55},${hb.y + u.x * hh * .55}`, style: `fill:${CV(c)}`}, svg); }
+const WATER = '#bfdbfe';
+/* beaker with a lip; liquid from level y = lvl to the bottom; o.fill liquid colour, o.op its opacity */
+function beaker(svg, x, y, w, h, lvl, o = {}){
+  if (lvl !== null && lvl < y + h){ rect(svg, x + 2, lvl, w - 4, y + h - lvl - 2, `fill:${o.base || WATER};opacity:${o.bop ?? .55}`, 2);
+    if (o.fill) rect(svg, x + 2, lvl, w - 4, y + h - lvl - 2, `fill:${o.fill};opacity:${o.op ?? .5}`, 2);
+    ln(svg, x + 2, lvl, x + w - 2, lvl, '#3b82f6', 1.2, 'opacity:.6'); }
+  pth(svg, `M${x - 7},${y - 4} L${x},${y + 4} L${x},${y + h} L${x + w},${y + h} L${x + w},${y + 4} L${x + w + 5},${y - 4}`, 'fill:none;stroke:var(--text);stroke-width:2.4;stroke-linejoin:round');
+  ln(svg, x + 8, y + 18, x + 8, y + h - 14, '#ffffff', 3, 'opacity:.35'); }
+/* yes/no style choice buttons */
+function choices(root = document){ K.$$('.yn[data-ans]', root).forEach(bx => { if (bx.dataset.wired) return; bx.dataset.wired = 1; const ans = +bx.dataset.ans, why = bx.parentElement.querySelector('.why');
+  K.$$('button', bx).forEach((b, k) => b.addEventListener('click', () => { K.$$('button', bx).forEach(x => x.classList.remove('ok', 'bad')); b.classList.add(k === ans ? 'ok' : 'bad');
+    if (why){ why.innerHTML = k === ans ? '✅ ' + (bx.dataset.why || 'Correct.') : '❌ ' + (bx.dataset.hint || 'Not quite – think again.'); why.style.color = k === ans ? 'var(--green)' : 'var(--red)'; } })); }); }
+/* number boxes: <input data-a="20"> … <button data-chk> inside .inl, feedback in the next .why */
+function numChecks(){ K.$$('[data-chk]').forEach(b => { const box = b.closest('.inl'), why = box.parentElement.querySelector('.why'), ins = K.$$('input[data-a]', box);
+  b.addEventListener('click', () => { let ok = 0; ins.forEach(i => { const v = parseFloat(String(i.value).replace(',', '.')), r = !isNaN(v) && Math.abs(v - +i.dataset.a) <= Math.max(.01, Math.abs(+i.dataset.a) * .005); i.classList.toggle('ok', r); i.classList.toggle('bad', !r); if (r) ok++; });
+    why.innerHTML = ok === ins.length ? '✅ Correct!' : '❌ Not yet – use mass of solution = solute + solvent, and "× 100 ÷ 100" carefully.'; why.style.color = ok === ins.length ? 'var(--green)' : 'var(--red)'; }); }); }
+/* 10 × 10 grid of squares; n squares filled (row by row) */
+function grid100(svg, x, y, s, n, col = '#a855f7', rest = null, o = {}){ const c = s / 10;
+  for (let k = 0; k < 100; k++){ const gx = x + (k % 10) * c, gy = y + Math.floor(k / 10) * c, on = k + 1 <= n + 1e-6;
+    const part = !on && k < n ? n - k : 0;
+    rect(svg, gx + 1, gy + 1, c - 2, c - 2, `fill:${rest || 'var(--surface2)'};stroke:var(--border);stroke-width:1`, 2);
+    if (on || part > 0) rect(svg, gx + 1, gy + 1, (c - 2) * (on ? 1 : part), c - 2, `fill:${col};opacity:${o.op ?? .9}`, 2); } }
+/* ==== end common ==== */
+
+choices();
+
+/* ---------- page drawing helpers ---------- */
+const SOLID = '#f8fafc', SOLIDE = '#64748b';
+function spoon(svg, x, y, pour){ pth(svg, `M${x + 8},${y - 4} L${x + 90},${y - 50}`, 'fill:none;stroke:#94a3b8;stroke-width:6;stroke-linecap:round');
+  el('ellipse', {cx: x, cy: y, rx: 20, ry: 10, transform: `rotate(${pour ? 25 : -10} ${x} ${y})`, style: 'fill:#cbd5e1;stroke:#475569;stroke-width:1.6'}, svg);
+  for (let k = 0; k < 6; k++) rect(svg, x - 10 + k * 3.5, y - 6 - (k % 2) * 3, 4, 4, `fill:${SOLID};stroke:${SOLIDE};stroke-width:.6`);
+  if (pour) for (let k = 0; k < 7; k++) rect(svg, x - 14 + ((k * 5) % 9), y + 12 + k * 9, 3.5, 3.5, `fill:${SOLID};stroke:${SOLIDE};stroke-width:.6`); }
+function rodAt(svg, x1, y1, x2, y2){ ln(svg, x1, y1, x2, y2, '#64748b', 9); ln(svg, x1, y1, x2, y2, '#e2e8f0', 6); ln(svg, x1 + 1, y1, x2 + 1, y2, '#ffffff', 1.5, 'opacity:.8'); }
+function pile(svg, cx, by, g, spread = 1){ const n = Math.min(160, Math.round(g * 3)); for (let k = 0; k < n; k++){ const u = ((k * 0.618034) % 1) - .5, v = (k * 0.381966 * 7) % 1, hw = (30 + Math.sqrt(g) * 9) * spread;
+  rect(svg, cx + u * 2 * hw, by - 4 - v * (6 + Math.sqrt(g) * 3) * (1 - Math.abs(u) * 1.6), 4, 4, `fill:${SOLID};stroke:${SOLIDE};stroke-width:.6`); } }
+function needles(svg, x0, x1, by, n, rmax = 1e9, cx = 0){ for (let k = 0; k < n; k++){ const x = x0 + ((k * 0.618034 * 997) % 1) * (x1 - x0), len = 7 + (k * 7) % 9, a = -0.4 - ((k * 13) % 10) / 12;
+  if (Math.abs(x - cx) > rmax) continue; const y = by - 2 - ((k * 3) % 5);
+  pth(svg, `M${x},${y} L${x + Math.cos(a) * len},${y + Math.sin(a) * len}`, 'fill:none;stroke:#64748b;stroke-width:4;stroke-linecap:round'); pth(svg, `M${x},${y} L${x + Math.cos(a) * len},${y + Math.sin(a) * len}`, `fill:none;stroke:${SOLID};stroke-width:2.4;stroke-linecap:round`); } }
+function tripod(svg, x, y, w){ rect(svg, x - 10, y, w + 20, 6, 'fill:#94a3b8;stroke:var(--text);stroke-width:1'); for (let k = 0; k < 12; k++) ln(svg, x - 6 + k * (w + 12) / 11, y, x - 6 + k * (w + 12) / 11, y + 6, '#475569', .8);
+  ln(svg, x + 6, y + 6, x - 14, y + 80, '#b45309', 4); ln(svg, x + w - 6, y + 6, x + w + 14, y + 80, '#b45309', 4); ln(svg, x + w / 2, y + 6, x + w / 2, y + 80, '#b45309', 3, 'opacity:.5'); }
+function burner(svg, cx, y, on, t = 0){ rect(svg, cx - 7, y + 20, 14, 52, 'fill:#94a3b8;stroke:var(--text);stroke-width:1.2', 2); rect(svg, cx - 22, y + 68, 44, 8, 'fill:#64748b;stroke:var(--text);stroke-width:1.2', 2);
+  if (on){ const f = 1 + .08 * Math.sin(t * 17); pth(svg, `M${cx - 10},${y + 22} Q${cx - 13},${y + 2} ${cx},${y - 22 * f} Q${cx + 13},${y + 2} ${cx + 10},${y + 22} Z`, 'fill:#60a5fa;opacity:.75;stroke:#2563eb;stroke-width:1');
+    pth(svg, `M${cx - 5},${y + 22} Q${cx - 6},${y + 10} ${cx},${y - 4 * f} Q${cx + 6},${y + 10} ${cx + 5},${y + 22} Z`, 'fill:#bfdbfe;opacity:.9'); } }
+
+/* ---------- Fig 6.2 ---------- */
+(function(){ const svg = $id('f62'), y = 70, w = 170, h = 190, lv = 120;
+  [40, 315, 590].forEach((x, i) => { beaker(svg, x, y, w, h, lv);
+    if (i > 0){ rodAt(svg, x + w - 30, y - 35, x + 40, y + h - 8); spoon(svg, x + 40, y - 18, true); }
+    if (i === 2) pile(svg, x + w / 2, y + h - 2, 9);
+    T(svg, x + w / 2, y + h + 18, 't °C', 14, {w: 700});
+    if (i === 0) T(svg, x + w / 2, 40, '100 mL water', 14, {w: 700});
+    T(svg, x + w / 2, y + h + 38, ['100 mL water', 'x g solute added – it dissolves', 'more than x g added – the extra stays'][i], 13, {c: i === 2 ? 'red' : 'muted'}); });
+  T(svg, 400, 322, 'Fig 6.2 – making a saturated solution (temperature kept constant)', 13, {c: 'muted'}); })();
+
+/* ---------- Fig 6.3 ---------- */
+(function(){ const svg = $id('f63'), y = 70, w = 180, h = 170, lv = 115;
+  [140, 480].forEach((x, i) => { beaker(svg, x, y, w, h, lv); rodAt(svg, x + w - 30, y - 35, x + 40, y + h - 8); spoon(svg, x + 50, y - 18, true);
+    T(svg, x + w / 2, 22, i ? 'more NH₄Cl added' : 'NH₄Cl added', 14, {w: 700});
+    T(svg, x + w / 2, y + h + 18, 't °C', 14, {w: 700}); T(svg, x + w / 2, y + h + 38, i ? 'more solute dissolves' : 'the solute dissolves', 13, {c: 'green', w: 700}); });
+  T(svg, 400, 302, 'Fig 6.3 – an unsaturated solution: more solute can still dissolve', 13, {c: 'muted'}); })();
+
+/* ---------- Fig 6.4 ---------- */
+(function(){ const svg = $id('f64'), y = 50, w = 170, h = 170, lv = 95;
+  const x1 = 120; beaker(svg, x1, y, w, h, lv); tripod(svg, x1, y + h, w); burner(svg, x1 + w / 2, y + h + 8, true, .3); rodAt(svg, x1 + w - 30, y - 30, x1 + 40, y + h - 8); spoon(svg, x1 + 50, y - 14, true);
+  T(svg, x1 + w / 2, 340, 'at a higher temperature', 13, {w: 700}); T(svg, x1 + w / 2, 360, 'more solute dissolves', 13, {w: 700, c: 'red'});
+  const x2 = 500, y2 = 90; beaker(svg, x2, y2, w, h, y2 + 40); rodAt(svg, x2 + w - 25, y2 - 30, x2 + 50, y2 + h - 8); needles(svg, x2 + 12, x2 + w - 12, y2 + h - 2, 40);
+  T(svg, x2 + w / 2, 340, 'the supersaturated solution is cooled:', 13, {w: 700}); T(svg, x2 + w / 2, 360, 'crystals of the extra solute form', 13, {w: 700, c: 'blue'});
+  arrow(svg, P(330, 170), P(470, 170), 'muted', 2.5); T(svg, 400, 156, 'cool slowly', 13, {c: 'muted', w: 700});
+  T(svg, 400, 18, 'Fig 6.4', 13, {c: 'muted'}); })();
+
+/* ---------- saturation lab ---------- */
+(function(){
+  const svg = $id('satSvg'), out = $id('satOut'), tIn = $id('sT'), tOut = tIn.parentElement.querySelector('output');
+  const DATA = [[10, 24], [20, 37], [40, 41], [60, 55], [80, 66]];
+  const S = T => { if (T <= DATA[0][0]) return DATA[0][1]; for (let k = 1; k < DATA.length; k++){ const [a, sa] = DATA[k - 1], [b, sb] = DATA[k]; if (T <= b) return sa + (sb - sa) * (T - a) / (b - a); } return DATA[DATA.length - 1][1]; };
+  const BX = 60, BY = 100, BW = 220, BH = 220, LV = 140, BOT = BY + BH - 3, F = v => K.fmt(v, 1);
+  const dots = []; for (let k = 0; k < 130; k++) dots.push({x: BX + 10 + ((k * 0.7548777) % 1) * (BW - 20), y: LV + 8 + ((k * 0.5698403) % 1) * (BOT - LV - 30)});
+  let st, msg = '', running = false, last = 0, tt = 0;
+  function init(){ st = {T: 30, added: 0, dis: 0, xt: 0, vd: 0, vs: 0, vx: 0, grains: [], cool: false, burst: null}; msg = 'Add NH₄Cl a spoonful at a time and watch the meter.'; tIn.value = 30; tOut.textContent = '30 °C'; }
+  const solid = () => st.added - st.dis;
+  function status(){ const s = S(st.T); return st.dis > s + .05 ? 'x' : (solid() > .05 || Math.abs(st.dis - s) < .05) ? 's' : 'u'; }
+  const NAME = {u: 'UNSATURATED', s: 'SATURATED', x: 'SUPERSATURATED'}, COL = {u: 'green', s: 'amber', x: 'red'};
+  function crystallise(note){ const s = S(st.T); if (st.dis > s){ st.xt += st.dis - s; st.dis = s; st.burst = 0; msg = note; } }
+  function draw(){
+    K.clear(svg); const s = S(st.T), stt = status();
+    /* beaker side */
+    const heating = st.T >= 35 && !st.cool;
+    tripod(svg, BX, BY + BH, BW); burner(svg, BX + BW / 2, BY + BH + 8, heating, tt);
+    beaker(svg, BX, BY, BW, BH, LV);
+    dots.forEach((d, k) => { if (k < Math.round(st.vd * 1.8)) circ(svg, d.x, d.y, 2, `fill:${SOLIDE};opacity:.45`); });
+    const powder = Math.max(0, st.vs - st.vx);
+    if (powder > .2) pile(svg, BX + BW / 2, BOT, powder);
+    if (st.vx > .2) needles(svg, BX + 10, BX + BW - 10, BOT, Math.round(st.vx * 2.4), st.burst !== null ? st.burst * 260 : 1e9, BX + BW / 2);
+    rodAt(svg, BX + BW - 40, BY - 40, BX + 60, BOT - 6);
+    /* thermometer */
+    const tx = BX + BW - 22; rect(svg, tx - 4, BY - 50, 8, BH + 20, 'fill:var(--svgbg);stroke:var(--text);stroke-width:1.3', 4); circ(svg, tx, BY + BH - 20, 8, 'fill:#ef4444;stroke:var(--text);stroke-width:1.3');
+    const hgt = (st.T / 100) * (BH + 5); rect(svg, tx - 2, BY + BH - 22 - hgt, 4, hgt, 'fill:#ef4444');
+    T(svg, tx + 12, BY - 46, `${Math.round(st.T)} °C`, 14, {a: 'start', w: 700, c: 'red'});
+    st.grains.forEach(g => rect(svg, g.x, g.y, 4, 4, `fill:${SOLID};stroke:${SOLIDE};stroke-width:.6`));
+    if (st.grains.length) spoon(svg, BX + 80, 46, true);
+    T(svg, BX + BW / 2 - 20, 22, NAME[stt], 18, {w: 800, c: COL[stt]});
+    T(svg, BX + BW / 2 - 20, 44, '100 g water + NH₄Cl', 12, {c: 'muted'});
+    /* meter */
+    const MX = 330, MY = 70, MH = 280, sc = MH / 80; T(svg, MX + 28, 22, 'dissolved', 13, {w: 700}); T(svg, MX + 28, 40, '(g per 100 g water)', 11, {c: 'muted'});
+    rect(svg, MX, MY, 56, MH, 'fill:var(--surface2);stroke:var(--text);stroke-width:1.4', 4);
+    rect(svg, MX + 2, MY + MH - st.vd * sc, 52, st.vd * sc, `fill:${stt === 'x' ? 'var(--red)' : 'var(--green)'};opacity:.75`, 2);
+    for (let g = 0; g <= 80; g += 20){ ln(svg, MX - 6, MY + MH - g * sc, MX, MY + MH - g * sc, 'text', 1.2); T(svg, MX - 10, MY + MH - g * sc, String(g), 11, {a: 'end', c: 'muted'}); }
+    ln(svg, MX - 4, MY + MH - s * sc, MX + 64, MY + MH - s * sc, 'red', 2.5, 'stroke-dasharray:6 4'); T(svg, MX + 66, MY + MH - s * sc - 9, 'limit', 11, {a: 'start', c: 'red', w: 700}); T(svg, MX + 66, MY + MH - s * sc + 7, `${F(s)} g`, 11, {a: 'start', c: 'red', w: 700});
+    T(svg, MX + 28, MY + MH + 18, `${F(st.vd)} g`, 14, {w: 800});
+    /* curve */
+    const X0 = 480, X1 = 775, Y0 = 350, Y1 = 70, xT = T => X0 + (T - 10) / 70 * (X1 - X0), yS = g => Y0 - g / 80 * (Y0 - Y1);
+    T(svg, (X0 + X1) / 2, 22, 'solubility curve of NH₄Cl (textbook table)', 13, {w: 700});
+    const curve = DATA.map(([t, g]) => `${xT(t)},${yS(g)}`).join(' ');
+    el('polygon', {points: `${xT(10)},${Y1} ${curve} ${xT(80)},${Y1}`, style: 'fill:var(--red-soft);opacity:.8'}, svg);
+    el('polygon', {points: `${xT(10)},${Y0} ${curve} ${xT(80)},${Y0}`, style: 'fill:var(--green-soft);opacity:.8'}, svg);
+    for (let t = 10; t <= 80; t += 10){ ln(svg, xT(t), Y0, xT(t), Y0 + 5, 'text', 1.2); T(svg, xT(t), Y0 + 16, String(t), 11, {c: 'muted'}); }
+    for (let g = 0; g <= 80; g += 20){ ln(svg, X0 - 5, yS(g), X0, yS(g), 'text', 1.2); T(svg, X0 - 8, yS(g), String(g), 11, {a: 'end', c: 'muted'}); }
+    ln(svg, X0, Y0, X1, Y0, 'text', 1.5); ln(svg, X0, Y0, X0, Y1, 'text', 1.5);
+    el('polyline', {points: curve, style: 'fill:none;stroke:var(--text);stroke-width:2.5'}, svg); DATA.forEach(([t, g]) => circ(svg, xT(t), yS(g), 3.5, 'fill:var(--text)'));
+    T(svg, xT(25), yS(70), 'supersaturated', 13, {c: 'red', w: 700}); T(svg, xT(62), yS(18), 'unsaturated', 13, {c: 'green', w: 700}); T(svg, xT(50), yS(52) - 16, 'saturated (on the line)', 11, {c: 'muted', w: 700});
+    T(svg, (X0 + X1) / 2, Y0 + 34, 'temperature (°C)', 12, {c: 'muted'});
+    circ(svg, xT(st.T), yS(Math.min(80, st.vd)), 8, `fill:${CV(COL[stt])};stroke:var(--svgbg);stroke-width:2`);
+  }
+  function say(){ const s = S(st.T), stt = status();
+    out.textContent = `Temperature ${Math.round(st.T)} °C → at most ${F(s)} g of NH₄Cl can dissolve in 100 g of water.\nAdded ${F(st.added)} g · dissolved ${F(st.dis)} g · solid at the bottom ${F(solid())} g\n` +
+      `Status: ${NAME[stt]} – ` + (stt === 'u' ? `${F(s - st.dis)} g more can still dissolve.` : stt === 's' ? 'it holds the maximum; extra solute stays undissolved.' : `it holds ${F(st.dis - s)} g MORE than the saturation amount. Unstable!`) + (msg ? '\n' + msg : ''); }
+  function frame(now){ const dt = Math.min(.05, Math.max(0, (now - last) / 1000)); last = now; tt += dt; let busy = false;
+    st.grains.forEach(g => { g.vy += 900 * dt; g.y += g.vy * dt; }); st.grains = st.grains.filter(g => g.y < BOT - 4); if (st.grains.length) busy = true;
+    if (st.cool){ busy = true; st.T = Math.max(30, st.T - 12 * dt); tIn.value = Math.round(st.T); tOut.textContent = `${Math.round(st.T)} °C`; const s = S(st.T);
+      if (st.dis > s){ if ($id('sCare').checked && st.added - st.dis < .01) { /* stays dissolved: supersaturated */ } else { st.xt += st.dis - s; st.dis = s; } }
+      if (st.T <= 30){ st.cool = false; msg = status() === 'x' ? 'Cooled carefully: the solution is clear but SUPERSATURATED. Try a seed crystal!' : (st.xt > .05 ? 'As it cooled, crystals of NH₄Cl separated out (Fig 6.4). The liquid is now saturated at 30 °C.' : 'Cooled to 30 °C. Nothing came out – there was not enough solute to exceed the limit.'); say(); } }
+    if (st.burst !== null){ st.burst += dt; busy = true; if (st.burst > 1.2) st.burst = null; }
+    const ap = (v, to) => { const d = to - v; if (Math.abs(d) < .05) return to; busy = true; return v + d * Math.min(1, dt * 5); };
+    st.vd = ap(st.vd, st.dis); st.vs = ap(st.vs, solid()); st.vx = ap(st.vx, Math.min(st.xt, solid()));
+    draw(); if (busy) requestAnimationFrame(frame); else { running = false; say(); } }
+  function kick(){ if (!running){ running = true; last = performance.now(); requestAnimationFrame(frame); } say(); }
+  $id('sAdd').addEventListener('click', () => { if (st.cool) return; if (st.added >= 80){ msg = 'That is enough for this beaker (80 g).'; kick(); return; }
+    st.added += 5; for (let k = 0; k < 12; k++) st.grains.push({x: BX + 66 + ((k * 7) % 22), y: 60 + k * 5, vy: 0});
+    if (status() === 'x' || st.dis > S(st.T)){ crystallise('The new solid acted as a seed: the extra solute crystallised at once!'); }
+    else { const before = st.dis; st.dis = Math.min(st.added, S(st.T)); st.xt = Math.min(st.xt, st.added - st.dis);
+      msg = st.dis - before >= 4.99 ? 'The spoonful dissolved completely.' : st.dis > before ? 'Part of the spoonful dissolved; the rest is left at the bottom.' : 'Nothing more dissolves: the solution is saturated.'; }
+    kick(); });
+  K.slider('#sT', v => { if (!st || st.cool) return; const old = st.T; st.T = v; const s = S(v);
+    if (st.dis > s){ crystallise(v < old ? 'Cooling while stirring: the extra solute comes out as crystals straight away.' : 'Stirring disturbed the supersaturated solution: it crystallised.'); }
+    else { st.dis = Math.min(st.added, s); st.xt = Math.min(st.xt, st.added - st.dis); if (v > old) msg = solid() > .05 ? 'Heating: more solid dissolves.' : (st.added ? 'Heating: everything is dissolved; more could dissolve now.' : 'Heating the water.'); }
+    kick(); }, 0);
+  $id('sCool').addEventListener('click', () => { if (st.cool) return; if (st.T <= 30.5){ msg = 'It is already at 30 °C. Heat it first with the temperature slider.'; kick(); return; }
+    st.cool = true; msg = $id('sCare').checked ? 'Cooling very slowly and carefully…' : 'Cooling slowly…'; kick(); });
+  $id('sSeed').addEventListener('click', () => { if (st.cool) return; const stt = status();
+    if (stt === 'x') crystallise('The seed crystal triggered crystallisation: the extra solute came out at once and the solution is saturated again.');
+    else msg = stt === 'u' ? 'The seed crystal dissolves – the solution is unsaturated.' : 'The seed crystal just sits there – the solution is saturated.';
+    kick(); });
+  $id('sReset').addEventListener('click', () => { init(); kick(); });
+  init(); draw(); say();
+})();
+
+/* ---------- growing crystals ---------- */
+(function(){
+  const svg = $id('grSvg'), out = $id('grOut'), sel = $id('grType'), tIn = $id('grT'); let t = 0;
+  const size = () => { const ty = sel.value; return ty === 'x' ? 9 + 36 * (1 - Math.exp(-t / 7)) : ty === 's' ? 9 : Math.max(0, 9 * (1 - t / 6)); };
+  function cuso4(cx, cy, s){ if (s < .5) return; el('polygon', {points: `${cx - s},${cy - s * .3} ${cx - s * .4},${cy - s * .8} ${cx + s},${cy - s * .5} ${cx + s * .9},${cy + s * .4} ${cx + s * .3},${cy + s * .8} ${cx - s * .9},${cy + s * .5}`, style: 'fill:#1d4ed8;stroke:#1e3a8a;stroke-width:1.4'}, svg);
+    el('polygon', {points: `${cx - s * .4},${cy - s * .8} ${cx + s},${cy - s * .5} ${cx + s * .2},${cy - s * .05} ${cx - s},${cy - s * .3}`, style: 'fill:#60a5fa;opacity:.85'}, svg); }
+  function kno3(cx, cy, s){ if (s < .5) return; const n = 3 + Math.round(s / 5);
+    for (let k = 0; k < n; k++){ const a = -Math.PI / 2 + (k - (n - 1) / 2) * .45 + Math.PI, L = s * (1.1 + .3 * ((k * 5) % 3)), w = Math.max(2, s / 6);
+      const x2 = cx + (k - (n - 1) / 2) * w * 1.1, y2 = cy + L;
+      el('polygon', {points: `${x2 - w / 2},${cy} ${x2 + w / 2},${cy} ${x2 + w / 2},${y2 - w} ${x2},${y2} ${x2 - w / 2},${y2 - w}`, style: 'fill:#f8fafc;stroke:#64748b;stroke-width:1.1;opacity:.95'}, svg); } }
+  function draw(){ K.clear(svg); const s = size(), ty = sel.value;
+    [[70, 'copper sulphate (CuSO₄)', '#3b82f6'], [450, 'potassium nitrate (KNO₃)', null]].forEach(([x, name, col], i) => { const w = 260, y = 70, h = 220, cx = x + w / 2;
+      T(svg, cx, 22, name, 15, {w: 700}); T(svg, cx, 42, {x: 'supersaturated solution', s: 'saturated solution', u: 'unsaturated solution'}[ty], 12, {c: 'muted'});
+      beaker(svg, x, y, w, h, y + 30, {fill: col, op: col ? .35 : 0});
+      ln(svg, x - 25, y - 4, x + w + 25, y - 4, '#64748b', 9); ln(svg, x - 25, y - 4, x + w + 25, y - 4, '#e2e8f0', 6);
+      const cy = y + 140; ln(svg, cx, y - 2, cx, cy - (i ? 0 : s * .6), '#a16207', 1.5);
+      if (i === 0) cuso4(cx, cy, s); else kno3(cx, cy - 2, s);
+      if (ty === 'x' && t >= 6){ const m = Math.min(8, Math.floor(t / 3)); for (let k = 0; k < m; k++){ const bx = x + 30 + k * 26; if (i === 0) cuso4(bx, y + h - 10, 5); else kno3(bx, y + h - 14, 7); } }
+      if (s < .5) T(svg, cx, cy, 'seed dissolved!', 13, {c: 'red', w: 700}); });
+    T(svg, 400, 322, `${t} h after hanging the seeds`, 14, {w: 700}); }
+  function say(){ const ty = sel.value, s = size();
+    out.textContent = `t = ${t} h · crystal size ≈ ${K.fmt(s / 9, 1)} × the seed\n` + (ty === 'x' ? (t === 0 ? 'Seeds just hung in the supersaturated solutions.' : t < 6 ? 'After a short time the seed crystals have started to grow.' : 'Much bigger crystals: blue CuSO₄ with slanting faces, colourless KNO₃ needles. Extra solute leaves the solution and joins the crystal.')
+      : ty === 's' ? 'Saturated: particles leave and join the crystal at the same rate, so its size does not change.' : (s > .5 ? 'Unsaturated: the solution can still dissolve solute, so the seed crystal is shrinking.' : 'Unsaturated: the seed crystal has dissolved completely.')); }
+  const run = K.slider('#grT', v => { t = v; draw(); say(); }, 0);
+  sel.addEventListener('change', () => { draw(); say(); });
+  let stop = null; $id('grPlay').addEventListener('click', () => { if (stop) stop(); stop = K.animate(6000, (u, raw) => { tIn.value = Math.round(24 * raw); run(); }, () => { stop = null; }); });
+})();
+
+/* ---------- quiz ---------- */
+K.mcq('#q1', {q: 'A saturated solution is one in which …', options: ['the solute and solvent react', 'the maximum amount of solute has dissolved at a given temperature', 'any amount of solute can dissolve', 'the solvent has evaporated'], answer: 1, explain: 'Key box, page 119.', hint: 'Think of the moment solid starts to collect at the bottom.'});
+K.mcq('#q2', {q: 'At 30 °C a little more NH₄Cl is added to a clear solution and it dissolves completely. Before adding, the solution was …', options: ['saturated', 'unsaturated', 'supersaturated', 'a suspension'], answer: 1, explain: 'More solute could still dissolve, so it was unsaturated.', hint: 'Could it take more solute?'});
+K.mcq('#q3', {q: 'How is a supersaturated solution made?', options: ['By adding solute to cold water quickly', 'By dissolving more solute at a higher temperature and cooling slowly without disturbing', 'By shaking a saturated solution', 'By adding a seed crystal'], answer: 1, explain: 'Activity 3: heat, dissolve more, cool slowly and undisturbed.', hint: 'Remember the "very careful" box in the lab.'});
+K.mcq('#q4', {q: 'A seed crystal is dropped into a supersaturated solution. What happens?', options: ['It dissolves', 'Nothing happens', 'The extra solute crystallises and the solution becomes saturated', 'The solution becomes unsaturated'], answer: 2, explain: 'A supersaturated solution is unstable; the seed starts crystallisation.', hint: 'Try the seed crystal button in the lab.'});
+K.mcq('#q5', {q: 'The process in which crystals of the solute form when a supersaturated solution is cooled slowly is called …', options: ['dissolving', 'evaporation', 'crystallization', 'filtration'], answer: 2, explain: 'Crystallization – പരലീകരണം (page 121).', hint: 'പരലീകരണം'});
+K.mcq('#q6', {q: 'A copper sulphate crystal is hung in an unsaturated copper sulphate solution. After some time it will …', options: ['grow bigger', 'get smaller or dissolve', 'turn colourless', 'stay exactly the same'], answer: 1, explain: 'An unsaturated solution can dissolve more solute, so the crystal dissolves.', hint: 'Choose "unsaturated" in the growing-crystals lab.'});
+})();
+</script>
+<script>document.addEventListener("DOMContentLoaded",function(){var w=document.querySelector("header.top .wrap");if(!w)return;var a=document.createElement("a");a.href="../";a.className="navbtn";a.textContent="◀ All chapters";a.title="Back to the list of chapters";w.insertBefore(a,w.firstChild);});</script>
+</body>
+</html>
